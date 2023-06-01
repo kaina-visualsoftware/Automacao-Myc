@@ -26,6 +26,8 @@ ${TELA_ORC_ADICIONAR}        tela_Orcamentos_Adicionar.png
 ${TELA_ORC_SEM_OBJETO}       tela_Orcamentos_Sem_Objeto.png
 ${TELA_SELECAO_GRADE}        tela_SelecaoGrade.png
 ${TELA_EXCLUIR_PRODUTO}      tela_Orcamentos_ExcluirProduto.png
+${AVISO_DESEJA_EXCLUIR}      aviso_DesejaExcluir.png
+${TELA_EXCLUSAO_ORC}         tela_ExclusaoOrc.png
 #Botões
 ${BT_ABRIR_OBJETO}           bt_Abrir_Objeto.png
 ${BT_DOWN_OBJETO}            bt_DowbObjeto_Orc.png
@@ -70,6 +72,13 @@ Quando pressiono o atalho para editar
     Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
 
     Verificar se objeto está visivel
+
+Quando pressiono o atalho de excluir
+    Press Combination    KEY.ALT     Key.X 
+    Wait Until Screen Contain    ${AVISO_DESEJA_EXCLUIR}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Wait Until Screen Contain    ${TELA_EXCLUSAO_ORC}    ${TEMPO_TELA}
 
 E insiro Vendedor e Cliente
     Input Text    ${EMPTY}    ${COD_VENDEDOR}
@@ -215,6 +224,15 @@ Então gravo o orçamento - 30 Dias
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Valida valores finais do orçamento
 
+Então informo o motivo da exlusão
+    Input Text    ${EMPTY}    Exlusao Orcamento Automacao
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+
+    Verifica Status Exclusão
+
 Quando informo um objeto
     SikuliLibrary.Click    ${BT_DOWN_OBJETO}
     Sleep    ${SLEEP_BAIXO}
@@ -276,3 +294,10 @@ Valida valores finais do orçamento
     
     Sleep    ${SLEEP_BAIXO}
     Should Be Equal    ${TOTAL_PEDIDO[0][0]}    ${VALOR_FINALPAG[0][0]}
+
+#***---Função de validação do status do orçamento---***#
+Verifica Status Exclusão
+    ${STATUS_ORC}    Query    SELECT Status FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
+    
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${STATUS_ORC[0][0]}    x

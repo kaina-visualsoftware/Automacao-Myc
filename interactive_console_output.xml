@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.11.3 on win32)" generated="20230601 13:34:13.032" rpa="false" schemaversion="3">
+<suite id="s1" name="Robot Interactive Console" source="c:\Users\Veniceos\.vscode\extensions\robocorp.robotframework-lsp-1.10.1\src\robotframework_ls\vendored\robotframework_interactive\robot_interactive_console.robot">
+<test id="s1-t1" name="Default Task/Test" line="5">
+<kw name="Interpreter Main Loop" library="MainLoop">
+<kw name="Dado que acesso a tela de orçamentos">
+<msg timestamp="20230601 13:34:13.575" level="FAIL">No keyword with name 'Dado que acesso a tela de orçamentos' found.</msg>
+<status status="FAIL" starttime="20230601 13:34:13.575" endtime="20230601 13:34:13.575"/>
+</kw>
+<kw name="Quando pressiono o atalho de adicionar">
+<status status="NOT RUN" starttime="20230601 13:34:13.576" endtime="20230601 13:34:13.576"/>
+</kw>
+<kw name="E insiro Vendedor e Cliente">
+<status status="NOT RUN" starttime="20230601 13:34:13.578" endtime="20230601 13:34:13.578"/>
+</kw>
+<kw name="Quando insiro um produto do tipo lote">
+<status status="NOT RUN" starttime="20230601 13:34:13.579" endtime="20230601 13:34:13.579"/>
+</kw>
+<kw name="Então finalizo o orçamento como a vista">
+<status status="NOT RUN" starttime="20230601 13:34:13.581" endtime="20230601 13:34:13.581"/>
+</kw>
+<status status="PASS" starttime="20230601 13:34:13.057" endtime="20230601 13:34:23.201"/>
+</kw>
+<status status="PASS" starttime="20230601 13:34:13.056" endtime="20230601 13:34:23.201"/>
+</test>
+<status status="PASS" starttime="20230601 13:34:13.034" endtime="20230601 13:34:23.202"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Robot Interactive Console">Robot Interactive Console</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

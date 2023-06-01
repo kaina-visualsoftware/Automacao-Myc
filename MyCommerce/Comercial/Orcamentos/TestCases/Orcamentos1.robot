@@ -146,4 +146,8 @@ Teste 15 - Editando último orçamento cadastrado
     Quando insiro um produto(${COD_PRODUTO_NORMAL})
     Então gravo o orçamento - 30 Dias 
 
-Teste 16 - 
+Teste 16 - Excluindo o último orçamento cadastrado
+    [Tags]    Teste16
+    Dado que acesso a tela de orçamentos
+    Quando pressiono o atalho de excluir
+    Então informo o motivo da exlusão
