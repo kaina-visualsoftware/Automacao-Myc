@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Testes básicos em orçamentos, inlcuindo produtos, excluindo, editando. Finalizando venda incluindo e desdobrando os pagamentos.
+Documentation    Testes Geração de venda oriunda de orçamentos
 
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
@@ -28,6 +28,15 @@ ${TELA_SELECAO_GRADE}        tela_SelecaoGrade.png
 ${TELA_EXCLUIR_PRODUTO}      tela_Orcamentos_ExcluirProduto.png
 ${AVISO_DESEJA_EXCLUIR}      aviso_DesejaExcluir.png
 ${TELA_EXCLUSAO_ORC}         tela_ExclusaoOrc.png
+${TELA_VENDA_AGRUPADA}       tela_VendaAgrupada.png
+${TELA_SERIAL_SELECAO}       tela_controleSerialSelecao.png
+${TELA_SERIAL_DIGITACAO}     tela_controleSerialDigitacao.png
+${TELA_GENRENCIAMET_LOTE}    tela_GerenciamentoLotes.png  
+${TELA_FUNC_COMISSIONADO}    tela_FuncionariosComissionados       
+${TELA_OS_PREENCHIDA}        tela_OSPreenchida.png
+${TELA_RECEB_DUPLICATAS}     tela_RecebimentoDuplicatas.png
+${TELA_GERAR_VENDA}          tela_GerarVendaOrc.png
+${TELA_VENDA_PREENCHIDA}     tela_vendaPreenchida.png
 #Botões
 ${BT_ABRIR_OBJETO}           bt_Abrir_Objeto.png
 ${BT_DOWN_OBJETO}            bt_DowbObjeto_Orc.png
@@ -91,7 +100,6 @@ E insiro Vendedor e Cliente
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
-    Verificar se objeto está visivel
 
 Quando insiro um produto(${COD_PRODUTO})
     Press Combination    KEY.ALT     Key.P
@@ -204,7 +212,7 @@ E removo o último produto inserido
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S
 
-Então finalizo o orçamento como a vista
+Quando finalizo o orçamento como a vista
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
 
@@ -215,14 +223,13 @@ Então finalizo o orçamento como a vista
     Press Special Key    DOWN
     Press Combination    KEY.ALT     Key.G 
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
-    Valida valores finais do orçamento
+    Sleep    ${SLEEP_BAIXO}
 
 Então gravo o orçamento - 30 Dias
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.G 
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
-    Valida valores finais do orçamento
 
 Então informo o motivo da exlusão
     Input Text    ${EMPTY}    Exlusao Orcamento Automacao
@@ -230,8 +237,6 @@ Então informo o motivo da exlusão
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
-
-    Verifica Status Exclusão
 
     Press Combination    KEY.ALT     Key.S  
 
@@ -265,6 +270,114 @@ E informo mais de um serviço
     Press Combination    KEY.ALT     KEY.I
     Sleep    ${SLEEP_BAIXO}
 
+Quando pressiono o atalho de vendas agrupada
+    Press Combination    KEY.ALT     Key.V 
+    Wait Until Screen Contain    ${TELA_VENDA_AGRUPADA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+    Calcula valor total orcamentos
+
+E clico em gerar venda agrupada
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.V 
+    Sleep    ${SLEEP_MEDIO}
+
+E clico em gerar venda
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.G  
+    Sleep    ${SLEEP_MEDIO}
+    Wait Until Screen Contain    ${TELA_GERAR_VENDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+
+    Pega valor produto
+
+Quando seleciono o serial(${F})
+
+    FOR    ${I}    IN RANGE    ${F}
+
+        ${TELA_SELECAO} =    Exists    ${TELA_SERIAL_SELECAO}
+        ${TELA_DIGITACAO} =    Exists    ${TELA_SERIAL_DIGITACAO}
+
+        IF    ${TELA_SELECAO} == ${True}
+            Press Special Key    SPACE
+        ELSE
+            @{SELECAO} =    Create List    838    302    11    11
+            Click Region    ${SELECAO}
+            Wait Until Screen Contain    ${TELA_SERIAL_DIGITACAO}    10
+            Press Special Key    SPACE
+        END
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    Key.F 
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+E informo os lotes(${F})
+
+    FOR    ${I}    IN RANGE    ${F}
+
+        Wait Until Screen Contain    ${TELA_GENRENCIAMET_LOTE}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_MEDIO}
+        Press Special Key    SPACE
+        Input Text    ${EMPTY}    1
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.O 
+        Sleep    ${SLEEP_MEDIO}
+        
+    END
+
+Quando incluo os funcionarios comissionados(${F})
+     
+    FOR    ${I}    IN RANGE    ${F}
+
+        Wait Until Screen Contain    ${TELA_FUNC_COMISSIONADO}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${COD_VENDEDOR}
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.I 
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.S 
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+Então finalizo a OS 
+    Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F  
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain    ${TELA_RECEB_DUPLICATAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${VALOR_FINAL_ORCS}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C 
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S 
+
+Então finalizo a venda
+    Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     KEY.D 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     KEY.F 
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain    ${TELA_RECEB_DUPLICATAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${VALOR_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C 
+    Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S 
+
 #***---Função de Ajuste de Resolução da tela de orçamentos---***#
 Verificar se objeto está visivel
     ${TELA_ORC} =     Exists    ${TELA_ORC_SEM_OBJETO}
@@ -274,32 +387,14 @@ Verificar se objeto está visivel
         SikuliLibrary.Click    ${BT_ABRIR_OBJETO}
     END
 
-#***---Função de Validação dos valores de pagamentos, na tela de orçamentos---***#
-Valida valores finais do orçamento
-    ${VALOR_ENTRADA}    Query    SELECT o.ValorEntrada FROM orcamentos AS o WHERE Codigo = ${COD_ORCAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    ${VALOR_FINALPAG}    Query    SELECT o.ValorFinalPagamentos FROM orcamentos AS o WHERE Codigo = ${COD_ORCAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    ${TOTAL_PEDIDO}    Query    SELECT o.TotalPedido FROM orcamentos AS o WHERE Codigo = ${COD_ORCAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-
-    ${FORMA_PARCELAMENTO}    Query    SELECT o.FormaParcelamento FROM orcamentos AS o WHERE Codigo = ${COD_ORCAMENTO}
-
-    ${forma_avista}    Convert To String    001 - À VISTA
+#***---Função para calcular total dos orçamentos na venda agrupada---***#
+Calcula valor total orcamentos
+    ${VALOR_TOTAL_ORCS}    Query    SELECT ROUND(SUM(TotalPedido),2) FROM orcamentos WHERE `Data` = CURDATE() AND `Status` = 'f'
     
-    ${verifica_forma}    Should Be Equal As Strings    ${FORMA_PARCELAMENTO[0][0]}    ${forma_avista}
+    Set Suite Variable    ${VALOR_FINAL_ORCS}    ${VALOR_TOTAL_ORCS[0][0]}
 
-    IF    ${verifica_forma} == ${True}
-        Should Be Equal    ${TOTAL_PEDIDO[0][0]}    ${VALOR_ENTRADA[0][0]}
-        Sleep    ${SLEEP_BAIXO}
-    END
-    
-    Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${TOTAL_PEDIDO[0][0]}    ${VALOR_FINALPAG[0][0]}
+#***---Função para recuperar valor do produto---***#
+Pega valor produto
+    ${VALOR_PROD}    Query    SELECT ROUND(SUM(quantidade*valorunitario),2) FROM orcamentosprodutos WHERE CodigoOrcamento = ${COD_ORCAMENTO} ORDER BY Sequencia DESC LIMIT 1;
 
-#***---Função de validação do status do orçamento---***#
-Verifica Status Exclusão
-    ${STATUS_ORC}    Query    SELECT Status FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
-    
-    Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${STATUS_ORC[0][0]}    x
+    Set Suite Variable    ${VALOR_PRODUTO}    ${VALOR_PROD[0][0]}

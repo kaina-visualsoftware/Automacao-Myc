@@ -1,6 +1,6 @@
 import mysql.connector
 
-class verificaInclusaoProduto:
+class verificaProduto:
 
     def verifica_Produto_Incluiu_Correto(self, nomeTela, codProduto, codOperacao):
 
@@ -22,6 +22,14 @@ class verificaInclusaoProduto:
                 comparacao = tabelaProdutos == tabelaOrcamentoProdutos
 
                 return comparacao
-            
+            elif nomeTela == "Vendas":
+
+                return
+            elif nomeTela == "OS":
+
+                return
+            elif nomeTela == "Condicional":
+
+                return
 
         
