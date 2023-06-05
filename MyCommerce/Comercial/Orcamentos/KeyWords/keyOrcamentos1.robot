@@ -225,7 +225,7 @@ Então gravo o orçamento - 30 Dias
     Valida valores finais do orçamento
 
 Então informo o motivo da exlusão
-    Input Text    ${EMPTY}    Exlusao Orcamento Automacao
+    Input Text    ${EMPTY}    Exclusao Orcamento Automacao
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER

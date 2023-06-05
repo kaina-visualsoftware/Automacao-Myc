@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.11.3 on win32)" generated="20230605 10:21:02.336" rpa="false" schemaversion="3">
+<suite id="s1" name="TestCases" source="C:\Automacao\MyCommerce-Automacao\MyCommerce\Comercial\Orcamentos\TestCases">
+<suite id="s1-s1" name="Orcamentos1" source="C:\Automacao\MyCommerce-Automacao\MyCommerce\Comercial\Orcamentos\TestCases\Orcamentos1.robot">
+<kw name="Run Keywords" library="BuiltIn" type="SETUP">
+<arg>Start Sikuli Process</arg>
+<arg>AND</arg>
+<arg>Ler imagens iniciais</arg>
+<arg>AND</arg>
+<arg>Connect To Database</arg>
+<arg>pymysql</arg>
+<arg>${DBName}</arg>
+<arg>${DBUser}</arg>
+<arg>${DBPass}</arg>
+<arg>${DBHost}</arg>
+<arg>${DBPort}</arg>
+<doc>Executes all the given keywords in a sequence.</doc>
+<kw name="Start Sikuli Process" library="SikuliLibrary">
+<msg timestamp="20230605 10:21:05.514" level="INFO">Starting process:
+java -jar C:\Users\Veniceos\AppData\Local\Programs\Python\Python311\Lib\site-packages\SikuliLibrary\lib\SikuliLibrary.jar 56457 C:\Automacao\MyCommerce-Automacao\MyCommerce\results</msg>
+<msg timestamp="20230605 10:21:05.520" level="INFO">Start sikuli java process on port 56457</msg>
+<msg timestamp="20230605 10:21:06.644" level="INFO">Sikuli java process is started</msg>
+<status status="PASS" starttime="20230605 10:21:05.512" endtime="20230605 10:21:08.456"/>
+</kw>
+<kw name="Ler imagens iniciais" library="keyOrcamentos1">
+<kw name="Add Image Path" library="SikuliLibrary">
+<arg>${IMAGES}</arg>
+<doc>Add image path</doc>
+<msg timestamp="20230605 10:21:08.482" level="INFO">[error] ImagePath: add: class not found (.) or folder does not exist (C:\Automacao\MyCommerce-Automacao\MyCommerce\MyCommerce\images)
+[error] ImagePath: add: not valid: ./MyCommerce/images</msg>
+<status status="PASS" starttime="20230605 10:21:08.457" endtime="20230605 10:21:08.482"/>
+</kw>
+<status status="PASS" starttime="20230605 10:21:08.456" endtime="20230605 10:21:08.482"/>
+</kw>
+<kw name="Connect To Database" library="DatabaseLibrary">
+<arg>pymysql</arg>
+<arg>${DBName}</arg>
+<arg>${DBUser}</arg>
+<arg>${DBPass}</arg>
+<arg>${DBHost}</arg>
+<arg>${DBPort}</arg>
+<doc>Loads the DB API 2.0 module given `dbapiModuleName` then uses it to
+connect to the database using `dbName`, `dbUsername`, and `dbPassword`.</doc>
+<msg timestamp="20230605 10:21:08.499" level="INFO">Connecting using : pymysql.connect(db=bdvinicius, user=root, passwd=vssql, host=10.1.1.220, port=3306, charset=None) </msg>
+<status status="PASS" starttime="20230605 10:21:08.483" endtime="20230605 10:21:08.512"/>
+</kw>
+<status status="PASS" starttime="20230605 10:21:05.512" endtime="20230605 10:21:08.512"/>
+</kw>
+<test id="s1-s1-t1" name="Teste 01 - Incluindo produto e fazendo o orçamento de maneira padrão - Á vista" line="14">
+<kw name="Dado que acesso a tela de orçamentos" library="keyOrcamentos1">
+<kw name="Type With Modifiers" library="SikuliLibrary">
+<arg>O</arg>
+<arg>CTRL</arg>
+<doc>Type with modifiers</doc>
+<msg timestamp="20230605 10:21:08.854" level="INFO">Input Text:
+CTRL+O
+[log] ( Ctrl )  TYPE "O"</msg>
+<status status="PASS" starttime="20230605 10:21:08.513" endtime="20230605 10:21:08.854"/>
+</kw>
+<kw name="Wait Until Screen Contain" library="SikuliLibrary">
+<arg>${TELA_ORCAMENTO}</arg>
+<arg>${TEMPO_TELA}</arg>
+<doc>Wait until screen contain
+ Wait until image shown in screen</doc>
+<msg timestamp="20230605 10:21:29.241" level="INFO">[error] ImagePath: find: not there: tela_Orcamentos.png</msg>
+<msg timestamp="20230605 10:21:29.241" level="INFO" html="true">&lt;img src='sikuli_captured/sikuliximage-1685971289006.png'/&gt;
+[error] ImagePath: find: not there: tela_Orcamentos.png</msg>
+<msg timestamp="20230605 10:21:29.241" level="FAIL">com.github.rainmanwy.robotframework.sikulilib.exceptions.TimeoutException: Timeout happened, could not find P(tela_Orcamentos.png -- not valid!) S: 0.699999988079071</msg>
+<status status="FAIL" starttime="20230605 10:21:08.854" endtime="20230605 10:21:29.241"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>${SLEEP_BAIXO}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20230605 10:21:29.241" endtime="20230605 10:21:29.241"/>
+</kw>
+<status status="FAIL" starttime="20230605 10:21:08.512" endtime="20230605 10:21:29.241"/>
+</kw>
+<kw name="Quando pressiono o atalho de adicionar" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:29.243" endtime="20230605 10:21:29.243"/>
+</kw>
+<kw name="E insiro Vendedor e Cliente" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:29.244" endtime="20230605 10:21:29.244"/>
+</kw>
+<kw name="Quando insiro um produto(${COD_PRODUTO_NORMAL})" library="keyOrcamentos1" sourcename="Quando insiro um produto(${COD_PRODUTO})">
+<status status="NOT RUN" starttime="20230605 10:21:29.244" endtime="20230605 10:21:29.244"/>
+</kw>
+<kw name="Então finalizo o orçamento como a vista" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:29.245" endtime="20230605 10:21:29.245"/>
+</kw>
+<tag>Teste01</tag>
+<status status="FAIL" starttime="20230605 10:21:08.512" endtime="20230605 10:21:29.245">com.github.rainmanwy.robotframework.sikulilib.exceptions.TimeoutException: Timeout happened, could not find P(tela_Orcamentos.png -- not valid!) S: 0.699999988079071</status>
+</test>
+<test id="s1-s1-t2" name="Teste 02 - Incluindo serviço e produto de maneira padrão - Á vista" line="22">
+<kw name="Dado que acesso a tela de orçamentos" library="keyOrcamentos1">
+<kw name="Type With Modifiers" library="SikuliLibrary">
+<arg>O</arg>
+<arg>CTRL</arg>
+<doc>Type with modifiers</doc>
+<msg timestamp="20230605 10:21:29.489" level="INFO">Input Text:
+CTRL+O
+[log] ( Ctrl )  TYPE "O"</msg>
+<status status="PASS" starttime="20230605 10:21:29.247" endtime="20230605 10:21:29.490"/>
+</kw>
+<kw name="Wait Until Screen Contain" library="SikuliLibrary">
+<arg>${TELA_ORCAMENTO}</arg>
+<arg>${TEMPO_TELA}</arg>
+<doc>Wait until screen contain
+ Wait until image shown in screen</doc>
+<status status="FAIL" starttime="20230605 10:21:29.490" endtime="20230605 10:21:49.729"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>${SLEEP_BAIXO}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20230605 10:21:49.729" endtime="20230605 10:21:49.729"/>
+</kw>
+<status status="FAIL" starttime="20230605 10:21:29.247" endtime="20230605 10:21:49.730"/>
+</kw>
+<kw name="Quando pressiono o atalho de adicionar" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:49.730" endtime="20230605 10:21:49.730"/>
+</kw>
+<kw name="E insiro Vendedor e Cliente" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:49.730" endtime="20230605 10:21:49.730"/>
+</kw>
+<kw name="Quando informo um objeto" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:49.731" endtime="20230605 10:21:49.731"/>
+</kw>
+<kw name="E informo um serviço" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:49.731" endtime="20230605 10:21:49.731"/>
+</kw>
+<kw name="Quando insiro um produto(${COD_PRODUTO_NORMAL})" library="keyOrcamentos1" sourcename="Quando insiro um produto(${COD_PRODUTO})">
+<status status="NOT RUN" starttime="20230605 10:21:49.732" endtime="20230605 10:21:49.732"/>
+</kw>
+<kw name="Então finalizo o orçamento como a vista" library="keyOrcamentos1">
+<status status="NOT RUN" starttime="20230605 10:21:49.732" endtime="20230605 10:21:49.732"/>
+</kw>
+<tag>Teste02</tag>
+<status status="FAIL" starttime="20230605 10:21:29.246" endtime="20230605 10:21:49.733">Execution terminated by signal</status>
+</test>
+<test id="s1-s1-t3" name="Teste 03 - Incluindo mais de um produto de maneira padrão - Á vista" line="32">
+<tag>robot:exit</tag>
+<tag>Teste03</tag>
+<status status="FAIL" starttime="20230605 10:21:49.734" endtime="20230605 10:21:49.735">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t4" name="Teste 04 - Incluindo mais de um serviço, e um produto de maneira padrão - Á vista" line="40">
+<tag>robot:exit</tag>
+<tag>Teste04</tag>
+<status status="FAIL" starttime="20230605 10:21:49.736" endtime="20230605 10:21:49.736">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t5" name="Teste 05 - Incluindo um serviço de maneira padrão - Á vista" line="50">
+<tag>robot:exit</tag>
+<tag>Teste05</tag>
+<status status="FAIL" starttime="20230605 10:21:49.738" endtime="20230605 10:21:49.738">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t6" name="Teste 06 - Inclusão de Produto do tipo Kit - Á vista" line="59">
+<tag>robot:exit</tag>
+<tag>Teste06</tag>
+<status status="FAIL" starttime="20230605 10:21:49.739" endtime="20230605 10:21:49.740">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t7" name="Teste 07 - Incluindo um produto do tipo kit e um serviço - Á vista" line="67">
+<tag>robot:exit</tag>
+<tag>Teste07</tag>
+<status status="FAIL" starttime="20230605 10:21:49.741" endtime="20230605 10:21:49.741">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t8" name="Teste 08 - Inclusão de Produto do tipo serial - Á vista" line="77">
+<tag>robot:exit</tag>
+<tag>Teste08</tag>
+<status status="FAIL" starttime="20230605 10:21:49.742" endtime="20230605 10:21:49.743">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t9" name="Teste 09 - Incluindo um produto do tipo serial e um serviço - Á vista" line="85">
+<tag>robot:exit</tag>
+<tag>Teste09</tag>
+<status status="FAIL" starttime="20230605 10:21:49.744" endtime="20230605 10:21:49.744">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t10" name="Teste 10 - Inclusão de Produto do tipo lote - Á vista" line="95">
+<tag>robot:exit</tag>
+<tag>Teste10</tag>
+<status status="FAIL" starttime="20230605 10:21:49.745" endtime="20230605 10:21:49.746">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t11" name="Teste 11 - Incluindo um produto do tipo lote e um serviço - Á vista" line="103">
+<tag>robot:exit</tag>
+<tag>Teste11</tag>
+<status status="FAIL" starttime="20230605 10:21:49.747" endtime="20230605 10:21:49.748">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t12" name="Teste 12 - Inclusão de Produto do tipo grade - Á vista" line="113">
+<tag>robot:exit</tag>
+<tag>Teste12</tag>
+<status status="FAIL" starttime="20230605 10:21:49.749" endtime="20230605 10:21:49.750">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t13" name="Teste 13 - Incluindo um produto do tipo grade e um serviço - Á vista" line="121">
+<tag>robot:exit</tag>
+<tag>Teste13</tag>
+<status status="FAIL" starttime="20230605 10:21:49.751" endtime="20230605 10:21:49.752">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t14" name="Teste 14 - Incluindo os produtos de todos os tipos - Á vista" line="131">
+<tag>robot:exit</tag>
+<tag>Teste14</tag>
+<status status="FAIL" starttime="20230605 10:21:49.753" endtime="20230605 10:21:49.753">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t15" name="Teste 15 - Editando último orçamento cadastrado" line="141">
+<tag>robot:exit</tag>
+<tag>Teste15</tag>
+<status status="FAIL" starttime="20230605 10:21:49.754" endtime="20230605 10:21:49.755">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s1-t16" name="Teste 16 - Excluindo o último orçamento cadastrado" line="149">
+<tag>robot:exit</tag>
+<tag>Teste16</tag>
+<status status="FAIL" starttime="20230605 10:21:49.756" endtime="20230605 10:21:49.757">Test execution stopped due to a fatal error.</status>
+</test>
+<doc>Testes básicos em orçamentos, inlcuindo produtos, excluindo, editando.</doc>
+<status status="FAIL" starttime="20230605 10:21:02.366" endtime="20230605 10:21:49.758"/>
+</suite>
+<suite id="s1-s2" name="Orcamentos2" source="C:\Automacao\MyCommerce-Automacao\MyCommerce\Comercial\Orcamentos\TestCases\Orcamentos2.robot">
+<test id="s1-s2-t1" name="Teste 01 - Gerando OS agrupada de todos os orcamentos anteriores" line="14">
+<tag>robot:exit</tag>
+<tag>Teste01</tag>
+<status status="FAIL" starttime="20230605 10:21:49.761" endtime="20230605 10:21:49.762">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s2-t2" name="Teste 02 - Gerando venda de Orcamento com um único produto" line="24">
+<tag>robot:exit</tag>
+<tag>Teste02</tag>
+<status status="FAIL" starttime="20230605 10:21:49.763" endtime="20230605 10:21:49.763">Test execution stopped due to a fatal error.</status>
+</test>
+<test id="s1-s2-t3" name="Teste 03 - Gerando venda de um Orcamento de um único produto - 30 Dias" line="34">
+<tag>robot:exit</tag>
+<tag>Teste02</tag>
+<status status="FAIL" starttime="20230605 10:21:49.765" endtime="20230605 10:21:49.765">Test execution stopped due to a fatal error.</status>
+</test>
+<doc>Testes Geração de venda e OS oriunda de orçamentos</doc>
+<status status="FAIL" starttime="20230605 10:21:49.760" endtime="20230605 10:21:49.766"/>
+</suite>
+<status status="FAIL" starttime="20230605 10:21:02.339" endtime="20230605 10:21:49.768"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="19" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="0" fail="2" skip="0" info="combined" combined="NOT robot:exit">NOT robot:exit</stat>
+<stat pass="0" fail="2" skip="0">Teste01</stat>
+<stat pass="0" fail="3" skip="0">Teste02</stat>
+<stat pass="0" fail="1" skip="0">Teste03</stat>
+<stat pass="0" fail="1" skip="0">Teste04</stat>
+<stat pass="0" fail="1" skip="0">Teste05</stat>
+<stat pass="0" fail="1" skip="0">Teste06</stat>
+<stat pass="0" fail="1" skip="0">Teste07</stat>
+<stat pass="0" fail="1" skip="0">Teste08</stat>
+<stat pass="0" fail="1" skip="0">Teste09</stat>
+<stat pass="0" fail="1" skip="0">Teste10</stat>
+<stat pass="0" fail="1" skip="0">Teste11</stat>
+<stat pass="0" fail="1" skip="0">Teste12</stat>
+<stat pass="0" fail="1" skip="0">Teste13</stat>
+<stat pass="0" fail="1" skip="0">Teste14</stat>
+<stat pass="0" fail="1" skip="0">Teste15</stat>
+<stat pass="0" fail="1" skip="0">Teste16</stat>
+</tag>
+<suite>
+<stat pass="0" fail="19" skip="0" id="s1" name="TestCases">TestCases</stat>
+<stat pass="0" fail="16" skip="0" id="s1-s1" name="Orcamentos1">TestCases.Orcamentos1</stat>
+<stat pass="0" fail="3" skip="0" id="s1-s2" name="Orcamentos2">TestCases.Orcamentos2</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

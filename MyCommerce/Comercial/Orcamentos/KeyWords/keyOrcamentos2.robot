@@ -225,6 +225,15 @@ Quando finalizo o orçamento como a vista
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
+Quando finalizo o orçamento como 30 Dias
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.G 
+    Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+
+
 Então gravo o orçamento - 30 Dias
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
@@ -241,6 +250,7 @@ Então informo o motivo da exlusão
     Press Combination    KEY.ALT     Key.S  
 
 Quando informo um objeto
+    Verificar se objeto está visivel
     SikuliLibrary.Click    ${BT_DOWN_OBJETO}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    DOWN
@@ -293,12 +303,16 @@ E clico em gerar venda
 
     Pega valor produto
 
+    Calcula valor total orcamentos
+
 Quando seleciono o serial(${F})
 
     FOR    ${I}    IN RANGE    ${F}
 
+        Sleep    ${SLEEP_BAIXO}
+
         ${TELA_SELECAO} =    Exists    ${TELA_SERIAL_SELECAO}
-        ${TELA_DIGITACAO} =    Exists    ${TELA_SERIAL_DIGITACAO}
+        ${TELA_DIGITACAO} =    Exists    ${TELA_SERIAL_DIGITACAO} 
 
         IF    ${TELA_SELECAO} == ${True}
             Press Special Key    SPACE
@@ -361,6 +375,19 @@ Então finalizo a OS
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_MEDIO}
+
+Então finalizo a OS - 30 Dias
+    Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F  
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_MEDIO}
 
 Então finalizo a venda
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
@@ -375,8 +402,21 @@ Então finalizo a venda
     Input Text    ${EMPTY}    ${VALOR_PRODUTO}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.C 
-    Sleep    ${SLEEP_ALTO}
-    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+
+Então finalizo a venda - 30 Dias
+    Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     KEY.D 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     KEY.F 
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+    Valida valores finais venda
+    Calcula valor total orcamentos
 
 #***---Função de Ajuste de Resolução da tela de orçamentos---***#
 Verificar se objeto está visivel
@@ -397,4 +437,10 @@ Calcula valor total orcamentos
 Pega valor produto
     ${VALOR_PROD}    Query    SELECT ROUND(SUM(quantidade*valorunitario),2) FROM orcamentosprodutos WHERE CodigoOrcamento = ${COD_ORCAMENTO} ORDER BY Sequencia DESC LIMIT 1;
 
-    Set Suite Variable    ${VALOR_PRODUTO}    ${VALOR_PROD[0][0]}
+    Set Suite Variable    ${VALOR_PRODUTO}    ${VALOR_PROD[0][0]}   
+
+#***---Função para validar o valor total da venda---***#
+Valida valores finais venda
+    ${Valor_Final_Venda}    Query    SELECT ValorFinalPagamentos FROM vendas WHERE CodOrcamento = ${COD_ORCAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${Valor_Final_Venda[0][0]}    ${VALOR_FINAL_ORCS}
