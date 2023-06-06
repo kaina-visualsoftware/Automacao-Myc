@@ -31,5 +31,6 @@ class verificaProduto:
             elif nomeTela == "Condicional":
 
                 return
+            elif nomeTela == "Pedidos":
 
-        
+                return

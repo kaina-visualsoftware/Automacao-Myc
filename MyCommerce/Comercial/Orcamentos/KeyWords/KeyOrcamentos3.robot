@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Testes Geração de venda oriunda de orçamentos
+Documentation    Testes Geração de venda oriunda de orçamentos com desconto e acrescimo
 
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
@@ -403,7 +403,7 @@ Então finalizo a OS
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S 
-    Sleep    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_MEDIO}
 
 Então finalizo a OS - 30 Dias / Personalizada
     Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
@@ -430,7 +430,7 @@ Então finalizo a venda
     Input Text    ${EMPTY}    ${VALOR_PRODUTO}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.C 
-    Sleep    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
 

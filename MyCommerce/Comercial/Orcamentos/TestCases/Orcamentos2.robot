@@ -39,7 +39,7 @@ Teste 03 - Gerando venda de um Orcamento de um único produto - 30 Dias
     Quando insiro um produto(${COD_PRODUTO_NORMAL})
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
-    Então finalizo a venda - 30 Dias
+    Então finalizo a venda - 30 Dias / Personalizada
 
 Teste 04 - Gerando uma OS com serviço e produto
     [Tags]    Teste04
@@ -97,7 +97,7 @@ Teste 08 - Gerando venda de Produto do tipo Kit - 30 Dias
     Quando insiro um produto(${COD_PRODUTO_KIT})
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
-    Então finalizo a venda - 30 Dias
+    Então finalizo a venda - 30 Dias / Personalizada
 
 Teste 09 - Gerando OS de um produto do tipo kit e um serviço - 30 Dias
     [Tags]    Teste09
@@ -110,7 +110,7 @@ Teste 09 - Gerando OS de um produto do tipo kit e um serviço - 30 Dias
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
     Quando incluo os funcionarios comissionados(1)
-    Então finalizo a OS - 30 Dias
+    Então finalizo a OS - 30 Dias / Personalizada
 
 Teste 10 - Gerando venda de Produto do tipo serial - Á vista
     [Tags]    Teste10
@@ -146,7 +146,7 @@ Teste 12 - Gerando venda de Produto do tipo serial - 30 Dias
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
     Quando seleciono o serial(1)
-    Então finalizo a venda - 30 Dias
+    Então finalizo a venda - 30 Dias / Personalizada
 
 Teste 13 - Gerando OS de um produto do tipo serial e um serviço - 30 Dias
     [Tags]    Teste13
@@ -160,7 +160,7 @@ Teste 13 - Gerando OS de um produto do tipo serial e um serviço - 30 Dias
     E clico em gerar venda
     Quando seleciono o serial(1)
     Quando incluo os funcionarios comissionados(1)
-    Então finalizo a OS - 30 Dias
+    Então finalizo a OS - 30 Dias / Personalizada
 
 Teste 14 - Gerando venda de Produto do tipo lote - Á vista
     [Tags]    Teste14
@@ -170,6 +170,7 @@ Teste 14 - Gerando venda de Produto do tipo lote - Á vista
     Quando insiro um produto do tipo lote
     Quando finalizo o orçamento como a vista
     E clico em gerar venda
+    E informo os lotes(1)
     Então finalizo a venda
 
 Teste 15 - Gerando OS de um produto do tipo lote e um serviço - Á vista
@@ -182,6 +183,7 @@ Teste 15 - Gerando OS de um produto do tipo lote e um serviço - Á vista
     Quando insiro um produto do tipo lote 
     Quando finalizo o orçamento como a vista
     E clico em gerar venda
+    E informo os lotes(1)
     Quando incluo os funcionarios comissionados(1)
     Então finalizo a OS
 
@@ -193,7 +195,8 @@ Teste 16 - Gerando venda de Produto do tipo lote - 30 Dias
     Quando insiro um produto do tipo lote
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
-    Então finalizo a venda - 30 Dias
+    E informo os lotes(1)
+    Então finalizo a venda - 30 Dias / Personalizada
 
 Teste 17 - Gerando OS de um produto do tipo lote e um serviço - 30 Dias
     [Tags]    Teste17
@@ -205,8 +208,9 @@ Teste 17 - Gerando OS de um produto do tipo lote e um serviço - 30 Dias
     Quando insiro um produto do tipo lote 
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
+    E informo os lotes(1)
     Quando incluo os funcionarios comissionados(1)
-    Então finalizo a OS - 30 Dias
+    Então finalizo a OS - 30 Dias / Personalizada
 
 Teste 18 - Gerando venda de Produto do tipo grade - Á vista
     [Tags]    Teste18
@@ -239,9 +243,9 @@ Teste 20 - Gerando venda de Produto do tipo grade - 30 Dias
     Quando insiro um produto do tipo grade
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
-    Então finalizo a venda - 30 Dias
+    Então finalizo a venda - 30 Dias / Personalizada
 
-Teste 21 - Gerando os de um produto do tipo grade e um serviço - 30 Dias
+Teste 21 - Gerando OS de um produto do tipo grade e um serviço - 30 Dias
     [Tags]    Teste21
     Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
@@ -252,4 +256,52 @@ Teste 21 - Gerando os de um produto do tipo grade e um serviço - 30 Dias
     Quando finalizo o orçamento como 30 Dias
     E clico em gerar venda
     Quando incluo os funcionarios comissionados(1)
-    Então finalizo a OS - 30 Dias
+    Então finalizo a OS - 30 Dias / Personalizada
+
+Teste 22 - Gerando OS de um produto do tipo grade e um serviço - Personalizada
+    [Tags]    Teste22
+    Dado que acesso a tela de orçamentos
+    Quando pressiono o atalho de adicionar
+    E insiro Vendedor e Cliente
+    Quando informo um objeto
+    E informo um serviço
+    Quando insiro um produto do tipo grade
+    Quando finalizo o orçamento como a Personalizada
+    E clico em gerar venda
+    Quando incluo os funcionarios comissionados(1)
+    Então finalizo a OS - 30 Dias / Personalizada
+
+Teste 23 - Gerando venda de Orcamento com um único produto
+    [Tags]    Teste23
+    Dado que acesso a tela de orçamentos
+    Quando pressiono o atalho de adicionar
+    E insiro Vendedor e Cliente
+    Quando insiro um produto(${COD_PRODUTO_NORMAL})
+    Quando finalizo o orçamento como a Personalizada
+    E clico em gerar venda
+    Então finalizo a venda - 30 Dias / Personalizada
+
+Teste 24 - Gerando OS de um produto do tipo lote e um serviço - Personalizada
+    [Tags]    Teste24
+    Dado que acesso a tela de orçamentos
+    Quando pressiono o atalho de adicionar
+    E insiro Vendedor e Cliente
+    Quando informo um objeto
+    E informo um serviço
+    Quando insiro um produto do tipo lote 
+    Quando finalizo o orçamento como a Personalizada
+    E clico em gerar venda
+    E informo os lotes(1)
+    Quando incluo os funcionarios comissionados(1)
+    Então finalizo a OS - 30 Dias / Personalizada
+
+Teste 25 - Gerando venda de Produto do tipo lote - Personalizada
+    [Tags]    Teste25
+    Dado que acesso a tela de orçamentos
+    Quando pressiono o atalho de adicionar
+    E insiro Vendedor e Cliente
+    Quando insiro um produto do tipo lote
+    Quando finalizo o orçamento como a Personalizada
+    E clico em gerar venda
+    E informo os lotes(1)
+    Então finalizo a venda - 30 Dias / Personalizada
