@@ -399,11 +399,13 @@ Então finalizo a OS
     Wait Until Screen Contain    ${TELA_RECEB_DUPLICATAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${VALOR_FINAL_ORCS}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S 
     Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_BAIXO}
 
 Então finalizo a OS - 30 Dias / Personalizada
     Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
@@ -413,7 +415,7 @@ Então finalizo a OS - 30 Dias / Personalizada
     Press Combination    KEY.ALT     Key.D  
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.F  
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S 
     Sleep    ${SLEEP_MEDIO}
 
@@ -440,7 +442,7 @@ Então finalizo a venda - 30 Dias / Personalizada
     Press Combination    KEY.ALT     KEY.D 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.F 
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
     Valida valores finais venda
