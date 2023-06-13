@@ -41,6 +41,7 @@ ${TELA_PERSONAL_PAGAMENT}    tela_PersonalizacaoPagamentos.png
 #Botões
 ${BT_ABRIR_OBJETO}           bt_Abrir_Objeto.png
 ${BT_DOWN_OBJETO}            bt_DowbObjeto_Orc.png
+${BT_SAIR}                   bt_Sair.png 
 #Códigos vendedores, clientes, produtos e serviços
 ${COD_VENDEDOR}              13
 ${COD_CLIENTE}               18
@@ -423,18 +424,17 @@ Então finalizo a venda
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.D 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     KEY.F 
     Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_RECEB_DUPLICATAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${VALOR_PRODUTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.C 
-    Sleep    ${SLEEP_ALTO}
-    Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.C 
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_SAIR}
 
 Então finalizo a venda - 30 Dias / Personalizada
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}

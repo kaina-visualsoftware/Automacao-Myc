@@ -42,6 +42,7 @@ ${TELA_LIBERACAO_DESC}       tela_LiberacaoDesconto.png
 ${BT_ABRIR_OBJETO}           bt_Abrir_Objeto.png
 ${BT_DOWN_OBJETO}            bt_DowbObjeto_Orc.png
 ${BT_SAIR}                   bt_Sair.png 
+${BT_ALTERAR}                bt_Alterar.png
 #Códigos vendedores, clientes, produtos e serviços
 ${COD_VENDEDOR}              13
 ${COD_CLIENTE}               18
@@ -76,14 +77,13 @@ Quando pressiono o atalho de adicionar
     Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
 
 Quando pressiono o atalho para editar
+    Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Press Combination    KEY.ALT     Key.E 
     Wait Until Screen Contain    ${TELA_ORC_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
     ${Consulta}    Query    SELECT Codigo FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
-
-    Verificar se objeto está visivel
 
 Quando pressiono o atalho de excluir
     Press Combination    KEY.ALT     Key.X 
@@ -134,6 +134,41 @@ Quando insiro um produto(${COD_PRODUTO} ${DESCONTO})
     Set Suite Variable    ${COD_PRODUTO}
 
     ${verificacao}    Verifica Valor Desconto    Orcamentos    ${COD_PRODUTO}    ${COD_ORCAMENTO}
+
+    Should Be Equal    ${verificacao}    ${True}
+
+Quando insiro um produto - acrescimo(${COD_PRODUTO} ${ACRESCIMO})
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${COD_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    Input Text    ${EMPTY}    ${ACRESCIMO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${TELA_LIBDES} =    Exists    ${TELA_LIBERACAO_DESC}
+
+    IF    ${TELA_LIBDES} == ${True}
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    1
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I 
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Suite Variable    ${COD_PRODUTO}
+
+    ${verificacao}    Verifica Valor Acrescimo    Orcamentos    ${COD_PRODUTO}    ${COD_ORCAMENTO}
 
     Should Be Equal    ${verificacao}    ${True}
 
@@ -266,25 +301,86 @@ Quando insiro um produto do tipo lote(${DESCONTO})
 
     Should Be Equal    ${verificacao}    ${True}
 
-Quando insiro todos os tipos de produtos
+Quando insiro todos os tipos de produtos(${DESCONTO})
     
     FOR    ${I}    IN RANGE    3
         
         IF    ${I} == 0
-            Quando insiro um produto(${COD_PRODUTO_NORMAL} 5)
+            Quando insiro um produto(${COD_PRODUTO_NORMAL} ${DESCONTO})
         END
         IF    ${I} == 1
-            Quando insiro um produto(${COD_PRODUTO_KIT} 5)
+            Quando insiro um produto(${COD_PRODUTO_KIT} ${DESCONTO})
         END
         IF    ${I} == 2
-            Quando insiro um produto(${COD_PRODUTO_SERIAL} 5)
+            Quando insiro um produto(${COD_PRODUTO_SERIAL} ${DESCONTO})
         END
 
     END
 
-    Quando insiro um produto do tipo grade(5)
-    Quando insiro um produto do tipo lote(5)
+    Quando insiro um produto do tipo grade(${DESCONTO})
+    Quando insiro um produto do tipo lote(${DESCONTO})
 
+E edito o produto inserido(${DESCONTO})
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.E 
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    5    
+        Press Special Key    DELETE
+        Sleep    ${SLEEP_BAIXO}
+    END
+    
+    Input Text    ${EMPTY}    ${DESCONTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${TELA_LIBDES} =    Exists    ${TELA_LIBERACAO_DESC}
+
+    IF    ${TELA_LIBDES} == ${True}
+
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    1
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Click    ${BT_ALTERAR}
+        Sleep    ${SLEEP_BAIXO}
+
+        Set Suite Variable    ${COD_PRODUTO}
+
+        ${verificacao}    Verifica Valor Desconto    Orcamentos    ${COD_PRODUTO}    ${COD_ORCAMENTO}
+
+    END
+    
+    Should Be Equal    ${verificacao}    ${True}
+
+E edito o produto inserido - Acrescimo(${ACRESCIMO})
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.E 
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2    
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+    END
+    
+    Input Text    ${EMPTY}    ${ACRESCIMO}
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_ALTERAR}
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Suite Variable    ${COD_PRODUTO}
+
+    ${verificacao}    Verifica Valor Acrescimo    Orcamentos    ${COD_PRODUTO}    ${COD_ORCAMENTO}
+
+    Should Be Equal    ${verificacao}    ${True}
 
 E removo o último produto inserido
     Press Combination    KEY.ALT     Key.P
@@ -300,6 +396,52 @@ Quando finalizo o orçamento como a vista
 
     FOR    ${I}    IN RANGE    3
         Press Special Key    TAB
+    END
+
+    Press Special Key    DOWN
+    Press Combination    KEY.ALT     Key.G 
+    Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+Quando finalizo o orçamento como a vista - Desconto no final(${DESCONTO})
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${DESCONTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${TELA_LIBDES} =    Exists    ${TELA_LIBERACAO_DESC}
+
+    IF    ${TELA_LIBDES} == ${True}
+
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    1
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        
+    ELSE
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    Press Special Key    DOWN
+    Press Combination    KEY.ALT     Key.G 
+    Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+Quando finalizo o orçamento como a vista - Acrescimo no final(${ACRESCIMO})
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${ACRESCIMO}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
     END
 
     Press Special Key    DOWN
@@ -343,7 +485,7 @@ Quando finalizo o orçamento como a Personalizada
     Sleep    ${SLEEP_BAIXO}
     Valida parcelas e valor - forma personalizada
 
-Então gravo o orçamento - 30 Dias
+Então gravo o orçamento
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.G 
@@ -413,6 +555,8 @@ E clico em gerar venda
     Pega valor produto
 
     Calcula valor total orcamentos
+
+    Sleep    ${SLEEP_BAIXO}
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
@@ -503,6 +647,7 @@ Então finalizo a OS - 30 Dias / Personalizada
     Sleep    ${SLEEP_MEDIO}
 
 Então finalizo a venda
+    ${DESCONTO}    Set Variable    D
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.D 
@@ -515,9 +660,29 @@ Então finalizo a venda
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
-    SikuliLibrary.Click    ${BT_SAIR}
+    Press Combination    KEY.ALT     Key.S 
+  
+    ${DescVendaProd}    Verifica Valor Desconto   Vendas    ${COD_PRODUTO}    ${COD_VENDA}
 
-    ${DescVendaProd}    Verifica Valor Desconto    Vendas    ${COD_PRODUTO}    ${COD_VENDA}
+    Should Be Equal    ${DescVendaProd}    ${True}
+
+Então finalizo a venda - Acrescimo
+    ${DESCONTO}    Set Variable    D
+    Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     KEY.D 
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     KEY.F 
+
+    Wait Until Screen Contain    ${TELA_RECEB_DUPLICATAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${VALOR_PRODUTO}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.C 
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S 
+  
+    ${DescVendaProd}    Verifica Valor Acrescimo   Vendas    ${COD_PRODUTO}    ${COD_VENDA}
 
     Should Be Equal    ${DescVendaProd}    ${True}
 
@@ -550,7 +715,7 @@ Calcula valor total orcamentos
 
 #***---Função para recuperar valor do produto---***#
 Pega valor produto
-    ${VALOR_PROD}    Query    SELECT ROUND(SUM(quantidade*valorunitario),2) FROM orcamentosprodutos WHERE CodigoOrcamento = ${COD_ORCAMENTO} ORDER BY Sequencia DESC LIMIT 1;
+    ${VALOR_PROD}    Query    SELECT ROUND(SUM(ValorUnitario * Quantidade),2) FROM orcamentosprodutos WHERE CodigoOrcamento = ${COD_ORCAMENTO} AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;
 
     Set Suite Variable    ${VALOR_PRODUTO}    ${VALOR_PROD[0][0]}   
 

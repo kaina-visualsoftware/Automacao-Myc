@@ -90,3 +90,44 @@ class verificaProduto:
 
         cursor.close()
         connection.close()
+
+    def verifica_valor_acrescimo(self, nomeTela, codProduto, codOperacao):
+        connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database='bdvinicius')
+        cursor = connection.cursor()
+        consultaProdutos = "SELECT vendaT1 FROM produtos WHERE Codigo = "+codProduto
+        cursor.execute(consultaProdutos)
+        tabelaProdutos = cursor.fetchall()
+        valorProduto = tabelaProdutos[0][0]
+
+        if connection.is_connected():
+
+            if nomeTela == "Orcamentos": 
+                valoresOrc = "SELECT ValorTotal, Acrescimo FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" ORDER BY Sequencia DESC LIMIT 1;"
+                cursor.execute(valoresOrc)
+                tabelaOrcProdutos = cursor.fetchall()
+                percAcrescimo = tabelaOrcProdutos[0][1]
+
+                percAcrescimo = percAcrescimo / 100
+
+                valorCalculo = round((valorProduto + (valorProduto * percAcrescimo)), 2)
+
+                valorTotalProd = float(tabelaOrcProdutos[0][0])
+
+                comparacao = valorCalculo == valorTotalProd
+
+                return comparacao          
+            elif nomeTela == "Vendas":
+                valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS orp WHERE orp.CodigoVenda = "+str(codOperacao)+" ORDER BY Sequencia DESC LIMIT 1;"
+                cursor.execute(valoresVenda)
+                tabelaVendaProdutos = cursor.fetchall()
+                percAcrescimo = tabelaVendaProdutos[0][1]
+
+                percAcrescimo = percAcrescimo / 100
+
+                valorCalculo = round((valorProduto + (valorProduto * percAcrescimo)), 2)
+
+                valorTotalProd = float(tabelaVendaProdutos[0][0])
+
+                comparacao = valorCalculo == valorTotalProd
+
+                return comparacao
