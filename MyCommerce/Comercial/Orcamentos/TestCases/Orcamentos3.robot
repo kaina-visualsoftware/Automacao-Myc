@@ -41,7 +41,7 @@ Teste 03 - Incluindo mais de um produto de maneira padrão - Desconto de 5% - Á
     E clico em gerar venda
     Então finalizo a venda
 
-Teste 04 - Incluindo os produtos de todos os tipos - Á vista
+Teste 04 - Incluindo os produtos de todos os tipos - Desconto de 5% - Á vista
     [Tags]    Teste04
     Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
@@ -169,7 +169,7 @@ Teste 15 - Gerando venda de orçamento com produto normal - Aplicando acrescimo 
     Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
     E insiro Vendedor e Cliente
-     Quando insiro um produto - acrescimo(${COD_PRODUTO_NORMAL} 0)
+    Quando insiro um produto - acrescimo(${COD_PRODUTO_NORMAL} 0)
     Quando finalizo o orçamento como a vista
     Quando pressiono o atalho para editar
     E edito o produto inserido - Acrescimo(20)

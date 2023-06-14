@@ -118,16 +118,33 @@ class verificaProduto:
 
             if nomeTela == "Orcamentos": 
 
-                valoresOrc = "SELECT ValorTotal, Acrescimo FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" ORDER BY Sequencia DESC LIMIT 1;"
+                valoresOrc = "SELECT ValorTotal, Acrescimo FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" AND orp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
                 cursor.execute(valoresOrc)
                 tabelaOperacaoProdutos = cursor.fetchall()
                           
             elif nomeTela == "Vendas":
 
-                valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS orp WHERE orp.CodigoVenda = "+str(codOperacao)+" ORDER BY Sequencia DESC LIMIT 1;"
+                valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'VP' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
                 cursor.execute(valoresVenda)
                 tabelaOperacaoProdutos = cursor.fetchall()
             
+            elif nomeTela == "OS":
+
+                valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'OS' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+                cursor.execute(valoresVenda)
+                tabelaOperacaoProdutos = cursor.fetchall()
+
+            elif nomeTela == "Condicional":
+
+                consultaOrcProdutos = "SELECT ValorTotal, Acrescimo FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+                cursor.execute(consultaOrcProdutos)
+                tabelaOperacaoProdutos = cursor.fetchall()
+
+            elif nomeTela == "Pedidos":
+
+                consultaPedidosProdutos = "SELECT ValorTotal, Acrescimo FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoPedido = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+                cursor.execute(consultaPedidosProdutos)
+                tabelaOperacaoProdutos = cursor.fetchall()
 
         tabelaOperacaoProdutos = cursor.fetchall()
         percAcrescimo = tabelaOperacaoProdutos[0][1]
@@ -143,4 +160,43 @@ class verificaProduto:
         cursor.close()
         connection.close()
 
-        return comparacao                  
+        return comparacao             
+
+    def movimentacao_Estoque(self, idMov, codProduto):
+        connection, cursor = verificaProduto.conexao_banco()
+        print(codProduto)
+
+        if(connection.is_connected):
+
+            consultaProdutos = "SELECT ModalidadeControle FROM produtos WHERE Codigo = "+codProduto
+            cursor.execute(consultaProdutos)
+            tabelaProdutos = cursor.fetchall()
+            Modalidade = tabelaProdutos[0][0]
+                
+            if(Modalidade == "Kit"):    
+                print("Validação Kit")
+                return True
+            else:
+                consultaProdutosEstoque = "SELECT Estoque, Tela, Operacao FROM produtosestoque WHERE CodigoOperacao = "+str(idMov)+" AND CodigoProduto = "+str(codProduto)+";"
+                cursor.execute(consultaProdutosEstoque)
+                tabelaProdutosEstoque = cursor.fetchall()
+
+                estoqueAtual = tabelaProdutosEstoque[0][0] 
+
+                consultaAuditoriaEstoque = "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque WHERE IDMov = "+str(idMov)+" AND CodigoProduto = "+str(codProduto)+";"
+                cursor.execute(consultaAuditoriaEstoque)
+                tabelaAuditoriaEstoque = cursor.fetchall()
+
+                consultaAuditoriaEstoqueMovAnterior = "SELECT EstoqueAnterior FROM auditoriaestoque WHERE IDMov = "+str(idMov)+" AND CodigoProduto = "+str(codProduto)+";"
+                cursor.execute(consultaAuditoriaEstoqueMovAnterior)
+                tabelaAuditoriaEstoqueMovAnterior = cursor.fetchall()       
+
+                if(tabelaProdutosEstoque == tabelaAuditoriaEstoque):
+                    print("Passou na validação 1")
+                    estoqueValidacao = tabelaAuditoriaEstoqueMovAnterior[0][0] - 1
+                    if(estoqueAtual == estoqueValidacao):
+                        print("Passou na validação 2")
+                        return True
+                    else:
+                        print("Não passou na validação")
+                        return False                               

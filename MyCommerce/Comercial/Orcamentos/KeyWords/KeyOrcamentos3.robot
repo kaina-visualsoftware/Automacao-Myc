@@ -376,8 +376,6 @@ E edito o produto inserido - Acrescimo(${ACRESCIMO})
     SikuliLibrary.Click    ${BT_ALTERAR}
     Sleep    ${SLEEP_BAIXO}
 
-    Set Suite Variable    ${COD_PRODUTO}
-
     ${verificacao}    Verifica Valor Acrescimo    Orcamentos    ${COD_PRODUTO}    ${COD_ORCAMENTO}
 
     Should Be Equal    ${verificacao}    ${True}

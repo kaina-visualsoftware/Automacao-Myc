@@ -61,6 +61,7 @@ Teste 05 - Gerando uma OS com mais de um serviço
     E insiro Vendedor e Cliente
     Quando informo um objeto
     E informo mais de um serviço
+    Quando insiro um produto(${COD_PRODUTO_NORMAL})
     Quando finalizo o orçamento como a vista
     E clico em gerar venda
     Quando incluo os funcionarios comissionados(2)

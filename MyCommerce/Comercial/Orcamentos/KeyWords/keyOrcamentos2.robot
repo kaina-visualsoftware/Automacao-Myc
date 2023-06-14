@@ -120,6 +120,8 @@ Quando insiro um produto(${COD_PRODUTO})
 
     Should Be Equal    ${verificacao}    ${True}
 
+    Set Suite Variable    ${COD_PRODUTO}
+
 Quando insiro mais de um produto normal
     
     FOR    ${I}    IN RANGE    2
@@ -167,6 +169,8 @@ Quando insiro um produto do tipo grade
 
     Should Be Equal    ${verificacao}    ${True}
 
+    Set Suite Variable    ${COD_PRODUTO}    ${COD_PRODUTO_GRADE}
+
 Quando insiro um produto do tipo lote
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
@@ -185,6 +189,8 @@ Quando insiro um produto do tipo lote
     ${verificacao}    Verifica Produto Incluiu Correto    Orcamentos     ${COD_PRODUTO_LOTE}     ${COD_ORCAMENTO}
 
     Should Be Equal    ${verificacao}    ${True}
+
+    Set Suite Variable    ${COD_PRODUTO}    ${COD_PRODUTO_LOTE}
 
 Quando insiro todos os tipos de produtos
     
@@ -318,6 +324,7 @@ Quando pressiono o atalho de vendas agrupada
     Calcula valor total orcamentos
 
 E clico em gerar venda agrupada
+    Set Suite Variable    ${COD_PRODUTO}    3
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.V 
     Sleep    ${SLEEP_MEDIO}
@@ -333,6 +340,9 @@ E clico em gerar venda
     Pega valor produto
 
     Calcula valor total orcamentos
+
+    ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
 
 Quando seleciono o serial(${F})
 
@@ -390,6 +400,11 @@ Quando incluo os funcionarios comissionados(${F})
 Então finalizo a OS 
     Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
+    ${validaestoque}    Movimentacao Estoque    ${COD_VENDA}    ${COD_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${validaestoque}    ${True}
+
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.D  
@@ -411,6 +426,11 @@ Então finalizo a OS
 Então finalizo a OS - 30 Dias / Personalizada
     Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
+    ${validaestoque}    Movimentacao Estoque    ${COD_VENDA}    ${COD_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${validaestoque}    ${True}
+
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.D  
@@ -422,6 +442,12 @@ Então finalizo a OS - 30 Dias / Personalizada
 
 Então finalizo a venda
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    ${validaestoque}    Movimentacao Estoque    ${COD_VENDA}    ${COD_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${validaestoque}    ${True}
+    
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.D 
     Sleep    ${SLEEP_MEDIO}
