@@ -164,7 +164,8 @@ class verificaProduto:
 
     def movimentacao_Estoque(self, idMov, codProduto):
         connection, cursor = verificaProduto.conexao_banco()
-        print(codProduto)
+        print("Codigo do Produto a ser validado: ",codProduto)
+        print("Codigo Movimentação: ", idMov)
 
         if(connection.is_connected):
 
@@ -173,10 +174,43 @@ class verificaProduto:
             tabelaProdutos = cursor.fetchall()
             Modalidade = tabelaProdutos[0][0]
                 
-            if(Modalidade == "Kit"):    
+            if(Modalidade == "Kit"):
+
                 print("Validação Kit")
-                return True
+                cont = 0
+
+                consultaProdutosKit = "SELECT aude.CodigoProduto, aude.EstoqueAnterior, aude.EstoqueAtual FROM auditoriaestoque AS aude INNER JOIN produtos_kits AS prodK ON aude.CodigoProduto = prodK.CodProdutoKit WHERE ProdutoPrincipal = "+str(codProduto)+" AND aude.IDmov = "+str(idMov)+";"
+                cursor.execute(consultaProdutosKit)
+                tabelaAudProdutosKit = cursor.fetchall()
+
+                consultaKit = "SELECT CodProdutoKit, Qtde FROM produtos_kits WHERE ProdutoPrincipal = "+codProduto
+                cursor.execute(consultaKit)
+                tabelaProdKit = cursor.fetchall()
+
+                for i in range(2):
+
+                    if(tabelaAudProdutosKit[i][0] == tabelaProdKit[i][0]):
+
+                        print("Passou na 1° Validação (Kit)")
+                        estoqueValidacao = tabelaAudProdutosKit[i][1] - tabelaProdKit[i][1]
+
+                        if(estoqueValidacao == tabelaAudProdutosKit[i][2]):
+                            print("Passou na 2° Validação (Kit)")
+                            cont = cont + 1
+                        else:
+                            cont = cont
+                            
+                    else:
+                        cont = cont
+
+                if(cont == 2):
+                    print("Passou na Validação (Kit)")
+                    return True
+                else:
+                    return False
+                
             else:
+
                 consultaProdutosEstoque = "SELECT Estoque, Tela, Operacao FROM produtosestoque WHERE CodigoOperacao = "+str(idMov)+" AND CodigoProduto = "+str(codProduto)+";"
                 cursor.execute(consultaProdutosEstoque)
                 tabelaProdutosEstoque = cursor.fetchall()
@@ -192,11 +226,16 @@ class verificaProduto:
                 tabelaAuditoriaEstoqueMovAnterior = cursor.fetchall()       
 
                 if(tabelaProdutosEstoque == tabelaAuditoriaEstoque):
+
                     print("Passou na validação 1")
                     estoqueValidacao = tabelaAuditoriaEstoqueMovAnterior[0][0] - 1
+
                     if(estoqueAtual == estoqueValidacao):
                         print("Passou na validação 2")
                         return True
                     else:
-                        print("Não passou na validação")
-                        return False                               
+                        print("Não passou na validação 2")
+                        return False 
+                else:
+                    print("Não passou na primeira validação")
+                    return False                              
