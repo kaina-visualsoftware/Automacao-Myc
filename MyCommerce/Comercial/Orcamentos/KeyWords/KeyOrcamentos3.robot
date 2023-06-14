@@ -647,7 +647,6 @@ Então finalizo a OS - 30 Dias / Personalizada
     Sleep    ${SLEEP_MEDIO}
 
 Então finalizo a venda
-    ${DESCONTO}    Set Variable    D
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.D 
@@ -667,7 +666,6 @@ Então finalizo a venda
     Should Be Equal    ${DescVendaProd}    ${True}
 
 Então finalizo a venda - Acrescimo
-    ${DESCONTO}    Set Variable    D
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.D 
