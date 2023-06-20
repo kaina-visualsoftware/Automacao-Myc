@@ -238,4 +238,8 @@ class verificaProduto:
                         return False 
                 else:
                     print("Não passou na primeira validação")
-                    return False                              
+                    return False  
+
+    def verifica_valor_parcelas(self):
+        
+        return                 
