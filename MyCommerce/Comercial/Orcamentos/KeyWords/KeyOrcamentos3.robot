@@ -481,7 +481,10 @@ Quando finalizo o orçamento como a Personalizada
     Sleep    ${SLEEP_BAIXO}
     Calcula valor total orcamentos
     Sleep    ${SLEEP_BAIXO}
-    Valida parcelas e valor - forma personalizada
+
+    ${Comparacao}    Verifica Valor Parcelas    Orcamentos    ${COD_ORCAMENTO}    ${VALOR_FINAL_ORCS}
+
+    Should Be Equal    ${Comparacao}    ${True}
 
 Então gravo o orçamento
     Press Combination    KEY.ALT     Key.m 
@@ -658,7 +661,7 @@ Então finalizo a venda
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S 
-  
+
     ${DescVendaProd}    Verifica Valor Desconto   Vendas    ${COD_PRODUTO}    ${COD_VENDA}
 
     Should Be Equal    ${DescVendaProd}    ${True}
@@ -720,20 +723,3 @@ Valida valores finais venda
     ${Valor_Final_Venda}    Query    SELECT ValorFinalPagamentos FROM vendas WHERE CodOrcamento = ${COD_ORCAMENTO}
     Sleep    ${SLEEP_BAIXO}
     Should Be Equal    ${Valor_Final_Venda[0][0]}    ${VALOR_FINAL_ORCS}
-
-#***---Função para validar o valor e parcelas da forma personalizada---***#
-
-#VER PARA FAZER ALGUMA FUNÇÃO NO PYTHON VALIDANDO MAIS CAMPOS#
-Valida parcelas e valor - forma personalizada
-    ${Valores_Personalizados}    Query    SELECT QuantidadePag, valorParcelas, ValorFinalPagamentos FROM orcamentos WHERE Codigo = ${COD_ORCAMENTO}
-
-    Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${Valores_Personalizados[0][2]}    ${VALOR_FINAL_ORCS}
-
-    Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${Valores_Personalizados[0][0]}    ${2}
-
-    ${ValorParcelas}    Evaluate    ${Valores_Personalizados[0][2]} / 2
-
-    Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${Valores_Personalizados[0][1]}    ${ValorParcelas}

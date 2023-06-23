@@ -118,3 +118,25 @@ Teste 10 - Gerando venda parcial de um pedido - A vista - Com desconto
     E pressiono o botão de gerar venda
     Quando seleciono uma quantidade a gerar
     Então pressiono o botão parcialmete - Desconto Excedido(20)
+
+Teste 11 - Gerando venda parcial de um pedido - 30 Dias - Alterando valor final da venda 
+    [Tags]    Teste11
+    Dado que acesso da tela de pedidos
+    Quando clico em adicionar um pedido
+    E insiro vendedor e cliente 
+    Quando insiro mais de um produto do tipo normal
+    Quando finalizo o pedido - 30 Dias
+    E pressiono o botão de gerar venda
+    Quando seleciono uma quantidade a gerar
+    Então pressiono o botão parcialmete - Alterando valor final(10)
+
+Teste 12 - Gerando venda parcial de um pedido - 30 Dias - Alterando valor final da venda
+    [Tags]    Teste12
+    Dado que acesso da tela de pedidos
+    Quando clico em adicionar um pedido
+    E insiro vendedor e cliente 
+    Quando insiro mais de um produto do tipo normal
+    Quando finalizo o pedido - 30 Dias
+    E pressiono o botão de gerar venda
+    Quando seleciono uma quantidade a gerar
+    Então pressiono o botão parcialmete - Alterando valor final - Desconto Excedido(20)

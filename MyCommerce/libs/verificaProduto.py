@@ -96,7 +96,7 @@ class verificaProduto:
         percDesconto = tabelaOperacaoProdutos[0][1]
         percDesconto = percDesconto / 100
 
-        valorCalculo = round((valorProduto - (valorProduto * percDesconto)), 2)
+        valorCalculo = round(round((valorProduto - (valorProduto * percDesconto)), 3), 2)
 
         valorTotalProd = float(tabelaOperacaoProdutos[0][0])
 
@@ -104,6 +104,8 @@ class verificaProduto:
 
         cursor.close()
         connection.close()
+
+        print("Desconto: ",percDesconto," Valor Calculado: ", valorCalculo," ValorProduto no BD: ", valorTotalProd)
 
         return comparacao
 
@@ -113,40 +115,36 @@ class verificaProduto:
         cursor.execute(consultaProdutos)
         tabelaProdutos = cursor.fetchall()
         valorProduto = tabelaProdutos[0][0]
+        if nomeTela == "Orcamentos": 
 
-        if connection.is_connected():
-
-            if nomeTela == "Orcamentos": 
-
-                valoresOrc = "SELECT ValorTotal, Acrescimo FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" AND orp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
-                cursor.execute(valoresOrc)
-                tabelaOperacaoProdutos = cursor.fetchall()
+            valoresOrc = "SELECT ValorTotal, Acrescimo FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" AND orp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+            cursor.execute(valoresOrc)
+            tabelaOperacaoProdutos = cursor.fetchall()
                           
-            elif nomeTela == "Vendas":
+        elif nomeTela == "Vendas":
 
-                valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'VP' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
-                cursor.execute(valoresVenda)
-                tabelaOperacaoProdutos = cursor.fetchall()
+            valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'VP' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+            cursor.execute(valoresVenda)
+            tabelaOperacaoProdutos = cursor.fetchall()
             
-            elif nomeTela == "OS":
+        elif nomeTela == "OS":
 
-                valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'OS' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
-                cursor.execute(valoresVenda)
-                tabelaOperacaoProdutos = cursor.fetchall()
+            valoresVenda = "SELECT ValorTotal, Acrescimo FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'OS' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+            cursor.execute(valoresVenda)
+            tabelaOperacaoProdutos = cursor.fetchall()
 
-            elif nomeTela == "Condicional":
+        elif nomeTela == "Condicional":
 
-                consultaOrcProdutos = "SELECT ValorTotal, Acrescimo FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
-                cursor.execute(consultaOrcProdutos)
-                tabelaOperacaoProdutos = cursor.fetchall()
+            consultaOrcProdutos = "SELECT ValorTotal, Acrescimo FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+            cursor.execute(consultaOrcProdutos)
+            tabelaOperacaoProdutos = cursor.fetchall()
 
-            elif nomeTela == "Pedidos":
+        elif nomeTela == "Pedidos":
 
-                consultaPedidosProdutos = "SELECT ValorTotal, Acrescimo FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoPedido = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
-                cursor.execute(consultaPedidosProdutos)
-                tabelaOperacaoProdutos = cursor.fetchall()
+            consultaPedidosProdutos = "SELECT ValorTotal, Acrescimo FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoPedido = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
+            cursor.execute(consultaPedidosProdutos)
+            tabelaOperacaoProdutos = cursor.fetchall()
 
-        tabelaOperacaoProdutos = cursor.fetchall()
         percAcrescimo = tabelaOperacaoProdutos[0][1]
 
         percAcrescimo = percAcrescimo / 100
@@ -156,6 +154,8 @@ class verificaProduto:
         valorTotalProd = float(tabelaOperacaoProdutos[0][0])
 
         comparacao = valorCalculo == valorTotalProd
+
+        print("%Acréscimo: ", percAcrescimo," valorCalulo: ", valorCalculo)
 
         cursor.close()
         connection.close()
@@ -240,6 +240,37 @@ class verificaProduto:
                     print("Não passou na primeira validação")
                     return False  
 
-    def verifica_valor_parcelas(self):
-        
-        return                 
+    def verifica_valor_parcelas(self, nomeTela, codOperacao, valorFinalOperacao):
+        connection, cursor = verificaProduto.conexao_banco()
+        valorPagConferencia = 0
+
+        if nomeTela == "Vendas" or nomeTela == "OS":
+            consulta = "SELECT v.QuantidadePag, cr.Valor, v.ValorFinalPagamentos FROM contasareceber AS cr INNER JOIN vendas AS v ON cr.CodigoVenda = v.Codigo WHERE v.Codigo = "+str(codOperacao)
+            cursor.execute(consulta)
+            tabela = cursor.fetchall()
+           
+        elif nomeTela == "Orcamentos":
+            consulta = "SELECT QuantidadePag, valorParcelas, ValorFinalPagamentos FROM orcamentos WHERE Codigo = "+str(codOperacao)
+            cursor.execute(consulta)
+            tabela = cursor.fetchall()
+            
+        QuantidadePagamentos = tabela[0][0]
+        valorParcelas = tabela[0][1]
+        valorFinalPagamento = tabela[0][2]
+
+        if valorFinalOperacao == valorFinalPagamento:
+            print("Primeira Validação: ok")
+            valorPagConferencia = valorFinalOperacao / QuantidadePagamentos
+
+            if valorPagConferencia == valorParcelas:
+                print("Passou 2° validação: Quantidade pagamentos e valor Parcelas")
+                print("Quantidade Parcelas: ", QuantidadePagamentos, " Valor das Parcelas: ", valorParcelas, " Valor Conferido: ", valorPagConferencia)
+                return True
+            
+            else:
+                print("Quantidade Parcelas: ", QuantidadePagamentos, " Valor das Parcelas: ", valorParcelas, " Valor Conferido: ", valorPagConferencia)
+                return False
+            
+        else:
+            print("Quantidade Parcelas: ", QuantidadePagamentos, " Valor das Parcelas: ", valorParcelas, " Valor Conferido: ", valorPagConferencia)
+            return False

@@ -192,6 +192,15 @@ Então pressiono gerar total
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
+    Recupera valor final dos pedidos - Venda Total
+
+    ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
+
+    ${Comparacao}    Verifica Valor Parcelas    Vendas    ${COD_VENDA}    ${VALOR_FINAL_PEDIDOS}
+
+    Should Be Equal    ${Comparacao}    ${True}
+
 Quando finalizo o pedido - Personalizado
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}
@@ -238,6 +247,15 @@ Então pressiono o botão parcialmete
     Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
+
+    Recupera valor final dos pedidos
+
+    ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
+
+    ${Comparacao}    Verifica Valor Parcelas    Vendas    ${COD_VENDA}    ${VALOR_FINAL_PEDIDOS}
+
+    Should Be Equal    ${Comparacao}    ${True}
 
 Então pressiono o botão parcialmete - A vista
     Press Combination    KEY.ALT     Key.P
@@ -292,10 +310,11 @@ Então pressiono o botão parcialmete - Desconto Excedido(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
-    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+        Press Special Key    ESC
+        Sleep    ${SLEEP_BAIXO}
+    END
 
 Quando seleciono uma quantidade a gerar - Grade
     Wait Until Screen Contain    ${TELA_GERACAO_PEDIDO}    ${TEMPO_TELA}
@@ -306,3 +325,77 @@ Quando seleciono uma quantidade a gerar - Grade
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.o 
     Sleep    ${SLEEP_BAIXO}
+
+Quando finalizo o pedido - 30 Dias
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.r
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+
+Então pressiono o botão parcialmete - Alterando valor final(${DESCONTO})
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO} 
+    Wait Until Screen Contain    ${TELA_FROMA_PAGAMANTO}    ${TEMPO_TELA} 
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    ${ValorFinal}    Calcula valor final - com desconto(${DESCONTO})
+
+    Input Text    ${EMPTY}    ${ValorFinal}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+    Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+
+Então pressiono o botão parcialmete - Alterando valor final - Desconto Excedido(${DESCONTO})
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO} 
+    Wait Until Screen Contain    ${TELA_FROMA_PAGAMANTO}    ${TEMPO_TELA} 
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    ${ValorFinal}    Calcula valor final - com desconto(${DESCONTO})
+
+    Input Text    ${EMPTY}    ${ValorFinal}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_DESCONTO_EXCEDE}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+        Press Special Key    ESC
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+# ---------------------------------------------------------------------------------------------------------------------------- #
+Calcula valor final - com desconto(${DESCONTO})
+    ${desc}    Convert To Number    ${DESCONTO}
+    ${valorFinal}    Evaluate    4.08 - (4.08 * (${desc} / 100))
+
+    RETURN    ${valorFinal}
+
+#***---Função para calcular total dos orçamentos na venda agrupada---***#
+Recupera valor final dos pedidos - Venda Total
+    ${VALOR_FINAL_PEDIDOS}    Query    SELECT ValorFinalPagamentos FROM pedidosvenda WHERE `Data` = CURDATE() ORDER BY Codigo DESC LIMIT 1
+    
+    Set Suite Variable    ${VALOR_FINAL_PEDIDOS}    ${VALOR_FINAL_PEDIDOS[0][0]}
+
+Recupera valor final dos pedidos
+    ${VALOR_FINAL_PEDIDOS}    Query    SELECT pvp.ValorTotal FROM pedidosvendaprodutos AS pvp INNER JOIN pedidosvenda AS pv ON (SELECT Codigo FROM pedidosvenda WHERE `Data` = CURDATE() ORDER BY Codigo DESC LIMIT 1) = pvp.CodigoPedido ORDER BY pvp.CodigoProduto ASC LIMIT 1
+
+    Set Suite Variable    ${VALOR_FINAL_PEDIDOS}    ${VALOR_FINAL_PEDIDOS[0][0]}
