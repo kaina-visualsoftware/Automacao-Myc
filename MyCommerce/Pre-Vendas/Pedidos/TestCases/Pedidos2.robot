@@ -4,6 +4,7 @@ Documentation    Testes Pedidos pré-venda - Gerando Venda
 Resource    ../KeyWords/KeyPedidos2.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+Suite Teardown      Stop Remote Server
 
 *** Variables ***
 ${COD_PRODUTO_NORMAL}    3
@@ -140,3 +141,12 @@ Teste 12 - Gerando venda parcial de um pedido - 30 Dias - Alterando valor final 
     E pressiono o botão de gerar venda
     Quando seleciono uma quantidade a gerar
     Então pressiono o botão parcialmete - Alterando valor final - Desconto Excedido(20)
+
+Teste 13 - Gerando venda de produto lote - Sem estar separado 
+    [Tags]    Teste13
+    Dado que acesso da tela de pedidos
+    Quando clico em adicionar um pedido
+    E insiro vendedor e cliente 
+    Quando insiro um produto(${COD_PRODUTO_LOTE})
+    Quando finalizo o pedido - 30 Dias
+    Então pressiono o botão de gerar venda - Produto lote 

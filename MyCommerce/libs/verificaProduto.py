@@ -243,7 +243,7 @@ class verificaProduto:
     def verifica_valor_parcelas(self, nomeTela, codOperacao, valorFinalOperacao):
         connection, cursor = verificaProduto.conexao_banco()
         valorPagConferencia = 0
-
+        
         if nomeTela == "Vendas" or nomeTela == "OS":
             consulta = "SELECT v.QuantidadePag, cr.Valor, v.ValorFinalPagamentos FROM contasareceber AS cr INNER JOIN vendas AS v ON cr.CodigoVenda = v.Codigo WHERE v.Codigo = "+str(codOperacao)
             cursor.execute(consulta)
@@ -274,3 +274,5 @@ class verificaProduto:
         else:
             print("Quantidade Parcelas: ", QuantidadePagamentos, " Valor das Parcelas: ", valorParcelas, " Valor Conferido: ", valorPagConferencia)
             return False
+
+

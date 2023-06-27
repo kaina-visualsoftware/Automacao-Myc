@@ -396,7 +396,7 @@ Quando incluo os funcionarios comissionados(${F})
 
     END
 
-Então finalizo a OS 
+Então finalizo a OS
     Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -421,6 +421,29 @@ Então finalizo a OS
     Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S 
     Sleep    ${SLEEP_BAIXO}
+
+Então finalizo a OS - Todos Orçamentos
+    Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F  
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain    ${TELA_RECEB_DUPLICATAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${VALOR_FINAL_ORCS}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.C 
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_BAIXO}
+
 
 Então finalizo a OS - 30 Dias / Personalizada
     Wait Until Screen Contain    ${TELA_OS_PREENCHIDA}    ${TEMPO_TELA}

@@ -30,6 +30,7 @@ ${TELA_RECEB_DUPLICATAS}     tela_RecebimentoDuplicatas.png
 ${TELA_FROMA_PAGAMANTO}      tela_FormaPagamento.png
 ${TELA_IMPRESSAO}            tela_Impressao.png
 ${TELA_DESCONTO_EXCEDE}      aviso_DescontoExcede.png
+${TELA_AVISOSEP_PRODLOTE}    aviso_ProdutoLoteSeparar.png
 #Códigos vendedores, clientes, produtos e serviços
 ${COD_VENDEDOR}              13
 ${COD_CLIENTE}               18
@@ -381,6 +382,15 @@ Então pressiono o botão parcialmete - Alterando valor final - Desconto Excedid
         Press Special Key    ESC
         Sleep    ${SLEEP_BAIXO}
     END
+
+Então pressiono o botão de gerar venda - Produto lote
+    Press Combination    KEY.ALT     Key.G 
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_AVISOSEP_PRODLOTE}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
 
 # ---------------------------------------------------------------------------------------------------------------------------- #
 Calcula valor final - com desconto(${DESCONTO})

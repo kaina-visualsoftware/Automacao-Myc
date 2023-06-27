@@ -4,6 +4,7 @@ Documentation    Testes Geração de venda e OS oriunda de orçamentos
 Resource    ../KeyWords/keyOrcamentos2.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+Suite Teardown      Stop Remote Server
 
 *** Variables ***
 ${COD_PRODUTO_NORMAL}        3
@@ -19,7 +20,7 @@ Teste 01 - Gerando OS agrupada de todos os orcamentos anteriores
     Quando seleciono o serial(2)
     E informo os lotes(2)
     Quando incluo os funcionarios comissionados(8)
-    Então finalizo a OS
+    Então finalizo a OS - Todos Orçamentos
 
 Teste 02 - Gerando venda de Orcamento com um único produto
     [Tags]    Teste02
