@@ -26,24 +26,20 @@ ${MENU_PRE_VENDAS}           menu_PreVendas.png
 ${TELA_SEPARACAO_CONFERE}    tela_SeparacaoConferencia.png
 ${TELA_PESQUISA_PREVENDA}    tela_PesquisaPreVenda.png
 ${TELA_INFO_ADICIONAIS}      tela_InfoAdicionais.png
-${TELA_SELEÇÃO_LOTE}         tela_SelecaoLoteSeparacao.png
-${TELA_SERIAL_SELECAO}       tela_controleSerialSelecao.png
-${TELA_SERIAL_DIGITACAO}     tela_controleSerialDigitacao.png
-${TELA_SELEÇÃO_GRADE}        tela_SelecaoGrade.png
 ${TELA_1PROD_CONFERIDO}      tela_SeparacaoConferencia-1ProdutoConferido.png
 ${TELA_AVISO_FECHAR}         aviso_DesejaFechar.png
+${AVISO_RECOMEÇAR_SEP}       aviso_RecomeçarSeparacao.png
+${TELA_LIBERACAO_SUPERV}     tela_LiberacaoSeparacao.png
+${PROD_SEPARACAO_TUBAINA}    prod_TubainaCod7.png
 #Códigos vendedores, clientes, produtos e serviços
 ${COD_VENDEDOR}              13
 ${COD_CLIENTE}               18
 ${COD_PRODUTO_NORMAL}        3
-${COD_PRODUTO_GRADE}         6
-${COD_PRODUTO_SERIAL}        187
 ${COD_PRODUTO_KIT}           9
 ${COD_PRODUTO_NORMAL2}       7
 # Botões
 ${BT_SELECIONA_ULTIMO}       bt_SeleUltimo.png
 ${MENU_PRÉVENDA}             menu_ClickPreVendas.png
-${CHECKBOX_MARCADO}          checkBox_Marcado.png
 ${CAMPO_CODIGOSEPARACAO}     campo_CodigoSeparacao.png
 
 *** Keywords ***
@@ -66,7 +62,7 @@ E insiro vendedor e cliente
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Input Text    ${EMPTY}    ${COD_CLIENTE}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
@@ -160,47 +156,6 @@ E informo o codigo dos produtos
     Input Text    ${EMPTY}    ${COD_PRODUTO}
     Press Special Key    TAB
 
-E informo o codigo dos produtos - Lote Seleção(${VALOR_VERIFICACAO})
-    Verifica Campo Baixar Lote Mais Velho(${VALOR_VERIFICACAO})
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${COD_PRODUTO}
-    Press Special Key    TAB
-
-    IF    ${VALOR_VERIFICACAO} == 0
-        
-        Wait Until Screen Contain    ${TELA_SELEÇÃO_LOTE}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    TAB
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    DOWN
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    ENTER
-
-    END
-
-E informo o codigo dos produtos - Serial
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${COD_PRODUTO}
-    Press Special Key    TAB
-    Wait Until Screen Contain    ${TELA_SERIAL_SELECAO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
-    ${TELA_SELECAO} =    Exists    ${TELA_SERIAL_SELECAO}
-    ${TELA_DIGITACAO} =    Exists    ${TELA_SERIAL_DIGITACAO} 
-
-    IF    ${TELA_SELECAO} == ${True}
-        Press Special Key    SPACE
-    ELSE
-        @{SELECAO} =    Create List    838    302    11    11
-        Click Region    ${SELECAO}
-        Wait Until Screen Contain    ${TELA_SERIAL_DIGITACAO}    10
-        Press Special Key    SPACE
-    END
-
-        Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT    Key.F 
-        Sleep    ${SLEEP_BAIXO}
-
 Então finalizo a separação
     Wait Until Screen Contain    ${TELA_INFO_ADICIONAIS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -222,18 +177,10 @@ Então finalizo a separação
     Wait Until Screen Contain    ${TELA_SEPARACAO_CONFERE}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S 
 
-Então finalizo a separação - 1 Produto
-    Wait Until Screen Contain    ${TELA_1PROD_CONFERIDO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.S 
-    Wait Until Screen Contain    ${TELA_AVISO_FECHAR}    ${TEMPO_TELA}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_BAIXO}
-
-Então finalizo a separação - Lote(${VALOR_VERIFICACAO})
+Quando finalizo a separação
     Wait Until Screen Contain    ${TELA_INFO_ADICIONAIS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     
@@ -252,36 +199,44 @@ Então finalizo a separação - Lote(${VALOR_VERIFICACAO})
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
     Wait Until Screen Contain    ${TELA_SEPARACAO_CONFERE}    ${TEMPO_TELA}
+
+E recomeço a separação
+    Quando seleciono o último pedido
+    Wait Until Screen Contain    ${TELA_INFO_ADICIONAIS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.O
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.r 
+    Wait Until Screen Contain    ${AVISO_RECOMEÇAR_SEP}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
+    Wait Until Screen Contain    ${TELA_LIBERACAO_SUPERV}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    1
+    Press Special Key    ENTER
+
+E recomeço a separação - Item 
+    Quando seleciono o último pedido
+    Wait Until Screen Contain    ${TELA_INFO_ADICIONAIS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.O
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.e 
+    Wait Until Screen Contain    ${AVISO_RECOMEÇAR_SEP}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
-
-    Verifica lote baixado(${VALOR_VERIFICACAO})
-
-Quando insiro um produto do tipo Grade
-    Press Combination    KEY.ALT     Key.P
+    Wait Until Screen Contain    ${TELA_LIBERACAO_SUPERV}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${COD_PRODUTO_GRADE}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Wait Until Screen Contain    ${TELA_SELEÇÃO_GRADE}    ${TEMPO_TELA}
     Input Text    ${EMPTY}    1
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.o 
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.I 
+    Press Special Key    ENTER
 
-E informo o codigo dos produtos - Grade
+Então finalizo a separação - 1 Produto
+    Wait Until Screen Contain    ${TELA_1PROD_CONFERIDO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${COD_PRODUTO_GRADE}
-    Press Special Key    TAB
-    Wait Until Screen Contain    ${TELA_SELEÇÃO_GRADE}    ${TEMPO_TELA}
-    Input Text    ${EMPTY}    1
+    Press Combination    KEY.ALT     Key.S 
+    Wait Until Screen Contain    ${TELA_AVISO_FECHAR}    ${TEMPO_TELA}
+    Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.o
 
 E informo o código dos produtos - Mais de um produto(${QTDE_PRODUTO})
     
@@ -293,64 +248,41 @@ E informo o código dos produtos - Mais de um produto(${QTDE_PRODUTO})
             Set Test Variable    ${COD_PRODUTO}    ${COD_PRODUTO_NORMAL2}
         END
         
+        Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    ${COD_PRODUTO}
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    TAB
         
     END
 
-#--------------------------------------------------------------------------------------------------------#
-Verifica Campo Baixar Lote Mais Velho(${VALIDAÇÃO})
+Quando seleciono o produto e corto ele
     Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${PROD_SEPARACAO_TUBAINA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.t 
+    Wait Until Screen Contain    ${TELA_LIBERACAO_SUPERV}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    1
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
 
-    ${coor_BaixarLote}    Create List    1052    771    36    13
+Quando corto os produtos restantes
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C 
+    Wait Until Screen Contain    ${TELA_LIBERACAO_SUPERV}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    1
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
     
-    IF    ${VALIDAÇÃO} == 0
-
-        Sleep    ${SLEEP_BAIXO}
-        ${campo}    Exists    ${CHECKBOX_MARCADO}
-
-        IF    ${campo} == ${True}
-
-            SikuliLibrary.Click On Region    ${coor_BaixarLote}
-            Sleep    ${SLEEP_BAIXO}
-            SikuliLibrary.Click    ${CAMPO_CODIGOSEPARACAO}
-
-        END
-        
-    ELSE
-    
-        Sleep    ${SLEEP_BAIXO}
-        ${campo}    Exists    ${CHECKBOX_MARCADO}
-
-        IF    ${campo} == ${False}
-
-            SikuliLibrary.Click On Region    ${coor_BaixarLote}
-            Sleep    ${SLEEP_BAIXO}
-            SikuliLibrary.Click    ${CAMPO_CODIGOSEPARACAO}
-
-        END
-
-    END
-
-Verifica lote baixado(${TIPO_BAIXA})
+Quando pressiono o botão excluir
     Sleep    ${SLEEP_BAIXO}
-
-    IF    ${TIPO_BAIXA} == 0
-        
-        ${COD_LOTE}    Convert To Number    2
-
-        ${CODIGO_LOTE}    Query    SELECT CodigoLote FROM pedidosvendaprodutoslotes WHERE IDPedido = ${COD_PEDIDO};
-        Sleep    ${SLEEP_BAIXO}
-        Should Be Equal    ${CODIGO_LOTE[0][0]}    ${COD_LOTE}
-
-    ELSE
-        
-        ${CODIGO_LOTE}    Query    SELECT Sequencia FROM produtos_lotes WHERE DataFabricacao IS NOT NULL ORDER BY DataFabricacao ASC LIMIT 1;
-        ${LOTE_SEPARADO}    Query    SELECT CodigoLote FROM pedidosvendaprodutoslotes WHERE IDPedido = ${COD_PEDIDO};
-        Sleep    ${SLEEP_BAIXO}
-        Should Be Equal    ${CODIGO_LOTE}    ${LOTE_SEPARADO}
-
-    END
-
+    Press Combination    KEY.ALT     Key.x 
+    Wait Until Screen Contain    ${TELA_LIBERACAO_SUPERV}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    1
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
