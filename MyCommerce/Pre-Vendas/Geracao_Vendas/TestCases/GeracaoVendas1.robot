@@ -15,4 +15,4 @@ ${COD_PRODUTO_LOTE}      5
 *** Test Cases ***
 Teste 01 - Gerando venda de pedido já separado
     Dado que acesso a tela de geração de vendas 
-    
+    E seleciono um pedido

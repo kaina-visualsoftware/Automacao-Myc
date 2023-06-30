@@ -23,6 +23,7 @@ ${TEMPO_TELA}                20
 ${TELA_GERACAO_VENDA}        tela_GeracaoVenda.png
 #Botões
 ${CHECK_PEDIDOSEPARADOS}     checkBox_PedidosSeparados.png
+${COL_PEDIDO}                col_Pedido.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -36,26 +37,19 @@ Dado que acesso a tela de geração de vendas
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
-
-    Verifica pedidos separados 
-
     Press Combination    KEY.ALT     Key.L 
     Sleep    ${SLEEP_BAIXO}
 
+    Ordena do último para o primeiro
+
+E seleciono um pedido
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    SPACE 
+    Sleep    ${SLEEP_BAIXO}
+
 #_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_#
-Verifica pedidos separados 
+Ordena do último para o primeiro
+    SikuliLibrary.Click    ${COL_PEDIDO}
     Sleep    ${SLEEP_BAIXO}
-
-    ${coor_PedSeparado}    Create List    402    439    16    15
-
+    SikuliLibrary.Click    ${COL_PEDIDO}
     Sleep    ${SLEEP_BAIXO}
-    ${campo}    Exists    ${CHECK_PEDIDOSEPARADOS}
-
-    IF    ${campo} == ${True}
-
-        SikuliLibrary.Click On Region    ${coor_PedSeparado}
-        Sleep    ${SLEEP_BAIXO}
-
-    END
-
-
