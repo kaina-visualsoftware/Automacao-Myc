@@ -132,6 +132,16 @@ Quando finalizo o pedido - A vista
     ${Consulta}    Query    SELECT Codigo FROM pedidosvenda ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_PEDIDO}    ${Consulta[0][0]}
 
+Quando finalizo o pedido - 30 Dias
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.r
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+
+
+
 E abro a separação e conferência
     SikuliLibrary.Click    ${MENU_PRÉVENDA}
     Wait Until Screen Contain    ${MENU_PRE_VENDAS}    ${TEMPO_TELA}

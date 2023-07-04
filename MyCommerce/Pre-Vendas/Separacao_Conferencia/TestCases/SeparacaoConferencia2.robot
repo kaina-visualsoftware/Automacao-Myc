@@ -78,7 +78,7 @@ Teste 05 - Realizando a conferência de pedido - Cortando item
     Quando clico em adicionar um pedido
     E insiro vendedor e cliente 
     Quando insiro mais de um produto do tipo normal
-    Quando finalizo o pedido - A vista
+    Quando finalizo o pedido - 30 Dias
     E abro a separação e conferência
     Quando seleciono o último pedido
     E informo o código dos produtos - Mais de um produto(1)

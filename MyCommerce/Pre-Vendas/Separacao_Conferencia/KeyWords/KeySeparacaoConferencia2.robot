@@ -286,3 +286,11 @@ Quando pressiono o botão excluir
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
+
+Quando finalizo o pedido - 30 Dias
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.r
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}

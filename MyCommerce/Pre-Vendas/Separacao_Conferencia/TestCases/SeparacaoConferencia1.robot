@@ -91,14 +91,14 @@ Teste 07 - Realizando a conferência de pedido - Mais de um Produto
     Quando clico em adicionar um pedido
     E insiro vendedor e cliente 
     Quando insiro mais de um produto do tipo normal
-    Quando finalizo o pedido - A vista
+    Quando finalizo o pedido - 30 Dias
     E abro a separação e conferência
     Quando seleciono o último pedido
     E informo o código dos produtos - Mais de um produto(2)
     Então finalizo a separação
 
 Teste 08 - Realizando a conferência parcial de pedido - Mais de um produto 
-    [Tags]    Teste07
+    [Tags]    Teste08
     Dado que acesso da tela de pedidos
     Quando clico em adicionar um pedido
     E insiro vendedor e cliente 
