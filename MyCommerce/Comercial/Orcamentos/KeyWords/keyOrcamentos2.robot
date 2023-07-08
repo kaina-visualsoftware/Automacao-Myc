@@ -102,6 +102,9 @@ E insiro Vendedor e Cliente
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
+    ${Consulta}    Query    SELECT Codigo FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
+
 Quando insiro um produto(${COD_PRODUTO})
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}

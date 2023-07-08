@@ -62,6 +62,7 @@ Quando pressiono o atalho de adicionar
 
     ${Consulta}    Query    SELECT Codigo FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
+    Log To Console    ${COD_ORCAMENTO}
 
 Quando pressiono o atalho para editar
     Press Combination    KEY.ALT     Key.E 
@@ -92,6 +93,9 @@ E insiro Vendedor e Cliente
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     Verificar se objeto está visivel
+
+    ${Consulta}    Query    SELECT Codigo FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
 
 Quando insiro um produto(${COD_PRODUTO})
     Press Combination    KEY.ALT     Key.P

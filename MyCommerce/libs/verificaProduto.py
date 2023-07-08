@@ -21,6 +21,7 @@ class verificaProduto:
                 consultaOrcProdutos = "SELECT codigoProduto, Descricao, ValorUnitario FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" AND orp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
                 cursor.execute(consultaOrcProdutos)
                 consultaOperacaoProduto = cursor.fetchall()
+                print("CodOrc: ", codOperacao," codProd: ",codProduto)
 
             elif nomeTela == "Vendas":
 
