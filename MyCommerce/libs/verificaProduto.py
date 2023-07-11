@@ -211,6 +211,8 @@ class verificaProduto:
                     return False
                 
             else:
+                
+                print("Validação Produtos diversos")
 
                 consultaProdutosEstoque = "SELECT Estoque, Tela, Operacao FROM produtosestoque WHERE CodigoOperacao = "+str(idMov)+" AND CodigoProduto = "+str(codProduto)+";"
                 cursor.execute(consultaProdutosEstoque)
@@ -275,5 +277,3 @@ class verificaProduto:
         else:
             print("Quantidade Parcelas: ", QuantidadePagamentos, " Valor das Parcelas: ", valorParcelas, " Valor Conferido: ", valorPagConferencia)
             return False
-
-
