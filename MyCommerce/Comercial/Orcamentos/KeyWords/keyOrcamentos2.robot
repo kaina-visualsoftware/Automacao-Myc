@@ -485,19 +485,20 @@ Então finalizo a venda
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${BT_SAIR}
+    #SikuliLibrary.Click    ${BT_SAIR}
+    Sleep    ${SLEEP_ALTO}
 
 Então finalizo a venda - 30 Dias / Personalizada
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     KEY.D 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     KEY.F 
     Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
-    Valida valores finais venda
     Calcula valor total orcamentos
+    Valida valores finais venda
 
 #***---Função de Ajuste de Resolução da tela de orçamentos---***#
 Verificar se objeto está visivel

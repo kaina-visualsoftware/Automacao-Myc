@@ -9,13 +9,18 @@ class verificaProduto:
         return connection, cursor
 
     def verifica_Produto_Incluiu_Correto(self, nomeTela, codProduto, codOperacao):
+        #Abre conexão com o banco
         connection, cursor = verificaProduto.conexao_banco()
+        #Consulta na tabela produtos as informações
         consultaProdutos = "SELECT codigo, Descricao, vendaT1 FROM produtos WHERE Codigo = "+codProduto
         cursor.execute(consultaProdutos)
         tabelaProdutos = cursor.fetchall()
 
+        print("Consultou a tabela produtos.")
+
         if connection.is_connected(): 
 
+            #Valida em qual tela está sendo feita a operação, e posteriormente faz a consulta na tabela de produtos da tela em questão
             if nomeTela == "Orcamentos": 
 
                 consultaOrcProdutos = "SELECT codigoProduto, Descricao, ValorUnitario FROM orcamentosprodutos AS orp WHERE orp.CodigoOrcamento = "+str(codOperacao)+" AND orp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
@@ -29,11 +34,17 @@ class verificaProduto:
                 cursor.execute(consultaVendaProdutos)
                 consultaOperacaoProduto = cursor.fetchall()
 
+                print("CodOrc: ", codOperacao," codProd: ",codProduto)
+
+
             elif nomeTela == "OS":
 
                 consultaVendaProdutos = "SELECT codigoProduto, Descricao, ValorUnitario FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.Tipo LIKE 'OS' AND vp.CodigoVenda = "+str(codOperacao)+" AND vp.Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
                 cursor.execute(consultaVendaProdutos)
                 consultaOperacaoProduto = cursor.fetchall()
+
+                print("CodOrc: ", codOperacao," codProd: ",codProduto)
+
 
             elif nomeTela == "Condicional":
 
@@ -41,14 +52,23 @@ class verificaProduto:
                 cursor.execute(consultaOrcProdutos)
                 consultaOperacaoProduto = cursor.fetchall()
 
+                print("CodOrc: ", codOperacao," codProd: ",codProduto)
+
+
             elif nomeTela == "Pedidos":
 
                 consultaPedidosProdutos = "SELECT codigoProduto, Descricao, ValorUnitario FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoPedido = "+str(codOperacao)+" AND Cancelada IS NULL ORDER BY Sequencia DESC LIMIT 1;"
                 cursor.execute(consultaPedidosProdutos)
                 consultaOperacaoProduto = cursor.fetchall()
-    
-        comparacao = tabelaProdutos == consultaOperacaoProduto
 
+                print("CodOrc: ", codOperacao," codProd: ",codProduto)
+
+    
+        #Compara se a consulta da tabela produtos é igual a da tabela produtos da tabela em validada, se for vai retornar true
+        comparacao = tabelaProdutos == consultaOperacaoProduto
+        print("Produtos incluiu correto = ", comparacao)
+
+        #Fecha conexão com o banco
         cursor.close()
         connection.close()
 

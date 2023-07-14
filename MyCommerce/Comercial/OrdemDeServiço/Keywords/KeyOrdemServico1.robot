@@ -361,3 +361,13 @@ Então informo o motivo da exlusão
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
+
+E preencho a guia adiantamentos
+    Press Combination    KEY.ALT    key.A
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    Teste
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    20
+    Press Combination    KEY.ALT    key.n
+    Sleep    ${SLEEP_BAIXO}

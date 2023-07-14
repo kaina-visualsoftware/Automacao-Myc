@@ -145,3 +145,13 @@ Teste 17 - Excluindo a última OS feita
     Dado que acesso a guia ordens de serviços
     Quando pressiono o atalho de excluir
     Então informo o motivo da exlusão
+
+Teste 18 - Gerando ordem de serviço com adiantamento
+    [Tags]    Teste18
+    Dado que acesso a guia ordens de serviços
+    Quando preencho código de vendedor e do cliente
+    Quando insiro um produto(${COD_PRODUTO_NORMAL})
+    E preencho a guia adiantamentos
+    Quando escolho a forma à vista na aba pagamentos
+    Então finalizo a OS
+    
