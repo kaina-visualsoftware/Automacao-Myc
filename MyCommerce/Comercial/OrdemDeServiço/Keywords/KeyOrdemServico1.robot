@@ -159,7 +159,7 @@ E digito o valor do pagamento e confirmo
 
 Quando escolho a forma personalizada na aba pagamentos
     Sleep    ${SLEEP_BAIXO}
-     Press Combination    KEY.ALT    key.m
+    Press Combination    KEY.ALT    key.m
    
     FOR    ${I}    IN RANGE    3
         Press Special Key    TAB

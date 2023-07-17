@@ -649,7 +649,7 @@ Então finalizo a OS - 30 Dias / Personalizada
 
 Então finalizo a venda
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     KEY.D 
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     KEY.F 
@@ -660,7 +660,6 @@ Então finalizo a venda
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
-    Press Combination    KEY.ALT     Key.S 
 
     ${DescVendaProd}    Verifica Valor Desconto   Vendas    ${COD_PRODUTO}    ${COD_VENDA}
 
@@ -668,7 +667,7 @@ Então finalizo a venda
 
 Então finalizo a venda - Acrescimo
     Wait Until Screen Contain    ${TELA_VENDA_PREENCHIDA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     KEY.D 
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     KEY.F 
@@ -679,7 +678,6 @@ Então finalizo a venda - Acrescimo
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C 
     Sleep    ${SLEEP_MEDIO}
-    Press Combination    KEY.ALT     Key.S 
   
     ${DescVendaProd}    Verifica Valor Acrescimo   Vendas    ${COD_PRODUTO}    ${COD_VENDA}
 
