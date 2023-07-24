@@ -32,6 +32,8 @@ ${TELA_RECB_DUPLICATAS}      tela_RecebimentoDuplicatas.png
 ${TELA_EMISSAO_NFC}          tela_EmissaoNFC.png  
 ${AVISO_CQP_HOMOLOGACAO}     aviso_CqpHomologacao.png
 ${AVISO_NCM_INVALIDO}        aviso_NCMInvalidoNFC.png
+#CÓDIGOS
+${DESCONTO}                  ${0.0}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -39,11 +41,11 @@ Ler imagens iniciais
 
 Dado que acesso a tela de vendas de balcao
     Press Special Key    F2
-    Wait Until Screen Contain    ${TELA_VENDAS}     50
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
 Quando pressiono o atalho de adicionar
     Press Combination    KEY.ALT     Key.A 
-    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    80
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
@@ -68,16 +70,16 @@ E adiciono vendedor e cliente
     Sleep    ${SLEEP_BAIXO}
 
     Valida alerta após inserir cliente
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_BAIXO}
     Valida aviso cliente outro vendedor
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_BAIXO}
     Valida informações de crédito
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_BAIXO}
     Valida aviso de alteração de número 
-    Sleep    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
 
 Quando insiro um produto normal
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
     ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
@@ -97,11 +99,11 @@ Quando insiro um produto normal
         Sleep    ${SLEEP_MEDIO}
     END
 
-    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    30
+    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]} 
 
-    Consulta valor do produto
+    Recupera valor dos produtos 
 
 Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
 
@@ -151,10 +153,14 @@ Então finalizo a venda
     Press Combination    KEY.ALT     Key.C 
     Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
 
-    #Faturando a NFC-e
+    Faturando a NFC-e
+
+    IF    ${DESCONTO} > 0
+        Verifica desconto correto
+    END
 
 Faturando a NFC-e
-    Sleep    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    DOWN
@@ -169,13 +175,60 @@ Faturando a NFC-e
     Press Special Key    ENTER
     Sleep    ${SLEEP_ALTO}
 
-    Wait Until Screen Not Contain    ${TELA_EMISSAO_NFC}    50
+    Wait Until Screen Not Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
 
     ${Consulta}    Query    SELECT NumeroNF FROM vendas WHERE Codigo = ${COD_VENDA}
     Sleep    ${SLEEP_BAIXO}
     Should Not Be Equal    ${Consulta[0][0]}    ${null}
 
+Quando insiro um produto com desconto(${DESCONTO})
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+    ${codProduto}    Query    SELECT codigo FROM produtos WHERE (ModalidadeControle = 'Normal' AND Cancelado IS NULL) AND (Ativo = -1 AND DescontoMaximo > 5) ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_MEDIO}
+    Input Text    ${EMPTY}    ${codProduto[0][0]} 
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+    END
+    
+    Valida quantidade de estoque inexistente
+
+    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.d
+    Wait Until Screen Not Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${DESCONTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I
+
+    Valida quantidade de estoque inexistente
+
+    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]} 
+
+    Set Test Variable    ${DESCONTO}    ${DESCONTO}
+
+    Recupera valor dos produtos 
+
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
+Valida quantidade de estoque inexistente
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${AVISO_SEM_ESTOQUE}
+    IF    ${MSG} == ${True}
+        Press Combination    KEY.ALT     Key.S
+        Sleep    ${SLEEP_MEDIO}
+    END
+
 Valida alerta após inserir cliente 
 
     Sleep    ${SLEEP_BAIXO}
@@ -224,16 +277,22 @@ Valida ncm invalido ao faturar nota
         Log To Console    \n Script cancelou o faturamento por conter produtos com NCM inválido!\n
     END
 
-Consulta valor do produto 
-    Sleep    ${SLEEP_BAIXO}
-    ${Valor_Produto}    Query    SELECT VendaT1 FROM produtos WHERE Codigo = ${COD_PRODUTO}
-    Sleep    ${SLEEP_BAIXO}
-    
-    Set Test Variable    ${ValorProduto}    ${Valor_Produto[0][0]}
-
 Recupera valor dos produtos 
     Sleep    ${SLEEP_BAIXO}
-    ${Valor_Produtos}    Query    SELECT SUM(valortotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+    ${Valor_Produtos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Cancelada IS NULL
     Sleep    ${SLEEP_BAIXO}
-    
+
     Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
+
+Verifica desconto correto
+    Sleep    ${SLEEP_BAIXO}
+    ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${COD_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Sleep    ${SLEEP_BAIXO}
+    ${DescontoAplicadoVenda}    Query    SELECT round(Desconto,2) FROM vendasprodutos WHERE CodigoVenda = 425894 AND (CodigoProduto = 68872 AND Cancelada IS NULL)
+    Sleep    ${SLEEP_BAIXO}
+
+    IF    ${DescontoAplicadoVenda[0][0]} > ${DescontoMáximoProduto[0][0]}
+        Fail    Desconto ultrapassou o máximo do produto!    level=WARN
+    END

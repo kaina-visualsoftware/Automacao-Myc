@@ -27,11 +27,11 @@ Teste 02 - Venda com mais de um produto normal, sem desconto - Faturando NFC
     E acesso a aba pagamentos
     Então finalizo a venda
 
-Teste 03 - 
+Teste 03 - Venda com produto com desconto - Dentro do limite
     [Tags]    Teste03
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro mais de um um produto normal(5)
+    Quando insiro um produto com desconto(5)
     E acesso a aba pagamentos
     Então finalizo a venda
