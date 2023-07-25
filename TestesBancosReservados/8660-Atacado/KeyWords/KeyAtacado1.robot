@@ -96,15 +96,20 @@ Quando insiro um produto normal
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    3
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
+        
     END
     
     Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${AVISO_SEM_ESTOQUE}
+
     IF    ${MSG} == ${True}
+    
         Press Combination    KEY.ALT     Key.S
         Sleep    ${SLEEP_MEDIO}
+
     END
 
     Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
@@ -132,9 +137,12 @@ Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
         
         Sleep    ${SLEEP_MEDIO}
         ${MSG}    Exists    ${AVISO_SEM_ESTOQUE}
+
         IF    ${MSG} == ${True}
+
             Press Combination    KEY.ALT     Key.S
             Sleep    ${SLEEP_MEDIO}
+
         END
 
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
@@ -218,8 +226,10 @@ Quando insiro um produto com desconto(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    3
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
+
     END
     
     Valida quantidade de estoque inexistente
@@ -260,8 +270,10 @@ Quando insiro um produto com desconto - Ultrapassando(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    3
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
+
     END
     
     Valida quantidade de estoque inexistente
@@ -312,6 +324,7 @@ E acesso a aba pagamentos - Aplicando desconto(${DESCONTO})
     IF    ${QUANTIDADE_PRODUTOS} >= 2
 
         Log To Console    \n ----- Esta pegando o valor total sem desconto por enquanto -----
+
     ELSE
 
         Calcula valor final com desconto
@@ -325,45 +338,60 @@ Valida quantidade de estoque inexistente
 
     Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${AVISO_SEM_ESTOQUE}
+
     IF    ${MSG} == ${True}
+
         Press Combination    KEY.ALT     Key.S
         Sleep    ${SLEEP_MEDIO}
+
     END
 
 Valida alerta após inserir cliente 
 
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${ALERTA_CLIENTE}
+
     IF    ${MSG} == ${True}
+    
         Press Combination    KEY.ALT     Key.O
         Sleep    ${SLEEP_MEDIO}
+
     END
 
 Valida aviso cliente outro vendedor
 
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${AVISO_CLIENTE_OUTRO_VE}
+
     IF    ${MSG} == ${True}
+
         Press Combination    KEY.ALT     Key.N
         Sleep    ${SLEEP_MEDIO}
+
     END
 
 Valida informações de crédito 
 
     Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${TELA_INFO_CRÉDITOS}
+
     IF    ${MSG} == ${True}
+
         Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
+
     END
 
 Valida aviso de alteração de número 
     
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${TELA_ALTERAR_NUMERO}
+
     IF    ${MSG} == ${True}
+
         Press Combination    KEY.ALT     Key.N
         Sleep    ${SLEEP_MEDIO}
+
     END
 
 Valida ncm invalido ao faturar nota 
@@ -400,7 +428,9 @@ Verifica desconto correto
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${DescontoAplicadoVenda[0][0]} > ${DescontoMáximoProduto[0][0]}
+
         Fail    Desconto ultrapassou o máximo do produto!    level=WARN
+
     END
 
 Calcula valor final com desconto 
