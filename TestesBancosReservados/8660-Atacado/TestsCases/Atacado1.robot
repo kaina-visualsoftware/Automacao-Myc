@@ -35,3 +35,39 @@ Teste 03 - Venda com produto com desconto - Dentro do limite
     Quando insiro um produto com desconto(5)
     E acesso a aba pagamentos
     Então finalizo a venda
+
+Teste 04 - Venda com produto com desconto - ultrapassando o limite
+    [Tags]    Teste04
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto com desconto - Ultrapassando(15)
+    E acesso a aba pagamentos
+    Então finalizo a venda
+
+Teste 05 - Venda com Desconto ao finalizar
+    [Tags]    Teste05
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    E acesso a aba pagamentos - Aplicando desconto(10)
+    Então finalizo a venda
+
+Teste 06 - Venda com Desconto ao finalizar - Ultrapassando limite
+    [Tags]    Teste06
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    E acesso a aba pagamentos - Aplicando desconto(50)
+    Então finalizo a venda
+
+Teste 07 - Venda com mais de um produto, inserindo o desconto no final
+    [Tags]    Teste07
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    E acesso a aba pagamentos - Aplicando desconto(50)
+    Então finalizo a venda
