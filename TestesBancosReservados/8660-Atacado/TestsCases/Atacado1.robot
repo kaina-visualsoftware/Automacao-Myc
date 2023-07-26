@@ -68,6 +68,6 @@ Teste 07 - Venda com mais de um produto, inserindo o desconto no final
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro mais de um um produto normal(3)
-    E acesso a aba pagamentos - Aplicando desconto(50)
+    Quando insiro mais de um um produto normal(12)
+    E acesso a aba pagamentos - Aplicando desconto(15)
     Então finalizo a venda

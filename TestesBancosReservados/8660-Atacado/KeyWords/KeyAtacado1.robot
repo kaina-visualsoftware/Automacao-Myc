@@ -323,15 +323,13 @@ E acesso a aba pagamentos - Aplicando desconto(${DESCONTO})
 
     IF    ${QUANTIDADE_PRODUTOS} >= 2
 
-        Log To Console    \n ----- Esta pegando o valor total sem desconto por enquanto -----
+        Calcula valor final com desconto - Mais de um produto
 
     ELSE
 
         Calcula valor final com desconto
 
-    END
-
-    
+    END  
 
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
 Valida quantidade de estoque inexistente
@@ -442,17 +440,16 @@ Calcula valor final com desconto
         
         ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DescontoMáximoProduto[0][0]} / 100))), 2)
 
-        Set Test Variable    ${ValorProduto}    ${ValorTotalFinal}
-
     ELSE
 
         ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 2)
 
-        Set Test Variable    ${ValorProduto}    ${ValorTotalFinal}
-
     END
 
+    Set Test Variable    ${ValorProduto}    ${ValorTotalFinal}
+
 Verifica valor de desconto de todos os produtos 
+    #Falta validar se aplicou desconto em produto promocional ( não pode )
     
     ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
 
@@ -474,4 +471,38 @@ Verifica valor de desconto de todos os produtos
         
     END
 
+Calcula valor final com desconto - Mais de um produto 
+
+    ${valorTotalProdutos} =     Set Variable    ${0.0}
     
+    ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
+
+    ${Sequencia}     Set Variable    ${PrimeiraSequencia[0][0]}
+
+    FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+        ${Valor_Produtos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Sequencia = ${Sequencia}
+        Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
+
+        ${CodigoProduto}    Query    SELECT CodigoProduto FROM vendasprodutos WHERE Sequencia = ${Sequencia}
+        
+        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${CodigoProduto[0][0]}
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${DESCONTO} > ${DescontoMáximoProduto[0][0]}
+            
+            ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DescontoMáximoProduto[0][0]} / 100))), 2)
+
+        ELSE
+
+            ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 3)
+
+        END
+
+        ${Sequencia} =     Set Variable    ${Sequencia + 1}
+
+        ${valorTotalProdutos}     Evaluate    (${valorTotalProdutos} + ${ValorTotalFinal})
+        
+    END
+
+    Set Test Variable    ${ValorProduto}    ${valorTotalProdutos}
