@@ -459,7 +459,17 @@ Verifica valor de desconto de todos os produtos
         
         ${Consulta_Tabela_vendaProdutos}    Query    SELECT CodigoProduto, Desconto FROM vendasprodutos WHERE Sequencia = ${Sequencia}
 
-        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${Consulta_Tabela_vendaProdutos[0][0]}
+        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo, ValorPromocao FROM produtos WHERE codigo = ${Consulta_Tabela_vendaProdutos[0][0]}
+
+        IF    ${DescontoMáximoProduto[0][1]} > ${0.0}
+            
+            IF    ${Consulta_Tabela_vendaProdutos[0][1]} > ${0.0}
+                
+                Fail    \n Produto: ${Consulta_Tabela_vendaProdutos[0][0]} é promocional e possui desconto!    level=WARN
+
+            END
+
+        END
 
         IF    ${Consulta_Tabela_vendaProdutos[0][1]} > ${DescontoMáximoProduto[0][0]}
 
