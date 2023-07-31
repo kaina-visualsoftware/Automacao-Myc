@@ -71,3 +71,21 @@ Teste 07 - Venda com mais de um produto, inserindo o desconto no final
     Quando insiro mais de um um produto normal(12)
     E acesso a aba pagamentos - Aplicando desconto(15)
     Então finalizo a venda
+
+Teste 08 - Processo tarefa 133691
+    [Tags]    Teste08
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    E acesso a aba pagamentos - Aplicando desconto(20)
+    Quando seleciono a forma 30 dias e desdobro
+    E excluo o pagamento
+    Quando incluo um pagamento
+    Então finalizo a venda - 30 dias 
+
+
+
+Teste - Processo tarefa 137639
+    [Tags]    Teste
+    #Aplicar a validação da quantidade de parcelas desdobradas

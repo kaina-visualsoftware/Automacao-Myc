@@ -33,8 +33,15 @@ ${TELA_EMISSAO_NFC}          tela_EmissaoNFC.png
 ${AVISO_CQP_HOMOLOGACAO}     aviso_CqpHomologacao.png
 ${AVISO_NCM_INVALIDO}        aviso_NCMInvalidoNFC.png
 ${AVISO_DESCONTO_EXCEDE}     aviso_DescontoExcede.png
+${AVISO_VENCIMENTO_SABAD}    aviso_VencimentoSabado.png        
+${AVISO_EXCLUIR_PAG}         aviso_ExcluirPag.png
+${TELA_IMPRESSAO_BOLETO}     tela_impressaoBoleto.png
+${TELA_EMISSAO_PROMISSO}     tela_EmissaoPromissoria.png
 #CÓDIGOS
 ${DESCONTO}                  ${0.0}
+#BOTÕES
+${BT_EXCLUIR_PAG}            bt_ExcluirPag.png
+${BT_NAO_IMP_BOLETO}         bt_nao.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -331,6 +338,50 @@ E acesso a aba pagamentos - Aplicando desconto(${DESCONTO})
 
     END  
 
+Quando seleciono a forma 30 dias e desdobro
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida vencimento no sabado 
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+
+E excluo o pagamento 
+    Sleep    ${SLEEP_ALTO}
+    SikuliLibrary.Click    ${BT_EXCLUIR_PAG}
+    Sleep    ${SLEEP_MEDIO}
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_PAG}    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+
+Quando incluo um pagamento 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.N 
+
+    Valida vencimento no sabado 
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+
+Então finalizo a venda - 30 dias
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+    Wait Until Screen Contain    ${TELA_IMPRESSAO_BOLETO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${BT_NAO_IMP_BOLETO}
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_EMISSAO_PROMISSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
+
+    Faturando a NFC-e
+
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
 Valida quantidade de estoque inexistente
 
@@ -404,6 +455,18 @@ Valida ncm invalido ao faturar nota
         Press Combination    KEY.ALT     Key.C
         Sleep    ${SLEEP_MEDIO}
         Log To Console    \n Script cancelou o faturamento por conter produtos com NCM inválido!\n
+
+    END
+
+Valida vencimento no sabado 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${AVISO_VENCIMENTO_SABAD}
+
+    IF    ${MSG} == ${True}
+
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_BAIXO}
 
     END
 
