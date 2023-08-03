@@ -37,6 +37,7 @@ ${AVISO_VENCIMENTO_SABAD}    aviso_VencimentoSabado.png
 ${AVISO_EXCLUIR_PAG}         aviso_ExcluirPag.png
 ${TELA_IMPRESSAO_BOLETO}     tela_impressaoBoleto.png
 ${TELA_EMISSAO_PROMISSO}     tela_EmissaoPromissoria.png
+${TELA_PERSONAL_PAGAMENT}    tela_PersonalizacaoPagamentos.png
 #CÓDIGOS
 ${DESCONTO}                  ${0.0}
 #BOTÕES
@@ -362,9 +363,11 @@ E excluo o pagamento
     Sleep    ${SLEEP_BAIXO}
 
 Quando incluo um pagamento 
-    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}  
     Press Combination    KEY.ALT     Key.N 
-
+    Sleep    ${SLEEP_BAIXO}
+    
     Valida vencimento no sabado 
 
     Sleep    ${SLEEP_BAIXO}
@@ -376,11 +379,56 @@ Então finalizo a venda - 30 dias
     Wait Until Screen Contain    ${TELA_IMPRESSAO_BOLETO}    ${TEMPO_TELA}
     SikuliLibrary.Click    ${BT_NAO_IMP_BOLETO}
     Sleep    ${SLEEP_BAIXO}
+
+    Faturando a NFC-e
+
     Wait Until Screen Contain    ${TELA_EMISSAO_PROMISSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
 
+Quando seleciono a forma Personalizada
+
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
+    END
+
+    Input Text    ${EMPTY}    P
+    Press Special Key    TAB
+    Wait Until Screen Contain    ${TELA_PERSONAL_PAGAMENT}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    UP 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.G 
+    Sleep    ${SLEEP_BAIXO}
+
+Então finalizo a venda - Personalizada
+
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida vencimento no sabado 
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+
+    Wait Until Screen Contain    ${TELA_IMPRESSAO_BOLETO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${BT_NAO_IMP_BOLETO}
+    Sleep    ${SLEEP_BAIXO}
+
     Faturando a NFC-e
+
+    Wait Until Screen Contain    ${TELA_EMISSAO_PROMISSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
+
+    Valida parcelas e valor - forma personalizada
 
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
 Valida quantidade de estoque inexistente
@@ -512,7 +560,6 @@ Calcula valor final com desconto
     Set Test Variable    ${ValorProduto}    ${ValorTotalFinal}
 
 Verifica valor de desconto de todos os produtos 
-    #Falta validar se aplicou desconto em produto promocional ( não pode )
     
     ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
 
@@ -522,11 +569,11 @@ Verifica valor de desconto de todos os produtos
         
         ${Consulta_Tabela_vendaProdutos}    Query    SELECT CodigoProduto, Desconto FROM vendasprodutos WHERE Sequencia = ${Sequencia}
 
-        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo, ValorPromocao FROM produtos WHERE codigo = ${Consulta_Tabela_vendaProdutos[0][0]}
+        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo, IF(DataPromocao > CURDATE(), 1, 0) AS produtoEmPromocao FROM produtos WHERE codigo = ${Consulta_Tabela_vendaProdutos[0][0]}
 
-        IF    ${DescontoMáximoProduto[0][1]} > ${0.0}
+        IF    ${DescontoMáximoProduto[0][1]} == ${1}
             
-            IF    ${Consulta_Tabela_vendaProdutos[0][1]} > ${0.0}
+            IF    ${Consulta_Tabela_vendaProdutos[0][1]} > ${0.1}
                 
                 Fail    \n Produto: ${Consulta_Tabela_vendaProdutos[0][0]} é promocional e possui desconto!    level=WARN
 
@@ -546,7 +593,7 @@ Verifica valor de desconto de todos os produtos
 
 Calcula valor final com desconto - Mais de um produto 
 
-    ${valorTotalProdutos} =     Set Variable    ${0.0}
+    ${valorTotalProdutos} =     Set Variable    ${0.1}
     
     ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
 
@@ -568,7 +615,7 @@ Calcula valor final com desconto - Mais de um produto
 
         ELSE
 
-            ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 3)
+            ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 2)
 
         END
 
@@ -579,3 +626,20 @@ Calcula valor final com desconto - Mais de um produto
     END
 
     Set Test Variable    ${ValorProduto}    ${valorTotalProdutos}
+
+Valida parcelas e valor - forma personalizada
+    ${Valores_Personalizados}    Query    SELECT QuantidadePag, ValorFinalPagamentos FROM vendas WHERE Codigo = ${COD_VENDA}
+
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${Valores_Personalizados[0][1]}    ${ValorProduto}
+
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${Valores_Personalizados[0][0]}    ${2}
+
+    ${ValorParcelas}    Evaluate    round((${Valores_Personalizados[0][1]} / 2),2)
+
+
+    ${ValorParcelasContasAreceber}    Query    SELECT Valor FROM contasareceber WHERE CodigoVenda = ${COD_VENDA} LIMIT 1;
+
+    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal    ${ValorParcelasContasAreceber[0][0]}    ${ValorParcelas}
