@@ -69,7 +69,7 @@ E adiciono vendedor e cliente
     Sleep    ${SLEEP_BAIXO}
     ${codVendedor}    Query    SELECT codigo FROM clientes WHERE Tipo LIKE 'D' OR Tipo LIKE 'V' AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
-    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') ORDER BY RAND() LIMIT 1;
+    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${codVendedor[0][0]}
