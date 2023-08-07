@@ -38,11 +38,13 @@ ${AVISO_EXCLUIR_PAG}         aviso_ExcluirPag.png
 ${TELA_IMPRESSAO_BOLETO}     tela_impressaoBoleto.png
 ${TELA_EMISSAO_PROMISSO}     tela_EmissaoPromissoria.png
 ${TELA_PERSONAL_PAGAMENT}    tela_PersonalizacaoPagamentos.png
+${COMBOBOX_FORMA_6X}         forma_6x.png
 #CÓDIGOS
 ${DESCONTO}                  ${0.0}
 #BOTÕES
 ${BT_EXCLUIR_PAG}            bt_ExcluirPag.png
 ${BT_NAO_IMP_BOLETO}         bt_nao.png
+${BT_SELECAO_FORMA}          bt_selecaoForma.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -199,7 +201,6 @@ Então finalizo a venda
 
     END
         
-
 Faturando a NFC-e
 
     Sleep    ${SLEEP_MEDIO}
@@ -428,7 +429,45 @@ Então finalizo a venda - Personalizada
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
 
-    Valida parcelas e valor - forma personalizada
+    Valida parcelas e valor - formas com parcelas(2)
+
+Quando seleciono a forma 30-60-90-120-180 Dias 
+
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_SELECAO_FORMA}
+
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${COMBOBOX_FORMA_6X}
+
+Então finalizo a venda - 30-60-90-120-180 Dias 
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    6
+
+        Valida vencimento no sabado 
+
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+
+    Wait Until Screen Contain    ${TELA_IMPRESSAO_BOLETO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${BT_NAO_IMP_BOLETO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Faturando a NFC-e
+
+    Wait Until Screen Contain    ${TELA_EMISSAO_PROMISSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
+
+    Valida parcelas e valor - formas com parcelas(6)
 
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
 Valida quantidade de estoque inexistente
@@ -593,7 +632,7 @@ Verifica valor de desconto de todos os produtos
 
 Calcula valor final com desconto - Mais de um produto 
 
-    ${valorTotalProdutos} =     Set Variable    ${0.1}
+    ${valorTotalProdutos} =     Set Variable    ${0.01}
     
     ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
 
@@ -609,37 +648,50 @@ Calcula valor final com desconto - Mais de um produto
         ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${CodigoProduto[0][0]}
         Sleep    ${SLEEP_BAIXO}
 
-        IF    ${DESCONTO} > ${DescontoMáximoProduto[0][0]}
+        ${ValidaPromo}    Query    SELECT IF(DataPromocao > CURDATE(), 1, 0) AS produtoEmPromocao FROM produtos WHERE codigo = ${CodigoProduto[0][0]}
+
+        IF    ${ValidaPromo[0][0]} == ${1}
             
-            ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DescontoMáximoProduto[0][0]} / 100))), 2)
+            ${ValorTotalFinal}    Evaluate    ${ValorProduto}
 
         ELSE
 
-            ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 2)
+            IF    ${DESCONTO} > ${DescontoMáximoProduto[0][0]}
+            
+                ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DescontoMáximoProduto[0][0]} / 100))), 2)
+
+            ELSE
+
+                ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 2)
+
+            END
 
         END
 
         ${Sequencia} =     Set Variable    ${Sequencia + 1}
 
-        ${valorTotalProdutos}     Evaluate    (${valorTotalProdutos} + ${ValorTotalFinal})
+        ${valorTotalProdutos}     Evaluate    round((${valorTotalProdutos} + ${ValorTotalFinal}),2)
         
     END
 
     Set Test Variable    ${ValorProduto}    ${valorTotalProdutos}
 
-Valida parcelas e valor - forma personalizada
+Valida parcelas e valor - formas com parcelas(${QTDE_PAG})
+
+    ${QTDE_PAG}    Convert To Integer    ${QTDE_PAG}
+
     ${Valores_Personalizados}    Query    SELECT QuantidadePag, ValorFinalPagamentos FROM vendas WHERE Codigo = ${COD_VENDA}
 
     Sleep    ${SLEEP_BAIXO}
     Should Be Equal    ${Valores_Personalizados[0][1]}    ${ValorProduto}
 
     Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${Valores_Personalizados[0][0]}    ${2}
+    Should Be Equal    ${Valores_Personalizados[0][0]}    ${QTDE_PAG}
 
-    ${ValorParcelas}    Evaluate    round((${Valores_Personalizados[0][1]} / 2),2)
+    ${ValorParcelas}    Evaluate    round((${Valores_Personalizados[0][1]} / ${QTDE_PAG}),2)
 
 
     ${ValorParcelasContasAreceber}    Query    SELECT Valor FROM contasareceber WHERE CodigoVenda = ${COD_VENDA} LIMIT 1;
 
     Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${ValorParcelasContasAreceber[0][0]}    ${ValorParcelas}
+    Should Be Equal    ${ValorParcelasContasAreceber[0][0]}    ${ValorParcelas}   
