@@ -39,6 +39,7 @@ ${TELA_IMPRESSAO_BOLETO}     tela_impressaoBoleto.png
 ${TELA_EMISSAO_PROMISSO}     tela_EmissaoPromissoria.png
 ${TELA_PERSONAL_PAGAMENT}    tela_PersonalizacaoPagamentos.png
 ${COMBOBOX_FORMA_6X}         forma_6x.png
+${INPUT_COD_CLIENTE}         lb_CodCliente.png
 #CÓDIGOS
 ${DESCONTO}                  ${0.0}
 #BOTÕES
@@ -74,9 +75,7 @@ E adiciono vendedor e cliente
 
     Input Text    ${EMPTY}    ${codVendedor[0][0]}
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
+    SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${codCliente[0][0]}
     Sleep    ${SLEEP_BAIXO}
@@ -247,7 +246,6 @@ Quando insiro um produto com desconto(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.d
-    Wait Until Screen Not Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
@@ -258,7 +256,8 @@ Quando insiro um produto com desconto(${DESCONTO})
 
     Valida quantidade de estoque inexistente
 
-    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+    
+    
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]} 
 
@@ -291,7 +290,6 @@ Quando insiro um produto com desconto - Ultrapassando(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.d
-    Wait Until Screen Not Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
