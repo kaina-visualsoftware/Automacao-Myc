@@ -183,6 +183,17 @@ Quando removo o desconto pelo botão X
 
     Verifica valor final ao remover desconto
 
+Quando audito o pedido 
+    Press Combination    KEY.ALT     Key.m 
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.r 
+    Sleep    ${SLEEP_BAIXO}
+
+Então finalizo o pedido depois de auditado
+    Press Combination    KEY.ALT     Key.F 
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_PEDIDOS_PREVENDA}     ${TEMPO_TELA}
+
 Então finalizo o pedido
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_BAIXO}

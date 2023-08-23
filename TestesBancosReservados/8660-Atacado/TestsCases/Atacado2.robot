@@ -43,3 +43,14 @@ Teste 04 - Adicionando Pedido com produto normal - Desconto
     E adiciono vendedor e cliente
     Quando insiro um produto com desconto(10)
     Então finalizo o pedido
+
+Teste 05 - Adicionando Pedido com produto normal - Desconto - Auditando
+    [Tags]    Teste05
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro um produto com desconto(10)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+
+Teste 06 - 
