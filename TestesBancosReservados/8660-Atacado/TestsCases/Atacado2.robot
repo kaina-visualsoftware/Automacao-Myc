@@ -53,4 +53,97 @@ Teste 05 - Adicionando Pedido com produto normal - Desconto - Auditando
     Quando audito o pedido
     Então finalizo o pedido depois de auditado
 
-Teste 06 - 
+Teste 06 - Adicionando pedido com mais de um produto - Auditando
+    [Tags]    Teste06
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+
+Teste 07 - Adicionando pedido com desconto no final 
+    [Tags]    Teste07
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    E acesso a aba pagamentos - Aplicando desconto(10)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+
+Teste 08 - Adicionando pedido com mais de um produto - desconto no final 
+    [Tags]    Teste08
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    E acesso a aba pagamentos - Aplicando desconto(10)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+
+Teste 09 - Adicionando pedido com mais de um produto - Forma Personalizada
+    [Tags]    Teste09
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Quando seleciono a forma Personalizada
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+
+Teste 10 - Adicionando pedido com mais de um produto - Forma 30-60-90-120-180 Dias
+    [Tags]    Teste10
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Quando seleciono a forma 30-60-90-120-180 Dias 
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+
+Teste 11 - Adicionando pedido e gerando venda total com o mesmo
+    [Tags]    Teste11
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Quando seleciono a forma 30-60-90-120-180 Dias 
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+    Quando clico em Gerar Venda
+    Então gero a venda total 
+
+Teste 12 - Adicionando pedido e gerando venda Parcial com o mesmo
+    [Tags]    Teste12
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+    Quando clico em Gerar Venda
+    Então gero a venda parcial(2)
+    
+Teste 13 - Adicionando pedido e gerando venda parcial - Com desconto
+    [Tags]    Teste13
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    E acesso a aba pagamentos - Aplicando desconto(10)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+    Quando clico em Gerar Venda
+    Então gero a venda parcial(2)
+
+Teste 14 - Adicionando pedido e gerando venda parcial com todos os itens
+    [Tags]    Teste14
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Quando audito o pedido
+    Então finalizo o pedido depois de auditado
+    Quando clico em Gerar Venda
+    Então gero a venda parcial(5)

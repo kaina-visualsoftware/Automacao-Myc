@@ -256,9 +256,6 @@ Quando insiro um produto com desconto(${DESCONTO})
 
     Valida quantidade de estoque inexistente
 
-    
-    
-
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]} 
 
     Set Test Variable    ${DESCONTO}    ${DESCONTO}

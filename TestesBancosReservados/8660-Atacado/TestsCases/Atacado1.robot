@@ -266,9 +266,7 @@ Teste 26 - Venda com mais de um produto, inserindo o desconto no final - Persona
     E acesso a aba pagamentos - Aplicando desconto(50)
     Quando seleciono a forma 30-60-90-120-180 Dias
     Então finalizo a venda - 30-60-90-120-180 Dias 
-
-
-    
+  
 Teste - Processo tarefa 137639
     [Tags]    Teste
     #Aplicar a validação da quantidade de parcelas desdobradas
