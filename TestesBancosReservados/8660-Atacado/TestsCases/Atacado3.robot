@@ -32,3 +32,34 @@ Teste 03 - Adicionando condicional com mais de um produto normal
     E adiciono vendedor e cliente
     Quando insiro mais de um um produto normal(5)
     Então finalizo a condicional
+
+Teste 04 - Adicionando condicional e gerando Venda Total
+    [Tags]    Teste04
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então finalizo a condicional
+    Quando clico em Gerar Venda
+    Então finalizo a venda
+    
+Teste 05 - Adicionando condicional com mais de um produto e gerando venda total
+    [Tags]    Teste05
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo a condicional
+    Quando clico em Gerar Venda
+    Então finalizo a venda
+
+Teste 06 - Adicionando condicional com produto com desconto e gerando venda total
+    [Tags]    Teste06
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro um produto com desconto(5)
+    Então finalizo a condicional
+    Quando clico em Gerar Venda
+    Então finalizo a venda
+    

@@ -4,6 +4,7 @@ Documentation    Testes Banco: Atacado Total - 8660 - Empresa 1
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
+Library    ../libs/validaAtacado.py
 
 *** Variables ***
 ${IMAGES}                    ./TestesBancosReservados/images
@@ -27,6 +28,12 @@ ${ALERTA_CLIENTE}            alertaCliente.png
 ${INPUT_COD_CLIENTE}         lb_CodClienteCondicional.png
 ${AVISO_CLIENTE_OUTRO_VE}    aviso_clienteOutroVendedorCond.png  
 ${ROW_PROD_INCLUSO}          row_ProdIncluso.png
+${AVISO_GERAR_VENDA}         aviso_GerarVendaCond.png
+${ROW_PAGAMENTO_INCLUSO}     row_PagIncluso.png
+${TELA_RECB_DUPLICATAS}      tela_RecebimentoDuplicatas.png
+${TELA_EMISSAO_NFC}          tela_EmissaoNFC.png  
+${AVISO_NCM_INVALIDO}        aviso_NCMInvalidoNFC.png
+${TELA_VENDAS_ADICIONAR}     atacado_TelaVendaBalcao_Adicionar.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -79,6 +86,9 @@ E adiciono vendedor e cliente
 Quando insiro um produto normal
 
     Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+
+    Sleep    ${SLEEP_BAIXO}
     ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
     Input Text    ${EMPTY}    ${codProduto[0][0]} 
@@ -109,6 +119,9 @@ Então finalizo a condicional
     Sleep    ${SLEEP_BAIXO}
 
 Quando insiro um produto com desconto(${DESCONTO})
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
 
     Sleep    ${SLEEP_BAIXO}
     ${codProduto}    Query    SELECT codigo FROM produtos WHERE (ModalidadeControle = 'Normal' AND Cancelado IS NULL) AND (Ativo = -1 AND DescontoMaximo > ${DESCONTO}) ORDER BY RAND() LIMIT 1;
@@ -172,8 +185,82 @@ Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
 
     Sleep    ${SLEEP_BAIXO}
 
+Quando clico em Gerar Venda
+
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.G 
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${AVISO_GERAR_VENDA}    ${TEMPO_TELA}
+    Press Special Key    ENTER
+
+Então finalizo a venda
+ 
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.m
+    Sleep    ${SLEEP_BAIXO}
+
+    Recupera codigo venda
+
+    Recupera valor dos produtos
+
+    Press Combination    KEY.ALT     Key.D
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.F
+    Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    Input Text    ${EMPTY}    ${ValorProduto}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.C 
+    Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
+
+    Faturando a NFC-e
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+
+    ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
+
+    IF    ${RESPONSE} == ${False}
+        Fail    Validação de desconto não passou!
+    END
 
 #----------------------------------------------------------------------------------------------------------------------#
+Faturando a NFC-e
+
+    Sleep    ${SLEEP_MEDIO}
+    Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F 
+    Sleep    ${SLEEP_MEDIO}
+
+    Valida ncm invalido ao faturar nota 
+
+    Press Special Key    LEFT
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_ALTO}
+
+    Wait Until Screen Not Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
+
+Valida ncm invalido ao faturar nota 
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${MSG}    Exists    ${AVISO_NCM_INVALIDO}
+
+    IF    ${MSG} == ${True}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.C
+        Sleep    ${SLEEP_MEDIO}
+        Log To Console    \n Script cancelou o faturamento por conter produtos com NCM inválido!\n
+
+    END
+
 Valida alerta após inserir cliente 
 
     Sleep    ${SLEEP_MEDIO}
@@ -221,3 +308,16 @@ Valida aviso cliente outro vendedor
         Sleep    ${SLEEP_MEDIO}
 
     END
+
+Recupera valor dos produtos 
+
+    Sleep    ${SLEEP_BAIXO}
+    ${Valor_Produtos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos AS vp INNER JOIN vendas AS v ON v.Codigo = vp.CodigoVenda WHERE v.CodCondicional = ${COD_CONDICIONAL} AND v.Cancelada IS NULL
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
+
+Recupera codigo venda
+
+    ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
