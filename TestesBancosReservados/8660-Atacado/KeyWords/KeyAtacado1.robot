@@ -4,6 +4,7 @@ Documentation    Testes Banco: Atacado Total - 8660 - Empresa 1
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
+Library    ../libs/validaAtacado.py
 
 *** Variables ***
 ${IMAGES}                    ./TestesBancosReservados/images
@@ -40,6 +41,7 @@ ${TELA_EMISSAO_PROMISSO}     tela_EmissaoPromissoria.png
 ${TELA_PERSONAL_PAGAMENT}    tela_PersonalizacaoPagamentos.png
 ${COMBOBOX_FORMA_6X}         forma_6x.png
 ${INPUT_COD_CLIENTE}         lb_CodCliente.png
+${AVISO_CONDI_ABERTO}        aviso_CondicionalAbertoVenda.png
 #CÓDIGOS
 ${DESCONTO}                  ${0.0}
 #BOTÕES
@@ -86,6 +88,9 @@ E adiciono vendedor e cliente
     Sleep    ${SLEEP_BAIXO}
 
     Valida aviso cliente outro vendedor
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida condicional aberto
     Sleep    ${SLEEP_BAIXO}
 
     Valida informações de crédito
@@ -188,14 +193,10 @@ Então finalizo a venda
 
     IF    ${DESCONTO} > 0
         
-        IF    ${QUANTIDADE_PRODUTOS} >= 2
+        ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
 
-            Verifica valor de desconto de todos os produtos
-
-        ELSE
-
-            Verifica desconto correto
-
+        IF    ${RESPONSE} == ${False}
+            Fail    Erro ao validar os descontos, verifique!
         END
 
     END
@@ -382,6 +383,12 @@ Então finalizo a venda - 30 dias
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S 
 
+    ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
+
+    IF    ${RESPONSE} == ${False}
+        Fail    Erro ao validar os descontos, verifique!
+    END
+
 Quando seleciono a forma Personalizada
 
     FOR    ${I}    IN RANGE    3
@@ -426,6 +433,12 @@ Então finalizo a venda - Personalizada
 
     Valida parcelas e valor - formas com parcelas(2)
 
+    ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
+
+    IF    ${RESPONSE} == ${False}
+        Fail    Erro ao validar os descontos, verifique!
+    END
+
 Quando seleciono a forma 30-60-90-120-180 Dias 
 
     Sleep    ${SLEEP_BAIXO}
@@ -463,6 +476,12 @@ Então finalizo a venda - 30-60-90-120-180 Dias
     Press Combination    KEY.ALT     Key.S 
 
     Valida parcelas e valor - formas com parcelas(6)
+
+    ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
+
+    IF    ${RESPONSE} == ${False}
+        Fail    Erro ao validar os descontos, verifique!
+    END
 
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
 Valida quantidade de estoque inexistente
@@ -552,6 +571,20 @@ Valida vencimento no sabado
 
     END
 
+Valida condicional aberto 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${AVISO_CONDI_ABERTO}
+
+    IF    ${MSG} == ${True}
+
+        Press Special Key    LEFT
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+
 Recupera valor dos produtos 
 
     Sleep    ${SLEEP_BAIXO}
@@ -559,22 +592,6 @@ Recupera valor dos produtos
     Sleep    ${SLEEP_BAIXO}
 
     Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
-
-Verifica desconto correto
-
-    Sleep    ${SLEEP_BAIXO}
-    ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${COD_PRODUTO}
-    Sleep    ${SLEEP_BAIXO}
-
-    Sleep    ${SLEEP_BAIXO}
-    ${DescontoAplicadoVenda}    Query    SELECT round(Desconto,2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND (CodigoProduto = ${COD_PRODUTO} AND Cancelada IS NULL)
-    Sleep    ${SLEEP_BAIXO}
-
-    IF    ${DescontoAplicadoVenda[0][0]} > ${DescontoMáximoProduto[0][0]}
-
-        Fail    Desconto ultrapassou o máximo do produto!    level=WARN
-
-    END
 
 Calcula valor final com desconto 
 
@@ -592,38 +609,6 @@ Calcula valor final com desconto
     END
 
     Set Test Variable    ${ValorProduto}    ${ValorTotalFinal}
-
-Verifica valor de desconto de todos os produtos 
-    
-    ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
-
-    ${Sequencia}     Set Variable    ${PrimeiraSequencia[0][0]}
-
-    FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-        
-        ${Consulta_Tabela_vendaProdutos}    Query    SELECT CodigoProduto, Desconto FROM vendasprodutos WHERE Sequencia = ${Sequencia}
-
-        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo, IF(DataPromocao > CURDATE(), 1, 0) AS produtoEmPromocao FROM produtos WHERE codigo = ${Consulta_Tabela_vendaProdutos[0][0]}
-
-        IF    ${DescontoMáximoProduto[0][1]} == ${1}
-            
-            IF    ${Consulta_Tabela_vendaProdutos[0][1]} > ${0.1}
-                
-                Fail    \n Produto: ${Consulta_Tabela_vendaProdutos[0][0]} é promocional e possui desconto!    level=WARN
-
-            END
-
-        END
-
-        IF    ${Consulta_Tabela_vendaProdutos[0][1]} > ${DescontoMáximoProduto[0][0]}
-
-            Fail    \n Produto: ${Consulta_Tabela_vendaProdutos[0][0]} ultrapassou o máximo do produto!    level=WARN
-
-        END
-
-        ${Sequencia} =     Set Variable    ${Sequencia + 1}
-        
-    END
 
 Calcula valor final com desconto - Mais de um produto 
 

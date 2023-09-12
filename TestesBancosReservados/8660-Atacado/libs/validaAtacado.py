@@ -30,37 +30,47 @@ class validaAtacado:
 
                 try:
 
-                    consultaProdutos = "SELECT VendaT1, DescontoMaximo FROM produtos WHERE Codigo = " + str(vendasProdutos[i][0])
+                    consultaProdutos = "SELECT VendaT1, DescontoMaximo, IF(DataPromocao > CURDATE(), 1, 0) AS produtoEmPromocao FROM produtos WHERE Codigo = " + str(vendasProdutos[i][0])
                     cursor.execute(consultaProdutos)
 
                     produto = cursor.fetchall()
 
-                    if vendasProdutos[i][3] > produto[0][1]:
+                    if produto[0][2] == 1:
 
-                        print("Desconto aplicado na venda maior que o desconto máximo do produto, verifique!\n Desconto Máximo: "+str(produto[0][1])+"\n Desconto Aplicado: "+str(vendasProdutos[i][3]))
+                        if vendasProdutos[i][3] > 0.1:
 
-                        return False
-                    
+                            print("Produto em promoção possui desconto, verifique!")
+                            
+                            return False
+                        
                     else:
 
-                        desconto = vendasProdutos[i][1] * (vendasProdutos[i][3] / 100)
+                        if vendasProdutos[i][3] > produto[0][1]:
 
-                        print("Valor de Desconto = " + str(desconto))
-
-                        calculoProdutoDesconto = round(produto[0][0] - desconto, ndigits=2)
-
-                        print("Calculo Realizado = " + str(calculoProdutoDesconto))
-
-                        if vendasProdutos[i][2] > calculoProdutoDesconto:
-
-                            print("Valor do produto com desconto calculado errado, verifique!\n Valor no Sistema: "+vendasProdutos[i][2]+"\n Valor Calculado: "+calculoProdutoDesconto)
+                            print("Desconto aplicado na venda maior que o desconto máximo do produto, verifique!\n Desconto Máximo: "+str(produto[0][1])+"\n Desconto Aplicado: "+str(vendasProdutos[i][3]))
 
                             return False
+                        
                         else:
+
+                            desconto = round(vendasProdutos[i][1] * (vendasProdutos[i][3] / 100), ndigits=2)
+
+                            print("Valor de Desconto = " + str(desconto))
+
+                            calculoProdutoDesconto = round(produto[0][0] - desconto, ndigits=2)
+
+                            print("Calculo Realizado = " + str(calculoProdutoDesconto))
+
+                            if vendasProdutos[i][2] > calculoProdutoDesconto:
+
+                                print("Valor do produto com desconto calculado errado, verifique!\n Valor no Sistema: "+str(vendasProdutos[i][2])+"\n Valor Calculado: "+str(calculoProdutoDesconto))
+
+                                return False
+                            else:
+                                
+                                print("Passou nas verificações!")
                             
-                            print("Passou nas verificações!")
-                            
-                except IndexError as e:
+                except IndexError:
                     print("Um erro do tipo IndexError ocorreu.")
                     #Caso seja necessário tratar algum outro erro, mudar o mesmo no Except, já que não é possível depurar o código, o traceback detalha aonde o erro ocorre (linha e aponta pro local do erro).
                     traceback.print_exc()
@@ -68,4 +78,3 @@ class validaAtacado:
         else:
 
             print("Conexão falhou, verifique!")
-        

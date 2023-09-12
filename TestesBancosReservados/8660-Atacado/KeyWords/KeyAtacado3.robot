@@ -34,6 +34,7 @@ ${TELA_RECB_DUPLICATAS}      tela_RecebimentoDuplicatas.png
 ${TELA_EMISSAO_NFC}          tela_EmissaoNFC.png  
 ${AVISO_NCM_INVALIDO}        aviso_NCMInvalidoNFC.png
 ${TELA_VENDAS_ADICIONAR}     atacado_TelaVendaBalcao_Adicionar.png
+${AVISO_COND_ABERTO}         aviso_CondicionalAberto.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -72,6 +73,9 @@ E adiciono vendedor e cliente
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida Condicionais em Aberto
     Sleep    ${SLEEP_BAIXO}
     
     Valida alerta após inserir cliente
@@ -305,6 +309,18 @@ Valida aviso cliente outro vendedor
     IF    ${MSG} == ${True}
 
         Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida Condicionais em Aberto
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${AVISO_COND_ABERTO}
+
+    IF    ${MSG} == ${True}
+
+        Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
 
     END
