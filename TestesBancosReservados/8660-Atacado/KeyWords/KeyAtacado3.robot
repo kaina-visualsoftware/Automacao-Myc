@@ -205,7 +205,8 @@ Então finalizo a venda
 
     Recupera codigo venda
 
-    Recupera valor dos produtos
+    ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
+    Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
@@ -324,14 +325,6 @@ Valida Condicionais em Aberto
         Sleep    ${SLEEP_MEDIO}
 
     END
-
-Recupera valor dos produtos 
-
-    Sleep    ${SLEEP_BAIXO}
-    ${Valor_Produtos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos AS vp INNER JOIN vendas AS v ON v.Codigo = vp.CodigoVenda WHERE v.CodCondicional = ${COD_CONDICIONAL} AND v.Cancelada IS NULL
-    Sleep    ${SLEEP_BAIXO}
-
-    Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
 
 Recupera codigo venda
 

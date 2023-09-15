@@ -4,7 +4,7 @@ Documentation    Testes Banco: Atacado Total - 8660 - Empresa 1
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
-Library    ../libs/validaAtacado.py
+Library    C:\\Automacao\\MyCommerce-Automacao\\TestesBancosReservados\\8660-Atacado\\libs\\validaAtacado.py
 
 *** Variables ***
 ${IMAGES}                    ./TestesBancosReservados/images
@@ -91,7 +91,7 @@ E adiciono vendedor e cliente
     Sleep    ${SLEEP_BAIXO}
 
     Valida condicional aberto
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
     Valida informações de crédito
     Sleep    ${SLEEP_BAIXO}
@@ -132,7 +132,9 @@ Quando insiro um produto normal
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
-    Recupera valor dos produtos 
+    #Recupera valor dos produtos 
+    ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
+    Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
 Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
 
@@ -166,7 +168,9 @@ Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QUANTIDADE_PRODUTOS}
 
     Sleep    ${SLEEP_BAIXO}
-    Recupera valor dos produtos 
+    #Recupera valor dos produtos 
+    ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
+    Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
 E acesso a aba pagamentos
 
@@ -247,10 +251,11 @@ Quando insiro um produto com desconto(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.d
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
+
     Input Text    ${EMPTY}    ${DESCONTO}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.I
@@ -263,7 +268,9 @@ Quando insiro um produto com desconto(${DESCONTO})
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
-    Recupera valor dos produtos 
+    #Recupera valor dos produtos 
+    ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
+    Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
 Quando insiro um produto com desconto - Ultrapassando(${DESCONTO})
 
@@ -288,7 +295,7 @@ Quando insiro um produto com desconto - Ultrapassando(${DESCONTO})
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.d
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
@@ -311,7 +318,9 @@ Quando insiro um produto com desconto - Ultrapassando(${DESCONTO})
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
-    Recupera valor dos produtos 
+    #Recupera valor dos produtos 
+    ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
+    Set Test Variable    ${ValorProduto}    ${ValorProduto}   
 
 E acesso a aba pagamentos - Aplicando desconto(${DESCONTO})
 
@@ -326,15 +335,8 @@ E acesso a aba pagamentos - Aplicando desconto(${DESCONTO})
 
     Set Test Variable    ${DESCONTO}    ${DESCONTO}
 
-    IF    ${QUANTIDADE_PRODUTOS} >= 2
-
-        Calcula valor final com desconto - Mais de um produto
-
-    ELSE
-
-        Calcula valor final com desconto
-
-    END  
+    ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
+    Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
 Quando seleciono a forma 30 dias e desdobro
     Sleep    ${SLEEP_BAIXO}
@@ -386,7 +388,9 @@ Então finalizo a venda - 30 dias
     ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
 
     IF    ${RESPONSE} == ${False}
+
         Fail    Erro ao validar os descontos, verifique!
+
     END
 
 Quando seleciono a forma Personalizada
@@ -436,7 +440,9 @@ Então finalizo a venda - Personalizada
     ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
 
     IF    ${RESPONSE} == ${False}
+
         Fail    Erro ao validar os descontos, verifique!
+
     END
 
 Quando seleciono a forma 30-60-90-120-180 Dias 
@@ -480,7 +486,9 @@ Então finalizo a venda - 30-60-90-120-180 Dias
     ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
 
     IF    ${RESPONSE} == ${False}
+
         Fail    Erro ao validar os descontos, verifique!
+        
     END
 
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
@@ -498,7 +506,7 @@ Valida quantidade de estoque inexistente
 
 Valida alerta após inserir cliente 
 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${ALERTA_CLIENTE}
 
     IF    ${MSG} == ${True}
