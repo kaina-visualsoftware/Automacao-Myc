@@ -46,6 +46,8 @@ ${COD_PRODUTO_SERIAL}        43
 #Diversos
 ${TX_DETAL_SERVIÇO}          ALTERNADOR   
 
+#teste
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
