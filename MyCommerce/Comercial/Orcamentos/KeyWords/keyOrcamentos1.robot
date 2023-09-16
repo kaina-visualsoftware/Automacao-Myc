@@ -6,6 +6,7 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    C:\\Automacao\\MyCommerce-Automacao\\MyCommerce\\libs\\verificaProduto.py
 
+#tteste 2
 
 *** Variables ***
 ${IMAGES}                    ./MyCommerce/images
