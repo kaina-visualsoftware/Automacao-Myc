@@ -26,6 +26,7 @@ ${AVISO_SEM_ESTOQUE}         aviso_QuantidadeSemEstoque.png
 ${TELA_INFO_CRÉDITOS}        tela_InfoCreditos.png  
 ${ALERTA_CLIENTE}            alertaCliente.png
 ${INPUT_COD_CLIENTE}         lb_CodClienteCondicional.png
+${INPUT_COD_VENDEDOR}        lb_CodCliente.png
 ${AVISO_CLIENTE_OUTRO_VE}    aviso_clienteOutroVendedorCond.png  
 ${ROW_PROD_INCLUSO}          row_ProdIncluso.png
 ${AVISO_GERAR_VENDA}         aviso_GerarVendaCond.png
@@ -35,6 +36,11 @@ ${TELA_EMISSAO_NFC}          tela_EmissaoNFC.png
 ${AVISO_NCM_INVALIDO}        aviso_NCMInvalidoNFC.png
 ${TELA_VENDAS_ADICIONAR}     atacado_TelaVendaBalcao_Adicionar.png
 ${AVISO_COND_ABERTO}         aviso_CondicionalAberto.png
+${AVISO_GERA_VENDA_ITENS}    aviso_ConfirmaVendaCond.png
+${TELA_VENDA_PARCIAL}        tela_VendaParcialCond.png
+${TELA_DEVOLUCAO}            tela_Devolucao.png
+#Diversos
+${DESCONTO}                  ${0.0}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -44,6 +50,7 @@ Dado que acesso a tela de condicionais
     
     Press Special Key    F11
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
 E adiciono uma nova condicional 
 
@@ -75,13 +82,13 @@ E adiciono vendedor e cliente
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    Valida Condicionais em Aberto
-    Sleep    ${SLEEP_BAIXO}
-    
     Valida alerta após inserir cliente
     Sleep    ${SLEEP_BAIXO}
 
     Valida aviso cliente outro vendedor
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida Condicionais em Aberto
     Sleep    ${SLEEP_BAIXO}
 
     Valida informações de crédito
@@ -122,49 +129,41 @@ Então finalizo a condicional
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
-Quando insiro um produto com desconto(${DESCONTO})
-
+Quando insiro um produto com desconto(${QUANTIDADE_PRODUTOS} ${DESCONTO})
+    
+    Press Combination    KEY.ALT     Key.n 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.P
-
-    Sleep    ${SLEEP_BAIXO}
-    ${codProduto}    Query    SELECT codigo FROM produtos WHERE (ModalidadeControle = 'Normal' AND Cancelado IS NULL) AND (Ativo = -1 AND DescontoMaximo > ${DESCONTO}) ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_MEDIO}
-    Input Text    ${EMPTY}    ${codProduto[0][0]} 
     Sleep    ${SLEEP_BAIXO}
 
-    FOR    ${I}    IN RANGE    3
-
-        Press Special Key    TAB
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+        
+        Sleep    ${SLEEP_BAIXO}
+        ${codProduto}    Query    SELECT codigo FROM produtos WHERE (ModalidadeControle = 'Normal' AND Cancelado IS NULL) AND (Ativo = -1 AND DescontoMaximo > ${DESCONTO}) ORDER BY RAND() LIMIT 1;
+        Sleep    ${SLEEP_MEDIO}
+        Input Text    ${EMPTY}    ${codProduto[0][0]} 
         Sleep    ${SLEEP_BAIXO}
 
+        FOR    ${I}    IN RANGE    2
+
+            Press Special Key    TAB
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Input Text    ${EMPTY}    ${DESCONTO}
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.I
+
+        Valida quantidade de estoque inexistente
+        
     END
-
-    Valida quantidade de estoque inexistente
-
-    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.E 
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    
-    Input Text    ${EMPTY}    ${DESCONTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.I
-
-    Valida quantidade de estoque inexistente
-
-    Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
-
-    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]} 
 
     Set Test Variable    ${DESCONTO}    ${DESCONTO}
 
-    Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QUANTIDADE_PRODUTOS}
 
 Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
 
@@ -197,11 +196,46 @@ Quando clico em Gerar Venda
     Wait Until Screen Contain    ${AVISO_GERAR_VENDA}    ${TEMPO_TELA}
     Press Special Key    ENTER
 
-Então finalizo a venda
- 
-    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
-    Press Combination    KEY.ALT     Key.m
+Quando clico em Gerar Venda Parcial
+
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.V
     Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${AVISO_GERAR_VENDA}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.s
+
+E seleciono os produtos para gerar a venda(${QUANTIDADE_VENDA})
+
+    Wait Until Screen Contain    ${TELA_VENDA_PARCIAL}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    IF    ${QUANTIDADE_VENDA} > ${QUANTIDADE_PRODUTOS}
+        
+        ${QUANTIDADE_VENDA}     Evaluate    ${QUANTIDADE_PRODUTOS}
+
+    END
+
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_VENDA}
+        
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Press Combination    KEY.ALT     Key.G
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain    ${AVISO_GERA_VENDA_ITENS}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.S  
+    Sleep    ${SLEEP_ALTO}  
+
+Então finalizo a venda
+
+    Sleep    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.m
+    Sleep    ${SLEEP_ALTO}
 
     Recupera codigo venda
 
@@ -230,6 +264,58 @@ Então finalizo a venda
     IF    ${RESPONSE} == ${False}
         Fail    Validação de desconto não passou!
     END
+
+Quando cliclo em gerar devolução
+    
+    Press Combination    KEY.ALT     Key.D 
+    Wait Until Screen Contain    ${TELA_DEVOLUCAO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+E seleciono os itens a serem devolvidos(${QUANTIDADE_DEVOLVER})
+    
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${QUANTIDADE_DEVOLVER}    ${QUANTIDADE_DEVOLVER}
+
+    FOR    ${I}    IN RANGE    ${QUANTIDADE_DEVOLVER}
+        
+        Press Combination    KEY.ALT     Key.t 
+        Sleep    ${SLEEP_BAIXO}
+
+        FOR    ${J}    IN RANGE    ${I + 1}
+
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}    
+            
+        END
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+Então finalizo a finalizo a devolução gravando 
+
+    Press Combination    KEY.ALT     Key.F 
+    Sleep    ${SLEEP_MEDIO}
+
+    Sleep    ${SLEEP_BAIXO}
+    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE Tipo LIKE 'D' OR Tipo LIKE 'V' AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${INPUT_COD_VENDEDOR}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${codVendedor[0][0]}
+    Sleep    ${SLEEP_BAIXO}
+    
+    Press Combination    KEY.ALT     Key.G 
+    Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+    Press Special Key    ENTER
+    
+    Check If Exists In Database    SELECT * FROM condicionais_devolucao WHERE CodigoCondicional = ${COD_CONDICIONAL}
 
 #----------------------------------------------------------------------------------------------------------------------#
 Faturando a NFC-e

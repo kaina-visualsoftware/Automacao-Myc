@@ -22,7 +22,7 @@ Teste 02 - Adicionando condicional com produto com desconto
     Dado que acesso a tela de condicionais
     E adiciono uma nova condicional 
     E adiciono vendedor e cliente
-    Quando insiro um produto com desconto(5)
+    Quando insiro um produto com desconto(1 5)
     Então finalizo a condicional
 
 Teste 03 - Adicionando condicional com mais de um produto normal
@@ -62,4 +62,56 @@ Teste 06 - Adicionando condicional com produto com desconto e gerando venda tota
     Então finalizo a condicional
     Quando clico em Gerar Venda
     Então finalizo a venda
-    
+
+Teste 07 - Adicionando condicional com mais de um produto e gerando venda Parcial
+    [Tags]    Teste07
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo a condicional
+    Quando clico em Gerar Venda Parcial
+    E seleciono os produtos para gerar a venda(3)
+    Então finalizo a venda
+
+Teste 08 - Adicionando condicional com produto com desconto
+    [Tags]    Teste08
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro um produto com desconto(1 5)
+    Então finalizo a condicional
+    Quando clico em Gerar Venda Parcial
+    E seleciono os produtos para gerar a venda(3)
+    Então finalizo a venda
+
+Teste 09 - Adicionando condicional com produto com desconto
+    [Tags]    Teste09
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro um produto com desconto(4 10)
+    Então finalizo a condicional
+    Quando clico em Gerar Venda Parcial
+    E seleciono os produtos para gerar a venda(3)
+    Então finalizo a venda
+
+Teste 10 - Adicionando condicional e gerando devolução da mesma
+    [Tags]    Teste10
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo a condicional
+    Quando cliclo em gerar devolução
+    E seleciono os itens a serem devolvidos(2)
+    Então finalizo a finalizo a devolução gravando
+
+Teste 11 - Adicionando condicional e gerando devolução da mesma
+    [Tags]    Teste11
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo a condicional
+    Quando cliclo em gerar devolução
