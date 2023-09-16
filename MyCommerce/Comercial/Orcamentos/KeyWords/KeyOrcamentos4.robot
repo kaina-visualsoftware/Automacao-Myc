@@ -106,11 +106,19 @@ E seleciono clicando no botão
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${BT_SELECIONAR}
     Wait Until Screen Contain    ${TELA_ORC_ADICIONAR}    ${TEMPO_TELA}   
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I
 
 E seleciono clicando no atalho botão
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S
-    Wait Until Screen Contain    ${TELA_ORC_ADICIONAR}    ${TEMPO_TELA}   
+    Wait Until Screen Contain    ${TELA_ORC_ADICIONAR}    ${TEMPO_TELA} 
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB  
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I
 
 Então finalizo o orçamento como a vista
     Press Combination    KEY.ALT     Key.m 

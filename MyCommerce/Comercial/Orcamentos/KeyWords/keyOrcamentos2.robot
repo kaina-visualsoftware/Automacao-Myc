@@ -511,6 +511,7 @@ Verificar se objeto está visivel
 
 #***---Função para calcular total dos orçamentos na venda agrupada---***#
 Calcula valor total orcamentos
+    Sleep    ${SLEEP_BAIXO}
     ${VALOR_TOTAL_ORCS}    Query    SELECT ROUND(SUM(TotalPedido),2) FROM orcamentos WHERE `Data` = CURDATE() AND `Status` = 'f'
     
     Set Suite Variable    ${VALOR_FINAL_ORCS}    ${VALOR_TOTAL_ORCS[0][0]}
