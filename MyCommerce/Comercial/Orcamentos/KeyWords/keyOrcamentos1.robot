@@ -6,7 +6,6 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    C:\\Automacao\\MyCommerce-Automacao\\MyCommerce\\libs\\verificaProduto.py
 
-
 *** Variables ***
 ${IMAGES}                    ./MyCommerce/images
 #Conexão MySQL
@@ -45,6 +44,8 @@ ${COD_PRODUTO_KIT}           9
 ${COD_PRODUTO_SERIAL}        43
 #Diversos
 ${TX_DETAL_SERVIÇO}          ALTERNADOR   
+
+#teste
 
 *** Keywords ***
 Ler imagens iniciais
