@@ -58,7 +58,7 @@ Teste 06 - Adicionando condicional com produto com desconto e gerando venda tota
     Dado que acesso a tela de condicionais
     E adiciono uma nova condicional 
     E adiciono vendedor e cliente
-    Quando insiro um produto com desconto(5)
+    Quando insiro um produto com desconto(1 5)
     Então finalizo a condicional
     Quando clico em Gerar Venda
     Então finalizo a venda
@@ -103,15 +103,18 @@ Teste 10 - Adicionando condicional e gerando devolução da mesma
     E adiciono vendedor e cliente
     Quando insiro mais de um um produto normal(5)
     Então finalizo a condicional
-    Quando cliclo em gerar devolução
+    Quando clico em gerar devolução
     E seleciono os itens a serem devolvidos(2)
     Então finalizo a finalizo a devolução gravando
 
-Teste 11 - Adicionando condicional e gerando devolução da mesma
+Teste 11 - Adicionando condicional e gerando Venda da mesma
     [Tags]    Teste11
     Dado que acesso a tela de condicionais
     E adiciono uma nova condicional 
     E adiciono vendedor e cliente
     Quando insiro mais de um um produto normal(5)
     Então finalizo a condicional
-    Quando cliclo em gerar devolução
+    Quando clico em gerar devolução
+    E seleciono os itens a serem devolvidos(2)
+    Quando finalizo a devolução gerando venda
+    Então finalizo a venda

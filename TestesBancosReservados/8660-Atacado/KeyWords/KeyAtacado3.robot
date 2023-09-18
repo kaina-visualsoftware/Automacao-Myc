@@ -265,7 +265,7 @@ Então finalizo a venda
         Fail    Validação de desconto não passou!
     END
 
-Quando cliclo em gerar devolução
+Quando clico em gerar devolução
     
     Press Combination    KEY.ALT     Key.D 
     Wait Until Screen Contain    ${TELA_DEVOLUCAO}    ${TEMPO_TELA}
@@ -278,17 +278,20 @@ E seleciono os itens a serem devolvidos(${QUANTIDADE_DEVOLVER})
     Set Test Variable    ${QUANTIDADE_DEVOLVER}    ${QUANTIDADE_DEVOLVER}
 
     FOR    ${I}    IN RANGE    ${QUANTIDADE_DEVOLVER}
-        
+
+        Sleep    ${SLEEP_BAIXO}    
         Press Combination    KEY.ALT     Key.t 
         Sleep    ${SLEEP_BAIXO}
 
         FOR    ${J}    IN RANGE    ${I + 1}
 
+            Sleep    ${SLEEP_BAIXO}
             Press Special Key    DOWN
             Sleep    ${SLEEP_BAIXO}    
             
         END
-
+        
+        Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
 
@@ -299,14 +302,8 @@ Então finalizo a finalizo a devolução gravando
     Press Combination    KEY.ALT     Key.F 
     Sleep    ${SLEEP_MEDIO}
 
-    Sleep    ${SLEEP_BAIXO}
-    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE Tipo LIKE 'D' OR Tipo LIKE 'V' AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_BAIXO}
+    Seleciona vendedor devolução
 
-    SikuliLibrary.Click    ${INPUT_COD_VENDEDOR}
-    Sleep    ${SLEEP_BAIXO}
-
-    Input Text    ${EMPTY}    ${codVendedor[0][0]}
     Sleep    ${SLEEP_BAIXO}
     
     Press Combination    KEY.ALT     Key.G 
@@ -317,7 +314,31 @@ Então finalizo a finalizo a devolução gravando
     
     Check If Exists In Database    SELECT * FROM condicionais_devolucao WHERE CodigoCondicional = ${COD_CONDICIONAL}
 
+Quando finalizo a devolução gerando venda
+
+    Press Combination    KEY.ALT     Key.F 
+    Sleep    ${SLEEP_MEDIO}
+
+    Seleciona vendedor devolução
+    
+    Press Combination    KEY.ALT     Key.V 
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${AVISO_GERAR_VENDA}    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_BAIXO}
+
 #----------------------------------------------------------------------------------------------------------------------#
+Seleciona vendedor devolução
+
+    Sleep    ${SLEEP_BAIXO}
+    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE Tipo LIKE 'D' OR Tipo LIKE 'V' AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${INPUT_COD_VENDEDOR}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${codVendedor[0][0]}
+
 Faturando a NFC-e
 
     Sleep    ${SLEEP_MEDIO}
