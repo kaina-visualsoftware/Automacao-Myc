@@ -21,9 +21,13 @@ Para rodar os testes automatizados é necessário:
 * Robotframework-imagehorizonlibrary==1.0
 * Robotframework-faker==5.0.0
 * Robotframework-databaselibrary==1.2.4
+* MySql-Connector
 ___
 ### Instalando o Python :smiley:
 Instalar o **Python** para Windows e incluí-lo ao path na hora da instalação. 
+___
+### ATENÇÃO ### :devil:
+Para que as Libs em Python funcionem, é necessário configurar o caminho das mesmas nas settings do Visual Studio - Editar o Python Path: https://prnt.sc/Abom_I6hnyl0 E inserir o caminho com \\ : https://prnt.sc/CuJebXfd5Lxm
 
 **OBSERVAÇÃO**:
 > Caso não seja feito na hora da instalação, basta adicionar depois indo nas variáveis de ambiente 
@@ -42,7 +46,9 @@ ___
 ___
 ### Instalando a DatabaseLibrary :relaxed:
 <code style="color : black">> pip install robotframework-databaselibrary </code>
-
+___
+### Instalando MySql Connector :relaxed:
+<code style="color : black">> pip install mysql-connector-python </code>
 
 
 ## Como rodar os testes
