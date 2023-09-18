@@ -26,7 +26,7 @@ ___
 ### Instalando o Python :smiley:
 Instalar o **Python** para Windows e incluí-lo ao path na hora da instalação. 
 ___
-### ATENÇÃO :devil:
+### ATENÇÃO :evil:
 Para que as Libs em Python funcionem, é necessário configurar o caminho das mesmas nas settings do Visual Studio - Editar o Python Path: https://prnt.sc/Abom_I6hnyl0 E inserir o caminho com \\ : https://prnt.sc/CuJebXfd5Lxm
 
 **OBSERVAÇÃO**:
