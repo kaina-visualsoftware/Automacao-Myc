@@ -18,8 +18,77 @@ Teste 01 - Gerando devolução de item normal
     E vou para a aba de pagamentos
     Então finalizo a devolução
 
-Teste 02 - Gerando devolução de item normal
+Teste 02 - Gerando devolução de item normal com troca
     [Tags]    Teste02
     Dado que acesso a tela de devolução
     E adiciono uma nova devolução
     E adiciono vendedor e cliente
+    Quando insiro produtos que o cliente já tenha comprado(1)
+    Quando seleciono produtos para a troca(1)
+    E vou para a aba de pagamentos
+    Quando desdobro os pagamentos
+    Então finalizo a devolução
+
+Teste 03 - Gerando devolução de mais produtos
+    [Tags]    Teste03
+    Dado que acesso a tela de devolução
+    E adiciono uma nova devolução
+    E adiciono vendedor e cliente
+    Quando insiro produtos que o cliente já tenha comprado(3)
+    E vou para a aba de pagamentos
+    Então finalizo a devolução
+
+Teste 04 - Gerando devolução de mais produtos com trocas
+    [Tags]    Teste04
+    Dado que acesso a tela de devolução
+    E adiciono uma nova devolução
+    E adiciono vendedor e cliente
+    Quando insiro produtos que o cliente já tenha comprado(3)
+    Quando seleciono produtos para a troca(4)
+    E vou para a aba de pagamentos
+    Quando desdobro os pagamentos
+    Então finalizo a devolução
+
+Teste 05 - Editando uma devolução
+    [Tags]    Teste05
+    Dado que acesso a tela de devolução
+    E adiciono uma nova devolução
+    E adiciono vendedor e cliente
+    Quando insiro produtos que o cliente já tenha comprado(3)
+    Quando seleciono produtos para a troca(1)
+    E vou para a aba de pagamentos
+    Quando gravo a devolução 
+    E edito a mesma
+    Quando removo um produto da devolução
+    E vou para a aba de pagamentos
+    Quando desdobro os pagamentos
+    Então finalizo a devolução
+
+Teste 06 - Editando um produto da devolução
+    [Tags]    Teste06
+    Dado que acesso a tela de devolução
+    E adiciono uma nova devolução
+    E adiciono vendedor e cliente
+    Quando insiro produtos que o cliente já tenha comprado(3)
+    Quando seleciono produtos para a troca(1)
+    E vou para a aba de pagamentos
+    Quando gravo a devolução 
+    E edito a mesma
+    Quando edito um produto
+    E vou para a aba de pagamentos
+    Quando desdobro os pagamentos
+    Então finalizo a devolução
+
+Teste 07 - Excluindo uma devolução
+    [Tags]    Teste07
+    Dado que acesso a tela de devolução
+    E adiciono uma nova devolução
+    E adiciono vendedor e cliente
+    Quando insiro produtos que o cliente já tenha comprado(2)
+    Quando seleciono produtos para a troca(2)
+    E vou para a aba de pagamentos
+    Quando desdobro os pagamentos
+    Então finalizo a devolução
+    Quando clico em excluir
+    E informo o motivo
+    Então excluo a devolução
