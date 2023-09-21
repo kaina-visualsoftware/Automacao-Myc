@@ -5,7 +5,6 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    C:\\Automacao\\MyCommerce-Automacao\\TestesBancosReservados\\8660-Atacado\\libs\\validaAtacado.py
-
 *** Variables ***
 ${IMAGES}                    ./TestesBancosReservados/images
 #Conexão MySQL
@@ -42,6 +41,12 @@ ${TELA_PERSONAL_PAGAMENT}    tela_PersonalizacaoPagamentos.png
 ${COMBOBOX_FORMA_6X}         forma_6x.png
 ${INPUT_COD_CLIENTE}         lb_CodCliente.png
 ${AVISO_CONDI_ABERTO}        aviso_CondicionalAbertoVenda.png
+${TELA_SOLICITACAO_SENHA}    tela_SolicitaSenha.png
+${TELA_MOTIVO_EXCLUSAO}      tela_exclusaoDevolucao.png
+${BT_SIM}                    bt_Sim.png
+${BT_NAO}                    bt_NaoExclusao.png
+${AVISO_EXCLUIR_PRODUTO}     aviso_ExcluirProdutoVenda.png
+${TELA_LIBERACAO}            tela_Liberacao.png
 #CÓDIGOS
 ${DESCONTO}                  ${0.0}
 #BOTÕES
@@ -132,7 +137,6 @@ Quando insiro um produto normal
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
-    #Recupera valor dos produtos 
     ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
     Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
@@ -168,7 +172,6 @@ Quando insiro mais de um um produto normal(${QUANTIDADE_PRODUTOS})
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QUANTIDADE_PRODUTOS}
 
     Sleep    ${SLEEP_BAIXO}
-    #Recupera valor dos produtos 
     ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
     Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
@@ -228,6 +231,14 @@ Faturando a NFC-e
     Sleep    ${SLEEP_BAIXO}
     Should Not Be Equal    ${Consulta[0][0]}    ${null}
 
+Cancelando a NFC-e
+
+    Sleep    ${SLEEP_MEDIO}
+    Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C
+    Sleep    ${SLEEP_MEDIO}
+
 Quando insiro um produto com desconto(${DESCONTO})
 
     Sleep    ${SLEEP_BAIXO}
@@ -268,7 +279,6 @@ Quando insiro um produto com desconto(${DESCONTO})
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
-    #Recupera valor dos produtos 
     ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
     Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
@@ -317,8 +327,7 @@ Quando insiro um produto com desconto - Ultrapassando(${DESCONTO})
     Set Test Variable    ${DESCONTO}    ${DESCONTO}
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
-
-    #Recupera valor dos produtos 
+ 
     ${ValorProduto}    Calcula Valor Final Desconto    ${COD_VENDA}    ${DESCONTO}
     Set Test Variable    ${ValorProduto}    ${ValorProduto}   
 
@@ -339,8 +348,10 @@ E acesso a aba pagamentos - Aplicando desconto(${DESCONTO})
     Set Test Variable    ${ValorProduto}    ${ValorProduto}
 
 Quando seleciono a forma 30 dias e desdobro
+
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
+    SikuliLibrary.Click    ${BT_SELECAO_FORMA}
+
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    DOWN
     Sleep    ${SLEEP_BAIXO}
@@ -352,7 +363,22 @@ Quando seleciono a forma 30 dias e desdobro
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
 
+Quando desdobro utilizando a forma 30 dias 
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.M 
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D  
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida vencimento no sabado 
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+
 E excluo o pagamento 
+
     Sleep    ${SLEEP_ALTO}
     SikuliLibrary.Click    ${BT_EXCLUIR_PAG}
     Sleep    ${SLEEP_MEDIO}
@@ -362,6 +388,7 @@ E excluo o pagamento
     Sleep    ${SLEEP_BAIXO}
 
 Quando incluo um pagamento 
+
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}  
     Press Combination    KEY.ALT     Key.N 
@@ -373,6 +400,7 @@ Quando incluo um pagamento
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
 
 Então finalizo a venda - 30 dias
+
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.F
     Wait Until Screen Contain    ${TELA_IMPRESSAO_BOLETO}    ${TEMPO_TELA}
@@ -380,6 +408,27 @@ Então finalizo a venda - 30 dias
     Sleep    ${SLEEP_BAIXO}
 
     Faturando a NFC-e
+
+    Wait Until Screen Contain    ${TELA_EMISSAO_PROMISSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S 
+
+    ${RESPONSE}    Valida Desconto Venda    ${COD_VENDA}
+
+    IF    ${RESPONSE} == ${False}
+
+        Fail    Erro ao validar os descontos, verifique!
+
+    END
+
+Quando finalizo a venda - 30 dias - Sem Faturar NFC
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+    Wait Until Screen Contain    ${TELA_IMPRESSAO_BOLETO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${BT_NAO_IMP_BOLETO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Cancelando a NFC-e
 
     Wait Until Screen Contain    ${TELA_EMISSAO_PROMISSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -491,6 +540,82 @@ Então finalizo a venda - 30-60-90-120-180 Dias
         
     END
 
+Quando clico em excluir
+    
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.x 
+    Sleep    ${SLEEP_BAIXO}
+
+E informo a senha do supervisor 
+    
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_SOLICITACAO_SENHA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    1
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+
+Então confirmo a exclusão da venda
+    
+    Wait Until Screen Contain    ${TELA_MOTIVO_EXCLUSAO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    Exclusao da venda por conta de lancamentos errados
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_SIM}
+    Sleep    ${SLEEP_MEDIO}
+
+    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
+
+Então cancelo a exclusão da venda
+    
+    Wait Until Screen Contain    ${TELA_MOTIVO_EXCLUSAO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    Exclusao da venda por conta de lancamentos errados
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_NAO}
+    Sleep    ${SLEEP_MEDIO}
+
+    Check If Not Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
+
+Quando clico em editar
+    
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.E 
+    Sleep    ${SLEEP_BAIXO}
+
+Quando removo um produto
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.o
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_PRODUTO}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.S 
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_LIBERACAO}    ${TEMPO_TELA}
+    Input Text    ${EMPTY}    1
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+
+    ${QUANTIDADE_VENDA}    Row Count    SELECT * FROM vendasprodutos WHERE codigoVenda = ${COD_VENDA} AND Cancelada IS NULL
+
+    Should Be Equal    ${QUANTIDADE_VENDA}    ${2}
+
+Quando edito a quantidade de um produto
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.d
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    5
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida quantidade de estoque inexistente
+
 #-------------------------------------------VALIDAÇÕES-------------------------------------------------#
 Valida quantidade de estoque inexistente
 
@@ -592,86 +717,16 @@ Valida condicional aberto
 
     END
 
-
-Recupera valor dos produtos 
-
-    Sleep    ${SLEEP_BAIXO}
-    ${Valor_Produtos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Cancelada IS NULL
-    Sleep    ${SLEEP_BAIXO}
-
-    Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
-
-Calcula valor final com desconto 
-
-    ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${COD_PRODUTO}
-    Sleep    ${SLEEP_BAIXO}
-
-    IF    ${DESCONTO} > ${DescontoMáximoProduto[0][0]}
-        
-        ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DescontoMáximoProduto[0][0]} / 100))), 2)
-
-    ELSE
-
-        ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 2)
-
-    END
-
-    Set Test Variable    ${ValorProduto}    ${ValorTotalFinal}
-
-Calcula valor final com desconto - Mais de um produto 
-
-    ${valorTotalProdutos} =     Set Variable    ${0.01}
-    
-    ${PrimeiraSequencia}    Query    SELECT Sequencia FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} ORDER BY Sequencia ASC LIMIT 1;
-
-    ${Sequencia}     Set Variable    ${PrimeiraSequencia[0][0]}
-
-    FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-
-        ${Valor_Produtos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Sequencia = ${Sequencia}
-        Set Test Variable    ${ValorProduto}    ${Valor_Produtos[0][0]}
-
-        ${CodigoProduto}    Query    SELECT CodigoProduto FROM vendasprodutos WHERE Sequencia = ${Sequencia}
-        
-        ${DescontoMáximoProduto}    Query    SELECT DescontoMaximo FROM produtos WHERE codigo = ${CodigoProduto[0][0]}
-        Sleep    ${SLEEP_BAIXO}
-
-        ${ValidaPromo}    Query    SELECT IF(DataPromocao > CURDATE(), 1, 0) AS produtoEmPromocao FROM produtos WHERE codigo = ${CodigoProduto[0][0]}
-
-        IF    ${ValidaPromo[0][0]} == ${1}
-            
-            ${ValorTotalFinal}    Evaluate    ${ValorProduto}
-
-        ELSE
-
-            IF    ${DESCONTO} > ${DescontoMáximoProduto[0][0]}
-            
-                ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DescontoMáximoProduto[0][0]} / 100))), 2)
-
-            ELSE
-
-                ${ValorTotalFinal}    Evaluate    round((${ValorProduto} - ( ${ValorProduto} * (${DESCONTO} / 100))), 2)
-
-            END
-
-        END
-
-        ${Sequencia} =     Set Variable    ${Sequencia + 1}
-
-        ${valorTotalProdutos}     Evaluate    round((${valorTotalProdutos} + ${ValorTotalFinal}),2)
-        
-    END
-
-    Set Test Variable    ${ValorProduto}    ${valorTotalProdutos}
-
 Valida parcelas e valor - formas com parcelas(${QTDE_PAG})
 
     ${QTDE_PAG}    Convert To Integer    ${QTDE_PAG}
 
     ${Valores_Personalizados}    Query    SELECT QuantidadePag, ValorFinalPagamentos FROM vendas WHERE Codigo = ${COD_VENDA}
 
+    ${VALORES_PRODUTO}    Convert To Number    ${ValorProduto}
+
     Sleep    ${SLEEP_BAIXO}
-    Should Be Equal    ${Valores_Personalizados[0][1]}    ${ValorProduto}
+    Should Be Equal    ${Valores_Personalizados[0][1]}    ${VALORES_PRODUTO}
 
     Sleep    ${SLEEP_BAIXO}
     Should Be Equal    ${Valores_Personalizados[0][0]}    ${QTDE_PAG}

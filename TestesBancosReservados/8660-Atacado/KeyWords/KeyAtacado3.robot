@@ -39,6 +39,9 @@ ${AVISO_COND_ABERTO}         aviso_CondicionalAberto.png
 ${AVISO_GERA_VENDA_ITENS}    aviso_ConfirmaVendaCond.png
 ${TELA_VENDA_PARCIAL}        tela_VendaParcialCond.png
 ${TELA_DEVOLUCAO}            tela_Devolucao.png
+${AVISO_ALTERAR_VENDEDOR}    aviso_AlterarVendedor_Pedidos.png
+${LB_CODIGO_PRODUTO}         lb_CodigoProduto.png
+${AVISO_EXCLUIR_PRODUTO}     aviso_ExcluirProdutoCondicional.png
 #Diversos
 ${DESCONTO}                  ${0.0}
 
@@ -327,6 +330,61 @@ Quando finalizo a devolução gerando venda
     Press Combination    KEY.ALT     Key.S 
     Sleep    ${SLEEP_BAIXO}
 
+Quando clico em editar
+    
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.E
+    Sleep    ${SLEEP_MEDIO}
+
+    Valida alerta após inserir cliente
+
+    Valida aviso alterar vendedor
+
+    Valida Condicionais em Aberto
+
+    Valida informações de crédito
+    
+E seleciono um produto para a edição
+
+    SikuliLibrary.Click    ${LB_CODIGO_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination     KEY.ALT     Key.E 
+    Sleep    ${SLEEP_BAIXO}
+
+E altero a quantidade inserida nele 
+    
+    Input Text    ${EMPTY}    4
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida quantidade de estoque inexistente
+
+Quando aplico desconto no item(${DESCONTO})
+    
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${DESCONTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.I
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida quantidade de estoque inexistente
+
+E removo um item da condicional
+    
+    SikuliLibrary.Click    ${LB_CODIGO_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination     KEY.ALT     Key.R
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_PRODUTO}    ${SLEEP_ALTO}
+    Press Combination     KEY.ALT     Key.S 
+    Sleep    ${SLEEP_BAIXO}
+
 #----------------------------------------------------------------------------------------------------------------------#
 Seleciona vendedor devolução
 
@@ -425,6 +483,18 @@ Valida Condicionais em Aberto
     
     Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${AVISO_COND_ABERTO}
+
+    IF    ${MSG} == ${True}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida aviso alterar vendedor 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${AVISO_ALTERAR_VENDEDOR}
 
     IF    ${MSG} == ${True}
 

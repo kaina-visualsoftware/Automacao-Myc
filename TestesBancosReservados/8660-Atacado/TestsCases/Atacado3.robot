@@ -118,3 +118,38 @@ Teste 11 - Adicionando condicional e gerando Venda da mesma
     E seleciono os itens a serem devolvidos(2)
     Quando finalizo a devolução gerando venda
     Então finalizo a venda
+
+Teste 12 - Editando a condicional e alterando a quantidade de produto
+    [Tags]    Teste12
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo a condicional
+    Quando clico em editar
+    E seleciono um produto para a edição
+    E altero a quantidade inserida nele
+    Então finalizo a condicional
+
+Teste 13 - Editando a condicional e alterando o desconto de um produto 
+    [Tags]    Teste13
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    Então finalizo a condicional
+    Quando clico em editar
+    E seleciono um produto para a edição
+    Quando aplico desconto no item(15)
+    Então finalizo a condicional
+
+Teste 14 - Editando a condicional e removendo um produto
+    [Tags]    Teste14
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo a condicional
+    Quando clico em editar
+    E removo um item da condicional
+    Então finalizo a condicional

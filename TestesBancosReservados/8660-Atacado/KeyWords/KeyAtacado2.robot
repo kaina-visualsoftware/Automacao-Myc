@@ -39,6 +39,10 @@ ${AVISO_VENCIMENTO_FDS}      aviso_VencimentoGeracaoVenda.png
 ${AVISO_NCM_INVALIDO}        aviso_NCMInvalidoNFC.png
 ${TELA_FORMAS_PAGAMENTO}     tela_FormasPagamento.png
 ${TELA_RECB_DUPLICATAS}      tela_RecebimentoDuplicatas.png
+${TELA_EXCLUSAO}             tela_ExclusaoDevolucao.png
+${BT_SIM}                    bt_Sim.png
+${BT_NAO}                    bt_NaoExclusao.png
+${AVISO_EXCLUIR_PRODUTO}     aviso_ExcluirProduto.png
 #Código
 ${DESCONTO}                  ${0.0}
 #Botões
@@ -384,6 +388,44 @@ Então gero a venda parcial(${QTD_GERAR})
         END
 
     END
+
+Quando clico em excluir
+    
+    Wait Until Screen Contain    ${TELA_PEDIDOS_PREVENDA}     ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.x 
+    Sleep    ${SLEEP_BAIXO}
+
+E informo o motivo da exclusão
+
+    Wait Until Screen Contain    ${TELA_EXCLUSAO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    Exclusao de pedido pois o cliente desistiu do pedido
+
+Então confirmo a exclusão
+    
+    SikuliLibrary.Click    ${BT_SIM}
+    Sleep    ${SLEEP_MEDIO}
+
+    Check If Exists In Database    SELECT * FROM pedidosvenda WHERE Codigo = ${COD_PEDIDO} AND `Status` LIKE 'x';
+
+Então cancelo a exclusão
+    
+    SikuliLibrary.Click    ${BT_NAO}
+    Sleep    ${SLEEP_MEDIO}
+
+    Check If Not Exists In Database    SELECT * FROM pedidosvenda WHERE Codigo = ${COD_PEDIDO} AND `Status` LIKE 'x';
+
+Quando excluo um produto
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.x 
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_PRODUTO}    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+
+    ${QUANTIDADE_PEDIDOS_VENDA}    Row Count    SELECT * FROM pedidosvendaprodutos WHERE CodigoPedido = ${COD_PEDIDO} AND Cancelada IS NULL
+    
+    Should Be Equal    ${QUANTIDADE_PEDIDOS_VENDA}    ${4}
 
 #-----------------------------------------------------------------------------------------------------------------#
 Valida aviso cliente outro vendedor

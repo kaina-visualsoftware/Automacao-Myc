@@ -147,3 +147,36 @@ Teste 14 - Adicionando pedido e gerando venda parcial com todos os itens
     Então finalizo o pedido depois de auditado
     Quando clico em Gerar Venda
     Então gero a venda parcial(5)
+
+Teste 15 - Exclusão de Pedido - Confirmando a exclusão
+    [Tags]    Teste15
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então finalizo o pedido
+    Quando clico em excluir
+    E informo o motivo da exclusão
+    Então confirmo a exclusão
+
+Teste 16 - Exclusão de Pedido - Cancelando a exclusão
+    [Tags]    Teste16
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então finalizo o pedido
+    Quando clico em excluir
+    E informo o motivo da exclusão
+    Então cancelo a exclusão
+
+Teste 17 - 
+    [Tags]    Teste17
+    Dado que acesso a tela de pedidos
+    E adiciono um novo pedido
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(5)
+    Então finalizo o pedido
+    E edito o último pedido
+    Quando excluo um produto
+    Então finalizo o pedido

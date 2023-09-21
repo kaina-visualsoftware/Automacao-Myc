@@ -267,6 +267,80 @@ Teste 26 - Venda com mais de um produto, inserindo o desconto no final - Persona
     Quando seleciono a forma 30-60-90-120-180 Dias
     Então finalizo a venda - 30-60-90-120-180 Dias 
   
+Teste 27 - Exclusão de venda - confirmando a exclusão
+    [Tags]    Teste27
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    E acesso a aba pagamentos
+    Então finalizo a venda
+    Quando clico em excluir
+    E informo a senha do supervisor
+    Então confirmo a exclusão da venda
+
+Teste 28 - Exclusão de venda - cancelado a exclusão
+    [Tags]    Teste28
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    E acesso a aba pagamentos
+    Então finalizo a venda
+    Quando clico em excluir
+    E informo a senha do supervisor
+    Então cancelo a exclusão da venda
+
+Teste 29 - Editando venda e removendo produto
+    [Tags]    Teste29
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    E acesso a aba pagamentos
+    Quando seleciono a forma 30 dias e desdobro
+    Quando finalizo a venda - 30 dias - Sem Faturar NFC
+    Quando clico em editar
+    E informo a senha do supervisor
+    E acesso a aba pagamentos
+    E excluo o pagamento
+    Quando removo um produto
+    Quando desdobro utilizando a forma 30 dias
+    Então finalizo a venda - 30 dias
+
+Teste 30 - Editando venda e alterando a quantidade do produto
+    [Tags]    Teste30
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    E acesso a aba pagamentos
+    Quando seleciono a forma 30 dias e desdobro
+    Quando finalizo a venda - 30 dias - Sem Faturar NFC
+    Quando clico em editar
+    E informo a senha do supervisor
+    E acesso a aba pagamentos
+    E excluo o pagamento
+    Quando edito a quantidade de um produto
+    Quando desdobro utilizando a forma 30 dias
+    Então finalizo a venda - 30 dias
+
+Teste 31 - Editando venda e alterando a forma de parcelamento
+    [Tags]    Teste31
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(3)
+    E acesso a aba pagamentos
+    Quando seleciono a forma 30 dias e desdobro
+    Quando finalizo a venda - 30 dias - Sem Faturar NFC
+    Quando clico em editar
+    E informo a senha do supervisor
+    E acesso a aba pagamentos
+    E excluo o pagamento
+    Quando seleciono a forma 30-60-90-120-180 Dias
+    Então finalizo a venda - 30-60-90-120-180 Dias
+
 Teste - Processo tarefa 137639
     [Tags]    Teste
     #Aplicar a validação da quantidade de parcelas desdobradas
