@@ -56,6 +56,8 @@ E adiciono uma nova devolução
     Wait Until Screen Contain    ${TELA_DEVOLUCOES_ADD}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
+    Set Test Variable    ${POSSUI_OBS}    ${False}
+
 E adiciono vendedor e cliente
 
     Sleep    ${SLEEP_MEDIO}
@@ -177,8 +179,6 @@ Quando desdobro os pagamentos
     END
 
     Set Test Variable    ${VALOR_FINAL}    ${VALOR_FINAL[0][0]}
-    
-    Set Test Variable    ${POSSUI_OBS}    ${False}
 
 Então finalizo a devolução
     

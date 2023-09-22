@@ -165,3 +165,57 @@ class validaAtacado:
             print("Conexão falhou, verifique!")
 
             return valorFinalVenda
+        
+    def valida_Estoque(self, codProduto, quantidadeAcerto):
+               
+        connection, cursor = validaAtacado.conexao_banco()
+
+        try:
+
+            if connection.is_connected():
+            
+                consultaProdutos = "SELECT Qtde, EstqAtual, EstqNovo, ID FROM acertoestoque WHERE CodigoProduto = "+str(codProduto)+" ORDER BY ID DESC LIMIT 1;"
+                cursor.execute(consultaProdutos)
+                AcertoProdutos = cursor.fetchall()
+
+                print(AcertoProdutos)
+
+                consultaProdutos = "SELECT Estoque FROM produtosestoque WHERE CodigoProduto = "+str(codProduto)
+                cursor.execute(consultaProdutos)
+                ProdutosEstoque = cursor.fetchall()
+                estoquePrevisto = float(AcertoProdutos[0][1]) + float(quantidadeAcerto)
+
+                quantidadeAcerto = float(quantidadeAcerto)
+
+                if AcertoProdutos[0][0] == quantidadeAcerto:
+
+                    print(quantidadeAcerto)
+
+                    if estoquePrevisto == AcertoProdutos[0][2]:
+
+                        if ProdutosEstoque[0][0] == estoquePrevisto:
+
+                            print("Passou em Todas a validações")
+                            return True
+                        
+                        else:
+
+                            print("Validação 3 falhou, verifique!"+str(estoquePrevisto)+" "+str(AcertoProdutos[0][0])+" "+str(AcertoProdutos[0][1])+" "+str(AcertoProdutos[0][2]))
+                            print(quantidadeAcerto)
+                            return False
+                    
+                    else:
+
+                        print("Validação 2 falhou, verifique!"+str(estoquePrevisto)+" "+str(AcertoProdutos[0][0])+" "+str(AcertoProdutos[0][1])+" "+str(AcertoProdutos[0][2]))
+                        print(quantidadeAcerto)
+                        return False
+
+                else:
+
+                    print("Validação 1 falhou, verifique!"+str(estoquePrevisto)+" "+str(AcertoProdutos[0][0])+" "+str(AcertoProdutos[0][1])+" "+str(AcertoProdutos[0][2]))
+                    print(quantidadeAcerto)
+                    return False
+
+        except TypeError:
+            traceback.print_exc()
+    
