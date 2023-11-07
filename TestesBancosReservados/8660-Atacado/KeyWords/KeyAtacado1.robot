@@ -5,6 +5,7 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    C:\\Automacao\\MyCommerce-Automacao\\TestesBancosReservados\\8660-Atacado\\libs\\validaAtacado.py
+
 *** Variables ***
 ${IMAGES}                    ./TestesBancosReservados/images
 #Conexão MySQL

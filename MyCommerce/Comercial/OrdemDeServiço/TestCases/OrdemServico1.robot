@@ -19,6 +19,7 @@ Teste 01 - gerando OS com serviço na forma 30 dias
     E preencho a guia serviços
     Quando escolho a forma 30 dias na aba pagamentos
     Então finalizo a OS - Somente serviço
+
 Teste 02 - gerando OS com serviço na forma à vista
     [Tags]    Teste02
     Dado que acesso a guia ordens de serviços

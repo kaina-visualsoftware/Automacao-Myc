@@ -153,3 +153,25 @@ Teste 14 - Editando a condicional e removendo um produto
     Quando clico em editar
     E removo um item da condicional
     Então finalizo a condicional
+
+Teste 15 - Adicionando condicional e excluindo a mesma
+    [Tags]    Teste15
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(2)
+    Então finalizo a condicional
+    Quando pressiono o botão de excluir
+    E informo o motivo da exclusao
+    Então confirmo a exclusão 
+
+Teste 16 - Adicionando condicional e cancelando a exclusão
+    [Tags]    Teste16
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional 
+    E adiciono vendedor e cliente
+    Quando insiro mais de um um produto normal(2)
+    Então finalizo a condicional
+    Quando pressiono o botão de excluir
+    E informo o motivo da exclusao
+    Então cancelo a exclusão

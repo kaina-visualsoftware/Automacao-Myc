@@ -17,7 +17,7 @@ ${DBUser}                    root
 ${SLEEP_BAIXO}               0.3
 ${SLEEP_MEDIO}               1.5
 ${SLEEP_ALTO}                3
-${TEMPO_TELA}                20
+${TEMPO_TELA}                30
 #Imagens de Telas
 ${TELA_EMISSAO_NFC}          tela_EmissaoNFC.png  
 ${TELA_PEDIDOS_PREVENDA}     tela_Pedidos.png
@@ -43,6 +43,7 @@ ${TELA_EXCLUSAO}             tela_ExclusaoDevolucao.png
 ${BT_SIM}                    bt_Sim.png
 ${BT_NAO}                    bt_NaoExclusao.png
 ${AVISO_EXCLUIR_PRODUTO}     aviso_ExcluirProduto.png
+${AVISO_COND_ABERTO}         aviso_CondicionalAberto.png
 #Código
 ${DESCONTO}                  ${0.0}
 #Botões
@@ -78,21 +79,25 @@ E adiciono vendedor e cliente
     Input Text    ${EMPTY}    ${codVendedor[0][0]}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+    # SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
+    # Sleep    ${SLEEP_MEDIO}
+    # Input Text    ${EMPTY}    ${codCliente[0][0]}
+    SikuliLibrary.Input Text    ${INPUT_COD_CLIENTE}    ${codCliente[0][0]}
     Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
-    Sleep    ${SLEEP_MEDIO}
-    Input Text    ${EMPTY}    ${codCliente[0][0]}
-    Sleep    ${SLEEP_MEDIO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_ALTO}
     
     Valida alerta após inserir cliente
     Sleep    ${SLEEP_BAIXO}
 
-    Valida aviso cliente outro vendedor
+    Valida Condicionais em Aberto
     Sleep    ${SLEEP_BAIXO}
+
+    Valida aviso cliente outro vendedor
+    Sleep    ${SLEEP_MEDIO}
 
     Valida informações de crédito
     Sleep    ${SLEEP_BAIXO}
@@ -114,6 +119,8 @@ Quando insiro um produto normal
         
     END
     
+    Sleep    ${SLEEP_MEDIO}
+
     Valida quantidade de estoque inexistente
 
     Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
@@ -270,7 +277,7 @@ E importo o pedido "${Cod_Pedido_Importar}"
     Input Text    ${EMPTY}    ${Cod_Pedido_Importar}
     Press Special Key    TAB
     Press Combination    KEY.ALT     KEY.I 
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
     Valida aviso cliente outro vendedor
     Sleep    ${SLEEP_ALTO}
     Valida quantidade de estoque inexistente
@@ -451,6 +458,7 @@ Valida quantidade de estoque inexistente
         Sleep    ${SLEEP_MEDIO}
 
     END
+
 Faturando a NFC-e
 
     Sleep    ${SLEEP_MEDIO}
@@ -651,5 +659,18 @@ Verifica desconto correto
     IF    ${DescontoAplicadoVenda[0][0]} > ${DescontoMáximoProduto[0][0]}
 
         Fail    Desconto ultrapassou o máximo do produto!    level=WARN
+
+    END
+
+Valida Condicionais em Aberto
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${AVISO_COND_ABERTO}
+
+    IF    ${MSG} == ${True}
+        
+        Press Special Key    RIGHT
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_MEDIO}
 
     END

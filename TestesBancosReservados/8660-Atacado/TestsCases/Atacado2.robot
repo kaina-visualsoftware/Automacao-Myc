@@ -170,7 +170,7 @@ Teste 16 - Exclusão de Pedido - Cancelando a exclusão
     E informo o motivo da exclusão
     Então cancelo a exclusão
 
-Teste 17 - 
+Teste 17 - Adicionando pedido e excluindo um produto
     [Tags]    Teste17
     Dado que acesso a tela de pedidos
     E adiciono um novo pedido

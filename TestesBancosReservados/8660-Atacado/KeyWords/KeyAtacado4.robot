@@ -37,6 +37,7 @@ ${AVISO_EXCLUIR_PRODUTO}     aviso_ExcluirProduto.png
 ${TELA_EXCLUI_DEVOLUCAO}     tela_exclusaoDevolucao.png
 ${BT_SIM}                    bt_Sim.png
 ${TELA_LIBERA_DESCONTO}      tela_Liberacao.png
+${INP_CODPRODUTO_DEV}        inp_CodProdutoCondicional.png
 #Diversos
 ${DESCONTO}                  ${0.0}
 
@@ -74,8 +75,6 @@ E adiciono vendedor e cliente
     Sleep    ${SLEEP_MEDIO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
 
     Valida alerta após inserir cliente
     Sleep    ${SLEEP_BAIXO}
@@ -92,13 +91,13 @@ E adiciono vendedor e cliente
     Set Test Variable    ${COD_CLIENTE}    ${codCliente[0][0]}
 
 Quando insiro um produto normal para ser devolvido
-
+    
+    Press Combination    KEY.ALT     Key.D 
     Sleep    ${SLEEP_BAIXO}
     ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_MEDIO}
-    Input Text    ${EMPTY}    ${codProduto[0][0]} 
     Sleep    ${SLEEP_BAIXO}
-
+    Input Text    ${INP_CODPRODUTO_DEV}    ${codProduto[0][0]} 
+    Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
@@ -121,7 +120,7 @@ Quando insiro produtos que o cliente já tenha comprado(${QUANTIDADE_PRODUTOS})
         Sleep    ${SLEEP_BAIXO}
         ${codProduto}    Query    SELECT CodigoProduto FROM vendasprodutos AS vp INNER JOIN vendas AS v ON vp.CodigoVenda = v.Codigo WHERE v.CodigoCliente = ${COD_CLIENTE} AND v.Cancelada IS NULL ORDER BY RAND() LIMIT 1;
         Sleep    ${SLEEP_BAIXO}
-        Input Text    ${EMPTY}    ${codProduto[0][0]} 
+        Input Text    ${INP_CODPRODUTO_DEV}    ${codProduto[0][0]} 
         Sleep    ${SLEEP_BAIXO}
 
         Press Special Key    TAB

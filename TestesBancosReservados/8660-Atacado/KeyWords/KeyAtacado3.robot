@@ -42,6 +42,10 @@ ${TELA_DEVOLUCAO}            tela_Devolucao.png
 ${AVISO_ALTERAR_VENDEDOR}    aviso_AlterarVendedor_Pedidos.png
 ${LB_CODIGO_PRODUTO}         lb_CodigoProduto.png
 ${AVISO_EXCLUIR_PRODUTO}     aviso_ExcluirProdutoCondicional.png
+${AVISO_EXCLUIR}             aviso_Excluir.png
+${TELA_MOTIVO_EXCLUSAO}      tela_exclusaoDevolucao.png
+${BT_SIM}                    bt_Sim.png 
+${BT_NAO}                    bt_NaoExclusao.png
 #Diversos
 ${DESCONTO}                  ${0.0}
 
@@ -384,6 +388,36 @@ E removo um item da condicional
     Wait Until Screen Contain    ${AVISO_EXCLUIR_PRODUTO}    ${SLEEP_ALTO}
     Press Combination     KEY.ALT     Key.S 
     Sleep    ${SLEEP_BAIXO}
+
+Quando pressiono o botão de excluir 
+    
+    Press Combination     KEY.ALT     Key.x 
+    Wait Until Screen Contain    ${AVISO_EXCLUIR}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination     KEY.ALT     Key.S
+
+E informo o motivo da exclusao 
+    
+    Wait Until Screen Contain    ${TELA_MOTIVO_EXCLUSAO}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    Excluindo condicional por que cliente desistiu dos produtos
+    Sleep    ${SLEEP_BAIXO}
+
+Então confirmo a exclusão 
+    
+    SikuliLibrary.Click    ${BT_SIM}
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+
+    Check If Exists In Database    SELECT * FROM condicionais WHERE Codigo = ${COD_CONDICIONAL} AND `Status` LIKE 'x'
+
+Então cancelo a exclusão
+
+    SikuliLibrary.Click    ${BT_NAO}
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+
+    Check If Exists In Database    SELECT * FROM condicionais WHERE Codigo = ${COD_CONDICIONAL} AND `Status` LIKE 'f'
 
 #----------------------------------------------------------------------------------------------------------------------#
 Seleciona vendedor devolução
