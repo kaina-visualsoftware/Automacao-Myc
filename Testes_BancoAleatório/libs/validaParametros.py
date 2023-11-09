@@ -15,7 +15,7 @@ class validaParametros:
         avisosMapeados = ("AvisoVendedor, Aviso_Info_Financeiro, Aviso_Info_Financeiro_Prev, BloqueiaVendaClienteInativo, BloqVenda_CaixaFechado, "
                           "ExigeSenhaCancelarVenda, Vende_Sem_Estoque, Venda_Rapida, VendedorDiferente, ExigeSenhaMudarVendedorVenda, IncluiDireto, "
                           "Aviso_Sem_Est, IndicacaoVenda, ControlaCreditoClientes, PVexibeAnteriores, NDias_Credito_Atu, Senha_supervisor_multiplo, "
-                          "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega")
+                          "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas")
 
         avisosMarcados = []
         updatesParametros = []
@@ -98,7 +98,7 @@ class validaParametros:
         
         formasPadrao = ("30 DIAS", "À VISTA")
 
-        cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo FROM formaparcelamento WHERE Padrao_Venda = 1 AND Personalizavel = 0;")
+        cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento FROM formaparcelamento WHERE Padrao_Venda = 1 AND Personalizavel = 0;")
 
         configuracoesFormaDeParcelamento = cursor.fetchall()
 
@@ -109,19 +109,25 @@ class validaParametros:
 
             if not formasSelecionadas:
                 
+                validaParametros.atualiza_formas(dbname)
+
                 sqlInsert = "INSERT INTO `formaparcelamento` (`Descricao`, `ComEntrada`, `NPagamentos`, `TaxaJuro`, `PrazoMedio`, `Personalizavel`, `Tipo_Intervalo`, `Comissao_Produtos`, `Comissao_Servicos`, `DataAlteracao`, `EnviaMymobile`, `FormaRecebimento`, `Comissao_Produtos_Ent`, `Comissao_Servicos_Ent`, `Padrao_Venda`, `Padrao_OS`, `Padrao_Pre`, `TPCalculo`, `AtivaIntervalos`, `Digitavel`, `TaxaFlex`, `ListaPreco`, `PrazoFixado`, `DataPrazoFixado`, `PDesconto`, `Padrao_Orc`, `DiaExtra`, `Empresas`, `ValorMinimo`, `CodigoPreOcorrencia`, `DescricaoPreOcorrencia`, `CodigoGrupo`, `DescricaoGrupo`, `CodigoIdentificador`, `Padrao_Devolucao`, `ConsiderarOfertas`, `ParcelamentoPadrao`, `Cancelado`, `ValorMaximo`, `PDescontoMaximo`, `Considera_DescMax_produto`) VALUES ('30 DIAS', 0, 1, 0, 30, 0, 'Dias', 1, 1, '2023-10-26 11:07:42', 1, 'DINHEIRO                       1    ', 1, 1, 1, 0, 0, 'TP', 0, 0, 0, 0, 0, NULL, 0, 1, 999, NULL, 0, NULL, NULL, NULL, NULL, '', 1, 1, 0, NULL, 0, 0, 1);"
                 cursor.execute(sqlInsert)
 
                 print("Realizou o Insert da forma 30 DIAS")
 
-                cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo FROM formaparcelamento WHERE Padrao_Venda = 1;")
+                cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento FROM formaparcelamento WHERE Padrao_Venda = 1;")
 
                 configuracoesFormaDeParcelamento = cursor.fetchall()
 
                 formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][0])
                 entrada = configuracoesFormaDeParcelamento[0][1]
+                NumeroDePagamentos = 1
                 formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][3])
                 formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][4])
+
+                formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
+                formaDeParcelamento.append(formaEntrada[0])
 
             else:
 
@@ -131,7 +137,7 @@ class validaParametros:
 
                 print("Atulizou a forma "+formaParaAtualizar+" para Padrao_Venda = 1")
 
-                cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo FROM formaparcelamento WHERE Padrao_Venda = 1;")
+                cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento FROM formaparcelamento WHERE Padrao_Venda = 1;")
 
                 configuracoesFormaDeParcelamento = cursor.fetchall()
 
@@ -140,6 +146,9 @@ class validaParametros:
                 NumeroDePagamentos = configuracoesFormaDeParcelamento[0][2]
                 formaDeParcelamento.append(str(configuracoesFormaDeParcelamento[0][3]))
                 formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][4])
+
+                formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
+                formaDeParcelamento.append(formaEntrada[0])
         
         else:
 
@@ -148,6 +157,9 @@ class validaParametros:
             NumeroDePagamentos = configuracoesFormaDeParcelamento[0][2]
             formaDeParcelamento.append(str(configuracoesFormaDeParcelamento[0][3]))
             formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][4])
+            
+            formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
+            formaDeParcelamento.append(formaEntrada[0])
 
         if formaDeParcelamento not in formasPadrao:
 
@@ -167,6 +179,9 @@ class validaParametros:
                 else:
                     formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][4])
 
+                formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
+                formaDeParcelamento.append(formaEntrada[0])
+
                 print("Vai considerar a forma: "+formaDeParcelamento[0]+" como A VISTA")
             
             elif entrada != 1 and NumeroDePagamentos > 0:
@@ -185,11 +200,23 @@ class validaParametros:
                 else:
                     formaDeParcelamento.append(configuracoesFormaDeParcelamento[0][4])
                 
+                formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
+                formaDeParcelamento.append(formaEntrada[0])
+
                 print("Vai considerar a forma: "+formaDeParcelamento[0]+" como 30 DIAS")
 
         print(formaDeParcelamento)
 
         return formaDeParcelamento
-        
+
+
+    def atualiza_formas(dbname):
+        connection, cursor = validaParametros.conexao_banco(dbname)
+
+        sqlUpdate = "UPDATE formaparcelamento SET Padrao_Venda = 0 WHERE Padrao_Venda = 1"
+
+        cursor.execute(sqlUpdate)
+
+
 #validaParametros.Valida_Pametros_Com_Aviso('9931-e')
-#validaParametros.valida_Configuracoes_Venda('14043')
+#validaParametros.valida_Configuracoes_Venda('bdvinicius')

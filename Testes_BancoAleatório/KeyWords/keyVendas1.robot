@@ -5,6 +5,8 @@ Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    Process
 
+Resource    ../utils/utils.robot
+
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
 #Conexão MySQL
@@ -49,17 +51,20 @@ ${TELA_LIBERAÇÃO_DESCONTO_SENHA}         tela_liberacaoDesconto.png
 ${TELA_SOLICITACAO_SENHA_USUARIO}        tela_SolicitaSenha.png
 ${INPUT_VALOR_FINAL_VENDA}               inp_ValorDuplicatas.png
 ${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
-${FORMA_RECEBIMENTO_OUTROS}              Outros...                      999  
+${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
-${MODAL_LOCAL_NEGOCIACAO}                tela_LocalNegociacao.png
-${BT_CONFIRMA_CANAL_NEGOCIACAO}          bt_ConfirmarCanal.png
 ${TELA_IMPRIMIR_ORDEM_ENTREGA}           tela_ImprimirOrdemEntrega.png
+${TELA_SELECIONA_TABELA_PRECO}           tela_TabelasPreco.png
 
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
 
 Dado que acesso a tela de vendas de balcao
+
+    ${FORMA_PADRAO}    Valida Configuracoes Venda    ${DBName}
+
+    Set Test Variable    ${FORMA_PADRAO}
 
     Press Special Key    F2
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
@@ -133,13 +138,21 @@ Quando insiro um produto normal
     Input Text    ${EMPTY}    ${codProduto[0][0]} 
     Sleep    ${SLEEP_BAIXO}
 
+    Press Special Key    TAB
+
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida tabela de preco
+
+    END
+
     FOR    ${I}    IN RANGE    3
 
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
         
     END
-    
+
     IF    ${Parametro_IncluiDireto} != ${True}
         
         Press Combination    KEY.ALT     Key.I
@@ -177,11 +190,11 @@ E acesso a aba pagamentos
     Press Combination    KEY.ALT     Key.M 
     Sleep    ${SLEEP_ALTO}
 
-    ${FORMA_PADRAO}    Valida Configuracoes Venda    ${DBName}
-
-    Set Test Variable    ${FORMA_PADRAO}
-
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
+
+    ${EntradaIgualA_Outros} =     Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO}    ${FORMA_RECEBIMENTO_OUTROS}
+
+    Set Test Variable    ${EntradaIgualA_Outros}
 
     IF     ${DESCONTO_FORMA} > 0
 
@@ -222,9 +235,6 @@ Então finalizo a venda
             END
 
         END
-        
-        Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
-        Sleep    ${SLEEP_MEDIO}
 
     END
 
@@ -236,33 +246,16 @@ Então finalizo a venda
     END
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
+        
+        IF    ${EntradaIgualA_Outros}
 
-        IF     ${Parametro_BaixaCentralizada}
-            
-            IF    ${Parametro_BaixaAutomatico}
+            IF     ${Parametro_BaixaAutomatico}
+                
+                Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA}) 
 
-                IF     ${Caixa_Baixas_Automatica} == ${False}
-                
-                    Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
-                    Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
-                    Sleep    ${SLEEP_MEDIO}
-                    Press Combination    KEY.ALT     Key.C
-                
-                END    
-            
             END
 
-        ELSE
-                
-            Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
-            Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
-            Sleep    ${SLEEP_MEDIO}
-            Press Combination    KEY.ALT     Key.C
-
         END
-        
-        Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
-        Sleep    ${SLEEP_MEDIO}
 
         IF    ${Parametro_ImprimeNFCeDireto}  
         
@@ -292,6 +285,10 @@ Então finalizo a venda
 
     END
 
+
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+
     #--------------------------------------------------#
     #--------------------------------------------------#
     #---------Validar Emissão de Promissórioa----------#
@@ -310,13 +307,14 @@ Verifica parametros que interferem na venda
     ${Parametro_IndicacaoVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    IndicacaoVenda
     ${Parametro_VendeSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Vende_Sem_Estoque
     ${Parametro_ControlaCredito} =      Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ControlaCreditoClientes
-    ${Parametro_ExibeVendasAnteriores} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
-    ${Parametro_ExigeSenhaMultiplo} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Senha_supervisor_multiplo
-    ${Parametro_Exibe_Foto_Cliente} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExibeFotoCli
     ${Parametro_Controla_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ControlaEntregaPrevista
     ${Parametro_Local_Negociacao} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    LocalNegociacao
+    ${Parametro_ExigeSenhaMultiplo} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Senha_supervisor_multiplo
+    ${Parametro_Exibe_Foto_Cliente} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExibeFotoCli
     ${Parametro_Imprime_OrdemEntrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
-
+    ${Parametro_ExibeVendasAnteriores} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
+    ${Parametro_Permite_Varias_Tabelas} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PermiteVariasTabelas
+    
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
     ${Parametro_ImprimeDuplicataVenda} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
@@ -366,6 +364,8 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_Local_Negociacao}
 
     Set Test Variable    ${Parametro_Imprime_OrdemEntrega}
+
+    Set Test Variable    ${Parametro_Permite_Varias_Tabelas}
 
 Verifica avisos presentes ao incluir cliente
     
@@ -682,20 +682,6 @@ Valida controle de entrega
 
     END
 
-Valida local da negociação
-
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${MODAL_LOCAL_NEGOCIACAO} 
-
-    IF    ${MSG}  
-        
-        Press Special Key    TAB 
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    DOWN
-        SikuliLibrary.Click    ${BT_CONFIRMA_CANAL_NEGOCIACAO}
-
-    END
-
 Valida impressão de ordem de entrega 
     
     Sleep    ${SLEEP_ALTO}
@@ -704,6 +690,18 @@ Valida impressão de ordem de entrega
     IF    ${MSG}  
         
         Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida tabela de preco
+
+    Sleep    ${SLEEP_ALTO}
+    ${MSG}    Exists    ${TELA_SELECIONA_TABELA_PRECO} 
+
+    IF    ${MSG}  
+        
+        Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
 
     END
