@@ -739,3 +739,4 @@ Valida parcelas e valor - formas com parcelas(${QTDE_PAG})
 
     Sleep    ${SLEEP_BAIXO}
     Should Be Equal    ${ValorParcelasContasAreceber[0][0]}    ${ValorParcelas}   
+

@@ -15,7 +15,7 @@ class validaParametros:
         avisosMapeados = ("AvisoVendedor, Aviso_Info_Financeiro, Aviso_Info_Financeiro_Prev, BloqueiaVendaClienteInativo, BloqVenda_CaixaFechado, "
                           "ExigeSenhaCancelarVenda, Vende_Sem_Estoque, Venda_Rapida, VendedorDiferente, ExigeSenhaMudarVendedorVenda, IncluiDireto, "
                           "Aviso_Sem_Est, IndicacaoVenda, ControlaCreditoClientes, PVexibeAnteriores, NDias_Credito_Atu, Senha_supervisor_multiplo, "
-                          "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas")
+                          "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega")
 
         avisosMarcados = []
         updatesParametros = []
@@ -56,7 +56,8 @@ class validaParametros:
 
         connection, cursor = validaParametros.conexao_banco(dbname)
 
-        parametrosMapeados = ("Venda_ImprimeCupom, ImprimirVenda_FinalizarVenda, ImprimirDup_FinalizarVenda, BaixaCentralizada, BaixaAutomatico, CodigoCX")
+        parametrosMapeados = ("Venda_ImprimeCupom, ImprimirVenda_FinalizarVenda, ImprimirDup_FinalizarVenda, BaixaCentralizada, BaixaAutomatico, CodigoCX, ImpRecEnt_FinalizarVenda, "
+                              "ImprimirContrato_FinalizarVenda, ImpPromissoria_FinalizarVenda, ImprimirBol_FinalizarVenda")
 
         cursor.execute("SELECT "+parametrosMapeados+" FROM configempresa WHERE empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);")
 
@@ -98,7 +99,7 @@ class validaParametros:
         
         formasPadrao = ("30 DIAS", "À VISTA")
 
-        cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento FROM formaparcelamento WHERE Padrao_Venda = 1 AND Personalizavel = 0;")
+        cursor.execute("SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento FROM formaparcelamento WHERE Padrao_Venda = 1 AND (Personalizavel = 0 AND Cancelado IS NULL);")
 
         configuracoesFormaDeParcelamento = cursor.fetchall()
 
@@ -128,6 +129,7 @@ class validaParametros:
 
                 formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
                 formaDeParcelamento.append(formaEntrada[0])
+                formaDeParcelamento.append(NumeroDePagamentos)
 
             else:
 
@@ -149,6 +151,7 @@ class validaParametros:
 
                 formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
                 formaDeParcelamento.append(formaEntrada[0])
+                formaDeParcelamento.append(NumeroDePagamentos)
         
         else:
 
@@ -160,6 +163,7 @@ class validaParametros:
             
             formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
             formaDeParcelamento.append(formaEntrada[0])
+            formaDeParcelamento.append(NumeroDePagamentos)
 
         if formaDeParcelamento not in formasPadrao:
 
@@ -181,6 +185,7 @@ class validaParametros:
 
                 formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
                 formaDeParcelamento.append(formaEntrada[0])
+                formaDeParcelamento.append(NumeroDePagamentos)
 
                 print("Vai considerar a forma: "+formaDeParcelamento[0]+" como A VISTA")
             
@@ -202,13 +207,13 @@ class validaParametros:
                 
                 formaEntrada = configuracoesFormaDeParcelamento[0][5].split(' ')
                 formaDeParcelamento.append(formaEntrada[0])
+                formaDeParcelamento.append(NumeroDePagamentos)
 
                 print("Vai considerar a forma: "+formaDeParcelamento[0]+" como 30 DIAS")
 
         print(formaDeParcelamento)
 
         return formaDeParcelamento
-
 
     def atualiza_formas(dbname):
         connection, cursor = validaParametros.conexao_banco(dbname)
@@ -217,6 +222,33 @@ class validaParametros:
 
         cursor.execute(sqlUpdate)
 
+    def seleciona_forma_prazo(self, dbname):
+        connection, cursor = validaParametros.conexao_banco(dbname)
+
+        consultaForma = "SELECT Descricao FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
+
+        cursor.execute(consultaForma)
+
+        formaParcelamento = cursor.fetchall()
+
+        if not formaParcelamento:
+            sqlInsert = "INSERT INTO `formaparcelamento` (`Descricao`, `ComEntrada`, `NPagamentos`, `TaxaJuro`, `PrazoMedio`, `Personalizavel`, `Tipo_Intervalo`, `Comissao_Produtos`, `Comissao_Servicos`, `DataAlteracao`, `EnviaMymobile`, `FormaRecebimento`, `Comissao_Produtos_Ent`, `Comissao_Servicos_Ent`, `Padrao_Venda`, `Padrao_OS`, `Padrao_Pre`, `TPCalculo`, `AtivaIntervalos`, `Digitavel`, `TaxaFlex`, `ListaPreco`, `PrazoFixado`, `DataPrazoFixado`, `PDesconto`, `Padrao_Orc`, `DiaExtra`, `Empresas`, `ValorMinimo`, `CodigoPreOcorrencia`, `DescricaoPreOcorrencia`, `CodigoGrupo`, `DescricaoGrupo`, `CodigoIdentificador`, `Padrao_Devolucao`, `ConsiderarOfertas`, `ParcelamentoPadrao`, `Cancelado`, `ValorMaximo`, `PDescontoMaximo`, `Considera_DescMax_produto`) VALUES ('30 DIAS', 0, 1, 0, 30, 0, 'Dias', 1, 1, '2023-10-26 11:07:42', 1, 'DINHEIRO                       1    ', 1, 1, 0, 0, 0, 'TP', 0, 0, 0, 0, 0, NULL, 0, 1, 999, NULL, 0, NULL, NULL, NULL, NULL, '', 1, 1, 0, NULL, 0, 0, 1);"
+            cursor.execute(sqlInsert)
+
+            print("Realizou o Insert da forma 30 DIAS")
+            consultaForma = "SELECT Descricao FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
+
+            cursor.execute(consultaForma)
+
+            formaParcelamento = cursor.fetchall()
+        
+        formaParcelamento = formaParcelamento[0][0]
+
+        print(formaParcelamento)
+
+        return  formaParcelamento
+    
 
 #validaParametros.Valida_Pametros_Com_Aviso('9931-e')
-#validaParametros.valida_Configuracoes_Venda('bdvinicius')
+#validaParametros.valida_Configuracoes_Venda('7535')
+#validaParametros.seleciona_forma_prazo('BDVINICIUS')

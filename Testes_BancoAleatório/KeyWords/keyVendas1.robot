@@ -4,18 +4,20 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    Process
+Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/utils.robot
+Resource    ../utils/validacaoAviso.robot
 
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
 #Conexão MySQL
-${DBHost}                                10.1.1.220
-${DBName}                                bdvinicius
+${DBHost}                                10.1.1.220   
+${DBName}                                ${config.Database}
 ${DBPass}                                vssql
-${DBPort}                                3306
+${DBPort}                                ${config.Porta}
 ${DBUser}                                root
-#Sleep's    
+#Sleep's
 ${SLEEP_BAIXO}                           0.3
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
@@ -28,7 +30,6 @@ ${TELA_VENDAS_ADICIONAR}                 atacado_TelaVendaBalcao_Adicionar.png
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
 ${ALERTA_CLIENTE}                        alertaCliente.png
-${INPUT_COD_CLIENTE}                     lb_CodCliente.png
 ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
 ${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
 ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
@@ -48,13 +49,29 @@ ${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizado.png
 ${TELA_VENDAS_ANTERIORES}                tela_ExibeAnteriores.png
 ${TELA_LIBERAÇÃO_DESCONTO_SENHA}         tela_liberacaoDesconto.png
-${TELA_SOLICITACAO_SENHA_USUARIO}        tela_SolicitaSenha.png
 ${INPUT_VALOR_FINAL_VENDA}               inp_ValorDuplicatas.png
 ${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
 ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
 ${TELA_IMPRIMIR_ORDEM_ENTREGA}           tela_ImprimirOrdemEntrega.png
 ${TELA_SELECIONA_TABELA_PRECO}           tela_TabelasPreco.png
+${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
+${BT_OK}                                 bt_Ok.png
+${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png 
+${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
+${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png  
+${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png  
+${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
+${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
+${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPag.png
+${TELA_IMPRESSAO_BOLETO}                 tela_impressaoBoleto.png
+${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
+${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
+${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
+${BT_NÃO}                                bt_Nao.png
+${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
+${TELA_VENCIMENTO_FIM_DE_SEMANA}         tela_VencimentoFimDeSemana.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -63,15 +80,17 @@ Ler imagens iniciais
 Dado que acesso a tela de vendas de balcao
 
     ${FORMA_PADRAO}    Valida Configuracoes Venda    ${DBName}
+    ${FORMA_PRAZO}    Seleciona Forma Prazo    ${DBName} 
 
     Set Test Variable    ${FORMA_PADRAO}
+    Set Test Variable    ${FORMA_PRAZO}   
 
     Press Special Key    F2
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
 Quando pressiono o atalho de adicionar
 
-    Verifica parametros que interferem na venda
+    Verifica parametros que interferem na venda(${DBName})
 
     Press Combination    KEY.ALT     Key.A 
 
@@ -97,25 +116,9 @@ Quando pressiono o atalho de adicionar
 
 E adiciono vendedor e cliente 
 
-    Sleep    ${SLEEP_BAIXO}
-    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_BAIXO}
-    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_BAIXO}
+    Adicionar Vendedor e Cliente(Venda)
 
-    Input Text    ${EMPTY}    ${codVendedor[0][0]}
-    Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${codCliente[0][0]}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-
-    Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
-    Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
-
-    Verifica avisos presentes ao incluir cliente
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
 
 Quando insiro um produto normal
 
@@ -133,7 +136,7 @@ Quando insiro um produto normal
         ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto WHERE p.ModalidadeControle LIKE 'Normal' AND (p.Cancelado IS NULL AND p.Ativo = -1) AND (pe.Estoque > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1)) ORDER BY RAND() LIMIT 1;
         Sleep    ${SLEEP_MEDIO}
 
-    END        
+    END      
 
     Input Text    ${EMPTY}    ${codProduto[0][0]} 
     Sleep    ${SLEEP_BAIXO}
@@ -153,6 +156,12 @@ Quando insiro um produto normal
         
     END
 
+    IF     ${Parametro_ExigeSenhaMultiplo}
+    
+        Valida solicitacao de senha do usuário
+    
+    END
+
     IF    ${Parametro_IncluiDireto} != ${True}
         
         Press Combination    KEY.ALT     Key.I
@@ -160,11 +169,9 @@ Quando insiro um produto normal
 
     END
 
-    IF     ${Parametro_ExigeSenhaMultiplo}
-    
-        Valida solicitacao de senha do usuário
-    
-    END
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
+
+    Verifica observacao do produto 
 
     IF    ${Aviso_ProdutoSemEstoque}
         
@@ -179,8 +186,6 @@ Quando insiro um produto normal
     END
 
     Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
-
-    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]} 
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
@@ -211,6 +216,8 @@ Então finalizo a venda
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
+
+    Valida vencimento fim de semana
 
     IF    ${FORMA_PADRAO[2]} > 0
         
@@ -257,236 +264,329 @@ Então finalizo a venda
 
         END
 
-        IF    ${Parametro_ImprimeNFCeDireto}  
+    END
+
+    Valida Parametros/Impressões pós venda
+
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+
+Então visualizo a mesma
+    Press Combination    KEY.ALT     Key.V 
+    Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.r
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+
+E acesso a aba pagamentos - A Prazo
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.M 
+    Sleep    ${SLEEP_ALTO}
+
+Então finalizo a venda - A Prazo
+
+    Verifica vendedor com senha
+
+    Calcula valor final da venda
+
+    SikuliLibrary.Click    ${BT_SIMULADOR_FORMAS_PARCELAMENTO}
+    Wait Until Screen Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${LABEL_DESCRIÇÃO}
+    Input Text    ${EMPTY}    ${FORMA_PRAZO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.D
+    Sleep    ${SLEEP_BAIXO}
+
+    IF    ${FORMA_PADRAO[2]} > 0
         
-            Faturando a NFC-e
+        Valida tela de liberação de desconto 
+
+    END
+
+    Valida vencimento fim de semana
+
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+
+    IF    ${Parametro_ControlaCredito}
+            
+        Valida Controle de Credito - Liberação
+
+        IF    ${VendedorPossuiSenha}
+        
+            Valida solicitacao de senha do usuário
 
         END
 
     END
 
-    IF    ${Parametro_ImprimeVendaDireto}
+
+    #Deixado aqui por que pode ser QUE quando a forma for a vista, apareça antes das duplicatas, mas ainda é necessário validar
+    IF    ${VendedorPossuiSenha}
         
-        Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.S
+        Valida solicitacao de senha do usuário
 
     END
 
-    IF     ${Parametro_Imprime_OrdemEntrega}
+    Valida Parametros/Impressões pós venda
 
-        Valida impressão de ordem de entrega
-
-    END
-
-    IF    ${Parametro_ImprimeDuplicataVenda}
+Quando clico em editar
+    
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.E
+    Sleep    ${SLEEP_BAIXO}
+    
+    IF    ${VendedorPossuiSenha}
         
-        Valida Impressao de duplicatas
+        Valida solicitacao de senha do usuário
 
     END
 
+    Valida solicitacao de senha do usuário
+
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}     ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+E excluo os pagamentos lançados 
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.M 
+
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_ALTO}
+    SikuliLibrary.Click    ${BT_EXCLUIR_PAGAMENTOS}
+    Wait Until Screen Contain    ${TELA_EXCLUIR_PAGAMENTOS}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+Então clico em excluir
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
-    Sleep    ${SLEEP_MEDIO}
-
-    #--------------------------------------------------#
-    #--------------------------------------------------#
-    #---------Validar Emissão de Promissórioa----------#
-    #--------------------------------------------------#
-    #--------------------------------------------------#
-
-Verifica parametros que interferem na venda 
-    
-    ${Lista_de_pametros}    Valida Pametros Com Aviso    ${DBName}
-    ${Config_Empresas}    Valida Config Empresa    ${DBName}
-
-    #Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
-    ${Parametro_VendaRapida} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Venda_Rapida 
-    ${Parametro_IncluiDireto} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    IncluiDireto
-    ${Aviso_ProdutoSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Aviso_Sem_Est
-    ${Parametro_IndicacaoVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    IndicacaoVenda
-    ${Parametro_VendeSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Vende_Sem_Estoque
-    ${Parametro_ControlaCredito} =      Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ControlaCreditoClientes
-    ${Parametro_Controla_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ControlaEntregaPrevista
-    ${Parametro_Local_Negociacao} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    LocalNegociacao
-    ${Parametro_ExigeSenhaMultiplo} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Senha_supervisor_multiplo
-    ${Parametro_Exibe_Foto_Cliente} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExibeFotoCli
-    ${Parametro_Imprime_OrdemEntrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
-    ${Parametro_ExibeVendasAnteriores} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
-    ${Parametro_Permite_Varias_Tabelas} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PermiteVariasTabelas
-    
-    ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
-    ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
-    ${Parametro_ImprimeDuplicataVenda} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
-    ${Parametro_BaixaCentralizada} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaCentralizada
-    ${Parametro_BaixaAutomatico} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaAutomatico
-    ${Caixa_Baixas_Automatica} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    CodigoCX
-
-    IF    ${Parametro_VendaRapida}
-            
-        Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado
-        Terminate Process
-
-    END
-
-    Set Test Variable    ${Parametro_ControlaCredito}
-
-    Set Test Variable    ${Parametro_IndicacaoVenda}
-
-    Set Test Variable    ${Parametro_IncluiDireto}
-
-    Set Test Variable    ${Aviso_ProdutoSemEstoque}
-   
-    Set Test Variable    ${Parametro_VendeSemEstoque}
-
-    Set Test Variable    ${Parametro_ImprimeNFCeDireto}
-
-    Set Test Variable    ${Parametro_IndicacaoVenda}
-
-    Set Test Variable    ${Parametro_ImprimeVendaDireto}
-
-    Set Test Variable    ${Parametro_ImprimeDuplicataVenda}
-
-    Set Test Variable    ${Parametro_ExibeVendasAnteriores}
-
-    Set Test Variable    ${Parametro_ExigeSenhaMultiplo}
-
-    Set Test Variable    ${Parametro_BaixaCentralizada}
-
-    Set Test Variable    ${Parametro_BaixaAutomatico}
-
-    Set Test Variable    ${Caixa_Baixas_Automatica}
-
-    Set Test Variable    ${Parametro_Exibe_Foto_Cliente}
-
-    Set Test Variable    ${Parametro_Controla_Entrega}
-
-    Set Test Variable    ${Parametro_Local_Negociacao}
-
-    Set Test Variable    ${Parametro_Imprime_OrdemEntrega}
-
-    Set Test Variable    ${Parametro_Permite_Varias_Tabelas}
-
-Verifica avisos presentes ao incluir cliente
-    
-    ${Lista_de_avisos}    Valida Pametros Com Aviso    ${DBName}
-
-    ${Aviso_vendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
-    ${Aviso_infoCredito_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
-    ${Aviso_ExigeSenhaOutroVendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
-
-    ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
-    ${Condicional_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
-
-    IF    ${Observacao_existe}  
-            
-        Valida observaco cliente
-
-    END
-
-    IF     ${Parametro_Exibe_Foto_Cliente}
-
-        Valida exibe cliente
-
-    END
-
-    IF    ${Aviso_ExigeSenhaOutroVendedor_existe}  
-        
-        Valida aviso exige senha para outro vendedor
-
-    END
-
-    IF    ${Aviso_vendedor_existe}  
-
-        Valida aviso cliente outro vendedor
-
-    END
-
-    IF    ${Condicional_existe}  
-        
-        Valida condicional aberto
-
-    END
-
-    IF    ${Aviso_infoCredito_existe}  
-        
-        Valida informações de crédito
-
-    END
-
-    IF     ${Parametro_ExibeVendasAnteriores}
-
-        Valida vendas anteriores 
-
-    END
-
-Valida aviso exige senha para outro vendedor
-
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}
-
-    IF    ${MSG}  
-        
-        Press Special Key    ENTER
-
-        Wait Until Screen Contain    ${TELA_SENHA_SUPERVISOR}    ${SLEEP_ALTO}
-        Sleep    ${SLEEP_BAIXO}
-        Input Text    ${EMPTY}    1
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    ENTER
-
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida aviso cliente outro vendedor
-
+    Press Combination    KEY.ALT     Key.X
     Sleep    ${SLEEP_BAIXO}
-    ${MSG}    Exists    ${AVISO_CLIENTE_OUTRO_VE}
-
-    IF    ${MSG}  
-
-        Press Combination    KEY.ALT     Key.N
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida informações de crédito 
-
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${TELA_INFO_CRÉDITOS}
-
-    IF    ${MSG}  
-
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida condicional aberto 
     
+    Valida solicitacao de senha do usuário
+
+    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
+    Input Text    ${EMPTY}    Exclusao de Venda - Teste Automacao
+    Press Special Key    TAB
+    Press Special Key    ENTER
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${AVISO_CONDICIONAL_ABERTO}
-
-    IF    ${MSG}  
-
-        Press Special Key    LEFT
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_BAIXO}
-
-    END
-
-Valida observaco cliente
-
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${ALERTA_CLIENTE}
-
-    IF    ${MSG}  
     
-        Press Combination    KEY.ALT     Key.O
-        Sleep    ${SLEEP_MEDIO}
+    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
 
-    END
+# Verifica parametros que interferem na venda 
+    
+#     ${Lista_de_pametros}    Valida Pametros Com Aviso    ${DBName}
+#     ${Config_Empresas}    Valida Config Empresa    ${DBName}
+
+#     #Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
+#     ${Parametro_VendaRapida} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Venda_Rapida 
+#     ${Parametro_IncluiDireto} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    IncluiDireto
+#     ${Aviso_ProdutoSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Aviso_Sem_Est
+#     ${Parametro_IndicacaoVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    IndicacaoVenda
+#     ${Parametro_VendeSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Vende_Sem_Estoque
+#     ${Parametro_ControlaCredito} =      Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ControlaCreditoClientes
+#     ${Parametro_Controla_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ControlaEntregaPrevista
+#     ${Parametro_Local_Negociacao} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    LocalNegociacao
+#     ${Parametro_ExigeSenhaMultiplo} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Senha_supervisor_multiplo
+#     ${Parametro_Exibe_Foto_Cliente} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExibeFotoCli
+#     ${Parametro_Imprime_OrdemEntrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
+#     ${Parametro_ExibeVendasAnteriores} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
+#     ${Parametro_Permite_Varias_Tabelas} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PermiteVariasTabelas
+#     ${Parametro_Impre_Ordem_de_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
+    
+#     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
+#     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
+#     ${Parametro_ImprimeDuplicataVenda} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
+#     ${Parametro_BaixaCentralizada} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaCentralizada
+#     ${Parametro_BaixaAutomatico} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaAutomatico
+#     ${Caixa_Baixas_Automatica} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    CodigoCX
+#     ${Parametro_Imprime_Entrada} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpRecEnt_FinalizarVenda
+#     ${Parametro_Imprime_Contrato_Venda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirContrato_FinalizarVenda
+#     ${Parametro_Imprime_Promissoria} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
+#     ${Parametro_Imprime_Boleto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
+
+#     IF    ${Parametro_VendaRapida}
+            
+#         Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado
+#         Terminate Process
+
+#     END
+
+#     Set Test Variable    ${Parametro_Imprime_Boleto}
+
+#     Set Test Variable    ${Parametro_Imprime_Promissoria}
+
+#     Set Test Variable    ${Parametro_Imprime_Contrato_Venda}
+
+#     Set Test Variable    ${Parametro_Imprime_Entrada}
+
+#     Set Test Variable    ${Parametro_Impre_Ordem_de_Entrega}
+
+#     Set Test Variable    ${Parametro_ControlaCredito}
+
+#     Set Test Variable    ${Parametro_IndicacaoVenda}
+
+#     Set Test Variable    ${Parametro_IncluiDireto}
+
+#     Set Test Variable    ${Aviso_ProdutoSemEstoque}
+   
+#     Set Test Variable    ${Parametro_VendeSemEstoque}
+
+#     Set Test Variable    ${Parametro_ImprimeNFCeDireto}
+
+#     Set Test Variable    ${Parametro_IndicacaoVenda}
+
+#     Set Test Variable    ${Parametro_ImprimeVendaDireto}
+
+#     Set Test Variable    ${Parametro_ImprimeDuplicataVenda}
+
+#     Set Test Variable    ${Parametro_ExibeVendasAnteriores}
+
+#     Set Test Variable    ${Parametro_ExigeSenhaMultiplo}
+
+#     Set Test Variable    ${Parametro_BaixaCentralizada}
+
+#     Set Test Variable    ${Parametro_BaixaAutomatico}
+
+#     Set Test Variable    ${Caixa_Baixas_Automatica}
+
+#     Set Test Variable    ${Parametro_Exibe_Foto_Cliente}
+
+#     Set Test Variable    ${Parametro_Controla_Entrega}
+
+#     Set Test Variable    ${Parametro_Local_Negociacao}
+
+#     Set Test Variable    ${Parametro_Imprime_OrdemEntrega}
+
+#     Set Test Variable    ${Parametro_Permite_Varias_Tabelas}
+
+# Verifica avisos presentes ao incluir cliente
+    
+#     ${Lista_de_avisos}    Valida Pametros Com Aviso    ${DBName}
+
+#     ${Aviso_vendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
+#     ${Aviso_infoCredito_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
+#     ${Aviso_ExigeSenhaOutroVendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
+
+#     ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
+#     ${Condicional_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
+
+#     IF    ${Observacao_existe}  
+            
+#         Valida observaco cliente
+
+#     END
+
+#     IF    ${Aviso_ExigeSenhaOutroVendedor_existe}  
+        
+#         Valida aviso exige senha para outro vendedor
+
+#     END
+
+#     IF    ${Aviso_vendedor_existe}  
+
+#         Valida aviso cliente outro vendedor
+
+#     END
+
+#     IF    ${Condicional_existe}  
+        
+#         Valida condicional aberto
+
+#     END
+
+#     IF    ${Aviso_infoCredito_existe}  
+        
+#         Valida informações de crédito
+
+#     END
+
+#     IF     ${Parametro_ExibeVendasAnteriores}
+
+#         Valida vendas anteriores 
+
+#     END
+
+#     IF     ${Parametro_Exibe_Foto_Cliente}
+
+#         Valida exibe cliente
+
+#     END
+
+#Valida aviso exige senha para outro vendedor
+
+#     Sleep    ${SLEEP_MEDIO}
+#     ${MSG}    Exists    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}
+
+#     IF    ${MSG}  
+        
+#         Press Special Key    ENTER
+
+#         Wait Until Screen Contain    ${TELA_SENHA_SUPERVISOR}    ${SLEEP_ALTO}
+#         Sleep    ${SLEEP_BAIXO}
+#         Input Text    ${EMPTY}    1
+#         Sleep    ${SLEEP_BAIXO}
+#         Press Special Key    ENTER
+
+#         Sleep    ${SLEEP_MEDIO}
+
+#     END
+
+# Valida aviso cliente outro vendedor
+
+#     Sleep    ${SLEEP_BAIXO}
+#     ${MSG}    Exists    ${AVISO_CLIENTE_OUTRO_VE}
+
+#     IF    ${MSG}  
+
+#         Press Combination    KEY.ALT     Key.N
+#         Sleep    ${SLEEP_MEDIO}
+
+#     END
+
+# Valida informações de crédito 
+
+#     Sleep    ${SLEEP_MEDIO}
+#     ${MSG}    Exists    ${TELA_INFO_CRÉDITOS}
+
+#     IF    ${MSG}  
+
+#         Press Special Key    ENTER
+#         Sleep    ${SLEEP_MEDIO}
+
+#     END
+
+# Valida condicional aberto 
+    
+#     Sleep    ${SLEEP_MEDIO}
+#     ${MSG}    Exists    ${AVISO_CONDICIONAL_ABERTO}
+
+#     IF    ${MSG}  
+
+#         Press Special Key    LEFT
+#         Press Special Key    ENTER
+#         Sleep    ${SLEEP_BAIXO}
+
+#     END
+
+# Valida observaco cliente
+
+#     Sleep    ${SLEEP_MEDIO}
+#     ${MSG}    Exists    ${ALERTA_CLIENTE}
+
+#     IF    ${MSG}  
+    
+#         Press Combination    KEY.ALT     Key.O
+#         Sleep    ${SLEEP_MEDIO}
+
+#     END
 
 Aviso produto sem estoque 
     
@@ -500,28 +600,14 @@ Aviso produto sem estoque
 
     END
 
-Faturando a NFC-e
+Cancelando Faturando a NFC-e
 
+    Sleep    ${SLEEP_MEDIO}
+    Press Special Key    ENTER
     Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    DOWN
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.F 
-    Sleep    ${SLEEP_MEDIO}
-
-    Valida ncm invalido ao faturar nota 
-
-    Press Special Key    LEFT
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_ALTO}
-
-    Wait Until Screen Not Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
-
-    ${Consulta}    Query    SELECT NumeroNF FROM vendas WHERE Codigo = ${COD_VENDA}
-    Sleep    ${SLEEP_BAIXO}
-    Should Not Be Equal    ${Consulta[0][0]}    ${null}
+    Press Combination    KEY.ALT     Key.C
 
 Valida ncm invalido ao faturar nota 
     
@@ -535,6 +621,21 @@ Valida ncm invalido ao faturar nota
         Press Combination    KEY.ALT     Key.C
         Sleep    ${SLEEP_MEDIO}
         Log To Console    \n Script cancelou o faturamento por conter produtos com NCM inválido!\n
+
+    END
+
+Valida erro ao faturar NFC 
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${ERRO}    Exists    ${ERRO_FATURAR_NFC}    
+
+    IF     ${ERRO}
+
+        SikuliLibrary.Click    ${BT_OK}
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.C
+        Sleep    ${SLEEP_MEDIO}
+        Log To Console    \n Script cancelou o faturamento por conter erro!\n
 
     END
 
@@ -593,36 +694,22 @@ Valida Controle de Credito - Liberação
 
     END
 
-Valida vendas anteriores 
+# Valida vendas anteriores 
     
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_VENDAS_ANTERIORES}
+#     Sleep    ${SLEEP_ALTO}
+#     ${MSG}    Exists    ${TELA_VENDAS_ANTERIORES}
 
-    IF    ${MSG}  
+#     IF    ${MSG}  
         
-        Press Combination    KEY.ALT     Key.F
-        Sleep    ${SLEEP_MEDIO}
+#         Press Combination    KEY.ALT     Key.F
+#         Sleep    ${SLEEP_MEDIO}
 
-    END
+#     END
 
 Valida tela de liberação de desconto 
     
     Sleep    ${SLEEP_ALTO}
     ${MSG}    Exists    ${TELA_LIBERAÇÃO_DESCONTO_SENHA}
-
-    IF    ${MSG}  
-        
-        Input Text    ${EMPTY}    1
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    ENTER 
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida solicitacao de senha do usuário
-
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_SOLICITACAO_SENHA_USUARIO}
 
     IF    ${MSG}  
         
@@ -641,7 +728,7 @@ Calcula valor final da venda
 
 Verifica vendedor com senha
 
-    ${VendedorComSenha} =     Run Keyword And Return Status     Check If Exists In Database    SELECT SenhaVendedor FROM clientes WHERE Codigo = 15378 AND SenhaVendedor IS NOT NULL
+    ${VendedorComSenha} =     Run Keyword And Return Status     Check If Exists In Database    SELECT SenhaVendedor FROM clientes WHERE Codigo = ${Codigo_Vendedor} AND SenhaVendedor IS NOT NULL AND SenhaVendedor NOT LIKE ''
 
     IF    ${VendedorComSenha}
         
@@ -656,17 +743,36 @@ Verifica vendedor com senha
 
     END
 
-Valida exibe cliente
+Verifica observacao do produto 
+    
+    ${ObservaçãoProduto} =     Run Keyword And Return Status     Check If Exists In Database    SELECT ObservaVenda FROM produtos WHERE Codigo = ${COD_PRODUTO} AND ObservaVenda <> 0 AND ObservaVenda IS NOT NULL
 
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_EXIBE_CLIENTE}
-
-    IF    ${MSG}  
+    IF    ${ObservaçãoProduto}
         
-        Press Combination    KEY.ALT     Key.F
-        Sleep    ${SLEEP_MEDIO}
+        Sleep    ${SLEEP_ALTO}
+        ${MSG}    Exists    ${TELA_OBSERVACAO_PRODUTO}
+
+        IF    ${MSG}  
+            
+            Input Text    ${EMPTY}    Obs Produto Teste
+            Press Combination    KEY.ALT     Key.O
+            Sleep    ${SLEEP_MEDIO}
+
+        END
 
     END
+
+# Valida exibe cliente
+
+#     Sleep    ${SLEEP_ALTO}
+#     ${MSG}    Exists    ${TELA_EXIBE_CLIENTE}
+
+#     IF    ${MSG}  
+        
+#         Press Combination    KEY.ALT     Key.F
+#         Sleep    ${SLEEP_MEDIO}
+
+#     END
 
 Valida controle de entrega 
     
@@ -703,5 +809,115 @@ Valida tabela de preco
         
         Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão de entrada 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_RECIBO_ENTRADA}
+
+    IF    ${MSG}  
+
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão do contrato de venda 
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_CONTRATO_VENDA}
+
+    IF    ${MSG}  
+
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão de Promissórioa
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_EMISSAO_PROMISSÓRIA}
+
+    IF    ${MSG}  
+
+        Press Combination    KEY.ALT     Key.S
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão de boleto 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_IMPRESSAO_BOLETO}
+
+    IF    ${MSG}  
+
+        SikuliLibrary.Click    ${BT_NÃO}
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida vencimento fim de semana
+
+    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
+        
+        ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_MEDIO}
+
+        IF    ${MSG}  
+
+            Press Combination    KEY.ALT     Key.S
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+        
+    END
+
+Valida Parametros/Impressões pós venda
+
+    Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
+    
+    IF     ${Parametro_Imprime_Boleto}
+
+        Valida impressão de boleto
+    
+    END
+
+    IF     ${Parametro_Imprime_Entrada}
+
+        Valida impressão de entrada
+        #BUG QUE EXIBE 2X A MESMA TELA
+        Valida impressão de entrada
+
+    END
+
+    IF    ${Parametro_ImprimeNFCeDireto}  
+        
+        Cancelando Faturando a NFC-e
+
+    END
+
+    IF     ${Parametro_Imprime_Contrato_Venda}
+
+        Valida impressão do contrato de venda
+
+    END
+
+    IF     ${Parametro_Imprime_OrdemEntrega}
+
+        Valida impressão de ordem de entrega
+
+    END
+
+    IF    ${Parametro_ImprimeDuplicataVenda}
+        
+        Valida Impressao de duplicatas
+
+    END
+
+    IF     ${Parametro_Imprime_Promissoria}
+
+        Valida impressão de Promissórioa
 
     END
