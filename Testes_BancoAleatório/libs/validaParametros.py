@@ -8,14 +8,15 @@ class validaParametros:
 
         return connection, cursor
 
-    def Valida_Pametros_Com_Aviso(self, dbname):
+    def Valida_Pametros_Config(self, dbname):
 
         connection, cursor = validaParametros.conexao_banco(dbname)
 
         avisosMapeados = ("AvisoVendedor, Aviso_Info_Financeiro, Aviso_Info_Financeiro_Prev, BloqueiaVendaClienteInativo, BloqVenda_CaixaFechado, "
                           "ExigeSenhaCancelarVenda, Vende_Sem_Estoque, Venda_Rapida, VendedorDiferente, ExigeSenhaMudarVendedorVenda, IncluiDireto, "
                           "Aviso_Sem_Est, IndicacaoVenda, ControlaCreditoClientes, PVexibeAnteriores, NDias_Credito_Atu, Senha_supervisor_multiplo, "
-                          "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega")
+                          "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega, "
+                          "SuprimirOS, Orc_DesabilitaServico")
 
         avisosMarcados = []
         updatesParametros = []
@@ -248,7 +249,7 @@ class validaParametros:
 
         return  formaParcelamento
     
-
+    
 #validaParametros.Valida_Pametros_Com_Aviso('9931-e')
 #validaParametros.valida_Configuracoes_Venda('7535')
 #validaParametros.seleciona_forma_prazo('BDVINICIUS')

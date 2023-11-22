@@ -12,3 +12,35 @@ Teste 01 - Adicionando Orcamento com produto normal
     Dado que acesso a tela de orçamento 
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então Gravo o Orcamento
+
+Teste 02 - Visualizando o orcamento
+    [Tags]    Teste02
+    Dado que acesso a tela de orçamento 
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então Gravo o Orcamento
+    Então visualizo o mesmo
+
+Teste 03 - Editando um orcamento
+    [Tags]    Teste03
+    Dado que acesso a tela de orçamento 
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então Gravo o Orcamento
+    Quando clico em editar
+    Quando insiro um produto normal
+    Então Gravo o Orcamento
+
+Teste 04 - Excluindo um orcamento
+    [Tags]    Teste04
+    Dado que acesso a tela de orçamento 
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    Então Gravo o Orcamento
+    Quando clico em excluir
+    Então finalizo a exclusão

@@ -31,7 +31,7 @@ ${COD_VENDEDOR}              13
 ${COD_CLIENTE}               18
 ${COD_PRODUTO_NORMAL}        3
 ${COD_PRODUTO_GRADE}         6
-${COD_PRODUTO_SERIAL}        187
+${COD_PRODUTO_SERIAL}        43
 ${COD_PRODUTO_KIT}           9
 ${COD_PRODUTO_LOTE}          5
 ${COD_TRANSPORTADORA}        66
@@ -39,7 +39,7 @@ ${COD_TRANSPORTADORA}        66
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
-
+    
 Dado que acesso da tela de pedidos
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}

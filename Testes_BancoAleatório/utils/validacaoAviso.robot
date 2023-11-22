@@ -19,12 +19,14 @@ ${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
 ${ALERTA_CLIENTE}                        alertaCliente.png
 ${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
 ${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
+${TELA_SELECIONA_TABELA_PRECO}           tela_TabelasPreco.png
 ${TELA_VENDAS_ANTERIORES}                tela_ExibeAnteriores.png
+${TELA_INDICACAO_VENDA}                  tela_QuemIndicou.png
 
 ***Keywords***
 Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
     
-    ${Lista_de_avisos}    Valida Pametros Com Aviso    ${DBName}
+    ${Lista_de_avisos}    Valida Pametros Config    ${DBName}
 
     ${Aviso_vendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
     ${Aviso_infoCredito_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
@@ -32,6 +34,8 @@ Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
 
     ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
     ${Condicional_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
+
+    Set Test Variable    ${Observacao_existe}
 
     IF    ${Observacao_existe}  
             
@@ -77,7 +81,7 @@ Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
 
 Verifica parametros que interferem na venda(${DBName})
     
-    ${Lista_de_pametros}    Valida Pametros Com Aviso    ${DBName}
+    ${Lista_de_pametros}    Valida Pametros Config    ${DBName}
     ${Config_Empresas}    Valida Config Empresa    ${DBName}
 
     #Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
@@ -95,6 +99,8 @@ Verifica parametros que interferem na venda(${DBName})
     ${Parametro_ExibeVendasAnteriores} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
     ${Parametro_Permite_Varias_Tabelas} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PermiteVariasTabelas
     ${Parametro_Impre_Ordem_de_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
+    ${Parametro_Suprime_Objetos_OS_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    SuprimirOS
+    ${Parametro_Desabilita_Servico_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Orc_DesabilitaServico
     
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -113,6 +119,10 @@ Verifica parametros que interferem na venda(${DBName})
         Terminate Process
 
     END
+
+    Set Test Variable    ${Parametro_Suprime_Objetos_OS_Orcamento}
+
+    Set Test Variable    ${Parametro_Desabilita_Servico_Orcamento}
 
     Set Test Variable    ${Parametro_Imprime_Boleto}
 
@@ -250,6 +260,30 @@ Valida exibe cliente
     IF    ${MSG}  
         
         Press Combination    KEY.ALT     Key.F
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida tabela de preco
+
+    Sleep    ${SLEEP_ALTO}
+    ${MSG}    Exists    ${TELA_SELECIONA_TABELA_PRECO} 
+
+    IF    ${MSG}  
+        
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida indicacao Venda 
+
+    Sleep    ${SLEEP_ALTO}
+    ${MSG}    Exists    ${TELA_INDICACAO_VENDA}
+
+    IF    ${MSG}  
+        
+        Press Special Key    ESC 
         Sleep    ${SLEEP_MEDIO}
 
     END
