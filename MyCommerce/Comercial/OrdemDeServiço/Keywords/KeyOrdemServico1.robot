@@ -271,9 +271,10 @@ Quando insiro um produto do tipo serial
     Input Text    ${EMPTY}    ${COD_PRODUTO_SERIAL}
     Press Special Key    TAB 
     Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB 
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.I 
-    Sleep    ${SLEEP_BAIXO}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
     ${TELA_SELECAO} =    Exists    ${TELA_SERIAL_SELECAO}
     ${TELA_DIGITACAO} =    Exists    ${TELA_SERIAL_DIGITACAO} 

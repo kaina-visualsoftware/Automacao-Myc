@@ -22,11 +22,21 @@ ${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
 ${TELA_SELECIONA_TABELA_PRECO}           tela_TabelasPreco.png
 ${TELA_VENDAS_ANTERIORES}                tela_ExibeAnteriores.png
 ${TELA_INDICACAO_VENDA}                  tela_QuemIndicou.png
+${TELA_LIBERAÇÃO_DESCONTO_SENHA}         tela_liberacaoDesconto.png
+${TELA_VENCIMENTO_FIM_DE_SEMANA}         tela_VencimentoFimDeSemana.png
+${BT_NÃO}                                bt_Nao.png
+${TELA_IMPRIMIR_ORDEM_ENTREGA}           tela_ImprimirOrdemEntrega.png
+${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png 
+${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
+${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png 
+${TELA_IMPRESSAO_BOLETO}                 tela_impressaoBoleto.png
+${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
+${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
 
 ***Keywords***
 Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
     
-    ${Lista_de_avisos}    Valida Pametros Config    ${DBName}
+    ${Lista_de_avisos}    Valida Pametros Config
 
     ${Aviso_vendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
     ${Aviso_infoCredito_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
@@ -79,10 +89,10 @@ Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
 
     END
 
-Verifica parametros que interferem na venda(${DBName})
+Verifica parametros que interferem na venda
     
-    ${Lista_de_pametros}    Valida Pametros Config    ${DBName}
-    ${Config_Empresas}    Valida Config Empresa    ${DBName}
+    ${Lista_de_pametros}    Valida Pametros Config
+    ${Config_Empresas}    Valida Config Empresa
 
     #Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
     ${Parametro_VendaRapida} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Venda_Rapida 
@@ -101,6 +111,10 @@ Verifica parametros que interferem na venda(${DBName})
     ${Parametro_Impre_Ordem_de_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
     ${Parametro_Suprime_Objetos_OS_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    SuprimirOS
     ${Parametro_Desabilita_Servico_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Orc_DesabilitaServico
+    ${Parametro_Seleciona_Funcionario_Comissao_Servico} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    SelecionaFunc_OS
+    ${Parametro_Fatura_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    FaturarOS
+    ${Parametro_Imprime_Carne_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirCarneOS
+    ${Parametro_Imprime_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOS
     
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -119,6 +133,14 @@ Verifica parametros que interferem na venda(${DBName})
         Terminate Process
 
     END
+
+    Set Test Variable    ${Parametro_Fatura_OS}
+    
+    Set Test Variable    ${Parametro_Imprime_Carne_OS}
+
+    Set Test Variable    ${Parametro_Imprime_OS}
+
+    Set Test Variable    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
 
     Set Test Variable    ${Parametro_Suprime_Objetos_OS_Orcamento}
 
@@ -287,3 +309,161 @@ Valida indicacao Venda
         Sleep    ${SLEEP_MEDIO}
 
     END
+
+Valida tela de liberação de desconto 
+    
+    Sleep    ${SLEEP_ALTO}
+    ${MSG}    Exists    ${TELA_LIBERAÇÃO_DESCONTO_SENHA}
+
+    IF    ${MSG}  
+        
+        Input Text    ${EMPTY}    1
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER 
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida Parametros/Impressões pós venda
+
+    Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
+    
+    IF     ${Parametro_Imprime_Boleto}
+
+        Valida impressão de boleto
+    
+    END
+
+    IF     ${Parametro_Imprime_Entrada}
+
+        Valida impressão de entrada
+        #BUG QUE EXIBE 2X A MESMA TELA
+        Valida impressão de entrada
+
+    END
+
+    IF    ${Parametro_ImprimeNFCeDireto}  
+        
+        Cancelando Faturando a NFC-e
+
+    END
+
+    IF     ${Parametro_Imprime_Contrato_Venda}
+
+        Valida impressão do contrato de venda
+
+    END
+
+    IF     ${Parametro_Imprime_OrdemEntrega}
+
+        Valida impressão de ordem de entrega
+
+    END
+
+    IF    ${Parametro_ImprimeDuplicataVenda}
+        
+        Valida Impressao de duplicatas
+
+    END
+
+    IF     ${Parametro_Imprime_Promissoria}
+
+        Valida impressão de Promissórioa
+
+    END
+
+Valida impressão de ordem de entrega 
+    
+    Sleep    ${SLEEP_ALTO}
+    ${MSG}    Exists    ${TELA_IMPRIMIR_ORDEM_ENTREGA}
+
+    IF    ${MSG}  
+        
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão de entrada 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_RECIBO_ENTRADA}
+
+    IF    ${MSG}  
+
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão do contrato de venda 
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_CONTRATO_VENDA}
+
+    IF    ${MSG}  
+
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão de Promissórioa
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_EMISSAO_PROMISSÓRIA}
+
+    IF    ${MSG}  
+
+        Press Combination    KEY.ALT     Key.S
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida impressão de boleto 
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${MSG}    Exists    ${TELA_IMPRESSAO_BOLETO}
+
+    IF    ${MSG}  
+
+        SikuliLibrary.Click    ${BT_NÃO}
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida vencimento fim de semana(${FORMA_PADRAO})
+
+    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
+        
+        ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_MEDIO}
+
+        IF    ${MSG}  
+
+            Press Combination    KEY.ALT     Key.S
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+        
+    END
+
+Valida Impressao de duplicatas 
+
+    Sleep    ${SLEEP_ALTO}
+    ${MSG}    Exists    ${TELA_IMPRESSAO_DUPLICATAS}
+
+    IF    ${MSG}  
+        
+        Press Combination    KEY.ALT     Key.N
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Cancelando Faturando a NFC-e
+
+    Sleep    ${SLEEP_MEDIO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
+    Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C
+

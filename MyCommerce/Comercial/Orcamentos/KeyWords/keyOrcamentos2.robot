@@ -266,7 +266,7 @@ Quando finalizo o orçamento como a Personalizada
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.G 
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Calcula valor total orcamentos
     Sleep    ${SLEEP_BAIXO}
     Valida parcelas e valor - forma personalizada
@@ -322,7 +322,7 @@ Quando pressiono o atalho de vendas agrupada
     Wait Until Screen Contain    ${TELA_VENDA_AGRUPADA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Calcula valor total orcamentos
 
 E clico em gerar venda agrupada
@@ -332,16 +332,17 @@ E clico em gerar venda agrupada
     Sleep    ${SLEEP_MEDIO}
 
 E clico em gerar venda
+
+    Calcula valor total orcamentos
+
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.G  
     Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_GERAR_VENDA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Special Key    ENTER
 
     Pega valor produto
-
-    Calcula valor total orcamentos
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
@@ -497,7 +498,7 @@ Então finalizo a venda - 30 Dias / Personalizada
     Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
-    Calcula valor total orcamentos
+    #Calcula valor total orcamentos
     Valida valores finais venda
 
 #***---Função de Ajuste de Resolução da tela de orçamentos---***#
@@ -511,7 +512,7 @@ Verificar se objeto está visivel
 
 #***---Função para calcular total dos orçamentos na venda agrupada---***#
 Calcula valor total orcamentos
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${VALOR_TOTAL_ORCS}    Query    SELECT ROUND(SUM(TotalPedido),2) FROM orcamentos WHERE `Data` = CURDATE() AND `Status` = 'f'
     
     Set Suite Variable    ${VALOR_FINAL_ORCS}    ${VALOR_TOTAL_ORCS[0][0]}
@@ -524,6 +525,7 @@ Pega valor produto
 
 #***---Função para validar o valor total da venda---***#
 Valida valores finais venda
+    Sleep    ${SLEEP_MEDIO}
     ${Valor_Final_Venda}    Query    SELECT ValorFinalPagamentos FROM vendas WHERE CodOrcamento = ${COD_ORCAMENTO}
     Sleep    ${SLEEP_BAIXO}
     Should Be Equal    ${Valor_Final_Venda[0][0]}    ${VALOR_FINAL_ORCS}

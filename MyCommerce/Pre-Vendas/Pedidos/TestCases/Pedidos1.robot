@@ -8,7 +8,7 @@ Suite Teardown      Stop Remote Server
 
 *** Variables ***
 ${COD_PRODUTO_NORMAL}    3
-${COD_PRODUTO_SERIAL}    187
+${COD_PRODUTO_SERIAL}    43
 ${COD_PRODUTO_KIT}       9
 ${COD_PRODUTO_LOTE}      5
 

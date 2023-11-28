@@ -34,26 +34,25 @@ ${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
 ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
 ${TELA_RECB_DUPLICATAS}                  tela_RecebimentoDuplicatas.png
 ${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
+${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
+${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png  
+${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png 
 ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png  
 ${AVISO_NCM_INVALIDO}                    aviso_NCMInvalidoNFC.png
 ${TELA_IMPRESSAO}                        tela_Impressao.png
-${TELA_SOLICITACAO_CREDITO}              tela_SolicitaLiberacaoCredito.png
-${BT_SOLICITAR_CRÉDITO}                  bt_SolicitarCredito.png
-${TELA_CONTROLE_CRÉDITO}                 tela_ControleDeCredito.png
-${TELA_CONFIRMA_LIBERACAO_CREDITO}       tela_ConfirmaLiberacao.png
-${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
-${CORRIGE_FOCO}                          corrigeFoco.png
-${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizado.png
 ${TELA_VENDAS_ANTERIORES}                tela_ExibeAnteriores.png
-${TELA_LIBERAÇÃO_DESCONTO_SENHA}         tela_liberacaoDesconto.png
 ${INPUT_VALOR_FINAL_VENDA}               inp_ValorDuplicatas.png
 ${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
 ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
-${TELA_IMPRIMIR_ORDEM_ENTREGA}           tela_ImprimirOrdemEntrega.png
 ${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
 ${BT_OK}                                 bt_Ok.png
+${BT_OK}                                 bt_Ok.png
+${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png 
+${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
+${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png  
+${BT_OK}                                 bt_Ok.png 
 ${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png 
 ${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
 ${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png  
@@ -61,14 +60,11 @@ ${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png
 ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPag.png
-${TELA_IMPRESSAO_BOLETO}                 tela_impressaoBoleto.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
-${BT_NÃO}                                bt_Nao.png
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${TELA_VENCIMENTO_FIM_DE_SEMANA}         tela_VencimentoFimDeSemana.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -76,8 +72,8 @@ Ler imagens iniciais
 
 Dado que acesso a tela de vendas de balcao
 
-    ${FORMA_PADRAO}    Valida Configuracoes Venda    ${DBName}
-    ${FORMA_PRAZO}    Seleciona Forma Prazo    ${DBName} 
+    ${FORMA_PADRAO}    Valida Configuracoes Venda
+    ${FORMA_PRAZO}    Seleciona Forma Prazo 
 
     Set Test Variable    ${FORMA_PADRAO}
     Set Test Variable    ${FORMA_PRAZO}   
@@ -87,7 +83,7 @@ Dado que acesso a tela de vendas de balcao
 
 Quando pressiono o atalho de adicionar
 
-    Verifica parametros que interferem na venda(${DBName})
+    Verifica parametros que interferem na venda
 
     Press Combination    KEY.ALT     Key.A 
 
@@ -149,7 +145,7 @@ Então finalizo a venda
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana
+    Valida vencimento fim de semana(${FORMA_PADRAO})
 
     IF    ${FORMA_PADRAO[2]} > 0
         
@@ -165,7 +161,7 @@ Então finalizo a venda
 
         IF    ${Parametro_ControlaCredito}
             
-            Valida Controle de Credito - Liberação
+            Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
             IF    ${VendedorPossuiSenha}
         
@@ -234,11 +230,11 @@ Então finalizo a venda - A Prazo
 
     IF    ${FORMA_PADRAO[2]} > 0
         
-        Valida tela de liberação de desconto 
+        Valida tela de liberação de desconto
 
     END
 
-    Valida vencimento fim de semana
+    Valida vencimento fim de semana(${FORMA_PADRAO})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -246,7 +242,7 @@ Então finalizo a venda - A Prazo
 
     IF    ${Parametro_ControlaCredito}
             
-        Valida Controle de Credito - Liberação
+        Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
         IF    ${VendedorPossuiSenha}
         
@@ -318,15 +314,6 @@ Então clico em excluir
     
     Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
 
-Cancelando Faturando a NFC-e
-
-    Sleep    ${SLEEP_MEDIO}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_MEDIO}
-    Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.C
-
 Valida ncm invalido ao faturar nota 
     
     Sleep    ${SLEEP_BAIXO}
@@ -357,206 +344,8 @@ Valida erro ao faturar NFC
 
     END
 
-Valida Impressao de duplicatas 
-
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_IMPRESSAO_DUPLICATAS}
-
-    IF    ${MSG}  
-        
-        Press Combination    KEY.ALT     Key.N
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida Controle de Credito - Liberação
-
-    ${VALOR_CREDITO}    Query    SELECT ValorCredito FROM clientes WHERE Codigo = ${Codigo_Cliente}
-
-    IF    ${VALOR_FINAL_VENDA} > ${VALOR_CREDITO[0][0]}
-        
-        SikuliLibrary.Click    ${CORRIGE_FOCO}
-
-        Sleep    ${SLEEP_BAIXO}
-        ${MSG}    Exists    ${TELA_SOLICITACAO_CREDITO}
-
-        IF    ${MSG}  
-            
-            SikuliLibrary.Click    ${BT_SOLICITAR_CRÉDITO}
-            Wait Until Screen Contain    ${TELA_CONTROLE_CRÉDITO}    ${TEMPO_TELA}
-            Sleep    ${SLEEP_BAIXO}
-            Press Combination    KEY.ALT    Key.L
-            Wait Until Screen Contain    ${TELA_CONFIRMA_LIBERACAO_CREDITO}    ${TEMPO_TELA}
-            Sleep    ${SLEEP_BAIXO}
-            Press Combination    KEY.ALT    Key.o
-            Wait Until Screen Contain    ${LABEL_AVISO_CREDITO_LIBERADO}    ${TEMPO_TELA}
-            Sleep    ${SLEEP_MEDIO}
-            Press Combination    KEY.ALT    Key.o
-            Sleep    ${SLEEP_MEDIO}
-            Press Combination    KEY.ALT    Key.F
-            Sleep    ${SLEEP_BAIXO}
-
-        END
-
-    END
-
-Valida tela de liberação de desconto 
-    
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_LIBERAÇÃO_DESCONTO_SENHA}
-
-    IF    ${MSG}  
-        
-        Input Text    ${EMPTY}    1
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    ENTER 
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
 Calcula valor final da venda 
     
     ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = (SELECT Codigo FROM vendas WHERE `Data` = CURDATE() ORDER BY Codigo DESC LIMIT 1);
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
-
-Verifica vendedor com senha
-
-    ${VendedorComSenha} =     Run Keyword And Return Status     Check If Exists In Database    SELECT SenhaVendedor FROM clientes WHERE Codigo = ${Codigo_Vendedor} AND SenhaVendedor IS NOT NULL AND SenhaVendedor NOT LIKE ''
-
-    IF    ${VendedorComSenha}
-        
-        Log To Console    \nConsiderou que tem senha
-        Execute Sql String    UPDATE clientes SET SenhaVendedor = 'W' WHERE Codigo = ${Codigo_Vendedor}
-        Set Test Variable    ${VendedorPossuiSenha}    ${True}
-
-    ELSE
-
-        Log To Console    \nConsiderou como sem senha
-        Set Test Variable    ${VendedorPossuiSenha}    ${False}
-
-    END
-
-
-
-Valida impressão de ordem de entrega 
-    
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_IMPRIMIR_ORDEM_ENTREGA}
-
-    IF    ${MSG}  
-        
-        Press Combination    KEY.ALT     Key.N
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida impressão de entrada 
-    
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${TELA_RECIBO_ENTRADA}
-
-    IF    ${MSG}  
-
-        Press Combination    KEY.ALT     Key.N
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida impressão do contrato de venda 
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${TELA_CONTRATO_VENDA}
-
-    IF    ${MSG}  
-
-        Press Combination    KEY.ALT     Key.N
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida impressão de Promissórioa
-    
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${TELA_EMISSAO_PROMISSÓRIA}
-
-    IF    ${MSG}  
-
-        Press Combination    KEY.ALT     Key.S
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida impressão de boleto 
-    
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${TELA_IMPRESSAO_BOLETO}
-
-    IF    ${MSG}  
-
-        SikuliLibrary.Click    ${BT_NÃO}
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida vencimento fim de semana
-
-    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
-        
-        ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_MEDIO}
-
-        IF    ${MSG}  
-
-            Press Combination    KEY.ALT     Key.S
-            Sleep    ${SLEEP_BAIXO}
-
-        END
-        
-    END
-
-Valida Parametros/Impressões pós venda
-
-    Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
-    
-    IF     ${Parametro_Imprime_Boleto}
-
-        Valida impressão de boleto
-    
-    END
-
-    IF     ${Parametro_Imprime_Entrada}
-
-        Valida impressão de entrada
-        #BUG QUE EXIBE 2X A MESMA TELA
-        Valida impressão de entrada
-
-    END
-
-    IF    ${Parametro_ImprimeNFCeDireto}  
-        
-        Cancelando Faturando a NFC-e
-
-    END
-
-    IF     ${Parametro_Imprime_Contrato_Venda}
-
-        Valida impressão do contrato de venda
-
-    END
-
-    IF     ${Parametro_Imprime_OrdemEntrega}
-
-        Valida impressão de ordem de entrega
-
-    END
-
-    IF    ${Parametro_ImprimeDuplicataVenda}
-        
-        Valida Impressao de duplicatas
-
-    END
-
-    IF     ${Parametro_Imprime_Promissoria}
-
-        Valida impressão de Promissórioa
-
-    END

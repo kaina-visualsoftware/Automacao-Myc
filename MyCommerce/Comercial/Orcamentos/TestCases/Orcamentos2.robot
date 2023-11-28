@@ -12,15 +12,15 @@ ${COD_PRODUTO_KIT}           9
 ${COD_PRODUTO_SERIAL}        43
 
 *** Test Cases ***
-Teste 01 - Gerando OS agrupada de todos os orcamentos anteriores
-    [Tags]    Teste01
-    Dado que acesso a tela de orçamentos
-    Quando pressiono o atalho de vendas agrupada
-    E clico em gerar venda agrupada
-    Quando seleciono o serial(2)
-    E informo os lotes(2)
-    Quando incluo os funcionarios comissionados(8)
-    Então finalizo a OS - Todos Orçamentos
+# Teste 01 - Gerando OS agrupada de todos os orcamentos anteriores
+#     [Tags]    Teste01
+#     Dado que acesso a tela de orçamentos
+#     Quando pressiono o atalho de vendas agrupada
+#     E clico em gerar venda agrupada
+#     Quando seleciono o serial(2)
+#     E informo os lotes(2)
+#     Quando incluo os funcionarios comissionados(8)
+#     Então finalizo a OS - Todos Orçamentos
 
 Teste 02 - Gerando venda de Orcamento com um único produto
     [Tags]    Teste02

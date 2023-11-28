@@ -38,9 +38,9 @@ Ler imagens iniciais
 
 Dado que acesso a tela de orçamento 
     
-    ${FORMA_PADRAO}    Valida Configuracoes Venda    ${DBName}
-    ${FORMA_PRAZO}    Seleciona Forma Prazo    ${DBName} 
-    Verifica parametros que interferem na venda(${DBName})
+    ${FORMA_PADRAO}    Valida Configuracoes Venda
+    ${FORMA_PRAZO}    Seleciona Forma Prazo 
+    Verifica parametros que interferem na venda
     Type With Modifiers    O    CTRL
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}

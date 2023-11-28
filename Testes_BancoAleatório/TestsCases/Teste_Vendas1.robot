@@ -35,7 +35,7 @@ Teste 03 - Editando venda
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
     Quando clico em editar
-    E excluo os pagamentos lançados 
+    E excluo os pagamentos lançados
     Quando insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo

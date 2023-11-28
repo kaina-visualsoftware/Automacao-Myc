@@ -1,19 +1,14 @@
 import mysql.connector
 import leituraConfig as config
 
-class verificacoesExtras:
-    
-    def conexao_banco():
-        dbname = config.config.Database
-        porta = config.config.Porta
-        connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database=dbname, port=porta)
-        cursor = connection.cursor()
+dbname = config.config.Database
+porta = config.config.Porta
+connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database=dbname, port=porta)
+cursor = connection.cursor()
 
-        return connection, cursor
+class verificacoesExtras:
 
     def verifica_Forma_Parcelamento_Cliente(self, codigo_Cliente):
-
-        connection, cursor = verificacoesExtras.conexao_banco()
 
         cursor.execute("SELECT fp.Personalizavel, fp.NPagamentos, fp.ComEntrada FROM formaparcelamento AS fp INNER JOIN clientes AS c ON fp.Codigo = c.IDFormaParcelamento AND c.Codigo = "+ str(codigo_Cliente) +";")
 

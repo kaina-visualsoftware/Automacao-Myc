@@ -14,6 +14,7 @@ ${TELA_IMPRESSAO}                        tela_Impressao.png
 ${TELA_SOLICITACAO_SENHA_USUARIO}        tela_SolicitaSenha.png
 ${INPUT_COD_CLIENTE}                     lb_CodCliente.png
 ${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
+${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}    lb_CodClienteOS.png
 #Sleep's    
 ${SLEEP_BAIXO}                           0.3
 ${SLEEP_MEDIO}                           1.5
@@ -24,6 +25,15 @@ ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png
 ${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
 ${ROW_PROD_INCLUSO}                      row_ProdIncluso.png    
 ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
+${CORRIGE_FOCO}                          corrigeFoco.png
+${TELA_SOLICITACAO_CREDITO}              tela_SolicitaLiberacaoCredito.png
+${BT_SOLICITAR_CRÉDITO}                  bt_SolicitarCredito.png
+${TELA_CONTROLE_CRÉDITO}                 tela_ControleDeCredito.png
+${TELA_CONFIRMA_LIBERACAO_CREDITO}       tela_ConfirmaLiberacao.png
+${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
+${TELA_DETALHAMENTO_SERVIÇO}             tela_DetalhamentoServico.png
+${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.png 
+${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png           
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -31,6 +41,24 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
     Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C
+
+Personalização de Pagamentos
+    
+    ${msg} =     Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}
+
+    IF    ${msg}
+
+        FOR    ${I}    IN RANGE    3
+
+            Press Special Key    TAB
+            Sleep    ${SLEEP_BAIXO}
+        
+        END
+
+        Press Combination    KEY.ALT     Key.G
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
 
 Adicionar Vendedor e Cliente(${TELA})
     
@@ -41,23 +69,87 @@ Adicionar Vendedor e Cliente(${TELA})
     Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${codVendedor[0][0]}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_BAIXO}    
     
     #Não me pergunte por que, mas só na tela de orçamento que o input é igual mas o robot ve diferente
     IF    '${TELA}' == 'Orcamento'
-        SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
-        Input Text    ${EMPTY}    ${codCliente[0][0]}
-    ELSE
-        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_VENDA}
-        Input Text    ${EMPTY}    ${codCliente[0][0]}    
-    END
 
+        SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
+        
+    ELSE IF     '${TELA}' == 'Venda'
+
+        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_VENDA}
+
+    ELSE IF     '${TELA}' == 'OrdemDeServico'
+        #Press Special Key    TAB
+        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
+
+    END
+    
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${codCliente[0][0]}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
     Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+
+Inserir serviço 
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    ${codServico}    Query    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_MEDIO}
+    
+    ${condicao} =    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
+
+    IF    ${condicao}
+    
+        Input Text    ${EMPTY}    ${codServico[0][0]} 
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    TAB
+
+        IF    ${codServico[0][1]} > 0 
+            
+            Insere detalhamento no serviço
+
+        END
+
+        IF    ${Parametro_IncluiDireto} != ${True}
+            
+            Press Combination    KEY.ALT     Key.n
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${SLEEP_ALTO}
+
+        IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
+            
+            Press Special Key    DOWN
+            
+        ELSE
+            
+            Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
+        END
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    key.I
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     key.S
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+
+    ELSE
+
+        Log To Console    Cliente sem serviços ou serviço inativo, OS sem serviço.
+        
+    END
 
 Inserir Produto normal 
     Sleep    ${SLEEP_BAIXO}
@@ -132,9 +224,9 @@ Valida local da negociação
 
     END
 
-Valida impressao direta de venda(${Parametro_ImprimeVendaDireto}) 
+Valida impressao direta de venda(${Parametro})
     
-    IF    ${Parametro_ImprimeVendaDireto}
+    IF    ${Parametro}
         
         Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
         Sleep    ${SLEEP_BAIXO}
@@ -197,5 +289,68 @@ Aviso produto sem estoque
         
         Press Combination    KEY.ALT     Key.S
         Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Verifica vendedor com senha
+
+    ${VendedorComSenha} =     Run Keyword And Return Status     Check If Exists In Database    SELECT SenhaVendedor FROM clientes WHERE Codigo = ${Codigo_Vendedor} AND SenhaVendedor IS NOT NULL AND SenhaVendedor NOT LIKE ''
+    
+    Set Test Variable    ${VendedorPossuiSenha}    ${False}
+
+    IF    ${VendedorComSenha}
+        
+        Log To Console    \nConsiderou que tem senha
+        Execute Sql String    UPDATE clientes SET SenhaVendedor = 'W' WHERE Codigo = ${Codigo_Vendedor}
+        Set Test Variable    ${VendedorPossuiSenha}    ${True}
+
+    ELSE
+
+        Log To Console    \nConsiderou como sem senha
+        Set Test Variable    ${VendedorPossuiSenha}    ${False}
+
+    END
+
+Valida Controle de Credito - Liberação(${VALOR_FINAL})
+
+    ${VALOR_CREDITO}    Query    SELECT ValorCredito FROM clientes WHERE Codigo = ${Codigo_Cliente}
+
+    IF    ${VALOR_FINAL} > ${VALOR_CREDITO[0][0]}
+        
+        SikuliLibrary.Click    ${CORRIGE_FOCO}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${MSG}    Exists    ${TELA_SOLICITACAO_CREDITO}
+
+        IF    ${MSG}  
+            
+            SikuliLibrary.Click    ${BT_SOLICITAR_CRÉDITO}
+            Wait Until Screen Contain    ${TELA_CONTROLE_CRÉDITO}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    Key.L
+            Wait Until Screen Contain    ${TELA_CONFIRMA_LIBERACAO_CREDITO}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    Key.o
+            Wait Until Screen Contain    ${LABEL_AVISO_CREDITO_LIBERADO}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_MEDIO}
+            Press Combination    KEY.ALT    Key.o
+            Sleep    ${SLEEP_MEDIO}
+            Press Combination    KEY.ALT    Key.F
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+    END
+
+Insere detalhamento no serviço
+    
+    ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVIÇO}    ${SLEEP_ALTO}
+
+    IF    ${MSG}
+        
+        Input Text    ${EMPTY}    Detalhamento de Servico - Teste de Automacao
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.C 
+        Sleep    ${SLEEP_BAIXO}
 
     END
