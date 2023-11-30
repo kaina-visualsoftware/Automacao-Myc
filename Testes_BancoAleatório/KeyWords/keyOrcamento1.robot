@@ -74,8 +74,9 @@ E adiciono vendedor e cliente
 
 Quando insiro um produto normal
 
-    utils.Inserir Produto normal
-
+    utils.Inserir Produto normal - Permite sem estoque
+    
+    utils.Valida parametros após incluir produto
 Então Gravo o Orcamento
 
     ${FORMA_PACELAMENTO_CLIENTE}    Verifica Forma Parcelamento Cliente    ${Codigo_Cliente}

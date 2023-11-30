@@ -9,7 +9,7 @@ Suite Teardown      Stop Remote Server
 *** Variables ***
 ${COD_PRODUTO_NORMAL}        3
 ${COD_PRODUTO_KIT}           9
-${COD_PRODUTO_SERIAL}        43
+${COD_PRODUTO_SERIAL}        188
 
 *** Test Cases ***
 Teste 01 - Gerando OS com apenas 1 serviço - 5% de desconto

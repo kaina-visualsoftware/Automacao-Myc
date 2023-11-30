@@ -88,9 +88,19 @@ Quando Insiro um servico
     utils.Inserir serviço
 
 E insiro um produto normal
+    
+    IF     ${Parametro_VendaSemEstoqueOrdemDeServico}
+        
+        utils.Inserir Produto normal - Permite sem estoque
 
-    utils.Inserir Produto normal
+    ELSE
 
+        utils.Inserir Produto normal - Necessita de estoque
+
+    END
+
+    utils.Valida parametros após incluir produto
+    
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}

@@ -15,6 +15,7 @@ ${TELA_SOLICITACAO_SENHA_USUARIO}        tela_SolicitaSenha.png
 ${INPUT_COD_CLIENTE}                     lb_CodCliente.png
 ${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
 ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}    lb_CodClienteOS.png
+${INPUT_COD_CLIENTE_CONDICIONAL}         lb_CodClienteCondicional.png
 #Sleep's    
 ${SLEEP_BAIXO}                           0.3
 ${SLEEP_MEDIO}                           1.5
@@ -74,15 +75,21 @@ Adicionar Vendedor e Cliente(${TELA})
     #Não me pergunte por que, mas só na tela de orçamento que o input é igual mas o robot ve diferente
     IF    '${TELA}' == 'Orcamento'
 
-        SikuliLibrary.Click    ${INPUT_COD_CLIENTE}
+        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE}
         
     ELSE IF     '${TELA}' == 'Venda'
 
-        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_VENDA}
+        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
 
     ELSE IF     '${TELA}' == 'OrdemDeServico'
-        #Press Special Key    TAB
-        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
+        Press Special Key    TAB
+        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE IF     '${TELA}' == 'Condicional'
+        
+        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_CONDICIONAL}
+        Sleep    ${SLEEP_BAIXO}
 
     END
     
@@ -151,7 +158,24 @@ Inserir serviço
         
     END
 
-Inserir Produto normal 
+Inserir Produto normal - Necessita de estoque
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+
+    ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    ${codProduto[0][0]} 
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
+
+Inserir Produto normal - Permite sem estoque
+
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
@@ -164,6 +188,10 @@ Inserir Produto normal
 
     Press Special Key    TAB
 
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
+
+Valida parametros após incluir produto 
+    
     IF     ${Parametro_Permite_Varias_Tabelas}
 
         Valida tabela de preco
@@ -189,8 +217,6 @@ Inserir Produto normal
         Sleep    ${SLEEP_BAIXO}
 
     END
-
-    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
 
     Verifica observacao do produto 
 

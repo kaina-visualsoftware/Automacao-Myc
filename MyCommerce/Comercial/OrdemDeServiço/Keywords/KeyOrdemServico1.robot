@@ -44,7 +44,7 @@ ${COD_SERVIÇO_COMPUT}        3
 ${COD_PRODUTO_GRADE}         6
 ${COD_PRODUTO_LOTE}          5
 ${COD_PRODUTO_KIT}           9
-${COD_PRODUTO_SERIAL}        43
+${COD_PRODUTO_SERIAL}        188
 ${COD_SERVIÇO_GERAL}         1
 ${COD_SERVIÇO_COMPUT}        3
 ${PROD_LOTE_5}               prod_LoteCod5.png

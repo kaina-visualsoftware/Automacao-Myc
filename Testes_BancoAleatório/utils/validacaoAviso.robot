@@ -16,6 +16,7 @@ ${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png
 ${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png 
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
+${AVISO_CONDICIONAL_ABERTO_COND}         aviso_CondicionalAberto.png
 ${ALERTA_CLIENTE}                        alertaCliente.png
 ${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
 ${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
@@ -34,7 +35,7 @@ ${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
 
 ***Keywords***
-Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
+Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     
     ${Lista_de_avisos}    Valida Pametros Config
 
@@ -44,6 +45,8 @@ Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
 
     ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
     ${Condicional_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
+
+    Set Test Variable    ${Aviso_vendedor_existe}
 
     Set Test Variable    ${Observacao_existe}
 
@@ -115,6 +118,9 @@ Verifica parametros que interferem na venda
     ${Parametro_Fatura_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    FaturarOS
     ${Parametro_Imprime_Carne_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirCarneOS
     ${Parametro_Imprime_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOS
+    ${Parametro_VendeSemEstoqueCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Vende_Sem_Estoque_Condicional
+    ${Parametro_ImprimeCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimiCondicional
+    ${Parametro_VendaSemEstoqueOrdemDeServico} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_OS
     
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -133,6 +139,8 @@ Verifica parametros que interferem na venda
         Terminate Process
 
     END
+
+    Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     Set Test Variable    ${Parametro_Fatura_OS}
     
@@ -194,6 +202,10 @@ Verifica parametros que interferem na venda
 
     Set Test Variable    ${Parametro_Permite_Varias_Tabelas}
 
+    Set Test Variable    ${Parametro_VendeSemEstoqueCondicional}
+
+    Set Test Variable    ${Parametro_ImprimeCondicional}
+
 Valida aviso exige senha para outro vendedor
 
     Sleep    ${SLEEP_MEDIO}
@@ -242,7 +254,9 @@ Valida condicional aberto
     Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${AVISO_CONDICIONAL_ABERTO}
 
-    IF    ${MSG}  
+    ${MSG2}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
+
+    IF    ${MSG} or ${MSG2}
 
         Press Special Key    LEFT
         Press Special Key    ENTER

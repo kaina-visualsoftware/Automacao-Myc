@@ -111,11 +111,21 @@ E adiciono vendedor e cliente
 
     utils.Adicionar Vendedor e Cliente(Venda)
 
-    validacaoAviso.Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando insiro um produto normal
 
-    utils.Inserir Produto normal
+    IF     ${Parametro_VendeSemEstoque}
+
+        utils.Inserir Produto normal - Permite sem estoque
+
+    ELSE
+        
+        utils.Inserir Produto normal - Necessita de estoque
+
+    END
+
+    utils.Valida parametros após incluir produto
 
 E acesso a aba pagamentos
 

@@ -8,7 +8,7 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    Ler imagens inici
 *** Variables ***
 ${COD_PRODUTO_NORMAL}        3     #Desconto Máximo = 15%
 ${COD_PRODUTO_KIT}           9     #Desconto Máximo = 0%
-${COD_PRODUTO_SERIAL}        43    #Desconto Máximo = 5%
+${COD_PRODUTO_SERIAL}        188    #Desconto Máximo = 5%
 
 *** Test Cases ***
 Teste 01 - Gerando venda de Orcamento com um único produto - Desconto de 5%

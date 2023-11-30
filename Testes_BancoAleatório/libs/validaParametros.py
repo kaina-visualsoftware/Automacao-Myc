@@ -14,14 +14,15 @@ class validaParametros:
                           "ExigeSenhaCancelarVenda, Vende_Sem_Estoque, Venda_Rapida, VendedorDiferente, ExigeSenhaMudarVendedorVenda, IncluiDireto, "
                           "Aviso_Sem_Est, IndicacaoVenda, ControlaCreditoClientes, PVexibeAnteriores, NDias_Credito_Atu, Senha_supervisor_multiplo, "
                           "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega, "
-                          "SuprimirOS, Orc_DesabilitaServico, SelecionaFunc_OS, FaturarOS, ImprimirCarneOS, ImprimirOS")
+                          "SuprimirOS, Orc_DesabilitaServico, SelecionaFunc_OS, FaturarOS, ImprimirCarneOS, ImprimirOS, Vende_Sem_Estoque_Condicional, "
+                          "ImprimiCondicional, RealizaVendaSemEstoque_PreVenda, RealizaVendaSemEstoque_OS")
 
         avisosMarcados = []
         updatesParametros = []
 
         cursor.execute("SELECT " + avisosMapeados + " FROM config;")
 
-        parametrosMarcados = cursor.fetchone()  
+        parametrosMarcados = cursor.fetchone()
 
         while parametrosMarcados is not None:
 
@@ -188,7 +189,7 @@ class validaParametros:
 
         return  formaParcelamento
     
-#validaParametros.valida_Configuracoes_OS('12785')
-#validaParametros.Valida_Pametros_Com_Aviso('9931-e')
+#validaParametros.valida_Configuracoes_OS()
+#validaParametros.Valida_Pametros_Com_Aviso()
 #validaParametros.valida_Configuracoes_Venda()
-#validaParametros.seleciona_forma_prazo('BDVINICIUS')
+#validaParametros.seleciona_forma_prazo()

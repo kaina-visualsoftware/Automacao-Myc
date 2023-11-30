@@ -7,10 +7,10 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    Ler imagens inici
 Suite Teardown      Stop Remote Server
 
 *** Variables ***
-${COD_PRODUTO_NORMAL}    3
-${COD_PRODUTO_SERIAL}    43
-${COD_PRODUTO_KIT}       9
-${COD_PRODUTO_LOTE}      5
+${COD_PRODUTO_NORMAL}        3
+${COD_PRODUTO_SERIAL}        188
+${COD_PRODUTO_KIT}           9
+${COD_PRODUTO_LOTE}          5
 
 *** Test Cases ***
 Teste 01 - Gerando venda de um pedido com produto normal - A vista

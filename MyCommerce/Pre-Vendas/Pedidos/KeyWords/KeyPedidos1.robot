@@ -31,7 +31,7 @@ ${COD_VENDEDOR}              13
 ${COD_CLIENTE}               18
 ${COD_PRODUTO_NORMAL}        3
 ${COD_PRODUTO_GRADE}         6
-${COD_PRODUTO_SERIAL}        43
+${COD_PRODUTO_SERIAL}        188
 ${COD_PRODUTO_KIT}           9
 ${COD_PRODUTO_LOTE}          5
 ${COD_TRANSPORTADORA}        66
