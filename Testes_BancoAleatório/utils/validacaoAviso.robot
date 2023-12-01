@@ -121,6 +121,7 @@ Verifica parametros que interferem na venda
     ${Parametro_VendeSemEstoqueCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Vende_Sem_Estoque_Condicional
     ${Parametro_ImprimeCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimiCondicional
     ${Parametro_VendaSemEstoqueOrdemDeServico} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_OS
+    ${Parametro_DevolucaoAvulsa} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    DevolucaoAvulsa
     
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -139,6 +140,8 @@ Verifica parametros que interferem na venda
         Terminate Process
 
     END
+
+    Set Test Variable    ${Parametro_DevolucaoAvulsa}
 
     Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
