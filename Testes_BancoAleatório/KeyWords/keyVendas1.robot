@@ -12,9 +12,9 @@ Resource    ../utils/validacaoAviso.robot
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
 #Conexão MySQL
-${DBHost}                                10.1.1.220   
+${DBHost}                                10.1.1.247 
 ${DBName}                                ${config.Database}
-${DBPass}                                vssql
+${DBPass}                                vssql@1234
 ${DBPort}                                ${config.Porta}
 ${DBUser}                                root
 #Sleep's
@@ -208,8 +208,13 @@ Então finalizo a venda
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
 
 Então visualizo a mesma
+    
+    Dado que acesso a tela de vendas de balcao
+
     Press Combination    KEY.ALT     Key.V 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}

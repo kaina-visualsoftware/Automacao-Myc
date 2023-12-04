@@ -35,6 +35,16 @@ ${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
 
 ***Keywords***
+Verifica se condicional existe(${Codigo_Cliente})
+
+    ${Condicional_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
+    
+    IF    ${Condicional_existe}  
+        
+        Valida condicional aberto
+
+    END
+
 Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     
     ${Lista_de_avisos}    Valida Pametros Config
@@ -44,7 +54,6 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     ${Aviso_ExigeSenhaOutroVendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
 
     ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
-    ${Condicional_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
 
     Set Test Variable    ${Aviso_vendedor_existe}
 
@@ -68,11 +77,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    IF    ${Condicional_existe}  
-        
-        Valida condicional aberto
-
-    END
+    Verifica se condicional existe(${Codigo_Cliente})
 
     IF    ${Aviso_infoCredito_existe}  
         

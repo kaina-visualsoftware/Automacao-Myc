@@ -3,7 +3,7 @@ import mysql.connector
 class verificaProduto:   
 
     def conexao_banco():
-        connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database='bdvinicius')
+        connection = mysql.connector.connect(host='10.1.1.247', user='root', password='vssql@1234', database='bdvinicius', port='3308')
         cursor = connection.cursor()
 
         return connection, cursor

@@ -16,6 +16,7 @@ ${INPUT_COD_CLIENTE}                     lb_CodCliente.png
 ${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
 ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}    lb_CodClienteOS.png
 ${INPUT_COD_CLIENTE_CONDICIONAL}         lb_CodClienteCondicional.png
+${INPUT_CODIGO_CLIENTE_DEVOLUCAO}        lb_CodClienteDevolucao.png
 #Sleep's    
 ${SLEEP_BAIXO}                           0.3
 ${SLEEP_MEDIO}                           1.5
@@ -82,6 +83,7 @@ Adicionar Vendedor e Cliente(${TELA})
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
 
     ELSE IF     '${TELA}' == 'OrdemDeServico'
+
         Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_BAIXO}
@@ -89,6 +91,11 @@ Adicionar Vendedor e Cliente(${TELA})
     ELSE IF     '${TELA}' == 'Condicional'
         
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_CONDICIONAL}
+        Sleep    ${SLEEP_BAIXO}
+    
+    ELSE IF     '${TELA}' == 'Devolução'
+        
+        SikuliLibrary.Double Click    ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}
         Sleep    ${SLEEP_BAIXO}
 
     END
