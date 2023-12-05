@@ -3,7 +3,7 @@ import leituraConfig as config
 
 dbname = config.config.Database
 porta = config.config.Porta
-connection = mysql.connector.connect(host='10.1.1.247', user='root', password='vssql@1234', database=dbname, port=porta)
+connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database=dbname, port=porta)
 cursor = connection.cursor()
 
 class verificacoesExtras:

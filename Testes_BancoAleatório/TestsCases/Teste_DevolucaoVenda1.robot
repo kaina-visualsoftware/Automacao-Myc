@@ -14,3 +14,6 @@ Teste 01 - Adicionando uma nova Devolução de venda
     Dado que abro a tela de Devolução de vendas/os 
     Quando adiciono uma nova devolução 
     E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    Quando seleciono um produto para a devolução
+    E vou para a aba de pagamentos
+    Então finalizo a devolução

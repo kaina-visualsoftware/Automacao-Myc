@@ -13,9 +13,9 @@ Resource    ../utils/utils.robot
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
 #Conexão MySQL
-${DBHost}                                10.1.1.247 
+${DBHost}                                10.1.1.220
 ${DBName}                                ${config.Database}
-${DBPass}                                vssql@1234
+${DBPass}                                vssql
 ${DBPort}                                ${config.Porta}
 ${DBUser}                                root
 #Sleep's

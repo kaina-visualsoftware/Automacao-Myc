@@ -9,10 +9,10 @@ Library    C:\\Automacao\\MyCommerce-Automacao\\MyCommerce\\libs\\verificaProdut
 *** Variables ***
 ${IMAGES}                    ./MyCommerce/images
 #Conexão MySQL
-${DBHost}                    10.1.1.247
+${DBHost}                    10.1.1.220
 ${DBName}                    bdvinicius
-${DBPass}                    vssql@1234
-${DBPort}                    3308
+${DBPass}                    vssql
+${DBPort}                    3306
 ${DBUser}                    root
 #Sleep's    
 ${SLEEP_BAIXO}               0.3

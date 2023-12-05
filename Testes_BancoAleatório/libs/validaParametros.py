@@ -3,7 +3,7 @@ import leituraConfig as config
 
 dbname = config.config.Database
 porta = config.config.Porta
-connection = mysql.connector.connect(host='10.1.1.247', user='root', password='vssql@1234', database=dbname, port=porta)
+connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database=dbname, port=porta)
 cursor = connection.cursor()
 
 class validaParametros:
@@ -164,6 +164,52 @@ class validaParametros:
 
         return formaParcelamento
 
+    def valida_Forma_Parcelamento(self, tela):
+
+        formasPadrao = ("30 DIAS", "À VISTA", "PERSONALIZADA")
+
+        formaParcelamento = []
+
+        condicao = ""
+
+        if tela == "Venda":
+            condicao = "Padrao_Venda"
+        elif tela == "OS":
+            condicao = "Padrao_OS"
+        elif tela == "Devolução":
+            condicao = "Padrao_Devolucao"
+
+        sqlConsulta =  "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE formarecebimento IS NOT NULL ORDER BY IF("+condicao+" = 0, Descricao, 0) LIMIT 1;"
+
+        cursor.execute(sqlConsulta)
+
+        formaPadraoOS = cursor.fetchall()
+
+        formaEntrada = formaPadraoOS[0][5].split(' ')
+
+        formaParcelamento.append(formaPadraoOS[0][0])
+        formaParcelamento.append(formaPadraoOS[0][3])
+        formaParcelamento.append(formaPadraoOS[0][4])
+        formaParcelamento.append(formaEntrada[0])
+        formaParcelamento.append(formaPadraoOS[0][2])
+
+        if formaParcelamento[0] not in formasPadrao:
+            print(formaParcelamento)
+
+            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:
+                formaParcelamento[0] = "À VISTA"
+                print(formaParcelamento)
+
+            elif formaPadraoOS[0][6] == 1:
+                formaParcelamento[0] = "PERSONALIZADA"
+                print(formaParcelamento)
+            
+            elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:
+                formaParcelamento[0] = "30 DIAS"
+                print(formaParcelamento)
+
+        return formaParcelamento
+
     def seleciona_forma_prazo(self):
 
         consultaForma = "SELECT Descricao FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
@@ -189,6 +235,7 @@ class validaParametros:
 
         return  formaParcelamento
     
+#validaParametros.valida_Forma_Parcelamento("Venda")
 #validaParametros.valida_Configuracoes_OS()
 #validaParametros.Valida_Pametros_Com_Aviso()
 #validaParametros.valida_Configuracoes_Venda()
