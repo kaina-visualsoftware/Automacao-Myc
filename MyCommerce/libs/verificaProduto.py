@@ -3,7 +3,7 @@ import mysql.connector
 class verificaProduto:   
 
     def conexao_banco():
-        connection = mysql.connector.connect(host='10.1.1.247', user='root', password='vssql@1234', database='bdvinicius', port='3308')
+        connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database='bdvinicius', port='3306')
         cursor = connection.cursor()
 
         return connection, cursor
@@ -17,6 +17,7 @@ class verificaProduto:
         tabelaProdutos = cursor.fetchall()
 
         print("Consultou a tabela produtos.")
+        print(tabelaProdutos)
 
         if connection.is_connected(): 
 
@@ -63,7 +64,7 @@ class verificaProduto:
 
                 print("CodOrc: ", codOperacao," codProd: ",codProduto)
 
-    
+        print(consultaOperacaoProduto)
         #Compara se a consulta da tabela produtos é igual a da tabela produtos da tabela em validada, se for vai retornar true
         comparacao = tabelaProdutos == consultaOperacaoProduto
         print("Produtos incluiu correto = ", comparacao)
@@ -297,3 +298,5 @@ class verificaProduto:
         else:
             print("Quantidade Parcelas: ", QuantidadePagamentos, " Valor das Parcelas: ", valorParcelas, " Valor Conferido: ", valorPagConferencia)
             return False
+
+#verificaProduto.verifica_Produto_Incluiu_Correto("Orcamentos","3","3210")

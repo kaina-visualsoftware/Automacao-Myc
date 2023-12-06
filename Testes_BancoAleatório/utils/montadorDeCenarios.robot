@@ -1,5 +1,6 @@
 *** Settings ***
 Resource    ../KeyWords/keyVendas1.robot
+Resource    ../utils/utils.robot
 
 *** Variables ***
 
@@ -11,3 +12,4 @@ Dado que realizo uma venda completa, com produto normal
     keyVendas1.Quando insiro um produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    utils.Exclui ordem de entrega(${COD_VENDA})

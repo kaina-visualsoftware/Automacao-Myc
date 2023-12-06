@@ -109,8 +109,8 @@ Quando insiro um produto(${COD_PRODUTO})
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.I 
-    Sleep    ${SLEEP_BAIXO}
-
+    Sleep    ${SLEEP_ALTO}
+    
     ${verificacao}    Verifica Produto Incluiu Correto    Orcamentos     ${COD_PRODUTO}     ${COD_ORCAMENTO}
 
     Should Be Equal    ${verificacao}    ${True}

@@ -84,7 +84,7 @@ Adicionar Vendedor e Cliente(${TELA})
 
     ELSE IF     '${TELA}' == 'OrdemDeServico'
 
-        Press Special Key    TAB
+        #Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_BAIXO}
 
@@ -387,3 +387,9 @@ Insere detalhamento no serviço
         Sleep    ${SLEEP_BAIXO}
 
     END
+
+Exclui ordem de entrega(${COD_OPERACAO})
+    
+    Execute Sql String    DELETE FROM produtos_entregues WHERE IDEntrega = (SELECT ID FROM entregas WHERE CodigoVenda = ${COD_OPERACAO});
+    Execute Sql String    DELETE FROM entregas WHERE CodigoVenda = ${COD_OPERACAO};
+    Log To Console    Apagou a ordem de entrega(Velha) e produtos entregues da operação de Código: ${COD_OPERACAO}

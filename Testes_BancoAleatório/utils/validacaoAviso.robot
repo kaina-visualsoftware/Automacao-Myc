@@ -127,6 +127,8 @@ Verifica parametros que interferem na venda
     ${Parametro_ImprimeCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimiCondicional
     ${Parametro_VendaSemEstoqueOrdemDeServico} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_OS
     ${Parametro_DevolucaoAvulsa} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    DevolucaoAvulsa
+    ${Parametro_DevolucaoExigeOBS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeObsTroca
+    ${Parametro_DevolucaoPermiteAberta} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Dev_PermiteAberta
     
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -138,6 +140,7 @@ Verifica parametros que interferem na venda
     ${Parametro_Imprime_Contrato_Venda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirContrato_FinalizarVenda
     ${Parametro_Imprime_Promissoria} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
     ${Parametro_Imprime_Boleto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
+    ${Parametro_ValeCompra_Dev_Menor0} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
 
     IF    ${Parametro_VendaRapida}
             
@@ -145,6 +148,12 @@ Verifica parametros que interferem na venda
         Terminate Process
 
     END
+    
+    Set Test Variable    ${Parametro_DevolucaoPermiteAberta}
+
+    Set Test Variable    ${Parametro_DevolucaoExigeOBS}
+
+    Set Test Variable    ${Parametro_ValeCompra_Dev_Menor0}
 
     Set Test Variable    ${Parametro_DevolucaoAvulsa}
 
