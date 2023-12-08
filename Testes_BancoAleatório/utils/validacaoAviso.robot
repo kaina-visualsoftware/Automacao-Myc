@@ -129,6 +129,8 @@ Verifica parametros que interferem na venda
     ${Parametro_DevolucaoAvulsa} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    DevolucaoAvulsa
     ${Parametro_DevolucaoExigeOBS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeObsTroca
     ${Parametro_DevolucaoPermiteAberta} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Dev_PermiteAberta
+    ${Parametro_RealizaPreVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_PreVenda
+    ${Parametro_RealizaVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_Venda
     
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -148,7 +150,30 @@ Verifica parametros que interferem na venda
         Terminate Process
 
     END
+
+    #Sim, essa redundância inútil existe no MyCommerce, em cada tela é validado se primeiro o Parametro de venda sem estoque está marcado
+    #Para depois ver se o parametro especifico da tela está marcado para ai sim ver se vai ser incluido ou não.
+
+    IF    ${Parametro_VendeSemEstoque} == ${False}
+        
+        Log To Console     Parametro de vende sem estoque é falso, logo todos os outros serão falsos
+
+        Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
+
+        Set Test Variable    ${Parametro_RealizaVendaSemEstoque}    ${False}
+
+        Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}    ${False}
     
+    ELSE
+
+        Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}
+
+        Set Test Variable    ${Parametro_RealizaVendaSemEstoque}
+
+        Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
+
+    END
+
     Set Test Variable    ${Parametro_DevolucaoPermiteAberta}
 
     Set Test Variable    ${Parametro_DevolucaoExigeOBS}
@@ -156,8 +181,6 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_ValeCompra_Dev_Menor0}
 
     Set Test Variable    ${Parametro_DevolucaoAvulsa}
-
-    Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     Set Test Variable    ${Parametro_Fatura_OS}
     
@@ -188,8 +211,6 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_IncluiDireto}
 
     Set Test Variable    ${Aviso_ProdutoSemEstoque}
-   
-    Set Test Variable    ${Parametro_VendeSemEstoque}
 
     Set Test Variable    ${Parametro_ImprimeNFCeDireto}
 

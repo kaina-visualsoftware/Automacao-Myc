@@ -15,7 +15,8 @@ class validaParametros:
                           "Aviso_Sem_Est, IndicacaoVenda, ControlaCreditoClientes, PVexibeAnteriores, NDias_Credito_Atu, Senha_supervisor_multiplo, "
                           "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega, "
                           "SuprimirOS, Orc_DesabilitaServico, SelecionaFunc_OS, FaturarOS, ImprimirCarneOS, ImprimirOS, Vende_Sem_Estoque_Condicional, "
-                          "ImprimiCondicional, RealizaVendaSemEstoque_PreVenda, RealizaVendaSemEstoque_OS, DevolucaoAvulsa, ExigeObsTroca, Dev_PermiteAberta")
+                          "ImprimiCondicional, RealizaVendaSemEstoque_PreVenda, RealizaVendaSemEstoque_OS, DevolucaoAvulsa, ExigeObsTroca, Dev_PermiteAberta, "
+                          "RealizaVendaSemEstoque_Venda")
 
         avisosMarcados = []
         updatesParametros = []
@@ -177,6 +178,8 @@ class validaParametros:
             condicao = "Padrao_OS"
         elif tela == "Devolução":
             condicao = "Padrao_Devolucao"
+        elif tela == "Pedido":
+            condicao = "Padrao_Pre"
 
         sqlConsulta =  "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE formarecebimento IS NOT NULL ORDER BY IF("+condicao+" = 0, Descricao, 0) LIMIT 1;"
 

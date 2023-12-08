@@ -98,6 +98,12 @@ Adicionar Vendedor e Cliente(${TELA})
         SikuliLibrary.Double Click    ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}
         Sleep    ${SLEEP_BAIXO}
 
+    ELSE IF     '${TELA}' == 'Pedido'
+
+        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
+        Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
+
     END
     
     Sleep    ${SLEEP_BAIXO}
@@ -171,13 +177,14 @@ Inserir Produto normal - Necessita de estoque
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
 
-    ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 ORDER BY RAND() LIMIT 1;
+    ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
 
     Input Text    ${EMPTY}    ${codProduto[0][0]} 
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
 
@@ -194,6 +201,7 @@ Inserir Produto normal - Permite sem estoque
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
 

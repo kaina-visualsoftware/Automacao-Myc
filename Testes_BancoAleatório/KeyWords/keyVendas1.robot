@@ -115,7 +115,7 @@ E adiciono vendedor e cliente
 
 Quando insiro um produto normal
 
-    IF     ${Parametro_VendeSemEstoque}
+    IF     ${Parametro_RealizaVendaSemEstoque}
 
         utils.Inserir Produto normal - Permite sem estoque
 
