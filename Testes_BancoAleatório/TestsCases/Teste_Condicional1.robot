@@ -43,3 +43,5 @@ Teste 04 - Adicionando nova Condicional e Excluindo
     E insiro um produto normal
     Então finalizo a condicional
     Então excluo a condicional        
+
+Teste 05 - Gerando venda total de uma condicional

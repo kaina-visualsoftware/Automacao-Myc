@@ -103,6 +103,9 @@ Então Gravo o Orcamento
 
     Wait Until Screen Contain    ${ABA_PAGAMENTOS}    ${TEMPO_TELA}
     Press Combination    KEY.ALT     Key.G
+
+    Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
+
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 

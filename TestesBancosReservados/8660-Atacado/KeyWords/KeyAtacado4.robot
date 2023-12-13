@@ -9,10 +9,10 @@ Library    ../libs/validaAtacado.py
 *** Variables ***
 ${IMAGES}                    ./TestesBancosReservados/images
 #Conexão MySQL
-${DBHost}                    10.1.1.220
+${DBHost}                    10.1.1.247
 ${DBName}                    8660
-${DBPass}                    vssql
-${DBPort}                    3306
+${DBPass}                    vssql@1234
+${DBPort}                    3308
 ${DBUser}                    root
 #Sleep's    
 ${SLEEP_BAIXO}               0.3
