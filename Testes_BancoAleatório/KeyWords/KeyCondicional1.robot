@@ -9,6 +9,7 @@ Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/validacaoAviso.robot
 Resource    ../utils/utils.robot
+Resource    ../KeyWords/keyVendas1.robot
 
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
@@ -30,6 +31,12 @@ ${TELA_DETALHES_CONDICIONAL}             tela_DetalhesCondicional.png
 ${TELA_VISUALIZA_CONDICIONAL}            tela_VisualizaVenda.png 
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 ${AVISO_DESEJA_EXCLUIR}                  aviso_DesejaExcluir.png
+${MODAL_GERAR_VENDA_CONDICIONAL}         modal_GerarVendaCondicional.png
+${TELA_VENDAS_ADICIONAR}                 atacado_TelaVendaBalcao_Adicionar.png
+${MODAL_GERAR_VENDA_PARCIAL}             modal_GerarVendaParcialCondicional.png    
+${TELA_GERAÇÃO_VENDA_PARICAL}            tela_GeracaoVendaParcialCondicional.png
+${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}     row_ProdInclusoVendaParcialCond.png
+${MODAL_CANCELAR_VENDA}                  modal_CancelarVenda.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -70,6 +77,14 @@ E insiro um produto normal
     END
 
     utils.Valida parametros após incluir produto
+
+E insiro mais de um produto normal(${Quantidade})
+    
+    FOR    ${I}    IN RANGE    ${Quantidade}
+        
+        E insiro um produto normal
+        
+    END
 
 Então finalizo a condicional 
     
@@ -115,3 +130,62 @@ Então excluo a condicional
     Valida solicitacao de senha do usuário
 
     Check If Exists In Database    SELECT * FROM condicionais WHERE Codigo = ${COD_CONDICIONAL} AND `Status` LIKE 'x'
+
+Quando clico em gerar venda
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.G
+
+    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_CONDICIONAL}    ${SLEEP_ALTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+
+    KeyVendas1.Verifica formas de recebimento da venda
+
+Quando cliclo em gerar venda parcial
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.V
+
+    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${SLEEP_ALTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+
+    Wait Until Screen Contain    ${TELA_GERAÇÃO_VENDA_PARICAL}    ${TEMPO_TELA}
+
+E gero a venda de parte dos produtos(${Quantidade})
+    
+    FOR    ${I}    IN RANGE    ${Quantidade}
+        
+        Press Special Key    SPACE 
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Wait Until Screen Contain    ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    ${SLEEP_ALTO}
+
+    Press Combination    KEY.ALT     Key.G
+
+    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${SLEEP_ALTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+
+    KeyVendas1.Verifica formas de recebimento da venda
+
+Então cancelo a geração da venda
+    
+    Press Special Key    ESC
+    Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${SLEEP_ALTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+    
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+

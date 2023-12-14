@@ -70,13 +70,17 @@ ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
 
-Dado que acesso a tela de vendas de balcao
-
+Verifica formas de recebimento da venda 
+    
     ${FORMA_PADRAO}    Valida Configuracoes Venda
     ${FORMA_PRAZO}    Seleciona Forma Prazo 
 
     Set Test Variable    ${FORMA_PADRAO}
     Set Test Variable    ${FORMA_PRAZO}   
+
+Dado que acesso a tela de vendas de balcao
+
+    Verifica formas de recebimento da venda
 
     Press Special Key    F2
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
@@ -139,7 +143,7 @@ E acesso a aba pagamentos
 
     Set Test Variable    ${EntradaIgualA_Outros}
 
-    IF     ${DESCONTO_FORMA} > 0
+        IF     ${DESCONTO_FORMA} > 0
 
         Valida tela de liberação de desconto 
 
