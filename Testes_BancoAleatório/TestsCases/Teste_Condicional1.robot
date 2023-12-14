@@ -55,6 +55,7 @@ Teste 05 - Gerando venda total de uma condicional
     Quando clico em gerar venda
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    Validação de vendas após a geração do condicional 
 
 Teste 06 - Gerando venda Parcial de uma condicional
     [Tags]    Teste06

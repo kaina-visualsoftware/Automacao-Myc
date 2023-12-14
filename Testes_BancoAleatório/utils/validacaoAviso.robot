@@ -131,7 +131,8 @@ Verifica parametros que interferem na venda
     ${Parametro_DevolucaoPermiteAberta} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Dev_PermiteAberta
     ${Parametro_RealizaPreVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_PreVenda
     ${Parametro_RealizaVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_Venda
-    
+    ${Parametro_ExigeSenhaCancelarVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeSenhaCancelarVenda
+
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
     ${Parametro_ImprimeDuplicataVenda} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
@@ -173,6 +174,8 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     END
+
+    Set Test Variable    ${Parametro_ExigeSenhaCancelarVenda}
 
     Set Test Variable    ${Parametro_DevolucaoPermiteAberta}
 

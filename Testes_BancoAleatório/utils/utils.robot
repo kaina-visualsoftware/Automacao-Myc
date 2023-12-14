@@ -36,6 +36,7 @@ ${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
 ${TELA_DETALHAMENTO_SERVIÇO}             tela_DetalhamentoServico.png
 ${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.png 
 ${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png           
+${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -72,8 +73,7 @@ Adicionar Vendedor e Cliente(${TELA})
 
     Input Text    ${EMPTY}    ${codVendedor[0][0]}
     Sleep    ${SLEEP_BAIXO}    
-    
-    #Não me pergunte por que, mas só na tela de orçamento que o input é igual mas o robot ve diferente
+
     IF    '${TELA}' == 'Orcamento'
 
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE}
@@ -401,3 +401,15 @@ Exclui ordem de entrega(${COD_OPERACAO})
     Execute Sql String    DELETE FROM produtos_entregues WHERE IDEntrega = (SELECT ID FROM entregas WHERE CodigoVenda = ${COD_OPERACAO});
     Execute Sql String    DELETE FROM entregas WHERE CodigoVenda = ${COD_OPERACAO};
     Log To Console    Apagou a ordem de entrega(Velha) e produtos entregues da operação de Código: ${COD_OPERACAO}
+
+Cancela venda com senha 
+    
+    #${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${SLEEP_ALTO}
+    #Sistema não reconhece a imagem do modal de jeito nenhum, então deixei dessa maneira, já que se estiver com o parametro marcado irá aparecer de certeza
+
+    Sleep    ${SLEEP_ALTO}
+        
+    Input Text    ${EMPTY}    1
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.O
+    Sleep    ${SLEEP_BAIXO}

@@ -56,7 +56,6 @@ E adiciono uma nova Condicional
 
     ${Consulta}    Query    SELECT Codigo FROM condicionais ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_CONDICIONAL}    ${Consulta[0][0]}
-    Log To Console    ${COD_CONDICIONAL}
 
 Quando insiro vendedor e cliente
 
@@ -186,6 +185,25 @@ Então cancelo a geração da venda
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S
+
+    IF    ${Parametro_ExigeSenhaCancelarVenda}
+
+        Cancela venda com senha
+
+    END
     
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
+    Validação de vendas canceladas vindas do condicional
+
+Validação de vendas canceladas vindas do condicional 
+    
+    Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'x';
+
+    Check If Not Exists In Database    SELECT * FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = ${COD_CONDICIONAL} AND QtdeGerada = 1;
+
+Validação de vendas após a geração do condicional 
+    
+    Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
+
+    Check If Not Exists In Database    SELECT * FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = ${COD_CONDICIONAL} AND QtdeGerada = 0;
