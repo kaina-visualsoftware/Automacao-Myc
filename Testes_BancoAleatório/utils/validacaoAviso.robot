@@ -5,6 +5,8 @@ Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    Process
 
+Resource    ./utils.robot
+
 *** Variables ***
 #Sleep's    
 ${SLEEP_BAIXO}                           0.3
@@ -273,8 +275,14 @@ Valida aviso cliente outro vendedor
 
     IF    ${MSG}  
 
-        Press Combination    KEY.ALT     Key.N
+        ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
+
+        Set Test Variable    ${Codigo_Vendedor}    ${NOVO_VENDEDOR[0][0]}
+
+        Press Combination    KEY.ALT     Key.S
         Sleep    ${SLEEP_MEDIO}
+
+        Log To Console    Alterou para o vendedor padrão do cliente - Vendedor Código: ${Codigo_Vendedor}
 
     END
 
@@ -297,14 +305,18 @@ Valida condicional aberto
 
     ${MSG2}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
 
-    IF    ${MSG} or ${MSG2}
+    IF    ${MSG}
 
-        Press Special Key    LEFT
-        Press Special Key    ENTER
+        Press Combination    KEY.ALT     Key.N
         Sleep    ${SLEEP_BAIXO}
 
-    END
+    ELSE IF     ${MSG2}
 
+       Press Special Key    ENTER
+       Sleep    ${SLEEP_BAIXO}
+
+    END
+    
 Valida observaco cliente
 
     Sleep    ${SLEEP_MEDIO}

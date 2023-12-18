@@ -143,7 +143,7 @@ E acesso a aba pagamentos
 
     Set Test Variable    ${EntradaIgualA_Outros}
 
-        IF     ${DESCONTO_FORMA} > 0
+    IF     ${DESCONTO_FORMA} > 0
 
         Valida tela de liberação de desconto 
 
@@ -332,6 +332,9 @@ Então clico em excluir
     Sleep    ${SLEEP_MEDIO}
     
     Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
+
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
 
 Valida ncm invalido ao faturar nota 
     

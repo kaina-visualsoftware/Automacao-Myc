@@ -193,7 +193,14 @@ Então finalizo a devolução
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
 Então visualizo a devolução
+
+    Press Special Key    F6
+    Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.V 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
@@ -241,7 +248,7 @@ Quando insiro um produto para a troca
         Press Combination    KEY.ALT     Key.T
         Sleep    ${SLEEP_BAIXO}
 
-        IF     ${Parametro_VendeSemEstoque}
+        IF     ${Parametro_RealizaVendaSemEstoque}
 
             utils.Inserir Produto normal - Permite sem estoque
 
@@ -265,6 +272,10 @@ Então finalizo a devolução após a edição
     END
 
 Então excluo a devolução 
+    
+    Press Special Key    F6
+    Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
     
     Press Combination     KEY.ALT     Key.x 
     Sleep    ${SLEEP_BAIXO}
