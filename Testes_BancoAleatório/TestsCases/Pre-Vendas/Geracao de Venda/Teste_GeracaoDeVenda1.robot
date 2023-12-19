@@ -1,9 +1,9 @@
 *** Settings ***
 Documentation    Testes em Banco Aleatório
 
-Resource     ../KeyWords/KeyGeracaoDeVenda1.robot
+Resource     ../KeyWords/Pré-Venda/Geracao Venda/KeyGeracaoDeVenda1.robot
 Resource     ../utils/montadorDeCenarios.robot
-Resource     ../KeyWords/keyVendas1.robot
+Resource     ../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyGeracaoDeVenda1.Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
 Suite Teardown      Stop Remote Server

@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ../KeyWords/keyVendas1.robot
-Resource    ../KeyWords/KeyPedidos1.robot
+Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
+Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../utils/utils.robot
 Library    Collections
 

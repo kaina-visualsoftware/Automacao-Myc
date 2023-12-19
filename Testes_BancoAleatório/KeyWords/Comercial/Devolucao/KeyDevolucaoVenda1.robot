@@ -9,7 +9,7 @@ Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/validacaoAviso.robot
 Resource    ../utils/utils.robot
-Resource    ./keyVendas1.robot
+Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images

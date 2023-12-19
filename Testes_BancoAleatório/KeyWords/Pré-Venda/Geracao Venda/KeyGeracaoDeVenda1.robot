@@ -94,21 +94,21 @@ Então confirmo a geração dos pedidos
 
     IF    ${EntradaIgualA_Outros}
 
-            IF     ${Parametro_BaixaAutomatico}
+        IF     ${Parametro_BaixaAutomatico}
                 
-                FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
+            FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
                     
-                    Recupera total do pedido(${I})
+                Recupera total do pedido(${I})
 
-                    Finalização com recebimento de duplicatas(${TOTAL_PEDIDO}) 
+                Finalização com recebimento de duplicatas(${TOTAL_PEDIDO}) 
 
-                    Sleep    ${SLEEP_MEDIO}
-
-                END
+                Sleep    ${SLEEP_MEDIO}
 
             END
 
         END
+
+    END
 
     Sleep    ${SLEEP_BAIXO}
 

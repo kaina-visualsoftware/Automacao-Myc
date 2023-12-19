@@ -134,6 +134,7 @@ Verifica parametros que interferem na venda
     ${Parametro_RealizaPreVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_PreVenda
     ${Parametro_RealizaVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_Venda
     ${Parametro_ExigeSenhaCancelarVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeSenhaCancelarVenda
+    ${Parametro_BloqueiaGeracaoVendaParcial} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PrevendaBloqueioVendaParcial
 
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -176,6 +177,8 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     END
+
+    Set Test Variable    ${Parametro_BloqueiaGeracaoVendaParcial}
 
     Set Test Variable    ${Parametro_ExigeSenhaCancelarVenda}
 
@@ -251,8 +254,9 @@ Verifica parametros que interferem na venda
 
 Valida aviso exige senha para outro vendedor
 
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}
+    # Sleep    ${SLEEP_MEDIO}
+    # ${MSG}    Exists    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}
+    ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}    ${SLEEP_ALTO}
 
     IF    ${MSG}  
         
@@ -474,7 +478,7 @@ Valida impressão do contrato de venda
 
     END
 
-Valida impressão de Promissórioa
+Valida impressão de Promissórioa 
     
     Sleep    ${SLEEP_MEDIO}
     ${MSG}    Exists    ${TELA_EMISSAO_PROMISSÓRIA}

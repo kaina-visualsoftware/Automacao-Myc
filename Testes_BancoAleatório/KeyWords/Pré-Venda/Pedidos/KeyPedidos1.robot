@@ -28,6 +28,10 @@ ${TELA_PEDIDOS_ADICIONAR}                tela_PedidosAdicionar.png
 ${TELA_PEDIDO_AUDITADO}                  tela_PedidoAuditado.png  
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 ${FORMA_RECEBIMENTO_OUTROS}              Outros...
+${TELA_GERACAO_VENDA}                    tela_GeracaoPedido.png
+${MODAL_FORMAS_DE_PAGAMENTO}             modal_FormasDePagamentoPedidos.png
+${TELA_WORKFLOW}                         tela_WorkFlowPedido.png
+${BT_WORKFLOW}                           bt_Workflow.png     
 
 *** Keywords ***
 Ler imagens iniciais
@@ -184,3 +188,161 @@ Valida avisos após incluir cliente e vendedor - Pré-Venda
         Valida informações de crédito
 
     END
+
+Quando clico em gerar venda 
+
+    Press Special Key    F10
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    
+    Press Combination    KEY.ALT     Key.G 
+
+    Valida solicitacao de senha do usuário
+
+    Wait Until Screen Contain    ${TELA_GERACAO_VENDA}    ${TEMPO_TELA}
+
+Então gero a venda totalmente
+    
+    Press Combination    KEY.ALT     Key.T 
+
+    IF    ${EntradaIgualA_Outros}
+
+        IF     ${Parametro_BaixaAutomatico}
+
+            Finalização com recebimento de duplicatas(${TOTAL_PEDIDO}) 
+
+            Sleep    ${SLEEP_MEDIO}
+
+        END
+
+    END
+
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Validação de geração de venda
+
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+
+Validação de geração de venda
+    
+    ${Codigo_Venda_Gerada}    Query    SELECT VendaGerada FROM pedidosvenda WHERE codigo = ${Codigo_Pedido};
+
+    ${Produtos_Pedidos}    Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM pedidosvendaprodutos WHERE codigoPedido = ${Codigo_Pedido};
+
+    ${Produtos_Vendas}     Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM vendasprodutos WHERE CodigoVenda = ${Codigo_Venda_Gerada[0][0]}
+
+    ${Comparacao_Produtos} =     Run Keyword And Return Status     Should Be Equal    ${Produtos_Pedidos}    ${Produtos_Vendas}
+
+    IF     ${Comparacao_Produtos}
+
+        Log To Console    \nProdutos foram incluidos corretamenta na venda - Código do Pedido: ${Codigo_Pedido}
+
+    ELSE
+
+        Log To Console    \nProdutos *NÃO* foram incluidos corretamenta na venda, verifique! - Código do Pedido: ${Codigo_Pedido}
+
+    END
+
+    Set Test Variable    ${COD_VENDA}    ${Codigo_Venda_Gerada[0][0]}
+
+Quando seleciono um produto para a geração da venda
+
+    IF    ${Parametro_BloqueiaGeracaoVendaParcial}
+
+        Log To Console    Parametro que bloqueia venda parcial está ativado!\nGeração de venda será cancelada!
+
+        Press Combination    KEY.ALT     Key.F
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+        
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    1
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+
+    END
+
+Então gero a venda parcialmente do produto selecionado 
+    
+    IF    ${Parametro_BloqueiaGeracaoVendaParcial}
+
+        Log To Console    Parametro que bloqueia venda parcial está ativado!\nGeração de venda foi cancelada!
+
+    ELSE
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Contain    ${MODAL_FORMAS_DE_PAGAMENTO}    ${SLEEP_ALTO}
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.S
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${EntradaIgualA_Outros}
+
+            IF     ${Parametro_BaixaAutomatico}
+                
+                Calcula total da venda com pedido parcial
+
+                Finalização com recebimento de duplicatas(${Total_Pedido_Parcial}) 
+
+                Sleep    ${SLEEP_MEDIO}
+
+            END
+
+        END
+
+    END
+
+Calcula total da venda com pedido parcial
+    
+    ${Consulta_Total_Pedido}    Query    SELECT SUM(ValorTotal) FROM pedidosvendaprodutos WHERE CodigoPedido = ${Codigo_Pedido} AND QtdeGerada >= 1;
+
+    Set Test Variable    ${Total_Pedido_Parcial}    ${Consulta_Total_Pedido[0][0]}
+
+Então verifico se o pedido retornou corretamente
+    
+    Press Special Key    F10
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${BT_WORKFLOW}
+    Wait Until Screen Contain    ${TELA_WORKFLOW}    ${SLEEP_ALTO}
+    Press Special Key    ESC
+
+    ${VendaGerada} =     Query    SELECT Gerado FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido}
+
+    Should Be Equal    ${VendaGerada[0][0]}    ${0}
+
+E clico em salvar
+
+    IF    ${Parametro_BloqueiaGeracaoVendaParcial}
+
+        Log To Console    Parametro que bloqueia venda parcial está ativado!\nGeração de venda foi cancelada!
+
+    ELSE
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Contain    ${MODAL_FORMAS_DE_PAGAMENTO}    ${SLEEP_ALTO}
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+Então cancelo a geração da venda
+    
+    FOR    ${I}    IN RANGE    2
+        
+        Press Combination    KEY.ALT     Key.F
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}

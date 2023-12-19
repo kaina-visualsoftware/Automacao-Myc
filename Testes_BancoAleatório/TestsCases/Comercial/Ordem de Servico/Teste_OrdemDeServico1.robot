@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    Testes em Banco Aleatório
 
-Resource     ../KeyWords/KeyOrdemDeSevico1.robot
+Resource     ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
 Suite Teardown      Stop Remote Server
