@@ -95,7 +95,7 @@ Teste 07 - Excluindo venda gerada através do pedidos
     Então verifico se o pedido retornou corretamente
 
 Teste 08 - Cancelando a geração de venda
-    [Tags]    Teste07
+    [Tags]    Teste08
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente

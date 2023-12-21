@@ -3,6 +3,7 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
+Library    ../libs/estoque.py
 Library    Process
 Variables    ../libs/leituraConfig.py
 
@@ -73,7 +74,7 @@ Ler imagens iniciais
 Verifica formas de recebimento da venda 
     
     ${FORMA_PADRAO}    Valida Configuracoes Venda
-    ${FORMA_PRAZO}    Seleciona Forma Prazo 
+    ${FORMA_PRAZO}    Seleciona Forma Prazo
 
     Set Test Variable    ${FORMA_PADRAO}
     Set Test Variable    ${FORMA_PRAZO}   
@@ -110,6 +111,7 @@ Quando pressiono o atalho de adicionar
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
 E adiciono vendedor e cliente 
 
@@ -214,6 +216,8 @@ Então finalizo a venda
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
+
+    Valida baixa de estoque
 
 Então visualizo a mesma
     
@@ -371,3 +375,20 @@ Calcula valor final da venda
     ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = (SELECT Codigo FROM vendas WHERE `Data` = CURDATE() ORDER BY Codigo DESC LIMIT 1);
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
+
+Valida baixa de estoque
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
+    Should Be Equal    ${Baixa_De_Estoque}    ${True}
+
+    IF    ${Baixa_De_Estoque}
+        
+        Log To Console    Baixou estoque corretamente!
+
+    ELSE
+
+        Log To Console    Falha na baixa do estoque! Verifique!
+
+    END

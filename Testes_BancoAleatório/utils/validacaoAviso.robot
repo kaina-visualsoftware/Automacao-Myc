@@ -73,11 +73,11 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    IF    ${Aviso_vendedor_existe}  
+    # IF    ${Aviso_vendedor_existe}  
 
-        Valida aviso cliente outro vendedor
+    #     Valida aviso cliente outro vendedor
 
-    END
+    # END
 
     Verifica se condicional existe(${Codigo_Cliente})
 
@@ -407,8 +407,6 @@ Valida Parametros/Impressões pós venda
 
     IF     ${Parametro_Imprime_Entrada}
 
-        Valida impressão de entrada
-        #BUG QUE EXIBE 2X A MESMA TELA
         Valida impressão de entrada
 
     END

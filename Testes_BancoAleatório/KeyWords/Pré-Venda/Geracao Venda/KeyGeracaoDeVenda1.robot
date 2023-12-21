@@ -81,7 +81,7 @@ Então confirmo a geração da venda
 
     Sleep    ${SLEEP_BAIXO}
 
-    Validação de geração de venda
+    KeyGeracaoDeVenda1.Validação de geração de venda
 
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
@@ -112,7 +112,7 @@ Então confirmo a geração dos pedidos
 
     Sleep    ${SLEEP_BAIXO}
 
-    Validação da geração de venda de mais de um pedido 
+    KeyGeracaoDeVenda1.Validação da geração de venda de mais de um pedido 
 
 Validação de geração de venda
     
@@ -200,6 +200,6 @@ Validação da geração de venda de mais de um pedido
 
         Set Test Variable    ${Codigo_Pedido}    ${Codigos_Pedidos[${I}]}
 
-        Validação de geração de venda
+        KeyGeracaoDeVenda1.Validação de geração de venda
         
     END

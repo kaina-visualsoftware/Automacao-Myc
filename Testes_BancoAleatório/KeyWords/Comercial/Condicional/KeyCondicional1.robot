@@ -56,6 +56,7 @@ E adiciono uma nova Condicional
 
     ${Consulta}    Query    SELECT Codigo FROM condicionais ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_CONDICIONAL}    ${Consulta[0][0]}
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_CONDICIONAL}
 
 Quando insiro vendedor e cliente
 
@@ -181,7 +182,7 @@ E gero a venda de parte dos produtos(${Quantidade})
 Então cancelo a geração da venda
     
     Press Special Key    ESC
-    Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S

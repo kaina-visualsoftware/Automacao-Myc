@@ -71,6 +71,10 @@ Adicionar Vendedor e Cliente(${TELA})
     ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
 
+    Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
+
+    Valida vendedor padrao
+
     Input Text    ${EMPTY}    ${codVendedor[0][0]}
     Sleep    ${SLEEP_BAIXO}    
 
@@ -112,8 +116,19 @@ Adicionar Vendedor e Cliente(${TELA})
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
     Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+
+Valida vendedor padrao
+    
+    ${VENDEDOR_PADRAO}     Run Keyword And Return Status    Check If Exists In Database    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente} AND c.CodigoVendedor IS NOT NULL;
+    
+    IF     ${VENDEDOR_PADRAO}
+
+        ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
+
+        Set Test Variable    ${codVendedor}    ${NOVO_VENDEDOR}
+    
+    END
 
 Inserir serviço 
 
