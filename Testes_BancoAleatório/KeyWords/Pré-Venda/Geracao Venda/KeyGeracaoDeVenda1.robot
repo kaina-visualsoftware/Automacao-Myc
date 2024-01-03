@@ -29,6 +29,7 @@ ${LABEL_PEDIDO}                          lb_Pedido.png
 ${GRID_LISTAGEM_PEDIDOS}                 grid_PedidosGeracaoVenda.png
 ${AVISO_DESEJA_GERAR_VENDA}              aviso_DesejaGerarVenda.png
 ${TELA_CARREGANDO_PEDIDOS}               tela_CarregandoPedidos.png
+${BT_SAIR_CTRLG}                         bt_SairCTRLG.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -83,7 +84,7 @@ Então confirmo a geração da venda
 
     KeyGeracaoDeVenda1.Validação de geração de venda
 
-    Press Combination    KEY.ALT     Key.S
+    SikuliLibrary.Click    ${BT_SAIR_CTRLG}
     Sleep    ${SLEEP_BAIXO}
 
 Então confirmo a geração dos pedidos 
@@ -135,6 +136,28 @@ Validação de geração de venda
     END
 
     Set Test Variable    ${COD_VENDA}    ${Codigo_Venda_Gerada[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
+
+    KeyGeracaoDeVenda1.Valida baixa de estoque
+
+
+Valida baixa de estoque
+
+    Sleep    ${SLEEP_MEDIO}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
+    Should Be Equal    ${Baixa_De_Estoque}    ${True}
+
+    IF    ${Baixa_De_Estoque}
+        
+        Log To Console    Baixou estoque corretamente!
+
+    ELSE
+
+        Log To Console    Falha na baixa do estoque! Verifique!
+
+    END
 
 E clico em visualizar 
     
@@ -199,6 +222,10 @@ Validação da geração de venda de mais de um pedido
     FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
 
         Set Test Variable    ${Codigo_Pedido}    ${Codigos_Pedidos[${I}]}
+
+        Set Test Variable    ${COD_PRODUTO}    ${Codigos_Produtos[${I}]}
+
+        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Pedido}
 
         KeyGeracaoDeVenda1.Validação de geração de venda
         

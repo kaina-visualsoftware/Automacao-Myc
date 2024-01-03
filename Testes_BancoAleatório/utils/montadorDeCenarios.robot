@@ -2,6 +2,7 @@
 Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../utils/utils.robot
+Library    SikuliLibrary
 Library    Collections
 
 *** Variables ***
@@ -17,7 +18,7 @@ Dado que realizo uma venda completa, com produto normal
     utils.Exclui ordem de entrega(${COD_VENDA})
 
 Dado que realizo um pedido, com produto normal
-
+    
     KeyPedidos1.Dado que acesso a tela de pedidos
     KeyPedidos1.E clico em adicionar
     KeyPedidos1.Quando adiciono vendedor e cliente
@@ -29,15 +30,21 @@ Dado que realizo um pedido, com produto normal
 Dado que realizo mais de um pedido(${Quantidade_Pedidos})
     
     ${Codigos_Pedidos} =    Create List
+    ${Codigos_Produtos} =    Create List
 
     FOR    ${I}    IN RANGE    ${Quantidade_Pedidos}
         
         Dado que realizo um pedido, com produto normal
         
         Append To List    ${Codigos_Pedidos}    ${Codigo_Pedido}
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
 
     END
 
     Log To Console    Pedidos Gerados: ${Codigos_Pedidos}
 
     Set Test Variable    ${Codigos_Pedidos}
+
+    Log To Console    Produtos em pedidos Gerados: ${Codigos_Produtos}
+
+    Set Test Variable    ${Codigos_Produtos}

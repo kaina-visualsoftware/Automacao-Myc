@@ -4,6 +4,7 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    ../libs/verificacoesExtras.py
+Library    ../libs/estoque.py
 Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/validacaoAviso.robot
@@ -224,6 +225,25 @@ Então gero a venda totalmente
 
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
+
+    KeyPedidos1.Valida baixa de estoque
+
+Valida baixa de estoque
+
+    Sleep    ${SLEEP_MEDIO}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_VENDA}
+
+    Should Be Equal    ${Baixa_De_Estoque}    ${True}
+
+    IF    ${Baixa_De_Estoque}
+        
+        Log To Console    Baixou estoque corretamente!
+
+    ELSE
+
+        Log To Console    Falha na baixa do estoque! Verifique!
+
+    END
 
 Validação de geração de venda
     
