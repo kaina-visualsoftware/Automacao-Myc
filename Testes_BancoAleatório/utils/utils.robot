@@ -166,6 +166,10 @@ Inserir serviço
         IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
             
             Press Special Key    DOWN
+
+            #Validação temporária pra ver se precisa informar horas
+            Press Special Key    TAB
+            Input Text    ${EMPTY}    1
             
         ELSE
             

@@ -217,7 +217,7 @@ Então finalizo a venda
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
-    Valida baixa de estoque
+    keyVendas1.Valida baixa de estoque
 
 Então visualizo a mesma
     
