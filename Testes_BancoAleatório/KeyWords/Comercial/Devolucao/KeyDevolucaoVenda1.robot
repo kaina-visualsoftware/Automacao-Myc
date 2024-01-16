@@ -75,6 +75,8 @@ E insiro os dados do cabeçalho - vendedor, venda|cliente
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
 
+        Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
         Verifica se condicional existe(${Codigo_Cliente})
     
     ELSE 
@@ -102,7 +104,14 @@ Quando seleciono um produto para a devolução
         END
 
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.I
+
+        IF    ${Parametro_IncluiDireto} != ${True}
+        
+            Press Combination    KEY.ALT     Key.I
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+        
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
         Sleep    ${SLEEP_BAIXO}
     

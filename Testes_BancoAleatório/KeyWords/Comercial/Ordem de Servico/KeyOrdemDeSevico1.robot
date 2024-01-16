@@ -38,6 +38,7 @@ ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
+${TELA_CHECKLIST}                        tela_CheckList.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -81,7 +82,7 @@ E adiciono vendedor e cliente
     
     utils.Adicionar Vendedor e Cliente(OrdemDeServico)
 
-    validacaoAviso.Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando Insiro um servico 
     
@@ -147,9 +148,14 @@ Então finalizo a Ordem de Servico
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.F
 
+    Valida check list
+
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
         IF    ${Parametro_ControlaCredito}
+
+            Press Special Key    TAB 
+            Sleep    ${SLEEP_BAIXO}
             
             Valida Controle de Credito - Liberação(${VALOR_FINAL_OS})
 
@@ -262,7 +268,10 @@ Então finalizo a OS - A prazo
     Press Combination    KEY.ALT     Key.F
 
     IF    ${Parametro_ControlaCredito}
-            
+        
+        Press Special Key    TAB 
+        Sleep    ${SLEEP_BAIXO}
+
         Valida Controle de Credito - Liberação(${VALOR_FINAL_OS})
 
         IF    ${VendedorPossuiSenha}
@@ -281,7 +290,7 @@ Então finalizo a OS - A prazo
 
     END
 
-    Valida Parametros/Impressões pós venda
+    Valida avisos ao finalizar Ordem de serviço
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
 
@@ -350,3 +359,58 @@ Valida impressao carne OS
 
     END
     
+Valida check list
+    
+    IF    ${Check_List_Objeto}
+        
+        Wait Until Screen Contain    ${TELA_CHECKLIST}    ${TEMPO_TELA}
+
+        ${Perguntas_CheckList}    Query    SELECT Pergunta, TipoResposta, Obrigar FROM checklist_questions WHERE CodigoCheckList = ${Codigo_CheckList}
+
+        ${QuantidadePerguntas}    DatabaseLibrary.Row Count    SELECT Pergunta FROM checklist_questions WHERE CodigoCheckList = ${Codigo_CheckList}
+
+        SikuliLibrary.Click Text    ${Perguntas_CheckList[0][0]}
+
+        FOR    ${I}    IN RANGE    ${QuantidadePerguntas}
+            
+            IF    ${Perguntas_CheckList[${I}][2]} == 1
+
+                Sleep    ${SLEEP_BAIXO}
+                Press Special Key    RIGHT
+                Press Special Key    ENTER 
+                Sleep    ${SLEEP_BAIXO}
+                
+                IF    '${Perguntas_CheckList[${I}][1]}' == 'A'
+                    
+                    #Validação para ficar alternando entre sim e não
+                    IF    ${I} % ${2} == 0
+
+                        Press Special Key    DOWN
+                        Press Special Key    ENTER 
+
+                    ELSE
+
+                        Press Special Key    DOWN
+                        Press Special Key    DOWN
+                        Press Special Key    ENTER 
+
+                    END                   
+
+                ELSE
+                    
+                    Input Text    ${EMPTY}    Descricao de automacao em check list
+                    Sleep    ${SLEEP_BAIXO}
+
+                END
+
+            END
+
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Press Combination    KEY.ALT     Key.G
+        Sleep    ${SLEEP_BAIXO}
+
+    END

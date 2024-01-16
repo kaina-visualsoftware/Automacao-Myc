@@ -1,3 +1,5 @@
+import socket
+
 class config:
     def leituraConfig():
 
@@ -16,4 +18,5 @@ class config:
 
             return database[0], porta[0]
 
+    terminal_name = socket.gethostname()
     Database, Porta = leituraConfig()

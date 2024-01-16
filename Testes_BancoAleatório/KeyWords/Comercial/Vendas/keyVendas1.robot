@@ -287,6 +287,8 @@ Então finalizo a venda - A Prazo
 
 Quando clico em editar
     
+    utils.Exclui ordem de entrega(${COD_VENDA})
+    
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Press Combination    KEY.ALT     Key.E
     Sleep    ${SLEEP_BAIXO}

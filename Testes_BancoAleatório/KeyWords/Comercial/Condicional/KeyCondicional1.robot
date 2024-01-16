@@ -112,6 +112,8 @@ Quando clico em editar
     Press Combination    KEY.ALT     Key.E
     Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
 Então excluo a condicional
 
     Sleep    ${SLEEP_BAIXO}
@@ -181,6 +183,7 @@ E gero a venda de parte dos produtos(${Quantidade})
 
 Então cancelo a geração da venda
     
+    Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
     Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 

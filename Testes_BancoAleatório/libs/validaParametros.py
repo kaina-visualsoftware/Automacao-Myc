@@ -16,7 +16,7 @@ class validaParametros:
                           "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega, "
                           "SuprimirOS, Orc_DesabilitaServico, SelecionaFunc_OS, FaturarOS, ImprimirCarneOS, ImprimirOS, Vende_Sem_Estoque_Condicional, "
                           "ImprimiCondicional, RealizaVendaSemEstoque_PreVenda, RealizaVendaSemEstoque_OS, DevolucaoAvulsa, ExigeObsTroca, Dev_PermiteAberta, "
-                          "RealizaVendaSemEstoque_Venda, PrevendaBloqueioVendaParcial")
+                          "RealizaVendaSemEstoque_Venda, PrevendaBloqueioVendaParcial, CaixaUsuario")
 
         avisosMarcados = []
         updatesParametros = []
@@ -56,7 +56,7 @@ class validaParametros:
     def valida_Config_Empresa(self):
 
         parametrosMapeados = ("Venda_ImprimeCupom, ImprimirVenda_FinalizarVenda, ImprimirDup_FinalizarVenda, BaixaCentralizada, BaixaAutomatico, CodigoCX, ImpRecEnt_FinalizarVenda, "
-                              "ImprimirContrato_FinalizarVenda, ImpPromissoria_FinalizarVenda, ImprimirBol_FinalizarVenda, Dev_Ativa_Vale")
+                              "ImprimirContrato_FinalizarVenda, ImpPromissoria_FinalizarVenda, ImprimirBol_FinalizarVenda, Dev_Ativa_Vale, FaturaVendaDireto")
 
         cursor.execute("SELECT "+parametrosMapeados+" FROM configempresa WHERE empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);")
 

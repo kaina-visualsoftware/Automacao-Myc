@@ -9,6 +9,7 @@ Library    Collections
 
 *** Keywords ***
 Dado que realizo uma venda completa, com produto normal 
+    
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
@@ -16,7 +17,7 @@ Dado que realizo uma venda completa, com produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
     utils.Exclui ordem de entrega(${COD_VENDA})
-
+    
 Dado que realizo um pedido, com produto normal
     
     KeyPedidos1.Dado que acesso a tela de pedidos

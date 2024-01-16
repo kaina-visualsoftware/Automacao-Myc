@@ -35,6 +35,8 @@ ${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png
 ${TELA_IMPRESSAO_BOLETO}                 tela_impressaoBoleto.png
 ${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
+${TELA_FATURAMENTO_NF}                   tela_FaturamentoDiretoNF.png  
+${TELA_CONFIRMAÇÃO_PAGAMENTO}            tela_DataPagamento.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -55,7 +57,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     ${Aviso_infoCredito_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
     ${Aviso_ExigeSenhaOutroVendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
 
-    ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
+    ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente};
 
     Set Test Variable    ${Aviso_vendedor_existe}
 
@@ -73,11 +75,12 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    # IF    ${Aviso_vendedor_existe}  
+    
+    IF    ${Aviso_Vendedor_Existe_Comissao}  
 
-    #     Valida aviso cliente outro vendedor
+        Valida aviso cliente outro vendedor
 
-    # END
+    END
 
     Verifica se condicional existe(${Codigo_Cliente})
 
@@ -98,6 +101,8 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
         Valida exibe cliente
 
     END
+
+    Verifica se cliente possui objeto vinculado
 
 Verifica parametros que interferem na venda
     
@@ -135,6 +140,7 @@ Verifica parametros que interferem na venda
     ${Parametro_RealizaVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    RealizaVendaSemEstoque_Venda
     ${Parametro_ExigeSenhaCancelarVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeSenhaCancelarVenda
     ${Parametro_BloqueiaGeracaoVendaParcial} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PrevendaBloqueioVendaParcial
+    ${Parametro_CaixaControladoPorUsuario} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    CaixaUsuario
 
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -147,6 +153,7 @@ Verifica parametros que interferem na venda
     ${Parametro_Imprime_Promissoria} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
     ${Parametro_Imprime_Boleto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
     ${Parametro_ValeCompra_Dev_Menor0} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
+    ${Parametro_FaturaVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
 
     IF    ${Parametro_VendaRapida}
             
@@ -177,6 +184,10 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     END
+
+    Set Test Variable    ${Parametro_CaixaControladoPorUsuario}
+
+    Set Test Variable    ${Parametro_FaturaVendaDireto}
 
     Set Test Variable    ${Parametro_BloqueiaGeracaoVendaParcial}
 
@@ -277,16 +288,18 @@ Valida aviso cliente outro vendedor
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${AVISO_CLIENTE_OUTRO_VE}
 
+    #Não altera mais para o vendedor padrão por conta dos testes de comissão
+
     IF    ${MSG}  
 
-        ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
+        # ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
 
-        Set Test Variable    ${Codigo_Vendedor}    ${NOVO_VENDEDOR[0][0]}
+        # Set Test Variable    ${Codigo_Vendedor}    ${NOVO_VENDEDOR[0][0]}
 
-        Press Combination    KEY.ALT     Key.S
+        Press Combination    KEY.ALT     Key.N
         Sleep    ${SLEEP_MEDIO}
 
-        Log To Console    Alterou para o vendedor padrão do cliente - Vendedor Código: ${Codigo_Vendedor}
+        # Log To Console    Alterou para o vendedor padrão do cliente - Vendedor Código: ${Codigo_Vendedor}
 
     END
 
@@ -323,15 +336,22 @@ Valida condicional aberto
     
 Valida observaco cliente
 
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${ALERTA_CLIENTE}
-
-    IF    ${MSG}  
+    ${Observacao}     Query    SELECT Observacao FROM clientes WHERE Codigo = ${Codigo_Cliente}
     
-        Press Combination    KEY.ALT     Key.O
+    IF    "${Observacao}" != "None"
+
         Sleep    ${SLEEP_MEDIO}
+        ${MSG} =     Run Keyword And Return Status    Wait Until Screen Contain    ${ALERTA_CLIENTE}    ${SLEEP_ALTO}
+        
+        IF    ${MSG}  
+        
+            Press Combination    KEY.ALT     Key.O
+            Sleep    ${SLEEP_MEDIO}
+
+        END
 
     END
+
 
 Valida vendas anteriores 
     
@@ -396,6 +416,12 @@ Valida tela de liberação de desconto
     END
 
 Valida Parametros/Impressões pós venda
+
+    IF    ${Parametro_FaturaVendaDireto}
+
+        Valida faturamento nf
+        
+    END
 
     Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
     
@@ -536,3 +562,51 @@ Cancelando Faturando a NFC-e
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.C
 
+
+Valida faturamento nf 
+    
+    ${FaturaDireto} =    Run Keyword And Return Status    Wait Until Screen Contain     ${TELA_FATURAMENTO_NF}    ${TEMPO_TELA}
+
+    IF    ${FaturaDireto}
+        
+        Press Combination    KEY.ALT     Key.C
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Verifica se cliente possui objeto vinculado
+
+    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    OrdemDeServico
+
+    Log To Console    ${SUITE_NAME}
+
+    IF    ${Test_OS}
+
+        ${Objeto_Cliente}    Query    SELECT NumeroSerie, Categoria FROM objetos WHERE CodigoCliente = ${Codigo_Cliente}
+
+        Log To Console    ${Objeto_Cliente}
+        
+        IF    "${Objeto_Cliente}" != "None"
+
+            ${Check_List_Objeto}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM checklist WHERE Objeto LIKE '${Objeto_Cliente[0][1]}' AND `Status` LIKE 'g'
+            
+            Log To Console    Possui Check List para o objeto? ${Check_List_Objeto}
+            
+            IF    ${Check_List_Objeto}
+                
+                ${Codigo_Check}    Query    SELECT Codigo FROM checklist WHERE Objeto LIKE '${Objeto_Cliente[0][1]}' AND `Status` LIKE 'g'
+                Set Test Variable    ${Codigo_CheckList}    ${Codigo_Check[0][0]}
+
+            END
+
+            Set Test Variable    ${Check_List_Objeto}
+            
+        END
+
+    END
+
+Valida tela de confirmação data - caixa 
+    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_PAGAMENTO}    ${SLEEP_ALTO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER

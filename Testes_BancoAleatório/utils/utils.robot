@@ -33,10 +33,12 @@ ${BT_SOLICITAR_CRÉDITO}                  bt_SolicitarCredito.png
 ${TELA_CONTROLE_CRÉDITO}                 tela_ControleDeCredito.png
 ${TELA_CONFIRMA_LIBERACAO_CREDITO}       tela_ConfirmaLiberacao.png
 ${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
+${LABEL_AVISO_CREDITO_LIBERADO2}         lb_CreditoLiberado2.png
 ${TELA_DETALHAMENTO_SERVIÇO}             tela_DetalhamentoServico.png
 ${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.png 
 ${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png           
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
+${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -65,6 +67,7 @@ Personalização de Pagamentos
 
 Adicionar Vendedor e Cliente(${TELA})
     
+    Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
     Sleep    ${SLEEP_BAIXO}
     ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
@@ -72,10 +75,16 @@ Adicionar Vendedor e Cliente(${TELA})
     Sleep    ${SLEEP_BAIXO}
 
     Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
-
+    
+    #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
     Valida vendedor padrao
 
-    Input Text    ${EMPTY}    ${codVendedor[0][0]}
+    Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+
+    #VALIDA SE O TESTE SERÁ DE COMISSÃO
+    Valida teste de comissão
+
+    Input Text    ${EMPTY}    ${Codigo_Vendedor}
     Sleep    ${SLEEP_BAIXO}    
 
     IF    '${TELA}' == 'Orcamento'
@@ -90,7 +99,8 @@ Adicionar Vendedor e Cliente(${TELA})
 
         #Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
-        Sleep    ${SLEEP_BAIXO}
+        Sleep    ${SLEEP_MEDIO}
+        Log To Console    Clicou
 
     ELSE IF     '${TELA}' == 'Condicional'
         
@@ -111,12 +121,67 @@ Adicionar Vendedor e Cliente(${TELA})
     END
     
     Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${codCliente[0][0]}
+    Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
+    Log To Console    ${Codigo_Cliente}
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+#Essa Keyword é necessária para que não seja preciso duplicar o código de seleção de vendedor e cliente e nem criar um outro montador de cenário
+#Ela simplesmente valida o nome do teste em execução e se for de comissão, irá selecionar um funcionário que seja comissionado 
+Valida teste de comissão
+    
+    ${Test_Comissao} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
+
+    IF    ${Test_Comissao}
+        
+        ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos FROM clientes WHERE Codigo = ${Codigo_Vendedor}
+
+        IF    '${Tipo_Comissao[0][0]}' == 'T'
+
+            IF    "${Tipo_Comissao[0][1]}" != "None" and "${Tipo_Comissao[0][1]}" > "0.0"
+                
+                Log To Console    Comissao por total de vendas
+                Set Test Variable    ${PercentualComissao}    ${Tipo_Comissao[0][1]}
+
+            ELSE IF     "${Tipo_Comissao[0][1]}" == "None"
+                
+                Seleciona vendedor comissionado
+
+            END
+
+        ELSE IF     '${Tipo_Comissao[0][0]}' == 'F'
+            
+            Log To Console    Comissao do tipo sobre forma de parcelamento
+
+        ELSE IF     '${Tipo_Comissao[0][0]}' == 'D'
+
+            Log To Console    Comissao do tipo sobre percentual de desconto
+
+        ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
+
+            Log To Console    Comissao por linha
+
+        END
+
+    END
+
+Seleciona vendedor comissionado
+    
+    #Selecionando apenas vendedor que tenha percentual sobre os produtos POR ENQUANTO
+    ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoPercentualProdutos > 0) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+
+    IF    '${codVendedor_Comissionado}' != 'None'
+        
+        Set Test Variable    ${Codigo_Vendedor}    ${codVendedor_Comissionado[0][0]}
+
+        Set Test Variable    ${PercentualComissao}    ${codVendedor_Comissionado[0][1]}
+
+        Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
+
+        Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\n Percentual de comissao sobre produtos: ${PercentualComissao}
+
+    END
 
 Valida vendedor padrao
     
@@ -391,12 +456,24 @@ Valida Controle de Credito - Liberação(${VALOR_FINAL})
             Wait Until Screen Contain    ${TELA_CONFIRMA_LIBERACAO_CREDITO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
             Press Combination    KEY.ALT    Key.o
-            Wait Until Screen Contain    ${LABEL_AVISO_CREDITO_LIBERADO}    ${TEMPO_TELA}
-            Sleep    ${SLEEP_MEDIO}
-            Press Combination    KEY.ALT    Key.o
-            Sleep    ${SLEEP_MEDIO}
-            Press Combination    KEY.ALT    Key.F
-            Sleep    ${SLEEP_BAIXO}
+            
+            #Valida o status = Liberado e a label Crédito liberado, por que na OS não existe o status = Liberado
+            ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${LABEL_AVISO_CREDITO_LIBERADO}    ${SLEEP_ALTO}
+            ${MSG2}    Run Keyword And Return Status    Wait Until Screen Contain    ${LABEL_AVISO_CREDITO_LIBERADO2}    ${SLEEP_ALTO}
+
+            IF    ${MSG} or ${MSG2}
+                
+                Sleep    ${SLEEP_MEDIO}
+                Press Combination    KEY.ALT    Key.o
+                
+                #Correção temporária até a correção da tarefa: 144920
+                SikuliLibrary.Click    ${BT_OK_LIBERACAO_CRÉDITO}
+
+                Sleep    ${SLEEP_MEDIO}
+                Press Combination    KEY.ALT    Key.F
+                Sleep    ${SLEEP_BAIXO}
+
+            END 
 
         END
 
