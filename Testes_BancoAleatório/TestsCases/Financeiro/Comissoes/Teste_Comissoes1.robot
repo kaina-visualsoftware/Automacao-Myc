@@ -19,3 +19,17 @@ Teste 01 - Gerando comissao sobre venda simples
     Quando acesso o caixa aberto
     E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+
+Teste 02 - Gerando comissão sobre venda e devolução
+    [Tags]    Teste02 
+    [Setup]    montadorDeCenarios.Dado que realizo uma devolução avulsa 
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão da venda e devolução 
+    E baixo a comissao recém recebida
+    Quando acesso o caixa aberto
+    E vou para a aba de contas a pagar
+    #Então faço o pagamento da comissao
+
+Teste 03 - Gerando comissão sobre venda e devolução
+    [Tags]    Teste03

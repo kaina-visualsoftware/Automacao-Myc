@@ -600,7 +600,11 @@ Verifica se cliente possui objeto vinculado
             END
 
             Set Test Variable    ${Check_List_Objeto}
+        
+        ELSE 
             
+            Set Test Variable    ${Check_List_Objeto}    ${False}
+
         END
 
     END

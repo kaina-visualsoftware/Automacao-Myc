@@ -26,6 +26,7 @@ ${SLEEP_BAIXO}                           0.3
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
+${TEMPO_LIMITE_CARREGAMENTO_GRID}        6
 #Imagens Telas
 ${MENU_FINANCEIRO}                       menu_Financeiro.png
 ${SUB_MENU_COMISSOES}                    subMenu_Comissoes.png
@@ -47,6 +48,7 @@ ${AVISO_CONFIRMAÇÃO_BAIXA}               aviso_confirmacaoBaixaContaPagar.png
 ${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}     tela_RecebimentoDuplicatasCaixa.png
 ${TELA_CAIXA_CARREGANDO}                 tela_CaixaPrinicipalCarregando.png
 ${INPUT_NUMERO_DOCUMENTO}                caixa_PesquisaPorNDoc.png
+${Total_Comissao}                        ${0}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -81,7 +83,7 @@ E seleciono a comissao da venda
     Sleep    ${SLEEP_BAIXO}
 
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda\/\/\/\/\/\/\/\/\/\/\/
-    ${Cod_Venda_String}    Convert To String    ${COD_VENDA}
+    ${Cod_Venda_String}    Convert To String     ${CODIGO_OPERACAO_MOV}
     
     ${Quantidade_de_zeros_esquerda} =    Get Length    ${Cod_Venda_String}
 
@@ -95,7 +97,7 @@ E seleciono a comissao da venda
     END
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda^^^^^^^^^^^^^^
 
-    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos}${COD_VENDA}
+    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    9
@@ -106,6 +108,55 @@ E seleciono a comissao da venda
 
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    SPACE
+
+    Calcula total da comissao
+
+E seleciono a comissão da venda e devolução 
+    
+    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+
+        SikuliLibrary.Click    ${LISTAGEM_GRID}
+        Sleep    ${SLEEP_BAIXO}
+        
+        #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda\/\/\/\/\/\/\/\/\/\/\/
+        ${Cod_Venda_String}    Convert To String     ${CODIGO_OPERACAO_MOV}
+        
+        ${Quantidade_de_zeros_esquerda} =    Get Length    ${Cod_Venda_String}
+
+        ${Quantidade_de_zeros_esquerda} =    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
+        
+
+        FOR    ${I}    IN RANGE    ${Quantidade_de_zeros_esquerda}
+            
+            ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
+            
+        END
+        #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda^^^^^^^^^^^^^^
+
+        Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
+        Sleep    ${SLEEP_BAIXO}
+
+        FOR    ${I}    IN RANGE    9
+            
+            Press Special Key    RIGHT
+            
+        END
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    SPACE
+        
+        Calcula total da comissao
+        
+        ${VALOR_DEVOLUCAO} =     Evaluate    (${VALOR_FINAL_VENDA} * (-1)) 
+
+        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
+        Set Test Variable    ${VALOR_FINAL_VENDA}    ${VALOR_DEVOLUCAO}
+
+    END
+
 
 E baixo a comissao recém recebida
     
@@ -118,20 +169,19 @@ E baixo a comissao recém recebida
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
 
-    Calcula total da comissao
-
     ${id_comissao}    Query    SELECT ID FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC;
 
-    Set Test Variable    ${NDoc_Comissao}    ${id_comissao[0][0]}
+    Set Test Variable    ${NDoc_Comissao}    ${id_comissao[0][0]} 
 
 Quando acesso o caixa aberto 
     
     Press Special Key    F12
     Wait Until Screen Contain    ${CAIXA_PRINCIPAL}     ${TEMPO_TELA}
     
-    Highlight    ${TELA_CAIXA_CARREGANDO}    ${SLEEP_ALTO}
-
-    Wait Until Screen Not Contain    ${TELA_CAIXA_CARREGANDO}    ${TEMPO_TELA}
+    Highlight    ${TELA_CAIXA_CARREGANDO}    1
+    
+    #Ignora o erro pq tem bancos em que carrega muito rápido, então ele não percebe a mudança e da erro
+    Run Keyword And Ignore Error    Wait Until Screen Not Contain    ${TELA_CAIXA_CARREGANDO}    ${TEMPO_LIMITE_CARREGAMENTO_GRID}
 
 E vou para a aba de contas a pagar
 
@@ -197,15 +247,18 @@ Então faço o pagamento da comissao
 
 Calcula total da comissao
     
-    ${Total_Comissao} =     Evaluate    round((${VALOR_FINAL_VENDA} * (${PercentualComissao} / 100)), 3)
+    ${Calculo_Comissao} =     Evaluate    round((${VALOR_FINAL_VENDA} * (${PercentualComissao} / 100)), 3)
+    
+    ${Total_Comissao} =     Evaluate    ${Total_Comissao} + ${Calculo_Comissao}
 
     Set Test Variable    ${Total_Comissao}
-
+    
+    Log To Console    Valor Calculado|Parcial| da comissão: ${Calculo_Comissao}
     Log To Console    Valor final da comissão: ${Total_Comissao}
-
+    
 Valida baixa comissao
     
     ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND DataQuitacao = CURDATE() AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
-
+    
     Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
     Should Be Equal    ${ComissaoPaga[0][1]}    ${Total_Comissao}

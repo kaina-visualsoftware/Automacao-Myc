@@ -57,6 +57,10 @@ Quando adiciono uma nova devolução
 
     END   
 
+    ${Consulta}    Query    SELECT Codigo FROM vendas WHERE Tipo LIKE 'DV' ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_DEVOLUCAO}    ${Consulta[0][0]}
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_DEVOLUCAO}
+
 Aguarda tela Devolução avulsa
     
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES_AVULSA_ADICIONAR}    ${TEMPO_TELA}

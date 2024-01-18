@@ -1,6 +1,7 @@
 *** Settings ***
 Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
+Resource    ../KeyWords/Comercial/Devolucao/KeyDevolucaoVenda1.robot
 Resource    ../utils/utils.robot
 Library    SikuliLibrary
 Library    Collections
@@ -49,3 +50,13 @@ Dado que realizo mais de um pedido(${Quantidade_Pedidos})
     Log To Console    Produtos em pedidos Gerados: ${Codigos_Produtos}
 
     Set Test Variable    ${Codigos_Produtos}
+
+Dado que realizo uma devolução avulsa 
+    
+    Dado que realizo uma venda completa, com produto normal 
+    KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os 
+    KeyDevolucaoVenda1.Quando adiciono uma nova devolução 
+    KeyDevolucaoVenda1.E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    KeyDevolucaoVenda1.Quando seleciono um produto para a devolução
+    KeyDevolucaoVenda1.E vou para a aba de pagamentos
+    KeyDevolucaoVenda1.Então finalizo a devolução

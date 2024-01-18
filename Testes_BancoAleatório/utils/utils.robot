@@ -126,6 +126,9 @@ Adicionar Vendedor e Cliente(${TELA})
     Log To Console    ${Codigo_Cliente}
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
+    
+    #Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos
+    Set Test Variable    ${TELA}
 
 #Essa Keyword é necessária para que não seja preciso duplicar o código de seleção de vendedor e cliente e nem criar um outro montador de cenário
 #Ela simplesmente valida o nome do teste em execução e se for de comissão, irá selecionar um funcionário que seja comissionado 
@@ -150,20 +153,22 @@ Valida teste de comissão
 
             END
 
-        ELSE IF     '${Tipo_Comissao[0][0]}' == 'F'
+        # ELSE IF     '${Tipo_Comissao[0][0]}' == 'F'
             
-            Log To Console    Comissao do tipo sobre forma de parcelamento
+        #     Log To Console    Comissao do tipo sobre forma de parcelamento
 
-        ELSE IF     '${Tipo_Comissao[0][0]}' == 'D'
+        # ELSE IF     '${Tipo_Comissao[0][0]}' == 'D'
 
-            Log To Console    Comissao do tipo sobre percentual de desconto
+        #     Log To Console    Comissao do tipo sobre percentual de desconto
 
-        ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
+        # ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
 
-            Log To Console    Comissao por linha
-
+        #     Log To Console    Comissao por linha
+        
+        ELSE
+            Seleciona vendedor comissionado
         END
-
+    
     END
 
 Seleciona vendedor comissionado
@@ -261,7 +266,16 @@ Inserir Produto normal - Necessita de estoque
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
 
-    ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+    IF    '${TELA}' == 'Pedido'
+        
+        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND (SELECT SUM(Quantidade - QtdeGerada) AS QuantidadeEmPedidos FROM pedidosvendaprodutos WHERE CodigoProduto = codigoProduto AND Cancelada IS NULL) < pe.Estoque ORDER BY RAND() LIMIT 1;
+    
+    ELSE
+
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+    
+    END
+    
     Sleep    ${SLEEP_MEDIO}
 
     Input Text    ${EMPTY}    ${codProduto[0][0]} 
