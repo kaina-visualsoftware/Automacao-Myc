@@ -127,6 +127,51 @@ class validaParametros:
         print(formaParcelamento)
         return formaParcelamento
 
+    def valida_Forma_Parcelamento_Cliente(self, codigo_cliente):
+
+        formasPadrao = ("30 DIAS", "À VISTA", "PERSONALIZADA")
+
+        formaParcelamento = []
+
+        sqlConsulta = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento AS fp INNER JOIN clientes_parcelamento AS cp ON fp.Codigo = cp.CodigoForma WHERE CodigoCliente = " + str(codigo_cliente) + " AND formarecebimento IS NOT NULL ORDER BY IF(Padrao_Venda = 0, Descricao, 0) LIMIT 1;"
+
+        cursor.execute(sqlConsulta)
+
+        formaPadraoOS = cursor.fetchall()
+
+        if formaPadraoOS == []:
+
+            formaParcelamento = False
+
+        else:
+
+            formaEntrada = formaPadraoOS[0][5].split(' ')
+
+            formaParcelamento.append(formaPadraoOS[0][0])
+            formaParcelamento.append(formaPadraoOS[0][3])
+            formaParcelamento.append(formaPadraoOS[0][4])
+            formaParcelamento.append(formaEntrada[0])
+            formaParcelamento.append(formaPadraoOS[0][2])
+
+        
+            if formaParcelamento[0] not in formasPadrao:
+                print(formaParcelamento)
+
+                if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:
+                    formaParcelamento[0] = "À VISTA"
+                    print(formaParcelamento)
+
+                elif formaPadraoOS[0][6] == 1:
+                    formaParcelamento[0] = "PERSONALIZADA"
+                    print(formaParcelamento)
+                
+                elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:
+                    formaParcelamento[0] = "30 DIAS"
+                    print(formaParcelamento)
+
+        print(formaParcelamento)
+        return formaParcelamento
+
     def valida_Configuracoes_OS(self):
 
         formasPadrao = ("30 DIAS", "À VISTA", "PERSONALIZADA")
@@ -241,4 +286,4 @@ class validaParametros:
 #validaParametros.valida_Configuracoes_OS()
 #validaParametros.valida_Config_Empresa()
 #validaParametros.valida_Configuracoes_Venda()
-#validaParametros.seleciona_forma_prazo()
+#validaParametros.valida_Forma_Parcelamento_Cliente(2)

@@ -51,12 +51,34 @@ Dado que realizo mais de um pedido(${Quantidade_Pedidos})
 
     Set Test Variable    ${Codigos_Produtos}
 
-Dado que realizo uma devolução avulsa 
-    
-    Dado que realizo uma venda completa, com produto normal 
+Dado que realizo uma devolução qualquer
+
     KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os 
     KeyDevolucaoVenda1.Quando adiciono uma nova devolução 
     KeyDevolucaoVenda1.E insiro os dados do cabeçalho - vendedor, venda|cliente 
     KeyDevolucaoVenda1.Quando seleciono um produto para a devolução
+    KeyDevolucaoVenda1.E vou para a aba de pagamentos
+    KeyDevolucaoVenda1.Então finalizo a devolução
+
+Dado que realizo uma devolução avulsa 
+    
+    Dado que realizo uma venda completa, com produto normal 
+    Dado que realizo uma devolução qualquer
+
+Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
+    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro mais de um produto normal(${Quantidade_Inserir})
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+    utils.Exclui ordem de entrega(${COD_VENDA})
+
+Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
+    Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
+    KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os 
+    KeyDevolucaoVenda1.Quando adiciono uma nova devolução 
+    KeyDevolucaoVenda1.E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    KeyDevolucaoVenda1.Quando seleciono os produtos para a devolução(${Quantidade_Inserir})
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução

@@ -29,6 +29,7 @@ ${TEMPO_TELA}                            20
 ${TEMPO_LIMITE_CARREGAMENTO_GRID}        6
 #Imagens Telas
 ${MENU_FINANCEIRO}                       menu_Financeiro.png
+${MENU_COMERCIAL}                        menu_Comercial.png
 ${SUB_MENU_COMISSOES}                    subMenu_Comissoes.png
 ${TELA_COMISSOES}                        tela_Comissoes.png   
 ${LISTAGEM_GRID}                         grid_Comissoes.png 
@@ -49,6 +50,11 @@ ${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}     tela_RecebimentoDuplicatasCaixa.png
 ${TELA_CAIXA_CARREGANDO}                 tela_CaixaPrinicipalCarregando.png
 ${INPUT_NUMERO_DOCUMENTO}                caixa_PesquisaPorNDoc.png
 ${Total_Comissao}                        ${0}
+${Total_Comissao_Final}                  ${0}
+${TELA_VALE_COMPRA}                      tela_ValeCompra.png
+${AVISO_BAIXA_VALE_COMPRA}               aviso_BaixaValeCompra.png
+${TELA_BAIXA_VALE_COMPRA}                tela_BaixaValeCompra.png
+${AVISO_COMISSAO_ZERADA}                 aviso_ComissaoZerada.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -129,7 +135,7 @@ E seleciono a comissão da venda e devolução
         ${Quantidade_de_zeros_esquerda} =    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
         
 
-        FOR    ${I}    IN RANGE    ${Quantidade_de_zeros_esquerda}
+        FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
             
             ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
             
@@ -139,7 +145,7 @@ E seleciono a comissão da venda e devolução
         Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
         Sleep    ${SLEEP_BAIXO}
 
-        FOR    ${I}    IN RANGE    9
+        FOR    ${K}    IN RANGE    9
             
             Press Special Key    RIGHT
             
@@ -147,13 +153,23 @@ E seleciono a comissão da venda e devolução
 
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    SPACE
-        
-        Calcula total da comissao
-        
-        ${VALOR_DEVOLUCAO} =     Evaluate    (${VALOR_FINAL_VENDA} * (-1)) 
+
+        IF    ${SelecionaProdutoComLinha}
+            
+            Set Test Variable    ${POSIÇÃO_VALOR}    ${I}
+            Calcula comissao por produto
+
+        ELSE
+
+            Calcula total da comissao
+
+            ${VALOR_DEVOLUCAO} =     Evaluate    (${VALOR_FINAL_VENDA} * (-1)) 
+            Set Test Variable    ${VALOR_FINAL_VENDA}    ${VALOR_DEVOLUCAO}
+
+        END
+         
 
         Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
-        Set Test Variable    ${VALOR_FINAL_VENDA}    ${VALOR_DEVOLUCAO}
 
     END
 
@@ -163,15 +179,29 @@ E baixo a comissao recém recebida
     SikuliLibrary.Click    ${BT_BAIXAR}
     Wait Until Screen Contain    ${TELA_AGENDAMENTO}     ${SLEEP_ALTO}
     SikuliLibrary.Click    ${BT_OK}
-    Wait Until Screen Contain    ${AVISO_BAIXA_SUCESSO}    ${SLEEP_ALTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
 
-    ${id_comissao}    Query    SELECT ID FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC;
+    IF    ${Total_Comissao_Final} == 0 or ${Total_Comissao} == 0
 
-    Set Test Variable    ${NDoc_Comissao}    ${id_comissao[0][0]} 
+        Wait Until Screen Contain    ${AVISO_COMISSAO_ZERADA}    ${SLEEP_ALTO}
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ESC
+
+    ELSE
+
+        Wait Until Screen Contain    ${AVISO_BAIXA_SUCESSO}    ${SLEEP_ALTO}
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ESC
+
+        ${id_comissao}    Query    SELECT ID FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC;
+
+        Set Test Variable    ${NDoc_Comissao}    ${id_comissao[0][0]} 
+
+    END
+    
 
 Quando acesso o caixa aberto 
     
@@ -255,10 +285,80 @@ Calcula total da comissao
     
     Log To Console    Valor Calculado|Parcial| da comissão: ${Calculo_Comissao}
     Log To Console    Valor final da comissão: ${Total_Comissao}
+
+#Se você entender essa keyword meus parabéns. Tempo gasto nessa keyword até o momento: 3:30 horas - Ultima Atualização - 19/01/2024
+#Tava dando muito B.O na questão de abater os valores e calcular correto (positivo e negativo), teve que ser criado uma lista com todos os valores de venda e devolução
+Calcula comissao por produto
     
+    ${Quantidade_Produtos_Calculo} =    Get Length    ${Codigos_Produtos}
+
+    FOR    ${I}    IN RANGE    ${Quantidade_Produtos_Calculo}
+
+        ${Comisssao_Produto}    Query    SELECT SUM(p.VendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+
+        ${Total_Comissao} =    Evaluate    round((${Comisssao_Produto[0][0]} + ${Total_Comissao}), 4)
+        
+    END
+    
+    #Vai definir a % de comissão apenas positiva
+    IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
+
+        ${PERCENT_COMISSAO} =     Evaluate    round(((${Total_Comissao} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100), 2)
+        Set Suite Variable    ${PERCENT_COMISSAO}
+        
+    END
+
+    ${Total_Comissao} =     Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
+
+    ${Total_Comissao_Final} =    Evaluate    ${Total_Comissao_Final} + ${Total_Comissao}
+
+    Set Test Variable    ${Total_Comissao_Final}
+
+    Log To Console    Valor final da comissão: ${Total_Comissao}
+    Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
+    Log To Console    %Comissao final: ${PERCENT_COMISSAO}
+
 Valida baixa comissao
     
     ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND DataQuitacao = CURDATE() AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
     
     Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
     Should Be Equal    ${ComissaoPaga[0][1]}    ${Total_Comissao}
+
+Dado que acesso o menu de vale compras
+    
+    SikuliLibrary.Click    ${MENU_COMERCIAL}
+
+    FOR    ${I}    IN RANGE    9
+        
+        Press Special Key    DOWN
+        
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Wait Until Screen Contain    ${TELA_VALE_COMPRA}     ${TEMPO_TELA}
+
+E seleciono o vale gerado pela devolução
+    
+    Input Text    ${EMPTY}    ${ID_VALE_COMPRA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+
+Quando faço a baixa do mesmo
+    
+    Press Combination    KEY.ALT     Key.B 
+    Wait Until Screen Contain    ${AVISO_BAIXA_VALE_COMPRA}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+    Wait Until Screen Contain    ${TELA_BAIXA_VALE_COMPRA}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C
+    Sleep    ${SLEEP_BAIXO}
+
+    ${VALOR_VALE} =     Evaluate    (${VALOR_FINAL_VENDA} * -1)
+    Finalização com recebimento de duplicatas(${VALOR_VALE}) 
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_VALE_COMPRA}     ${TEMPO_TELA}
+    Press Special Key    ESC

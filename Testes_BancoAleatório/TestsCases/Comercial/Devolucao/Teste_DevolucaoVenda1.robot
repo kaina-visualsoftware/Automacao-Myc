@@ -51,3 +51,13 @@ Teste 04 - Adicionando uma nova Devolução de venda - Excluindo
     E vou para a aba de pagamentos
     Então finalizo a devolução
     Então excluo a devolução 
+
+Teste 05 - Adicionando uma devolução de venda com mais de um produto
+    [Tags]    Teste05
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda com mais de um produto(2)
+    Dado que abro a tela de Devolução de vendas/os 
+    Quando adiciono uma nova devolução 
+    E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    Quando seleciono os produtos para a devolução(2)
+    E vou para a aba de pagamentos
+    Então finalizo a devolução

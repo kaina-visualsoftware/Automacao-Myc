@@ -57,9 +57,18 @@ Quando adiciono uma nova devolução
 
     END   
 
+    Sleep    ${SLEEP_MEDIO}
     ${Consulta}    Query    SELECT Codigo FROM vendas WHERE Tipo LIKE 'DV' ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_DEVOLUCAO}    ${Consulta[0][0]}
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_DEVOLUCAO}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[1][0]}     ${COD_DEVOLUCAO}
+
+    ${VALOR_TOTAL_DEV} =     Evaluate    (${VALOR_FINAL_VENDA} * (-1))
+
+    ${DADOS_DEVOLUÇÃO}    Create List    ${COD_DEVOLUCAO}    ${VALOR_TOTAL_DEV}
+
+    Append To List    ${DADOS_VENDA_DEVOLUÇÃO}    ${DADOS_DEVOLUÇÃO}
 
 Aguarda tela Devolução avulsa
     
@@ -124,10 +133,20 @@ Quando seleciono um produto para a devolução
         Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    ${QUANTIDADE_PRODUTOS}
         Sleep    ${SLEEP_BAIXO}
-        Press Special Key    TAB
+        Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
 
     END 
+
+Quando seleciono os produtos para a devolução(${Quantidade_Devolver})
+    
+    FOR    ${I}    IN RANGE    ${Quantidade_Devolver}
+        
+        Set Test Variable    ${COD_PRODUTO}    ${Codigos_Produtos[${I}]}
+        
+        Quando seleciono um produto para a devolução
+        
+    END
 
 E vou para a aba de pagamentos
     
@@ -196,6 +215,10 @@ Então finalizo a devolução
         
         #Impressão do vale compra
         Valida impressao direta de venda(${True})
+
+        ${CodigoVale}    Query    SELECT ID FROM valecompra WHERE VendaOrigem = ${COD_DEVOLUCAO}
+
+        Set Test Variable    ${ID_VALE_COMPRA}    ${CodigoVale[0][0]}
 
     END
     

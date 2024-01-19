@@ -39,6 +39,7 @@ ${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.pn
 ${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png           
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
 ${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
+${SelecionaProdutoComLinha}              ${False}                 
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -75,7 +76,7 @@ Adicionar Vendedor e Cliente(${TELA})
     Sleep    ${SLEEP_BAIXO}
 
     Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
-    
+
     #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
     Valida vendedor padrao
 
@@ -130,6 +131,16 @@ Adicionar Vendedor e Cliente(${TELA})
     #Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos
     Set Test Variable    ${TELA}
 
+    ${Forma_Padrao_Cliente}    valida_Forma_Parcelamento_Cliente    ${Codigo_Cliente}
+
+    IF    ${Forma_Padrao_Cliente} != $False
+        
+        Log To Console    Possui forma padrão no cliente: ${Forma_Padrao_Cliente}
+
+        Set Test Variable    ${FORMA_PADRAO}    ${Forma_Padrao_Cliente}
+
+    END
+
 #Essa Keyword é necessária para que não seja preciso duplicar o código de seleção de vendedor e cliente e nem criar um outro montador de cenário
 #Ela simplesmente valida o nome do teste em execução e se for de comissão, irá selecionar um funcionário que seja comissionado 
 Valida teste de comissão
@@ -161,12 +172,17 @@ Valida teste de comissão
 
         #     Log To Console    Comissao do tipo sobre percentual de desconto
 
-        # ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
+        ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
+            
+            #Validar para que quando for inserido mais de 1 produto com linhas diferentes, fazer a média
+            Log To Console    Comissao por linha
 
-        #     Log To Console    Comissao por linha
+            Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
         
         ELSE
+
             Seleciona vendedor comissionado
+
         END
     
     END
@@ -174,9 +190,9 @@ Valida teste de comissão
 Seleciona vendedor comissionado
     
     #Selecionando apenas vendedor que tenha percentual sobre os produtos POR ENQUANTO
-    ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoPercentualProdutos > 0) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+    ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoPercentualProdutos > 0 OR ComissaoDiferenciadapor IN ('L')) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
 
-    IF    '${codVendedor_Comissionado}' != 'None'
+    IF    ${codVendedor_Comissionado} != 'None'
         
         Set Test Variable    ${Codigo_Vendedor}    ${codVendedor_Comissionado[0][0]}
 
@@ -185,6 +201,12 @@ Seleciona vendedor comissionado
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
 
         Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\n Percentual de comissao sobre produtos: ${PercentualComissao}
+
+        IF    '${codVendedor_Comissionado[0][2]}' == 'L'
+
+            Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
+
+        END
 
     END
 
@@ -523,3 +545,36 @@ Cancela venda com senha
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.O
     Sleep    ${SLEEP_BAIXO}
+
+Seleciona produto com linha cadastrada
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+
+    IF     ${Parametro_RealizaVendaSemEstoque}
+
+        ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 AND CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
+        Sleep    ${SLEEP_MEDIO}
+
+    ELSE
+        
+        IF    '${TELA}' == 'Pedido'
+        
+            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND (SELECT SUM(Quantidade - QtdeGerada) AS QuantidadeEmPedidos FROM pedidosvendaprodutos WHERE CodigoProduto = codigoProduto AND Cancelada IS NULL) < pe.Estoque AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
+    
+        ELSE
+
+            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
+        
+        END
+
+    END
+
+    Input Text    ${EMPTY}    ${codProduto[0][0]} 
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}

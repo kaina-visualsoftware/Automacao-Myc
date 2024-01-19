@@ -33,3 +33,11 @@ Teste 02 - Gerando comissão sobre venda e devolução
 
 Teste 03 - Gerando comissão sobre venda e devolução
     [Tags]    Teste03
+    [Setup]    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
+    Dado que acesso o menu de vale compras
+    E seleciono o vale gerado pela devolução
+    Quando faço a baixa do mesmo
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão da venda e devolução 
+    E baixo a comissao recém recebida

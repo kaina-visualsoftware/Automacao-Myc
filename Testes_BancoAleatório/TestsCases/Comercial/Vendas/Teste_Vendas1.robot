@@ -49,3 +49,12 @@ Teste 04 - Excluindo uma venda
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
     Então clico em excluir
+
+Teste 05 - Realizando venda com mais de um produto 
+    [Tags]    Teste05
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um produto normal(2)
+    E acesso a aba pagamentos
+    Então finalizo a venda

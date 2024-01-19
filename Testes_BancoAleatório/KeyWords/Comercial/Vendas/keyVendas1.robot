@@ -5,6 +5,7 @@ Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    ../libs/estoque.py
 Library    Process
+Library    Collections
 Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/utils.robot
@@ -65,7 +66,7 @@ ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.pnG
 
 *** Keywords ***
 Ler imagens iniciais
@@ -119,15 +120,40 @@ E adiciono vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
+Quando insiro mais de um produto normal(${Quantidade_Inserir})
+    
+    ${Codigos_Produtos} =    Create List
+
+    FOR    ${I}    IN RANGE    ${Quantidade_Inserir}
+        
+        Quando insiro um produto normal
+
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
+
+    END
+
+    Log To Console    Produtos adicionados na venda: ${Codigos_Produtos}
+
+    Set Test Variable    ${Codigos_Produtos}
+
+
 Quando insiro um produto normal
+    
+    IF    ${SelecionaProdutoComLinha}
 
-    IF     ${Parametro_RealizaVendaSemEstoque}
-
-        utils.Inserir Produto normal - Permite sem estoque
+        utils.Seleciona produto com linha cadastrada
 
     ELSE
+
+        IF     ${Parametro_RealizaVendaSemEstoque}
+
+            utils.Inserir Produto normal - Permite sem estoque
+
+        ELSE
         
-        utils.Inserir Produto normal - Necessita de estoque
+            utils.Inserir Produto normal - Necessita de estoque
+
+        END
 
     END
 
@@ -377,6 +403,14 @@ Calcula valor final da venda
     ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = (SELECT Codigo FROM vendas WHERE `Data` = CURDATE() ORDER BY Codigo DESC LIMIT 1);
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}     ${VALOR_FINAL_VENDA}
+
+    ${DADOS_VENDA}    Create List    ${COD_VENDA}    ${VALOR_FINAL_VENDA}
+
+    ${DADOS_VENDA_DEVOLUÇÃO}     Create List    ${DADOS_VENDA}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
 Valida baixa de estoque
     
