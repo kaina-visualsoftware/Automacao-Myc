@@ -115,7 +115,18 @@ E seleciono a comissao da venda
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    SPACE
 
-    Calcula total da comissao
+    IF    ${SelecionaProdutoComLinha}
+
+        Calcula comissao com por produto - apenas 1 produto 
+
+    ELSE
+
+        Calcula total da comissao
+
+        ${VALOR_DEVOLUCAO} =     Evaluate    (${VALOR_FINAL_VENDA} * (-1)) 
+        Set Test Variable    ${VALOR_FINAL_VENDA}    ${VALOR_DEVOLUCAO}
+
+    END
 
 E seleciono a comissão da venda e devolução 
     
@@ -180,7 +191,7 @@ E baixo a comissao recém recebida
     Wait Until Screen Contain    ${TELA_AGENDAMENTO}     ${SLEEP_ALTO}
     SikuliLibrary.Click    ${BT_OK}
 
-    IF    ${Total_Comissao_Final} == 0 or ${Total_Comissao} == 0
+    IF    ${Total_Comissao_Final} == 0 and ${Total_Comissao} == 0
 
         Wait Until Screen Contain    ${AVISO_COMISSAO_ZERADA}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
@@ -208,7 +219,7 @@ Quando acesso o caixa aberto
     Press Special Key    F12
     Wait Until Screen Contain    ${CAIXA_PRINCIPAL}     ${TEMPO_TELA}
     
-    Highlight    ${TELA_CAIXA_CARREGANDO}    1
+    #Highlight    ${TELA_CAIXA_CARREGANDO}    1
     
     #Ignora o erro pq tem bancos em que carrega muito rápido, então ele não percebe a mudança e da erro
     Run Keyword And Ignore Error    Wait Until Screen Not Contain    ${TELA_CAIXA_CARREGANDO}    ${TEMPO_LIMITE_CARREGAMENTO_GRID}
@@ -317,6 +328,18 @@ Calcula comissao por produto
     Log To Console    Valor final da comissão: ${Total_Comissao}
     Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
     Log To Console    %Comissao final: ${PERCENT_COMISSAO}
+
+Calcula comissao com por produto - apenas 1 produto 
+    
+    ${Comisssao_Produto}    Query    SELECT SUM(p.VendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO}
+
+    ${Total_Comissao} =    Evaluate    round((${Comisssao_Produto[0][0]} + ${Total_Comissao}), 4)
+
+    ${Total_Comissao_Final} =    Evaluate    ${Total_Comissao_Final} + ${Total_Comissao}
+
+    Set Test Variable    ${Total_Comissao_Final}
+
+    Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
 
 Valida baixa comissao
     

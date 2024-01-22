@@ -63,4 +63,4 @@ class estoque:
             cursor.close() 
             connection.close()
 
-#estoque.Valida_Movimentacao_Estoque_Venda(1, 2288)
+#estoque.Valida_Movimentacao_Estoque_Venda(1284, 921)

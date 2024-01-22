@@ -110,9 +110,13 @@ Quando pressiono o atalho de adicionar
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
-    ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
-    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
+    Ultima venda feita/em aberto
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
+
+Ultima venda feita/em aberto
+    
+    ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
+    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}  
 
 E adiciono vendedor e cliente 
 
@@ -178,6 +182,8 @@ E acesso a aba pagamentos
     END
 
 Então finalizo a venda
+    
+    Ultima venda feita/em aberto
 
     Verifica vendedor com senha
 
