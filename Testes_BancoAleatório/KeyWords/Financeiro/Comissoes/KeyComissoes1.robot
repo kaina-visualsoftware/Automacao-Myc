@@ -55,6 +55,10 @@ ${TELA_VALE_COMPRA}                      tela_ValeCompra.png
 ${AVISO_BAIXA_VALE_COMPRA}               aviso_BaixaValeCompra.png
 ${TELA_BAIXA_VALE_COMPRA}                tela_BaixaValeCompra.png
 ${AVISO_COMISSAO_ZERADA}                 aviso_ComissaoZerada.png
+${BT_FECHAR}                             bt_fechar.png   
+${COL_LOTE}                              grid_ComissoesLote.png  
+${LABEL_DATA_PAGAMENTO_NULA}             lb_DataPagamentoComBranco.png
+${TELA_DETALHES_COMISSAO}                tela_DetalhesComissao.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -117,7 +121,18 @@ E seleciono a comissao da venda
 
     IF    ${SelecionaProdutoComLinha}
 
-        Calcula comissao com por produto - apenas 1 produto 
+        IF    ${Codigos_Produtos} is None
+                
+            Calcula comissao com por produto - apenas 1 produto 
+
+        ELSE
+
+            Set Test Variable    ${POSIÇÃO_VALOR}    ${0}
+            Calcula comissao por produto
+
+        END
+
+        Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Final}    
 
     ELSE
 
@@ -167,8 +182,18 @@ E seleciono a comissão da venda e devolução
 
         IF    ${SelecionaProdutoComLinha}
             
-            Set Test Variable    ${POSIÇÃO_VALOR}    ${I}
-            Calcula comissao por produto
+            IF    ${Codigos_Produtos} is None
+                
+                Calcula comissao com por produto - apenas 1 produto 
+
+            ELSE
+
+                Set Test Variable    ${POSIÇÃO_VALOR}    ${I}
+                Calcula comissao por produto
+
+            END
+
+            Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Final}
 
         ELSE
 
@@ -184,7 +209,6 @@ E seleciono a comissão da venda e devolução
 
     END
 
-
 E baixo a comissao recém recebida
     
     SikuliLibrary.Click    ${BT_BAIXAR}
@@ -197,8 +221,10 @@ E baixo a comissao recém recebida
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Click    ${BT_FECHAR}
+        Sleep    ${SLEEP_BAIXO}
         Press Special Key    ESC
-
+        
     ELSE
 
         Wait Until Screen Contain    ${AVISO_BAIXA_SUCESSO}    ${SLEEP_ALTO}
@@ -286,11 +312,64 @@ Então faço o pagamento da comissao
 
     Valida baixa comissao
 
+Então visualizo os detalhes da comissao recem paga
+
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.C
+
+    #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda\/\/\/\/\/\/\/\/\/\/\/
+    ${Cod_Com_String}    Convert To String     ${NDoc_Comissao}
+        
+    ${Quantidade_de_zeros_esquerda} =    Get Length    ${Cod_Com_String}
+
+    ${Quantidade_de_zeros_esquerda} =    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
+        
+
+    FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
+            
+        ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
+            
+    END
+    #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda^^^^^^^^^^^^^^
+    
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${COL_LOTE}
+
+    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${NDoc_Comissao}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.D
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain    ${TELA_DETALHES_COMISSAO}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    ESC
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+E seleciono somente as recebidas
+    
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    DOWN
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
 Calcula total da comissao
     
     ${Calculo_Comissao} =     Evaluate    round((${VALOR_FINAL_VENDA} * (${PercentualComissao} / 100)), 3)
     
-    ${Total_Comissao} =     Evaluate    ${Total_Comissao} + ${Calculo_Comissao}
+    ${Total_Comissao} =     Evaluate    round((${Total_Comissao} + ${Calculo_Comissao}),2)
 
     Set Test Variable    ${Total_Comissao}
     
@@ -300,7 +379,7 @@ Calcula total da comissao
 #Se você entender essa keyword meus parabéns. Tempo gasto nessa keyword até o momento: 3:30 horas - Ultima Atualização - 19/01/2024
 #Tava dando muito B.O na questão de abater os valores e calcular correto (positivo e negativo), teve que ser criado uma lista com todos os valores de venda e devolução
 Calcula comissao por produto
-    
+
     ${Quantidade_Produtos_Calculo} =    Get Length    ${Codigos_Produtos}
 
     FOR    ${I}    IN RANGE    ${Quantidade_Produtos_Calculo}
@@ -314,14 +393,14 @@ Calcula comissao por produto
     #Vai definir a % de comissão apenas positiva
     IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
 
-        ${PERCENT_COMISSAO} =     Evaluate    round(((${Total_Comissao} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100), 2)
+        ${PERCENT_COMISSAO} =     Evaluate    ((${Total_Comissao} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
         Set Suite Variable    ${PERCENT_COMISSAO}
         
     END
 
     ${Total_Comissao} =     Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
 
-    ${Total_Comissao_Final} =    Evaluate    ${Total_Comissao_Final} + ${Total_Comissao}
+    ${Total_Comissao_Final} =    Evaluate    round((${Total_Comissao_Final} + ${Total_Comissao}), 2)
 
     Set Test Variable    ${Total_Comissao_Final}
 
@@ -335,10 +414,10 @@ Calcula comissao com por produto - apenas 1 produto
 
     ${Total_Comissao} =    Evaluate    round((${Comisssao_Produto[0][0]} + ${Total_Comissao}), 4)
 
-    ${Total_Comissao_Final} =    Evaluate    ${Total_Comissao_Final} + ${Total_Comissao}
+    ${Total_Comissao_Final} =    Evaluate    round((${Total_Comissao_Final} + ${Total_Comissao}), 2)
 
-    Set Test Variable    ${Total_Comissao_Final}
-
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Final}
+    
     Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
 
 Valida baixa comissao

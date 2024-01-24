@@ -67,6 +67,7 @@ ${LABEL_DESCRIÇÃO}                       lb_Descricao.png
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.pnG
+${Codigos_Produtos}                      ${None}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -113,6 +114,9 @@ Quando pressiono o atalho de adicionar
     Ultima venda feita/em aberto
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
+    #Seta a lista de produtos como None para dar certo em ambos os casos (venda com mais de um produto e com apenas 1 produto)
+    Set Test Variable    ${Codigos_Produtos}
+
 Ultima venda feita/em aberto
     
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
@@ -142,7 +146,7 @@ Quando insiro mais de um produto normal(${Quantidade_Inserir})
 
 
 Quando insiro um produto normal
-    
+
     IF    ${SelecionaProdutoComLinha}
 
         utils.Seleciona produto com linha cadastrada

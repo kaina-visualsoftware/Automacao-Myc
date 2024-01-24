@@ -2,6 +2,7 @@
 Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../KeyWords/Comercial/Devolucao/KeyDevolucaoVenda1.robot
+Resource    ../KeyWords/Financeiro/Caixa/keyCaixa1.robot
 Resource    ../utils/utils.robot
 Library    SikuliLibrary
 Library    Collections
@@ -82,3 +83,18 @@ Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
     KeyDevolucaoVenda1.Quando seleciono os produtos para a devolução(${Quantidade_Inserir})
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução
+
+Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
+    Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
+    
+    IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
+        
+        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Então faço o recebimento da conta
+
+    ELSE
+        
+        Log To Console    Venda foi finalizada com a forma - A vista, portanto está totalmente paga
+
+    END

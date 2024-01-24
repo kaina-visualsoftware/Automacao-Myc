@@ -16,8 +16,8 @@ Teste 01 - Gerando comissao sobre venda simples
     Quando insiro o vendedor comissionado
     E seleciono a comissao da venda
     E baixo a comissao recém recebida
-    Quando acesso o caixa aberto
-    E vou para a aba de contas a pagar
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
 
 Teste 02 - Gerando comissão sobre venda e devolução
@@ -27,8 +27,8 @@ Teste 02 - Gerando comissão sobre venda e devolução
     Quando insiro o vendedor comissionado
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
-    Quando acesso o caixa aberto
-    E vou para a aba de contas a pagar
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
     #Então faço o pagamento da comissao
 
 Teste 03 - Gerando comissão sobre venda e devolução
@@ -41,3 +41,16 @@ Teste 03 - Gerando comissão sobre venda e devolução
     Quando insiro o vendedor comissionado
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
+
+Teste 04 - Gerando comissao sobre somente recebidas
+    [Tags]    Teste04
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda totalmente recebida(3)
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+    Então visualizo os detalhes da comissao recem paga
