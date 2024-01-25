@@ -141,6 +141,7 @@ Verifica parametros que interferem na venda
     ${Parametro_ExigeSenhaCancelarVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeSenhaCancelarVenda
     ${Parametro_BloqueiaGeracaoVendaParcial} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PrevendaBloqueioVendaParcial
     ${Parametro_CaixaControladoPorUsuario} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    CaixaUsuario
+    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    DescontoFinalIgualmente
 
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -184,6 +185,8 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     END
+
+    Set Test Variable    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
 
     Set Test Variable    ${Parametro_CaixaControladoPorUsuario}
 
@@ -576,7 +579,7 @@ Valida faturamento nf
 
 Verifica se cliente possui objeto vinculado
 
-    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    OrdemDeServico
+    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Servico
 
     Log To Console    ${SUITE_NAME}
 

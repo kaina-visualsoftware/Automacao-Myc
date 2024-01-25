@@ -58,3 +58,21 @@ Teste 05 - Realizando venda com mais de um produto
     Quando insiro mais de um produto normal(2)
     E acesso a aba pagamentos
     Então finalizo a venda
+
+Teste 06 - Realizando venda com desconto ao finalizar
+    [Tags]    Teste06
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro um produto normal
+    E acesso a aba pagamentos
+    Então finalizo a venda - Desconto(5)
+
+Teste 07 - Realizando venda com mais de um produto 
+    [Tags]    Teste07
+    Dado que acesso a tela de vendas de balcao
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando insiro mais de um produto normal(2)
+    E acesso a aba pagamentos
+    Então finalizo a venda - Desconto(25)

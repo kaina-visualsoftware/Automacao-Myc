@@ -143,7 +143,8 @@ Quando insiro mais de um produto normal(${Quantidade_Inserir})
     Log To Console    Produtos adicionados na venda: ${Codigos_Produtos}
 
     Set Test Variable    ${Codigos_Produtos}
-
+    
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${Quantidade_Inserir}
 
 Quando insiro um produto normal
 
@@ -192,6 +193,84 @@ Então finalizo a venda
     Verifica vendedor com senha
 
     Calcula valor final da venda
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.D
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida vencimento fim de semana(${FORMA_PADRAO})
+
+    IF    ${FORMA_PADRAO[2]} > 0
+        
+        Valida tela de liberação de desconto 
+
+    END
+
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.F
+
+    IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
+
+        IF    ${Parametro_ControlaCredito}
+            
+            Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
+
+            IF    ${VendedorPossuiSenha}
+        
+                Valida solicitacao de senha do usuário
+
+            END
+
+        END
+
+    END
+
+    #Deixado aqui por que pode ser QUE quando a forma for a vista, apareça antes das duplicatas, mas ainda é necessário validar
+    IF    ${VendedorPossuiSenha}
+        
+        Valida solicitacao de senha do usuário
+
+    END
+
+    IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
+        
+        IF    ${EntradaIgualA_Outros}
+
+            IF     ${Parametro_BaixaAutomatico}
+                
+                Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA}) 
+
+            END
+
+        END
+
+    END
+
+    Valida Parametros/Impressões pós venda
+
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    keyVendas1.Valida baixa de estoque
+
+Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB 
+    Input Text    ${EMPTY}    ${PERCENT_DESCONTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB 
+
+    Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
+
+    Ultima venda feita/em aberto
+
+    Verifica vendedor com senha
+
+    Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.D
@@ -410,7 +489,7 @@ Valida erro ao faturar NFC
 
 Calcula valor final da venda 
     
-    ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = (SELECT Codigo FROM vendas WHERE `Data` = CURDATE() ORDER BY Codigo DESC LIMIT 1);
+    ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
 
@@ -421,6 +500,86 @@ Calcula valor final da venda
     ${DADOS_VENDA_DEVOLUÇÃO}     Create List    ${DADOS_VENDA}
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
+
+Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
+    
+    ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+
+    IF    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
+
+        ${Valor_Final_Com_Desconto}    Calcula desconto final por produto(${PERCENT_DESCONTO})
+
+    ELSE
+
+        ${Valor_Final_Com_Desconto} =     Evaluate    ${ValorTotalProdutos[0][0]} - (${ValorTotalProdutos[0][0]} * (${PERCENT_DESCONTO} / 100))
+
+    END
+
+    Log To Console    Valor com desconto: ${Valor_Final_Com_Desconto}
+
+    Set Test Variable    ${VALOR_FINAL_VENDA}    ${Valor_Final_Com_Desconto}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}     ${VALOR_FINAL_VENDA}
+
+    ${DADOS_VENDA}    Create List    ${COD_VENDA}    ${VALOR_FINAL_VENDA}
+
+    ${DADOS_VENDA_DEVOLUÇÃO}     Create List    ${DADOS_VENDA}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
+
+Calcula desconto final por produto(${PERCENT_DESCONTO})
+    
+    IF    ${Codigos_Produtos} is None
+        
+        ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
+
+        IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
+            
+            ${Valor_Final_Atual} =     Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${Produto[0][1]} / 100))),4)
+            Log To Console    Desconto ultrapassou o máximo do produto, novo valor final: ${Valor_Final_Atual}
+            ${Valor_Final_Atual} =     Evaluate    round((${Valor_Final_Atual}),2)
+
+        ELSE
+
+            ${Valor_Final_Atual} =     Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${PERCENT_DESCONTO} / 100))),4)
+            Log To Console    Desconto está no limite do máximo do produto, novo valor final: ${Valor_Final_Atual}
+            ${Valor_Final_Atual} =     Evaluate    round((${Valor_Final_Atual}),2)
+
+        END
+
+        RETURN    ${Valor_Final_Atual}
+
+    ELSE
+        
+        ${Valor_Final_Atual} =    Evaluate    0
+
+        FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+            ${Produto}     Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${Codigos_Produtos[${I}]}
+            
+            IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
+            
+                ${Valor_Produto_Desconto} =     Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${Produto[0][1]} / 100))),4)
+                Log To Console    Desconto ultrapassou o máximo do produto, novo valor final: ${Valor_Produto_Desconto}
+
+                ${Valor_Final_Atual} =     Evaluate    ${Valor_Final_Atual} + ${Valor_Produto_Desconto}
+                ${Valor_Final_Atual} =     Evaluate    round((${Valor_Final_Atual}),2)
+
+            ELSE
+
+                ${Valor_Produto_Desconto} =     Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${PERCENT_DESCONTO} / 100))),4)
+                Log To Console    Desconto está no limite do máximo do produto, novo valor final: ${Valor_Produto_Desconto}
+                
+                ${Valor_Final_Atual} =     Evaluate    ${Valor_Final_Atual} + ${Valor_Produto_Desconto}
+                ${Valor_Final_Atual} =     Evaluate    round((${Valor_Final_Atual}),2)
+
+            END
+
+        END
+
+        RETURN    ${Valor_Final_Atual}
+
+    END
 
 Valida baixa de estoque
     
@@ -436,5 +595,42 @@ Valida baixa de estoque
     ELSE
 
         Log To Console    Falha na baixa do estoque! Verifique!
+
+    END
+
+Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
+    
+    IF    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} == False
+        
+        IF    ${Codigos_Produtos} is None
+            
+            ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
+
+            IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
+                    
+                Valida tela de liberação de desconto 
+                
+            END       
+
+        ELSE
+                
+            ${Valor_Final_Atual} =    Evaluate    0
+
+            FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+                ${Produto}     Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${Codigos_Produtos[${I}]}
+                    
+                IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
+                    
+                    Valida tela de liberação de desconto 
+                    
+                    BREAK
+
+                END
+
+            END
+
+        END
+
 
     END
