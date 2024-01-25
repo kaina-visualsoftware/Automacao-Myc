@@ -27,8 +27,8 @@ Teste 02 - Gerando comissão sobre venda e devolução
     Quando insiro o vendedor comissionado
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
-    KeyComissoes1.Quando acesso o caixa aberto
-    KeyComissoes1.E vou para a aba de contas a pagar
+    # KeyComissoes1.Quando acesso o caixa aberto
+    # KeyComissoes1.E vou para a aba de contas a pagar
     #Então faço o pagamento da comissao
 
 Teste 03 - Gerando comissão sobre venda e devolução

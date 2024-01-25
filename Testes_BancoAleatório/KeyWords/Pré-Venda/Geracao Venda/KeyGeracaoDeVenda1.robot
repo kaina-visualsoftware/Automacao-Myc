@@ -112,11 +112,13 @@ Então confirmo a geração dos pedidos
     END
 
     Sleep    ${SLEEP_BAIXO}
-
-    KeyGeracaoDeVenda1.Validação da geração de venda de mais de um pedido 
+    
+    KeyGeracaoDeVenda1.Validação da geração de venda de mais de um pedido
 
 Validação de geração de venda
     
+    Sleep    ${SLEEP_ALTO}
+
     ${Codigo_Venda_Gerada}    Query    SELECT VendaGerada FROM pedidosvenda WHERE codigo = ${Codigo_Pedido};
 
     ${Produtos_Pedidos}    Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM pedidosvendaprodutos WHERE codigoPedido = ${Codigo_Pedido};
@@ -139,6 +141,7 @@ Validação de geração de venda
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
+    Sleep    ${SLEEP_MEDIO}
     KeyGeracaoDeVenda1.Valida baixa de estoque
 
 
@@ -220,12 +223,18 @@ Recupera total do pedido(${Contador})
 Validação da geração de venda de mais de um pedido 
     
     FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
+        
+        Sleep    ${SLEEP_BAIXO}
 
         Set Test Variable    ${Codigo_Pedido}    ${Codigos_Pedidos[${I}]}
 
         Set Test Variable    ${COD_PRODUTO}    ${Codigos_Produtos[${I}]}
 
+        Sleep    ${SLEEP_BAIXO}
+
         Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Pedido}
+        
+        Sleep    ${SLEEP_BAIXO}
 
         KeyGeracaoDeVenda1.Validação de geração de venda
         

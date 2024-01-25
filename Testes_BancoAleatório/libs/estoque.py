@@ -31,6 +31,8 @@ class estoque:
                 cursor.execute(consultaProdutosEstoque)
                 tabelaProdutosEstoque = cursor.fetchall()
 
+                print("-------- "+consultaProdutosEstoque+"--------")
+                
                 estoqueAtual = tabelaProdutosEstoque[0][0] 
 
                 consultaAuditoriaEstoque = "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque WHERE IDMov = "+str(idMovimentacao)+" AND CodigoProduto = "+str(idProduto)+" ORDER BY ID DESC LIMIT 1;"

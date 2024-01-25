@@ -246,6 +246,8 @@ Valida baixa de estoque
     END
 
 Validação de geração de venda
+
+    Sleep    ${SLEEP_ALTO}
     
     ${Codigo_Venda_Gerada}    Query    SELECT VendaGerada FROM pedidosvenda WHERE codigo = ${Codigo_Pedido};
 

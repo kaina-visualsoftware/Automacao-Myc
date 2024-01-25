@@ -9,7 +9,7 @@ Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/validacaoAviso.robot
 Resource    ../utils/utils.robot
-Resource     ../utils/montadorDeCenarios.robot
+Resource    ../utils/montadorDeCenarios.robot
 
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
@@ -193,7 +193,7 @@ E seleciono a comissão da venda e devolução
 
             END
 
-            Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Final}
+            #Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Final}
 
         ELSE
 
@@ -224,6 +224,8 @@ E baixo a comissao recém recebida
         SikuliLibrary.Click    ${BT_FECHAR}
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ESC
+
+        Log To Console    Finalizando Teste pois comissão está zerada (correto para o cenário 2)
         
     ELSE
 
@@ -410,13 +412,14 @@ Calcula comissao por produto
 
 Calcula comissao com por produto - apenas 1 produto 
     
-    ${Comisssao_Produto}    Query    SELECT SUM(p.VendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO}
+    ${Comisssao_Produto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
 
     ${Total_Comissao} =    Evaluate    round((${Comisssao_Produto[0][0]} + ${Total_Comissao}), 4)
 
-    ${Total_Comissao_Final} =    Evaluate    round((${Total_Comissao_Final} + ${Total_Comissao}), 2)
+    ${Total_Comissao_Final} =    Evaluate    round((${Total_Comissao}), 2)
 
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Final}
+    Set Test Variable    ${Total_Comissao_Final}
+    Set Test Variable    ${Total_Comissao}
     
     Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
 
