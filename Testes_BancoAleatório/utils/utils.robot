@@ -40,6 +40,7 @@ ${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
 ${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
 ${SelecionaProdutoComLinha}              ${False}                 
+${Vendedor_Selecionada_Escalonada}       ${False}
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -67,23 +68,36 @@ Personalização de Pagamentos
     END
 
 Adicionar Vendedor e Cliente(${TELA})
-    
-    Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
-    Sleep    ${SLEEP_BAIXO}
-    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_BAIXO}
-    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_BAIXO}
 
-    Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
+    IF    ${Vendedor_Selecionada_Escalonada}
 
-    #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
-    Valida vendedor padrao
+        Log To Console    Vendedor já selecionado para os testes!\nCódigo Vendedor: ${Codigo_Vendedor}
 
-    Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+        ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
+        Sleep    ${SLEEP_BAIXO}
 
-    #VALIDA SE O TESTE SERÁ DE COMISSÃO
-    Valida teste de comissão
+        Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
+
+    ELSE
+
+        Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
+        Sleep    ${SLEEP_BAIXO}
+        ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+        Sleep    ${SLEEP_BAIXO}
+        ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
+        Sleep    ${SLEEP_BAIXO}
+
+        Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
+
+        #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
+        Valida vendedor padrao
+
+        Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+
+        #VALIDA SE O TESTE SERÁ DE COMISSÃO
+        Valida teste de comissão
+
+    END
 
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
     Sleep    ${SLEEP_BAIXO}    
@@ -147,50 +161,73 @@ Valida teste de comissão
     
     ${Test_Comissao} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
 
+    ${Teste_Comissao_Escalonada} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
+
     IF    ${Test_Comissao}
         
         ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos FROM clientes WHERE Codigo = ${Codigo_Vendedor}
 
-        IF    '${Tipo_Comissao[0][0]}' == 'T'
-
-            IF    "${Tipo_Comissao[0][1]}" != "None" and "${Tipo_Comissao[0][1]}" > "0.0"
-                
-                Log To Console    Comissao por total de vendas
-                Set Test Variable    ${PercentualComissao}    ${Tipo_Comissao[0][1]}
-
-            ELSE IF     "${Tipo_Comissao[0][1]}" == "None"
-                
-                Seleciona vendedor comissionado
-
-            END
-
-        # ELSE IF     '${Tipo_Comissao[0][0]}' == 'F'
+        IF    ${Teste_Comissao_Escalonada}
             
-        #     Log To Console    Comissao do tipo sobre forma de parcelamento
-
-        # ELSE IF     '${Tipo_Comissao[0][0]}' == 'D'
-
-        #     Log To Console    Comissao do tipo sobre percentual de desconto
-
-        ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
+            Log To Console    Teste sobre comissão escalonada${\n}Selecionar vendedor por tipo D
             
-            #Validar para que quando for inserido mais de 1 produto com linhas diferentes, fazer a média
-            Log To Console    Comissao por linha
+            Seleciona vendedor comissionado('D')
 
-            Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
-        
+            Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
+
         ELSE
 
-            Seleciona vendedor comissionado
+            IF    '${Tipo_Comissao[0][0]}' == 'T'
+
+                IF    "${Tipo_Comissao[0][1]}" != "None" and "${Tipo_Comissao[0][1]}" > "0.0"
+                    
+                    Log To Console    Comissao por total de vendas
+                    Set Test Variable    ${PercentualComissao}    ${Tipo_Comissao[0][1]}
+
+                ELSE IF     "${Tipo_Comissao[0][1]}" == "None"
+                    
+                    #Seleciona vendedor comissionado
+                    Log To Console    C
+
+                END
+
+            # ELSE IF     '${Tipo_Comissao[0][0]}' == 'F'
+                
+            #     Log To Console    Comissao do tipo sobre forma de parcelamento
+
+            ELSE IF     '${Tipo_Comissao[0][0]}' == 'D'
+
+                Log To Console    Comissao do tipo sobre percentual de desconto
+
+            ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
+                
+                #Validar para que quando for inserido mais de 1 produto com linhas diferentes, fazer a média
+                Log To Console    Comissao por linha
+
+                Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
+            
+            ELSE
+
+                #Seleciona vendedor comissionado
+                Log To Console    C
+
+            END
 
         END
     
     END
 
-Seleciona vendedor comissionado
-    
-    #Selecionando apenas vendedor que tenha percentual sobre os produtos POR ENQUANTO
-    ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoPercentualProdutos > 0 OR ComissaoDiferenciadapor IN ('L')) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+Seleciona vendedor comissionado(${Tipo_Selecionar})
+
+    IF    ${Tipo_Selecionar} == 'T'
+
+        ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoPercentualProdutos > 0) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+
+    ELSE
+
+        ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoDiferenciadapor LIKE ${Tipo_Selecionar}) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+
+    END
 
     IF    ${codVendedor_Comissionado} != 'None'
         
@@ -200,7 +237,7 @@ Seleciona vendedor comissionado
 
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
 
-        Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\n Percentual de comissao sobre produtos: ${PercentualComissao}
+        Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\n Tipo de comissão: ${Tipo_Selecionar}
 
         IF    '${codVendedor_Comissionado[0][2]}' == 'L'
 
@@ -324,6 +361,18 @@ Inserir Produto normal - Permite sem estoque
     Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
+
+Inserir produto pré-definido(${Produto})
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.P
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${Produto} 
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
 
 Valida parametros após incluir produto 
     
@@ -578,3 +627,9 @@ Seleciona produto com linha cadastrada
     Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
+
+Pesquisa comissões por escalonamento
+    
+    ${Descontos_Comissoes}    Query    SELECT Ate, Comissao FROM comissao_escalonadaprod LIMIT 2
+
+    RETURN    ${Descontos_Comissoes}

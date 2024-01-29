@@ -75,4 +75,4 @@ Teste 07 - Realizando venda com mais de um produto
     E adiciono vendedor e cliente
     Quando insiro mais de um produto normal(2)
     E acesso a aba pagamentos
-    Então finalizo a venda - Desconto(25)
+    Então finalizo a venda - Desconto(25) 

@@ -98,3 +98,36 @@ Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
         Log To Console    Venda foi finalizada com a forma - A vista, portanto está totalmente paga
 
     END
+
+Realizando venda com desconto ao finalizar(${desconto})
+    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto normal
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda - Desconto(${desconto})
+
+Realizando vendas com o mesmo produto porém com descontos diferentes
+    
+    ${Codigo_Vendas} =     Create List
+    ${Valor_Final_Vendas} =     Create List
+
+    ${DESCONTOS_COMISSOES}    Pesquisa comissões por escalonamento
+    Realizando venda com desconto ao finalizar(${DESCONTOS_COMISSOES[0][0]})
+
+    Append To List    ${Codigo_Vendas}    ${COD_VENDA}
+    Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
+
+    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO})
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda - Desconto(${DESCONTOS_COMISSOES[1][0]})
+
+    Append To List    ${Codigo_Vendas}    ${COD_VENDA}
+    Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
+
+    Set Test Variable    ${DESCONTOS_COMISSOES}
+    Set Test Variable    ${Codigo_Vendas} 
+    Set Test Variable    ${Valor_Final_Vendas}

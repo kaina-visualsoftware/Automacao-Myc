@@ -59,6 +59,7 @@ ${BT_FECHAR}                             bt_fechar.png
 ${COL_LOTE}                              grid_ComissoesLote.png  
 ${LABEL_DATA_PAGAMENTO_NULA}             lb_DataPagamentoComBranco.png
 ${TELA_DETALHES_COMISSAO}                tela_DetalhesComissao.png
+${BT_JÁ_SELECIONADO}                     ${False}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -87,8 +88,14 @@ Quando insiro o vendedor comissionado
     Wait Until Screen Contain    ${LISTAGEM_GRID}     ${SLEEP_ALTO}
 
 E seleciono a comissao da venda
-    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
-    Sleep    ${SLEEP_BAIXO}
+
+    IF    ${BT_JÁ_SELECIONADO} == $False
+
+        SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+    
     SikuliLibrary.Click    ${LISTAGEM_GRID}
     Sleep    ${SLEEP_BAIXO}
 
@@ -426,9 +433,10 @@ Calcula comissao com por produto - apenas 1 produto
 Valida baixa comissao
     
     ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND DataQuitacao = CURDATE() AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
-    
+    ${Comissao_Paga_BD} =     Evaluate    round((${ComissaoPaga[0][1]}), 2)
+
     Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
-    Should Be Equal    ${ComissaoPaga[0][1]}    ${Total_Comissao}
+    Should Be Equal    ${Comissao_Paga_BD}    ${Total_Comissao}
 
 Dado que acesso o menu de vale compras
     
@@ -467,3 +475,21 @@ Quando faço a baixa do mesmo
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_VALE_COMPRA}     ${TEMPO_TELA}
     Press Special Key    ESC
+
+E seleciono as comissaos das vendas
+
+    ${QuantidadeVendas} =     Get Length    ${Codigo_Vendas} 
+
+    FOR    ${I}    IN RANGE    ${QuantidadeVendas}
+        
+        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendas[${I}]} 
+
+        Set Test Variable    ${VALOR_FINAL_VENDA}     ${Valor_Final_Vendas[${I}]}
+
+        Set Test Variable    ${PercentualComissao}    ${DESCONTOS_COMISSOES[${I}][1]}
+
+        E seleciono a comissao da venda
+        
+        Set Test Variable    ${BT_JÁ_SELECIONADO}    ${True}
+
+    END

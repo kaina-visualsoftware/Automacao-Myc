@@ -634,3 +634,17 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
 
     END
+
+Quando insiro um produto já definido(${Produto})
+    
+    IF    ${SelecionaProdutoComLinha}
+
+        utils.Seleciona produto com linha cadastrada
+
+    ELSE
+
+        utils.Inserir produto pré-definido(${Produto})
+
+    END
+
+    utils.Valida parametros após incluir produto

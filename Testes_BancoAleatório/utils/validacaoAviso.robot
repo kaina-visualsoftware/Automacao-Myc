@@ -158,7 +158,7 @@ Verifica parametros que interferem na venda
 
     IF    ${Parametro_VendaRapida}
             
-        Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado
+        Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado${\n}Caminho do parametro: ADM Sistema >> +Config >> Geral >> Mais - Trazer vendedor e cliente padrão...
         Terminate Process
 
     END
@@ -579,7 +579,7 @@ Valida faturamento nf
 
 Verifica se cliente possui objeto vinculado
 
-    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Servico
+    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    servico
 
     Log To Console    ${SUITE_NAME}
 

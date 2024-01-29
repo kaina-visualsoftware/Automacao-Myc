@@ -54,3 +54,14 @@ Teste 04 - Gerando comissao sobre somente recebidas
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     Então visualizo os detalhes da comissao recem paga
+
+Teste 05 - Gerando comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
+    [Tags]    Teste05
+    [Setup]    montadorDeCenarios.Realizando vendas com o mesmo produto porém com descontos diferentes
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono as comissaos das vendas
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
