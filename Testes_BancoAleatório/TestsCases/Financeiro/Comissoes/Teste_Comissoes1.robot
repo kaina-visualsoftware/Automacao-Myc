@@ -10,7 +10,7 @@ Suite Teardown      Stop Remote Server
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
 
 *** Test Cases ***
-Teste 01 - Gerando comissao sobre venda simples
+Teste 01 - Gerando comissao sobre venda simples - Total Venda
     [Tags]    Teste01
     Dado que acesso a tela de comissoes
     Quando insiro o vendedor comissionado
@@ -20,7 +20,7 @@ Teste 01 - Gerando comissao sobre venda simples
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
 
-Teste 02 - Gerando comissão sobre venda e devolução
+Teste 02 - Gerando comissão sobre venda e devolução - Linha
     [Tags]    Teste02 
     [Setup]    montadorDeCenarios.Dado que realizo uma devolução avulsa 
     Dado que acesso a tela de comissoes
@@ -31,7 +31,7 @@ Teste 02 - Gerando comissão sobre venda e devolução
     # KeyComissoes1.E vou para a aba de contas a pagar
     #Então faço o pagamento da comissao
 
-Teste 03 - Gerando comissão sobre venda e devolução
+Teste 03 - Gerando comissão sobre venda e devolução - Linha
     [Tags]    Teste03
     [Setup]    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
     Dado que acesso o menu de vale compras
@@ -42,7 +42,7 @@ Teste 03 - Gerando comissão sobre venda e devolução
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
 
-Teste 04 - Gerando comissao sobre somente recebidas
+Teste 04 - Gerando comissao sobre somente recebidas - Total Venda
     [Tags]    Teste04
     [Setup]    montadorDeCenarios.Dado que realizo uma venda totalmente recebida(3)
     Dado que acesso a tela de comissoes

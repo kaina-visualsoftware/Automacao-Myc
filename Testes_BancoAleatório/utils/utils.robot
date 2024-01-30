@@ -162,56 +162,62 @@ Valida teste de comissão
     ${Test_Comissao} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
 
     ${Teste_Comissao_Escalonada} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
+    ${Teste_Comissao_Total_Venda} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
+    ${Teste_Comissao_Linha} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
+    ${Teste_Comissao_Forma_Parcelamento} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma
 
     IF    ${Test_Comissao}
         
         ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos FROM clientes WHERE Codigo = ${Codigo_Vendedor}
 
         IF    ${Teste_Comissao_Escalonada}
-            
-            Log To Console    Teste sobre comissão escalonada${\n}Selecionar vendedor por tipo D
-            
-            Seleciona vendedor comissionado('D')
+                       
+            IF    '${Tipo_Comissao[0][0]}' != 'D'
+
+                Seleciona vendedor comissionado('D')
+
+            END
 
             Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
 
-        ELSE
+            Log To Console    Teste sobre comissão escalonada${\n}Selecionar vendedor por tipo D
 
-            IF    '${Tipo_Comissao[0][0]}' == 'T'
-
-                IF    "${Tipo_Comissao[0][1]}" != "None" and "${Tipo_Comissao[0][1]}" > "0.0"
+        ELSE IF    ${Teste_Comissao_Total_Venda}           
+        
+            IF    '${Tipo_Comissao[0][1]}' != 'None' and '${Tipo_Comissao[0][1]}' > '0.0'
                     
-                    Log To Console    Comissao por total de vendas
-                    Set Test Variable    ${PercentualComissao}    ${Tipo_Comissao[0][1]}
+                Set Test Variable    ${PercentualComissao}    ${Tipo_Comissao[0][1]}
 
-                ELSE IF     "${Tipo_Comissao[0][1]}" == "None"
-                    
-                    #Seleciona vendedor comissionado
-                    Log To Console    C
-
-                END
-
-            # ELSE IF     '${Tipo_Comissao[0][0]}' == 'F'
-                
-            #     Log To Console    Comissao do tipo sobre forma de parcelamento
-
-            ELSE IF     '${Tipo_Comissao[0][0]}' == 'D'
-
-                Log To Console    Comissao do tipo sobre percentual de desconto
-
-            ELSE IF     '${Tipo_Comissao[0][0]}' == 'L'
-                
-                #Validar para que quando for inserido mais de 1 produto com linhas diferentes, fazer a média
-                Log To Console    Comissao por linha
-
-                Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
-            
             ELSE
-
-                #Seleciona vendedor comissionado
-                Log To Console    C
+                    
+                Seleciona vendedor comissionado('T')
 
             END
+
+            Log To Console    Comissao por total de vendas
+
+        ELSE IF    ${Teste_Comissao_Linha}
+
+            IF     '${Tipo_Comissao[0][0]}' != 'L'
+                
+                Seleciona vendedor comissionado('L')
+
+            END
+
+            Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
+
+            Log To Console    Comissao por linha
+        
+        ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
+
+            IF     '${Tipo_Comissao[0][0]}' != 'F'
+
+                Seleciona vendedor comissionado('F')
+
+            END
+
+            Log To Console    Comissao do tipo sobre forma de parcelamento - SEM CASOS DE TESTE POR ENQUANTO
+
 
         END
     
