@@ -431,12 +431,16 @@ Calcula comissao com por produto - apenas 1 produto
     Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
 
 Valida baixa comissao
-    
+
     ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND DataQuitacao = CURDATE() AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
     ${Comissao_Paga_BD} =     Evaluate    round((${ComissaoPaga[0][1]}), 2)
 
     Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
     Should Be Equal    ${Comissao_Paga_BD}    ${Total_Comissao}
+
+    Check If Exists In Database    SELECT Sequencia, nDocumento, CodigoAbertura, ValorDocumento FROM caixamovimentos WHERE nDocumento = ${NDoc_Comissao}
+
+    Log To Console    Validações passaram!
 
 Dado que acesso o menu de vale compras
     

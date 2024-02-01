@@ -37,6 +37,7 @@ ${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
 ${TELA_FATURAMENTO_NF}                   tela_FaturamentoDiretoNF.png  
 ${TELA_CONFIRMAÇÃO_PAGAMENTO}            tela_DataPagamento.png
+${LABEL_LIBERAÇÃO_SUPERVISOR}            label_PasseOCartaoDeLiberacao.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -411,6 +412,7 @@ Valida tela de liberação de desconto
 
     IF    ${MSG}  
         
+        Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    1
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER 

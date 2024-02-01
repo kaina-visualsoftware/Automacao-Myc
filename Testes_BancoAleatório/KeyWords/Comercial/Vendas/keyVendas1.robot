@@ -150,7 +150,7 @@ Quando insiro um produto normal
 
     IF    ${SelecionaProdutoComLinha}
 
-        utils.Seleciona produto com linha cadastrada
+        utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
 
     ELSE
 
@@ -639,7 +639,7 @@ Quando insiro um produto já definido(${Produto})
     
     IF    ${SelecionaProdutoComLinha}
 
-        utils.Seleciona produto com linha cadastrada
+        utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
 
     ELSE
 

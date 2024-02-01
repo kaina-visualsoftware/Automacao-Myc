@@ -71,17 +71,24 @@ Quando adiciono vendedor e cliente
     Valida avisos após incluir cliente e vendedor - Pré-Venda 
 
 E adiciono um produto
+    
+    IF    ${SelecionaProdutoComLinha}
 
-    IF     ${Parametro_RealizaPreVendaSemEstoque}
-
-        utils.Inserir Produto normal - Permite sem estoque
+        utils.Seleciona produto com linha cadastrada(${Parametro_RealizaPreVendaSemEstoque})
 
     ELSE
-        
-        utils.Inserir Produto normal - Necessita de estoque
+
+        IF     ${Parametro_RealizaPreVendaSemEstoque}
+
+            utils.Inserir Produto normal - Permite sem estoque
+
+        ELSE
+            
+            utils.Inserir Produto normal - Necessita de estoque
+
+        END
 
     END
-
     utils.Valida parametros após incluir produto
 
     ${QUERY}    Query    SELECT SUM(ValorTotal) FROM pedidosvendaprodutos WHERE CodigoPedido = ${Codigo_Pedido};
@@ -101,14 +108,13 @@ E audito o pedido
 Então finalizo o pedido 
     
     Press Combination    KEY.ALT     Key.F
-    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
-
     #Verifica se valor minimo da forma é maior que total do pedido
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
 
         Valida tela de liberação de desconto
-
     END
+
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
@@ -125,6 +131,13 @@ Então visualizo o pedido feito
 Quando finalizo o pedido sem auditar
     
     Press Combination    KEY.ALT     Key.F
+    
+    #Verifica se valor minimo da forma é maior que total do pedido
+    IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
+
+        Valida tela de liberação de desconto
+    END
+
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
 E pressiono o atalho de editar
@@ -176,9 +189,9 @@ Valida avisos após incluir cliente e vendedor - Pré-Venda
         
         Valida aviso exige senha para outro vendedor
 
-    END
+    END   
 
-    IF    ${Aviso_vendedor_existe}  
+    IF    ${Aviso_Vendedor_Existe_Comissao}  
 
         Valida aviso cliente outro vendedor
 
@@ -268,6 +281,8 @@ Validação de geração de venda
     END
 
     Set Test Variable    ${COD_VENDA}    ${Codigo_Venda_Gerada[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
 Quando seleciono um produto para a geração da venda
 

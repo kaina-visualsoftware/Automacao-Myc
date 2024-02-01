@@ -601,13 +601,13 @@ Cancela venda com senha
     Press Combination    KEY.ALT     Key.O
     Sleep    ${SLEEP_BAIXO}
 
-Seleciona produto com linha cadastrada
+Seleciona produto com linha cadastrada(${Paremtro_Operação_Sem_Estoque})
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
 
-    IF     ${Parametro_RealizaVendaSemEstoque}
+    IF     ${Paremtro_Operação_Sem_Estoque}
 
         ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 AND CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
         Sleep    ${SLEEP_MEDIO}

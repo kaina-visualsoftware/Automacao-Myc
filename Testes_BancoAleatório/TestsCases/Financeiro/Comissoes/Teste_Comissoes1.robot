@@ -65,3 +65,27 @@ Teste 05 - Gerando comissão escalonada sobre mesmos produtos, com desconto dife
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+
+Teste 06 - Gerando comissao de venda oriunda de pedidp - Linha
+    [Tags]    Teste06
+    [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele 
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+
+Teste 07 - Gerando comissao de venda oriunda de pedido - Total Venda
+    [Tags]    Teste07
+    [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida 
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+    Então visualizo os detalhes da comissao recem paga

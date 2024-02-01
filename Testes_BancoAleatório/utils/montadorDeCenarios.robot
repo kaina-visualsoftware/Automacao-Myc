@@ -30,6 +30,30 @@ Dado que realizo um pedido, com produto normal
     KeyPedidos1.E audito o pedido 
     KeyPedidos1.Então finalizo o pedido 
 
+Dado que realizo um pedido e gero uma venda total sobre ele 
+    Dado que realizo um pedido, com produto normal
+    KeyPedidos1.Quando clico em gerar venda
+    KeyPedidos1.Então gero a venda totalmente
+
+Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida 
+
+    Dado que realizo um pedido e gero uma venda total sobre ele 
+    
+    Set Suite Variable    ${FORMA_PADRAO}    ${FORMA_PADRAO_PEDIDO}
+    Set Test Variable    ${VALOR_FINAL_VENDA}    ${TOTAL_PEDIDO}
+
+    IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
+        
+        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Então faço o recebimento da conta
+
+    ELSE
+        
+        Log To Console    Venda foi finalizada com a forma - A vista, portanto está totalmente paga
+
+    END
+
 Dado que realizo mais de um pedido(${Quantidade_Pedidos})
     
     ${Codigos_Pedidos} =    Create List
