@@ -497,3 +497,4 @@ E seleciono as comissaos das vendas
         Set Test Variable    ${BT_JÁ_SELECIONADO}    ${True}
 
     END
+    
