@@ -66,16 +66,23 @@ Quando insiro vendedor e cliente
 
 E insiro um produto normal
 
-    IF     ${Parametro_VendeSemEstoqueCondicional}
+    IF    ${SelecionaProdutoComLinha}
 
-        utils.Inserir Produto normal - Permite sem estoque
+        utils.Seleciona produto com linha cadastrada(${Parametro_VendeSemEstoqueCondicional})
 
     ELSE
-        
-        utils.Inserir Produto normal - Necessita de estoque
+
+        IF     ${Parametro_VendeSemEstoqueCondicional}
+
+            utils.Inserir Produto normal - Permite sem estoque
+
+        ELSE
+            
+            utils.Inserir Produto normal - Necessita de estoque
+
+        END
 
     END
-
     utils.Valida parametros após incluir produto
 
 E insiro mais de um produto normal(${Quantidade})
@@ -181,6 +188,10 @@ E gero a venda de parte dos produtos(${Quantidade})
 
     KeyVendas1.Verifica formas de recebimento da venda
 
+    ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL};
+
+    Set Test Variable    ${Codigo_Venda_Gerada}    ${Codigo_Venda_Gerada_Cond[0][0]}
+    
 Então cancelo a geração da venda
     
     Sleep    ${SLEEP_BAIXO}
@@ -211,3 +222,7 @@ Validação de vendas após a geração do condicional
     Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
 
     Check If Not Exists In Database    SELECT * FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = ${COD_CONDICIONAL} AND QtdeGerada = 0;
+
+    ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
+
+    Set Test Variable    ${Codigo_Venda_Gerada}    ${Codigo_Venda_Gerada_Cond[0][0]}

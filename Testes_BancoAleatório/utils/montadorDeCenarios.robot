@@ -3,6 +3,7 @@ Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../KeyWords/Comercial/Devolucao/KeyDevolucaoVenda1.robot
 Resource    ../KeyWords/Financeiro/Caixa/keyCaixa1.robot
+Resource    ../KeyWords/Comercial/Condicional/KeyCondicional1.robot
 Resource    ../utils/utils.robot
 Library    SikuliLibrary
 Library    Collections
@@ -155,3 +156,48 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     Set Test Variable    ${DESCONTOS_COMISSOES}
     Set Test Variable    ${Codigo_Vendas} 
     Set Test Variable    ${Valor_Final_Vendas}
+
+
+Dado que realizo uma venda total de uma condicional
+    KeyCondicional1.Dado que acesso a tela de condicionais
+    KeyCondicional1.E adiciono uma nova Condicional
+    KeyCondicional1.Quando insiro vendedor e cliente
+    KeyCondicional1.E insiro um produto normal
+    KeyCondicional1.Então finalizo a condicional
+    KeyCondicional1.Quando clico em gerar venda
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+    KeyCondicional1.Validação de vendas após a geração do condicional 
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+
+Dado que realizo uma venda parcial de uma condicional
+    KeyCondicional1.Dado que acesso a tela de condicionais
+    KeyCondicional1.E adiciono uma nova Condicional
+    KeyCondicional1.Quando insiro vendedor e cliente
+    KeyCondicional1.E insiro mais de um produto normal(3)
+    KeyCondicional1.Então finalizo a condicional
+    KeyCondicional1.Quando cliclo em gerar venda parcial
+    KeyCondicional1.E gero a venda de parte dos produtos(2)
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+
+Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
+
+    Dado que realizo uma venda parcial de uma condicional
+
+    IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
+            
+        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Então faço o recebimento da conta
+
+    ELSE
+            
+        Log To Console    Venda foi finalizada com a forma - A vista, portanto está totalmente paga
+
+    END
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}

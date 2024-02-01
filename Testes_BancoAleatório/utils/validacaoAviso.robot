@@ -15,6 +15,7 @@ ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
 #Imagens Tela
 ${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png  
+${AVISO_ALTERAR_VENDEDOR}                aviso_DesejaAlterarVendedor.png
 ${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png 
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
@@ -291,10 +292,11 @@ Valida aviso cliente outro vendedor
 
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${AVISO_CLIENTE_OUTRO_VE}
+    ${MSG2}    Exists    ${AVISO_ALTERAR_VENDEDOR}
 
     #Não altera mais para o vendedor padrão por conta dos testes de comissão
 
-    IF    ${MSG}  
+    IF    ${MSG} or ${MSG2}
 
         # ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
 

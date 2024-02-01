@@ -89,3 +89,38 @@ Teste 07 - Gerando comissao de venda oriunda de pedido - Total Venda
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     Então visualizo os detalhes da comissao recem paga
+
+Teste 08 - Gerando comissao de uma venda oriunda de uma condicional - Linha
+    [Tags]    Teste08
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda total de uma condicional
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+
+Teste 09 - Gerando comissao de uma venda parcial oriunda de uma condicional - Total Venda
+    [Tags]    Teste09
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda parcial de uma condicional
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+
+Teste 10 - Gerando comissao de uma venda parcial oriunda de uma condicional totalmente recebida - Total Venda
+    [Tags]    Teste10
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+    Então visualizo os detalhes da comissao recem paga
