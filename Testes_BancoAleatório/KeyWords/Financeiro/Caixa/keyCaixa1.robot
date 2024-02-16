@@ -2,6 +2,7 @@
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
+Library    DateTime
 Library    ../libs/validaParametros.py
 Library    ../libs/verificacoesExtras.py
 Library    ../libs/estoque.py
@@ -42,9 +43,128 @@ ${INPUT_RAZAO/NOME_VAZIO}                campo_RazaoSocialNomeVazio.png
 ${INPUT_NUMERO_VENDA}                    caixa_PesquisaPorNVendac.png
 ${LABEL_NENHUMA_CONTA_RECEBER}           lb_NenhumaContaPendente.png 
 ${TELA_RECEBIMENTO_DUPLICATAS}           tela_RecebimentoDuplicatas.png
+${LABEL_APENAS_A_RECEBER}                label_ApenasAReceber.png
+${CHECK_BOX_MARCADO}                     checkBox_Marcado.png
+${CHECK_BOX_CONTA_PAGA}                  checkBox_ContaPaga.png  
+${BT_ESTORNAR}                           bt_Estornar.png 
+${TELA_REGISTROS_ESTORNOS}               tela_RegistrosDeEstornos.png 
+${INPUT_NUMERO_DOCUMENTO}                caixa_PesquisaPorNDoc.png
+${LABEL_APENAS_A_PAGAR}                  label_ApenasAPagar.png  
+${CHECK_BOX_CONTAS_PAGA}                 checkBox_Marcado_Selecionado.png   
+${TELA_ADIANTAMENTOS}                    tela_Adiantamenos_Caixa.png
+${AVISO_REALMENTE_EFETUAR_BAIXA}         aviso_PerguntaQualquer.png
+${TELA_REC_PAG_RÁPIDO}                   tela_RecPagRápido.png
 
 *** Keywords ***
+Ler imagens iniciais
+    Add Image Path    ${IMAGES}
+
+Carregar dados de formas 
+    
+    ${Forma_Recebimento}    Verifica Forma Recebimento Padrao
+    ${Forma_Pagamento}    Verifica Forma Pagamento Padrao
+
+    Set Test Variable    ${Forma_Recebimento}
+    Set Test Variable    ${Forma_Pagamento}
+
+Quando insiro o código do cliente
+
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${Codigo_Cliente}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    
+    Wait Until Screen Not Contain    ${INPUT_RAZAO/NOME_VAZIO}    ${SLEEP_ALTO}
+
+    Verifica se condicional existe(${Codigo_Cliente})
+
+Quando insiro um novo cliente 
+    
+    ${Codigo_Cliente}    Seleciona cliente
+    Log To Console    Selecionando um novo cliente
+
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${Codigo_Cliente}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+
+    Set Test Variable    ${Codigo_Cliente}
+
+E pesquiso pela conta receém gerada 
+    
+    SikuliLibrary.Click    ${INPUT_NUMERO_VENDA}
+    
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    SPACE
+        
+    END
+
+E pesquiso pela conta a pagar gerada 
+
+    SikuliLibrary.Click    ${INPUT_NUMERO_DOCUMENTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    SPACE
+    Sleep    ${SLEEP_BAIXO}
+
+Então concluo o pagamento da mesma 
+    
+    Press Combination    KEY.ALT     Key.g 
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.C 
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT     Key.S
+
+    Valida tela de confirmação de data
+
+    IF    '${Forma_Pagamento}' == 'Outros'
+
+        Wait Until Screen Contain    ${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}    ${TEMPO_TELA}
+        Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
+        Press Special Key    TAB
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.C
+    
+    ELSE IF     '${Forma_Pagamento}' == 'Cartão Oper.'
+        
+        Finalização com recebimento de cartão de crédito/débito
+
+    ELSE IF     '${Forma_Pagamento}' == 'Moeda'
+        
+        Log To Console    Tipo moeda não executada novas telas
+
+    ELSE IF     '${Forma_Pagamento}' == 'Bancária'
+        
+        Finalização com o tipo bancaria
+
+    END
+
+    Consulta sequencia caixa(${Controle_Pag_Rec_Diario[0][2]})
+
+    Validação movimentou caixa(Débito)
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+
 Quando acesso o caixa aberto 
+    
+    Verifica parametros que interferem na venda
+
+    Recupera sequencia caixa
+
+    Carregar dados de formas
     
     Press Special Key    F12
     Wait Until Screen Contain    ${CAIXA_PRINCIPAL}     ${TEMPO_TELA}
@@ -65,30 +185,6 @@ E vou para a aba de contas a receber
     Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER}    ${SLEEP_ALTO}
 
 Então faço o recebimento da conta 
-    
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${Codigo_Cliente}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    
-    Wait Until Screen Contain    ${INPUT_RAZAO/NOME_VAZIO}    ${SLEEP_ALTO}
-
-    Verifica se condicional existe(${Codigo_Cliente})
-
-    SikuliLibrary.Click    ${INPUT_NUMERO_VENDA}
-    
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${COD_VENDA}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-
-    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
-        
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    SPACE
-        
-    END
 
     Press Combination    KEY.ALT     Key.R
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
@@ -96,10 +192,223 @@ Então faço o recebimento da conta
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S
 
+    Valida tela de confirmação de data
+
+    IF    '${Forma_Recebimento}' == 'Outros'
+
+        Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
+    
+    ELSE IF     '${Forma_Recebimento}' == 'Cartão Oper.'
+        
+        Finalização com recebimento de cartão de crédito/débito
+
+    ELSE IF     '${Forma_Recebimento}' == 'Moeda'
+        
+        Log To Console    Tipo moeda não executada novas telas
+
+    ELSE IF     '${Forma_Recebimento}' == 'Bancária'
+        
+        Finalização com o tipo bancaria
+
+    END
+
+    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${SLEEP_ALTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+
+    Consulta sequencia caixa(${Controle_Pag_Rec_Diario[0][2]})
+
+    Validação movimentou caixa(Crédito)
+
+    Sleep    ${SLEEP_MEDIO}
+
+Quando desmarco a opção somente a receber
+    
+    SikuliLibrary.Click    ${LABEL_APENAS_A_RECEBER}
+    Sleep    ${SLEEP_MEDIO}
+
+Quando desmarco a opção somente a pagar 
+    
+    SikuliLibrary.Click    ${LABEL_APENAS_A_PAGAR}
+    Sleep    ${SLEEP_MEDIO}
+
+E dou um duplo clique na conta recém paga 
+    
+    SikuliLibrary.Double Click    ${CHECK_BOX_CONTA_PAGA}
+    Wait Until Screen Contain    ${TELA_REGISTROS_ESTORNOS}    ${SLEEP_ALTO}
+
+E dou um duplo clique na conta a pagar já paga 
+    
+    SikuliLibrary.Double Click    ${CHECK_BOX_CONTAS_PAGA}
+    Wait Until Screen Contain    ${TELA_REGISTROS_ESTORNOS}    ${SLEEP_ALTO}
+
+Então estorno a conta - A pagar 
+    
+    SikuliLibrary.Click    ${BT_ESTORNAR}
+
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}    ${TEMPO_TELA}
+    Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.C
+
+    Validação movimentou caixa(Crédito)
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+
+Então estorno a conta - A receber 
+    
+    SikuliLibrary.Click    ${BT_ESTORNAR}
+
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}    ${TEMPO_TELA}
+    Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.C
+
+    Validação movimentou caixa(Débito)
+
+    Wait Until Screen Contain    ${TELA_REGISTROS_ESTORNOS}    ${SLEEP_ALTO}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+
+E vou para a aba de adiantamentos
+    
+    Press Combination    KEY.ALT     Key.A
+    Wait Until Screen Contain    ${TELA_ADIANTAMENTOS}     ${SLEEP_ALTO}
+
+E insiro as informações do adiantamento(${Valor_Documento})
+    
+    Cria novo NDocumento a partir da sequencia do caixa 
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Input Text    ${EMPTY}    H
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${Conta_Histórico}    Seleciona plano de contas - Débito
+
+    Input Text    ${EMPTY}    ${Conta_Histórico}
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Input Text    ${EMPTY}    ${Valor_Documento}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Documento}
+
+E insiro as informações do adiantamento - Recebimento(${Valor_Documento})
+    
+    Cria novo NDocumento a partir da sequencia do caixa 
+
+    Press Special Key    RIGHT
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Input Text    ${EMPTY}    H
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${Conta_Histórico}    Seleciona plano de contas - Crédito
+
+    Input Text    ${EMPTY}    ${Conta_Histórico}
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Input Text    ${EMPTY}    ${Valor_Documento}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Documento}
+    
+Então finalizo o lançamento(${Tipo_Mov})
+    
+    Consulta sequencia caixa(${Seq_Caixa})
+
+    Press Combination    KEY.ALT     Key.I
+    Wait Until Screen Contain    ${AVISO_REALMENTE_EFETUAR_BAIXA}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S
+
+    Sleep    ${SLEEP_MEDIO}
+    Validação movimentou caixa(${Tipo_Mov})
+
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT     Key.S
+
+E vou para a aba de rec/pag rapido 
+
+    Press Combination    KEY.ALT     Key.d
+    Wait Until Screen Contain    ${TELA_REC_PAG_RÁPIDO}     ${SLEEP_ALTO}
+
+
+E insiro as informações necessárias
+    
+
+Validação movimentou caixa(${Tipo_Mov})
+    
+    ${DATA_ATUAL}    Get Current Date    result_format=%Y-%m-%d
+
+    ${Consulta_CaixaMovimento}    Query    SELECT CodigoCliente, ValorDocumento, ValorPago, Data, TipoMovimento FROM caixamovimentos WHERE CodigoAbertura = ${Sequencia_Caixa} AND NDocumento LIKE '${CODIGO_OPERACAO_MOV}%' ORDER BY Sequencia DESC;
+
+    ${Data_Banco}    Convert To String    ${Consulta_CaixaMovimento[0][3]}
+
+    ${Valor_Final_Operação_Convertido}    Convert To Number    ${VALOR_FINAL_OPERAÇÃO}
+
+    Should Be Equal    ${Consulta_CaixaMovimento[0][0]}    ${Codigo_Cliente}
+    Should Be Equal    ${Consulta_CaixaMovimento[0][1]}    ${Valor_Final_Operação_Convertido}
+    Should Be Equal    ${Consulta_CaixaMovimento[0][1]}    ${Consulta_CaixaMovimento[0][2]}
+    Should Be Equal    ${Data_Banco}    ${DATA_ATUAL}
+    Should Be Equal    ${Consulta_CaixaMovimento[0][4]}    ${Tipo_Mov}
+
+Consulta sequencia caixa(${Codigo_Caixa})
+    
+    ${Consulta_Seq}    Query    SELECT Sequencia FROM caixaaberturas WHERE CodigoCaixa = ${Codigo_Caixa} ORDER BY Sequencia DESC LIMIT 1
+
+    Set Test Variable    ${Sequencia_Caixa}    ${Consulta_Seq[0][0]}
+
+Valida tela de confirmação de data 
+    
     IF    ${Parametro_CaixaControladoPorUsuario}
         
         #No MyCommerce valida se o caixa que está aberto ou por usuario ou por terminal, tem marcado o recebimento ou pagamento diario, se não tiver exibe a tela de confirmação de data
-        ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec FROM caixas WHERE Usuario = ( SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1 ) AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
+        ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec, Codigo FROM caixas WHERE Usuario = ( SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1 ) AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
         
         IF    ${Controle_Pag_Rec_Diario[0][0]} == 0
 
@@ -109,7 +418,7 @@ Então faço o recebimento da conta
 
     ELSE
         
-        ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec FROM caixas WHERE Terminal LIKE '${NomeTerminalExecucao}' AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
+        ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec, Codigo FROM caixas WHERE Terminal LIKE '${NomeTerminalExecucao}' AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
 
         IF    ${Controle_Pag_Rec_Diario[0][0]} == 0
 
@@ -119,19 +428,31 @@ Então faço o recebimento da conta
 
     END
 
-    Wait Until Screen Contain    ${TELA_RECEBIMENTO_DUPLICATAS}    ${SLEEP_ALTO}
+    Set Test Variable    ${Controle_Pag_Rec_Diario}
 
-    Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.C
+Recupera sequencia caixa
+    
+    IF    ${Parametro_CaixaControladoPorUsuario}
+        
+        #No MyCommerce valida se o caixa que está aberto ou por usuario ou por terminal, tem marcado o recebimento ou pagamento diario, se não tiver exibe a tela de confirmação de data
+        ${Controle_Pag_Rec_Diario}    Query    SELECT Codigo FROM caixas WHERE Usuario = ( SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1 ) AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
 
-    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${SLEEP_ALTO}
+    ELSE
+        
+        ${Controle_Pag_Rec_Diario}    Query    SELECT Codigo FROM caixas WHERE Terminal LIKE '${NomeTerminalExecucao}' AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
 
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
+    END
 
+    Set Test Variable    ${Seq_Caixa}    ${Controle_Pag_Rec_Diario[0][0]}
+
+
+Cria novo NDocumento a partir da sequencia do caixa 
+    
+    ${Ultima_Sequencia}    Query    SELECT Sequencia FROM caixamovimentos ORDER BY Sequencia DESC LIMIT 1;
+
+    ${Novo_NDoc} =     Evaluate    ${Ultima_Sequencia[0][0]} + 1
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Novo_NDoc}
 
 # Então faço o pagamento da comissao
     

@@ -26,4 +26,26 @@ class verificacoesExtras:
             else:
                 return 'Agora Fudeo'
 
+    def verifica_Forma_Recebimento_Padrao(self):
+        
+        cursor.execute("select Tipo from formarecebimento f where Padrao = 1")
+
+        formaRecebimento = cursor.fetchall()
+
+        if not formaRecebimento:
+            return 'Outros'
+        else:
+            return formaRecebimento[0][0]
+
+    def verifica_Forma_Pagamento_Padrao(self):
+        
+        cursor.execute("select Tipo from formarecebimento f where PadraoPagar = 1")
+
+        formaRecebimento = cursor.fetchall()
+
+        if not formaRecebimento:
+            return 'Outros'
+        else:
+            return formaRecebimento[0][0]
+
 # verificacoesExtras.verifica_Forma_Parcelamento_Cliente(312805)

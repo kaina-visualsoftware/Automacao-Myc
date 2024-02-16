@@ -4,6 +4,9 @@ Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../KeyWords/Comercial/Devolucao/KeyDevolucaoVenda1.robot
 Resource    ../KeyWords/Financeiro/Caixa/keyCaixa1.robot
 Resource    ../KeyWords/Comercial/Condicional/KeyCondicional1.robot
+Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
+Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
+
 Resource    ../utils/utils.robot
 Library    SikuliLibrary
 Library    Collections
@@ -20,7 +23,21 @@ Dado que realizo uma venda completa, com produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
     utils.Exclui ordem de entrega(${COD_VENDA})
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+Dado que realizo uma venda completa, com produto normal - A prazo 
     
+    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto normal
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda - A Prazo
+    utils.Exclui ordem de entrega(${COD_VENDA})
+    
+    Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
+
 Dado que realizo um pedido, com produto normal
     
     KeyPedidos1.Dado que acesso a tela de pedidos
@@ -41,12 +58,15 @@ Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
     Dado que realizo um pedido e gero uma venda total sobre ele 
     
     Set Suite Variable    ${FORMA_PADRAO}    ${FORMA_PADRAO_PEDIDO}
-    Set Test Variable    ${VALOR_FINAL_VENDA}    ${TOTAL_PEDIDO}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${TOTAL_PEDIDO}
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
         
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Quando insiro o código do cliente
+        keyCaixa1.E pesquiso pela conta receém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE
@@ -111,11 +131,15 @@ Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
 
 Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
     Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
     
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
         
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Quando insiro o código do cliente
+        keyCaixa1.E pesquiso pela conta receém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE
@@ -188,10 +212,14 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
 
     Dado que realizo uma venda parcial de uma condicional
 
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
             
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Quando insiro o código do cliente
+        keyCaixa1.E pesquiso pela conta receém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE
@@ -201,3 +229,41 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
     END
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+
+Dado que realizo uma ordem de serviço com funcionário comissionado por serviço 
+    Log To Console    É necessário que o parametro 'Habilite está opção caso deseje selecionar os funcionários em uma lista' esteja ***DESABILITADO***
+    KeyOrdemDeSevico1.Dado que acesso a tela de Ordem de Servico
+    KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
+    KeyOrdemDeSevico1.E adiciono vendedor e cliente
+    KeyOrdemDeSevico1.Quando Insiro um servico
+    KeyOrdemDeSevico1.E insiro um produto normal
+    KeyOrdemDeSevico1.E acesso a aba pagamentos
+    KeyOrdemDeSevico1.Então finalizo a Ordem de Servico
+
+
+Dado que realizo uma ordem de serviço com funcionário comissionado por serviço - Totalmente recebida 
+    
+    Dado que realizo uma ordem de serviço com funcionário comissionado por serviço 
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_OS}
+
+    IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
+            
+        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.E vou para a aba de contas a receber
+        keyCaixa1.Quando insiro o código do cliente
+        keyCaixa1.E pesquiso pela conta receém gerada
+        keyCaixa1.Então faço o recebimento da conta
+
+    ELSE
+            
+        Log To Console    Venda foi finalizada com a forma - A vista, portanto está totalmente paga
+
+    END
+
+Dado que cadastro uma conta a pagar avulsa 
+    keyContasPagar1.Dado que acesso a tela de cadastro avulso de contas a pagar
+    keyContasPagar1.E insiro um cliente qualquer 
+    keyContasPagar1.Quando clico em adicionar
+    keyContasPagar1.E insiro as informações necessárias(100)
+    keyContasPagar1.Então gravo o lançamento de conta a pagar avulsa

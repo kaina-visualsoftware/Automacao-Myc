@@ -86,8 +86,15 @@ E adiciono vendedor e cliente
 
 Quando Insiro um servico 
     
-    utils.Inserir serviço
+    IF    ${SelecionaProdutoComLinha}
 
+        utils.Seleciona servico com linha de comissao
+
+    ELSE
+
+        utils.Inserir serviço
+
+    END
 E insiro um produto normal
     
     IF     ${Parametro_VendaSemEstoqueOrdemDeServico}
@@ -136,7 +143,7 @@ Então finalizo a Ordem de Servico
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO})
+    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
         
@@ -194,6 +201,11 @@ Então finalizo a Ordem de Servico
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
+
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORDEM_SERVICO}
 
 Então visualizado a OS recém criada
     
@@ -261,7 +273,7 @@ Então finalizo a OS - A prazo
 
     END
 
-    Valida vencimento fim de semana(${FORMA_PADRAO})
+    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}

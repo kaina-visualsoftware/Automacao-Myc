@@ -41,13 +41,45 @@ ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
 ${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
 ${SelecionaProdutoComLinha}              ${False}                 
 ${Vendedor_Selecionada_Escalonada}       ${False}
+${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png 
+${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
+
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
     Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.C
+
+Finalização com recebimento de cartão de crédito/débito
+    
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_CARTAO}    ${TEMPO_TELA}
+    Press Special Key    ENTER
+
+    Input Text    ${EMPTY}    1
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    1
+
+    FOR    ${I}    IN RANGE    3
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Press Combination    KEY.ALT     Key.S
+
+    Wait Until Screen Not Contain    ${TELA_RECEBIMENTO_CARTAO}    ${TEMPO_TELA}
+
+Finalização com o tipo bancaria 
+    
+    Wait Until Screen Contain    ${TELA_MOVIMENTACAO_CONTA_CORRENTE}    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_MEDIO}
+
+    Press Combination    KEY.ALT     Key.G
 
 Personalização de Pagamentos
     
@@ -69,35 +101,25 @@ Personalização de Pagamentos
 
 Adicionar Vendedor e Cliente(${TELA})
 
-    IF    ${Vendedor_Selecionada_Escalonada}
-
-        Log To Console    Vendedor já selecionado para os testes!\nCódigo Vendedor: ${Codigo_Vendedor}
-
-        ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
-        Sleep    ${SLEEP_BAIXO}
-
-        Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
-
-    ELSE
+    IF    ${Vendedor_Selecionada_Escalonada} != $True
 
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
         Sleep    ${SLEEP_BAIXO}
-        ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
-        Sleep    ${SLEEP_BAIXO}
-        ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
-        Sleep    ${SLEEP_BAIXO}
+        ${codVendedor}    Seleciona vendedor
 
-        Set Test Variable    ${Codigo_Cliente}    ${codCliente[0][0]}
-
-        #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
-        Valida vendedor padrao
-
-        Set Test Variable    ${Codigo_Vendedor}    ${codVendedor[0][0]}
+        Set Test Variable    ${Codigo_Vendedor}    ${codVendedor}
 
         #VALIDA SE O TESTE SERÁ DE COMISSÃO
         Valida teste de comissão
 
     END
+
+    ${codCliente}    Seleciona cliente 
+
+    #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
+    Valida vendedor padrao
+
+    Set Test Variable    ${Codigo_Cliente}    ${codCliente}
 
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
     Sleep    ${SLEEP_BAIXO}    
@@ -115,6 +137,7 @@ Adicionar Vendedor e Cliente(${TELA})
         #Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_MEDIO}
+        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Log To Console    Clicou
 
     ELSE IF     '${TELA}' == 'Condicional'
@@ -154,6 +177,38 @@ Adicionar Vendedor e Cliente(${TELA})
         Set Test Variable    ${FORMA_PADRAO}    ${Forma_Padrao_Cliente}
 
     END
+
+Seleciona vendedor
+    
+    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_BAIXO}
+
+    RETURN    ${codVendedor[0][0]}
+
+Seleciona cliente 
+    
+    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_BAIXO}
+
+    RETURN    ${codCliente[0][0]}
+
+Seleciona plano de contas - Débito
+
+    ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo LIKE 'D') ORDER BY RAND() LIMIT 1;
+
+    RETURN    ${Plano_de_Contas[0][0]}
+
+Seleciona plano de contas - Crédito
+    
+    ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo LIKE 'R') ORDER BY RAND() LIMIT 1;
+
+    RETURN    ${Plano_de_Contas[0][0]}
+
+Seleciona modalidade de cobrança 
+    
+    ${Modalidade_de_Cobranca}    Query    SELECT Codigo FROM modalidadecb ORDER BY RAND() LIMIT 1;
+
+    RETURN    ${Modalidade_de_Cobranca[0][0]}
 
 #Essa Keyword é necessária para que não seja preciso duplicar o código de seleção de vendedor e cliente e nem criar um outro montador de cenário
 #Ela simplesmente valida o nome do teste em execução e se for de comissão, irá selecionar um funcionário que seja comissionado 
@@ -318,6 +373,70 @@ Inserir serviço
         Press Combination    KEY.ALT     key.S
         Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+
+        Set Test Variable    ${COD_SERVICO}    ${codServico[0][0]} 
+
+    ELSE
+
+        Log To Console    Cliente sem serviços ou serviço inativo, OS sem serviço.
+        
+    END
+
+Seleciona servico com linha de comissao
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    ${codServico}    Query    SELECT codigo, Detalha FROM servicos s WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 and s.TabelaComissao in (select Codigo from comissaoporlinha where Tipo like 'N' and Aliquota > 0)ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_MEDIO}
+    
+    ${condicao} =    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
+
+    IF    ${condicao}
+    
+        Input Text    ${EMPTY}    ${codServico[0][0]} 
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    TAB
+
+        IF    ${codServico[0][1]} > 0 
+            
+            Insere detalhamento no serviço
+
+        END
+
+        IF    ${Parametro_IncluiDireto} != ${True}
+            
+            Press Combination    KEY.ALT     Key.n
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${SLEEP_ALTO}
+
+        IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
+            
+            Press Special Key    DOWN
+
+            #Validação temporária pra ver se precisa informar horas
+            Press Special Key    TAB
+            Input Text    ${EMPTY}    1
+            
+        ELSE
+            
+            Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
+        END
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    key.I
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT     key.S
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+
+        Set Test Variable    ${COD_SERVICO}    ${codServico[0][0]} 
 
     ELSE
 

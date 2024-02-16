@@ -124,3 +124,30 @@ Teste 10 - Gerando comissao de uma venda parcial oriunda de uma condicional tota
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     Então visualizo os detalhes da comissao recem paga
+
+Teste 11 - Gerando comissao por servico - Linha
+    [Tags]    Teste11
+    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com funcionário comissionado por serviço 
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E vou para a aba de servicos
+    E seleciono a comissao do servico
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+
+Teste 12 - Gerando comissao por servico totalmente recebido - Linha
+    [Tags]    Teste12
+    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com funcionário comissionado por serviço - Totalmente recebida
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E vou para a aba de servicos
+    E seleciono a comissao do servico
+    E baixo a comissao recém recebida
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+
+    

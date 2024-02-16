@@ -533,9 +533,9 @@ Valida impressão de boleto
 
     END
 
-Valida vencimento fim de semana(${FORMA_PADRAO})
+Valida vencimento fim de semana(${VALOR_I})
 
-    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
+    FOR    ${I}    IN RANGE    ${VALOR_I}
         
         ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_MEDIO}
 
@@ -585,9 +585,11 @@ Verifica se cliente possui objeto vinculado
 
     ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    servico
 
+    ${Test_Com_OS} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    servico
+
     Log To Console    ${SUITE_NAME}
 
-    IF    ${Test_OS}
+    IF    ${Test_OS} or ${Test_Com_OS}
 
         ${Objeto_Cliente}    Query    SELECT NumeroSerie, Categoria FROM objetos WHERE CodigoCliente = ${Codigo_Cliente}
 

@@ -198,7 +198,7 @@ Então finalizo a venda
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO})
+    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
         
@@ -276,7 +276,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO})
+    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
         
@@ -372,7 +372,7 @@ Então finalizo a venda - A Prazo
 
     END
 
-    Valida vencimento fim de semana(${FORMA_PADRAO})
+    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -399,6 +399,10 @@ Então finalizo a venda - A Prazo
     END
 
     Valida Parametros/Impressões pós venda
+
+    keyVendas1.Valida baixa de estoque
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
 Quando clico em editar
     

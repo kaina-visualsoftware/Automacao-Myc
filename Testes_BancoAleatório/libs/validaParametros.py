@@ -255,28 +255,38 @@ class validaParametros:
                 formaParcelamento[0] = "30 DIAS"
                 print(formaParcelamento)
 
+        print(formaParcelamento)
+
         return formaParcelamento
 
     def seleciona_forma_prazo(self):
 
-        consultaForma = "SELECT Descricao FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
+        formaParcelamento = []
+
+        consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
 
         cursor.execute(consultaForma)
 
-        formaParcelamento = cursor.fetchall()
+        formaParcelamentoFetch = cursor.fetchall()
 
-        if not formaParcelamento:
+        if not formaParcelamentoFetch:
             sqlInsert = "INSERT INTO `formaparcelamento` (`Descricao`, `ComEntrada`, `NPagamentos`, `TaxaJuro`, `PrazoMedio`, `Personalizavel`, `Tipo_Intervalo`, `Comissao_Produtos`, `Comissao_Servicos`, `DataAlteracao`, `EnviaMymobile`, `FormaRecebimento`, `Comissao_Produtos_Ent`, `Comissao_Servicos_Ent`, `Padrao_Venda`, `Padrao_OS`, `Padrao_Pre`, `TPCalculo`, `AtivaIntervalos`, `Digitavel`, `TaxaFlex`, `ListaPreco`, `PrazoFixado`, `DataPrazoFixado`, `PDesconto`, `Padrao_Orc`, `DiaExtra`, `Empresas`, `ValorMinimo`, `CodigoPreOcorrencia`, `DescricaoPreOcorrencia`, `CodigoGrupo`, `DescricaoGrupo`, `CodigoIdentificador`, `Padrao_Devolucao`, `ConsiderarOfertas`, `ParcelamentoPadrao`, `Cancelado`, `ValorMaximo`, `PDescontoMaximo`, `Considera_DescMax_produto`) VALUES ('30 DIAS', 0, 1, 0, 30, 0, 'Dias', 1, 1, '2023-10-26 11:07:42', 1, 'DINHEIRO                       1    ', 1, 1, 0, 0, 0, 'TP', 0, 0, 0, 0, 0, NULL, 0, 1, 999, NULL, 0, NULL, NULL, NULL, NULL, '', 1, 1, 0, NULL, 0, 0, 1);"
             cursor.execute(sqlInsert)
 
             print("Realizou o Insert da forma 30 DIAS")
-            consultaForma = "SELECT Descricao FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
+            consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
 
             cursor.execute(consultaForma)
 
-            formaParcelamento = cursor.fetchall()
-        
-        formaParcelamento = formaParcelamento[0][0]
+            formaParcelamentoFetch = cursor.fetchall()
+
+        formaEntrada = formaParcelamentoFetch[0][5].split(' ')
+
+        formaParcelamento.append(formaParcelamentoFetch[0][0])
+        formaParcelamento.append(formaParcelamentoFetch[0][3])
+        formaParcelamento.append(formaParcelamentoFetch[0][4])
+        formaParcelamento.append(formaEntrada[0])
+        formaParcelamento.append(formaParcelamentoFetch[0][2])
 
         print(formaParcelamento)
 
@@ -285,5 +295,5 @@ class validaParametros:
 #validaParametros.valida_Forma_Parcelamento("Venda")
 #validaParametros.valida_Configuracoes_OS()
 #validaParametros.valida_Config_Empresa()
-#validaParametros.valida_Configuracoes_Venda()
-#validaParametros.valida_Forma_Parcelamento_Cliente(2)
+# validaParametros.valida_Forma_Parcelamento("Venda")
+# validaParametros.seleciona_forma_prazo()

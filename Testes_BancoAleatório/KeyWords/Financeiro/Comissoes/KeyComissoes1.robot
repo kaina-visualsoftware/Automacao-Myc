@@ -60,6 +60,8 @@ ${COL_LOTE}                              grid_ComissoesLote.png
 ${LABEL_DATA_PAGAMENTO_NULA}             lb_DataPagamentoComBranco.png
 ${TELA_DETALHES_COMISSAO}                tela_DetalhesComissao.png
 ${BT_JÁ_SELECIONADO}                     ${False}
+${ABA_SERVICOS}                          aba_servicosSelecionada.png  
+${CHECK_BOX_SELE_TODOS_SERVICO}          checkBox_ComissaoServico.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -87,18 +89,8 @@ Quando insiro o vendedor comissionado
     Press Special Key    TAB
     Wait Until Screen Contain    ${LISTAGEM_GRID}     ${SLEEP_ALTO}
 
-E seleciono a comissao da venda
-
-    IF    ${BT_JÁ_SELECIONADO} == $False
-
-        SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
-        Sleep    ${SLEEP_BAIXO}
-
-    END
+Pesquisa código da operação com zeros a esquerda
     
-    SikuliLibrary.Click    ${LISTAGEM_GRID}
-    Sleep    ${SLEEP_BAIXO}
-
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda\/\/\/\/\/\/\/\/\/\/\/
     ${Cod_Venda_String}    Convert To String     ${CODIGO_OPERACAO_MOV}
     
@@ -126,6 +118,20 @@ E seleciono a comissao da venda
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    SPACE
 
+E seleciono a comissao da venda
+
+    IF    ${BT_JÁ_SELECIONADO} == $False
+
+        SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+    
+    SikuliLibrary.Click    ${LISTAGEM_GRID}
+    Sleep    ${SLEEP_BAIXO}
+
+    Pesquisa código da operação com zeros a esquerda
+
     IF    ${SelecionaProdutoComLinha}
 
         IF    ${Codigos_Produtos} is None
@@ -145,10 +151,22 @@ E seleciono a comissao da venda
 
         Calcula total da comissao
 
-        ${VALOR_DEVOLUCAO} =     Evaluate    (${VALOR_FINAL_VENDA} * (-1)) 
-        Set Test Variable    ${VALOR_FINAL_VENDA}    ${VALOR_DEVOLUCAO}
+        ${VALOR_DEVOLUCAO} =     Evaluate    (${VALOR_FINAL_OPERAÇÃO} * (-1)) 
+        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_DEVOLUCAO}
 
     END
+
+E seleciono a comissao do servico 
+
+    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS_SERVICO}
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${LISTAGEM_GRID}
+    Sleep    ${SLEEP_BAIXO}
+
+    Pesquisa código da operação com zeros a esquerda
+
+    Calcula total comissao por servico
 
 E seleciono a comissão da venda e devolução 
     
@@ -242,7 +260,7 @@ E baixo a comissao recém recebida
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ESC
 
-        ${id_comissao}    Query    SELECT ID FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC;
+        ${id_comissao}    Query    SELECT ID FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
 
         Set Test Variable    ${NDoc_Comissao}    ${id_comissao[0][0]} 
 
@@ -376,7 +394,7 @@ E seleciono somente as recebidas
 
 Calcula total da comissao
     
-    ${Calculo_Comissao} =     Evaluate    round((${VALOR_FINAL_VENDA} * (${PercentualComissao} / 100)), 3)
+    ${Calculo_Comissao} =     Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissao} / 100)), 3)
     
     ${Total_Comissao} =     Evaluate    round((${Total_Comissao} + ${Calculo_Comissao}),2)
 
@@ -498,3 +516,17 @@ E seleciono as comissaos das vendas
 
     END
     
+E vou para a aba de servicos
+    Press Combination    KEY.ALT     Key.S
+    Wait Until Screen Contain    ${ABA_SERVICOS}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+
+Calcula total comissao por servico
+    
+    ${Comissao_Servico}     Query    SELECT SUM(v.TotalServicos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN servicos as s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${COD_SERVICO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
+    
+    ${Total_Comissao} =     Evaluate    round((${Comissao_Servico[0][0]}),2)
+
+    Set Test Variable    ${Total_Comissao}
+
+    Log To Console    Total parcial da comissão do servico: ${Total_Comissao}
