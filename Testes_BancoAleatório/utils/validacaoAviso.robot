@@ -619,7 +619,14 @@ Verifica se cliente possui objeto vinculado
     END
 
 Valida tela de confirmação data - caixa 
-    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_PAGAMENTO}    ${SLEEP_ALTO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
+
+    ${Existe_Form} =     Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_PAGAMENTO}    ${SLEEP_ALTO}
+    
+    IF    ${Existe_Form}
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+
+    END
+    

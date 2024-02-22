@@ -87,6 +87,7 @@ Quando insiro um novo cliente
     Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
 
     Set Test Variable    ${Codigo_Cliente}
 
@@ -366,6 +367,8 @@ Então finalizo o lançamento(${Tipo_Mov})
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.S
 
+    Valida tela de confirmação data - caixa
+
     Sleep    ${SLEEP_MEDIO}
     Validação movimentou caixa(${Tipo_Mov})
 
@@ -373,13 +376,94 @@ Então finalizo o lançamento(${Tipo_Mov})
     Press Combination    KEY.ALT     Key.S
 
 E vou para a aba de rec/pag rapido 
-
+    
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.d
     Wait Until Screen Contain    ${TELA_REC_PAG_RÁPIDO}     ${SLEEP_ALTO}
 
-
-E insiro as informações necessárias
+E insiro as informações necessárias - recebimento rápido(${Valor_Documento})
     
+    Cria novo NDocumento a partir da sequencia do caixa 
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    RIGHT
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    Teste recebimento rapido
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    
+    Input Text    ${EMPTY}    H
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${Conta_Histórico}    Seleciona plano de contas - Crédito
+
+    Input Text    ${EMPTY}    ${Conta_Histórico}
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Input Text    ${EMPTY}    ${Valor_Documento}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Documento}
+
+E insiro as informações necessárias - pagamento rápido(${Valor_Documento})
+    
+    Cria novo NDocumento a partir da sequencia do caixa 
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    Teste recebimento rapido
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    
+    Input Text    ${EMPTY}    H
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${Conta_Histórico}    Seleciona plano de contas - Débito
+
+    Input Text    ${EMPTY}    ${Conta_Histórico}
+
+    FOR    ${I}    IN RANGE    2
+        
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+    Input Text    ${EMPTY}    ${Valor_Documento}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Documento}
 
 Validação movimentou caixa(${Tipo_Mov})
     

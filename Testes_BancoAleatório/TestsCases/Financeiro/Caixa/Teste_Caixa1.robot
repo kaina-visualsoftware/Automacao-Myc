@@ -79,3 +79,13 @@ Teste 07 - Realizando um recebimento rápido
     Quando acesso o caixa aberto
     E vou para a aba de rec/pag rapido 
     Quando insiro um novo cliente
+    E insiro as informações necessárias - recebimento rápido(20)
+    Então finalizo o lançamento(Crédito)
+
+Teste 08 - Realizando um pagamento rápido
+    [Tags]    Teste08
+    Quando acesso o caixa aberto
+    E vou para a aba de rec/pag rapido 
+    Quando insiro um novo cliente
+    E insiro as informações necessárias - pagamento rápido(20)
+    Então finalizo o lançamento(Débito)
