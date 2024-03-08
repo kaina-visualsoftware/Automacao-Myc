@@ -15,6 +15,7 @@ ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
 #Imagens Tela
 ${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png  
+${AVISO_ALTERAR_VENDEDOR}                aviso_DesejaAlterarVendedor.png
 ${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png 
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
@@ -37,6 +38,7 @@ ${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
 ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
 ${TELA_FATURAMENTO_NF}                   tela_FaturamentoDiretoNF.png  
 ${TELA_CONFIRMAÇÃO_PAGAMENTO}            tela_DataPagamento.png
+${LABEL_LIBERAÇÃO_SUPERVISOR}            label_PasseOCartaoDeLiberacao.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -141,6 +143,7 @@ Verifica parametros que interferem na venda
     ${Parametro_ExigeSenhaCancelarVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExigeSenhaCancelarVenda
     ${Parametro_BloqueiaGeracaoVendaParcial} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PrevendaBloqueioVendaParcial
     ${Parametro_CaixaControladoPorUsuario} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    CaixaUsuario
+    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    DescontoFinalIgualmente
 
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
@@ -157,7 +160,7 @@ Verifica parametros que interferem na venda
 
     IF    ${Parametro_VendaRapida}
             
-        Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado
+        Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado${\n}Caminho do parametro: ADM Sistema >> +Config >> Geral >> Mais - Trazer vendedor e cliente padrão...
         Terminate Process
 
     END
@@ -184,6 +187,8 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
     END
+
+    Set Test Variable    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
 
     Set Test Variable    ${Parametro_CaixaControladoPorUsuario}
 
@@ -287,10 +292,11 @@ Valida aviso cliente outro vendedor
 
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${AVISO_CLIENTE_OUTRO_VE}
+    ${MSG2}    Exists    ${AVISO_ALTERAR_VENDEDOR}
 
     #Não altera mais para o vendedor padrão por conta dos testes de comissão
 
-    IF    ${MSG}  
+    IF    ${MSG} or ${MSG2}
 
         # ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
 
@@ -408,6 +414,7 @@ Valida tela de liberação de desconto
 
     IF    ${MSG}  
         
+        Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    1
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER 
@@ -526,9 +533,9 @@ Valida impressão de boleto
 
     END
 
-Valida vencimento fim de semana(${FORMA_PADRAO})
+Valida vencimento fim de semana(${VALOR_I})
 
-    FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
+    FOR    ${I}    IN RANGE    ${VALOR_I}
         
         ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_MEDIO}
 
@@ -576,11 +583,13 @@ Valida faturamento nf
 
 Verifica se cliente possui objeto vinculado
 
-    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    OrdemDeServico
+    ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    servico
+
+    ${Test_Com_OS} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    servico
 
     Log To Console    ${SUITE_NAME}
 
-    IF    ${Test_OS}
+    IF    ${Test_OS} or ${Test_Com_OS}
 
         ${Objeto_Cliente}    Query    SELECT NumeroSerie, Categoria FROM objetos WHERE CodigoCliente = ${Codigo_Cliente}
 
@@ -610,7 +619,14 @@ Verifica se cliente possui objeto vinculado
     END
 
 Valida tela de confirmação data - caixa 
-    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_PAGAMENTO}    ${SLEEP_ALTO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
+
+    ${Existe_Form} =     Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_PAGAMENTO}    ${SLEEP_ALTO}
+    
+    IF    ${Existe_Form}
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+
+    END
+    
