@@ -98,7 +98,7 @@ Adicionar Vendedor e Cliente(${TELA})
 
     ELSE IF     '${TELA}' == 'OrdemDeServico'
 
-        #Press Special Key    TAB
+        Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_MEDIO}
         Log To Console    Clicou
@@ -124,7 +124,7 @@ Adicionar Vendedor e Cliente(${TELA})
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
-    Log To Console    ${Codigo_Cliente}
+    Log To Console    Código do cliente: ${Codigo_Cliente}
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
     

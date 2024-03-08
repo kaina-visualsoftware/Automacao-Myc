@@ -4,7 +4,7 @@ Documentation    Testes Pedidos pré-venda
 Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
-Library    C:\\Automacao\\MyCommerce-Automacao\\MyCommerce\\libs\\verificaProduto.py 
+Library    C://Automacao//automacao-mycommerce//Automação_Antiga//MyCommerce//libs//verificaProduto.py
 
 *** Variables ***
 ${IMAGES}                    ./MyCommerce/images
