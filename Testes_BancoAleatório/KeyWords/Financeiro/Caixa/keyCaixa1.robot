@@ -399,9 +399,9 @@ E insiro as informações necessárias - recebimento rápido(${Valor_Documento})
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     
-    Input Text    ${EMPTY}    H
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
+    # Input Text    ${EMPTY}    H
+    # Press Special Key    TAB
+    # Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
     Press Special Key    TAB
@@ -440,9 +440,9 @@ E insiro as informações necessárias - pagamento rápido(${Valor_Documento})
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     
-    Input Text    ${EMPTY}    H
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
+    # Input Text    ${EMPTY}    H
+    # Press Special Key    TAB
+    # Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
     Press Special Key    TAB

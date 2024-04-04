@@ -128,6 +128,8 @@ E adiciono vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
+    utils.Verifica cliente pessoa jurídica
+
 Quando insiro mais de um produto normal(${Quantidade_Inserir})
     
     ${Codigos_Produtos} =    Create List

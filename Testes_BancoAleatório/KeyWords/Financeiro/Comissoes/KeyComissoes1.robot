@@ -84,6 +84,7 @@ Dado que acesso a tela de comissoes
 Quando insiro o vendedor comissionado
     
     Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB

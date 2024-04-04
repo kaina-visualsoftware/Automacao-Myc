@@ -43,6 +43,7 @@ ${SelecionaProdutoComLinha}              ${False}
 ${Vendedor_Selecionada_Escalonada}       ${False}
 ${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png 
 ${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
+${TELA_CONS_FINAL}                       tela_cons_final.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -115,6 +116,7 @@ Adicionar Vendedor e Cliente(${TELA})
     END
 
     ${codCliente}    Seleciona cliente 
+    
 
     #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
     Valida vendedor padrao
@@ -134,7 +136,7 @@ Adicionar Vendedor e Cliente(${TELA})
 
     ELSE IF     '${TELA}' == 'OrdemDeServico'
 
-        Press Special Key    TAB
+        #Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_MEDIO}
         SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
@@ -165,6 +167,7 @@ Adicionar Vendedor e Cliente(${TELA})
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
     
+
     #Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos
     Set Test Variable    ${TELA}
 
@@ -575,7 +578,7 @@ Valida solicitacao de senha do usuário
 
     IF    ${MSG}
 
-        Input Text    ${EMPTY}    1
+        Input Text    ${EMPTY}    12
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER 
         Sleep    ${SLEEP_MEDIO}
@@ -758,3 +761,16 @@ Pesquisa comissões por escalonamento
     ${Descontos_Comissoes}    Query    SELECT Ate, Comissao FROM comissao_escalonadaprod LIMIT 2
 
     RETURN    ${Descontos_Comissoes}
+
+Verifica cliente pessoa jurídica
+
+    ${Pessoa_Juridica}    Query    SELECT cl.FisicaJuridica FROM clientes AS cl WHERE cl.Codigo = ${Codigo_Cliente};
+
+    IF    $Pessoa_Juridica[0][0] == 'J'
+        Sleep    ${SLEEP_MEDIO}
+        Press Special Key    TAB
+        
+        Wait Until Screen Contain    ${TELA_CONS_FINAL}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    key.Alt    key.p
+    END
