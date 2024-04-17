@@ -117,6 +117,8 @@ Quando clico em editar
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.E
+
+    utils.Valida solicitacao de senha do usuário
     Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
