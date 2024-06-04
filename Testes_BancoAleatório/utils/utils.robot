@@ -140,7 +140,7 @@ Adicionar Vendedor e Cliente(${TELA})
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_MEDIO}
         SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
-        Log To Console    Clicou
+        # Log To Console    Clicou
 
     ELSE IF     '${TELA}' == 'Condicional'
         
@@ -475,7 +475,7 @@ Inserir Produto normal - Necessita de estoque
 
 Inserir Produto normal - Permite sem estoque
 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.P
     Sleep    ${SLEEP_BAIXO}
 
