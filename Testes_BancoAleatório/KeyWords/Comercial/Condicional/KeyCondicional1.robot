@@ -109,6 +109,7 @@ Então visualizo a condicional
 
     Press Combination    KEY.ALT     Key.U
     Wait Until Screen Contain    ${TELA_VISUALIZA_CONDICIONAL}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.r
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
@@ -153,6 +154,7 @@ Quando clico em gerar venda
     Press Combination    KEY.ALT     Key.S
 
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
 
     KeyVendas1.Verifica formas de recebimento da venda
 
@@ -196,7 +198,7 @@ E gero a venda de parte dos produtos(${Quantidade})
     
 Então cancelo a geração da venda
     
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Special Key    ESC
     Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 

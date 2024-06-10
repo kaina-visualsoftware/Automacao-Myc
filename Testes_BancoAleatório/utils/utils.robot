@@ -578,7 +578,10 @@ Valida solicitacao de senha do usuário
 
     IF    ${MSG}
 
-        Input Text    ${EMPTY}    12
+        ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 LIMIT 1;
+        ${senhaUsuarioDescriptografada}=    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
+
+        Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER 
         Sleep    ${SLEEP_MEDIO}
