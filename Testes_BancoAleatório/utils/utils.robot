@@ -488,8 +488,8 @@ Inserir Produto normal - Permite sem estoque
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
-
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
+    
 Inserir produto pré-definido(${Produto})
     
     Sleep    ${SLEEP_BAIXO}
@@ -528,6 +528,16 @@ Valida parametros após incluir produto
         Press Combination    KEY.ALT     Key.I
         Sleep    ${SLEEP_BAIXO}
 
+    END
+
+    IF    ${Parametro_BloqueiaOrcamentoSemEstoque}
+        
+        validacaoAviso.Valida aviso de quantidade não existente em estoque - Orçamento
+
+        IF    ${AVISO_SEM_ESTOQUE}
+            Inserir Produto normal - Necessita de estoque
+            Valida parametros após incluir produto
+        END
     END
 
     Verifica observacao do produto 

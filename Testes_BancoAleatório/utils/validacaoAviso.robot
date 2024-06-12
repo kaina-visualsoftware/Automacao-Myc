@@ -39,6 +39,7 @@ ${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png
 ${TELA_FATURAMENTO_NF}                   tela_FaturamentoDiretoNF.png  
 ${TELA_CONFIRMAÇÃO_PAGAMENTO}            tela_DataPagamento.png
 ${LABEL_LIBERAÇÃO_SUPERVISOR}            label_PasseOCartaoDeLiberacao.png
+${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}      aviso_qtde_sem_estoque_orcamento.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -144,7 +145,6 @@ Verifica parametros que interferem na venda
     ${Parametro_BloqueiaGeracaoVendaParcial} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PrevendaBloqueioVendaParcial
     ${Parametro_CaixaControladoPorUsuario} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    CaixaUsuario
     ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    DescontoFinalIgualmente
-
     ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
     ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
     ${Parametro_ImprimeDuplicataVenda} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
@@ -157,6 +157,7 @@ Verifica parametros que interferem na venda
     ${Parametro_Imprime_Boleto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
     ${Parametro_ValeCompra_Dev_Menor0} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
     ${Parametro_FaturaVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
+    ${Parametro_BloqueiaOrcamentoSemEstoque} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    OrcamentoComEstoque_Bloq 
 
     IF    ${Parametro_VendaRapida}
             
@@ -267,6 +268,8 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_VendeSemEstoqueCondicional}
 
     Set Test Variable    ${Parametro_ImprimeCondicional}
+
+    Set Test Variable    ${Parametro_BloqueiaOrcamentoSemEstoque}
 
 Valida aviso exige senha para outro vendedor
 
@@ -630,3 +633,17 @@ Valida tela de confirmação data - caixa
 
     END
     
+Valida aviso de quantidade não existente em estoque - Orçamento
+
+    ${Existe_MSG} =    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}    ${SLEEP_BAIXO}
+    Set Test Variable    ${AVISO_SEM_ESTOQUE}    ${Existe_MSG}
+
+   IF    ${Existe_MSG}
+       
+        Sleep    ${SLEEP_BAIXO}       
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    BACKSPACE
+
+   END
