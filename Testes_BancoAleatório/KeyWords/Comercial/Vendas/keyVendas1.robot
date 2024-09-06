@@ -368,6 +368,9 @@ Então finalizo a venda - A Prazo
     Press Combination    KEY.ALT     Key.D
     Sleep    ${SLEEP_BAIXO}
 
+    validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
+    Sleep    ${SLEEP_BAIXO}
+
     IF    ${FORMA_PADRAO[2]} > 0
         
         Valida tela de liberação de desconto

@@ -140,6 +140,9 @@ Quando finalizo o pedido sem auditar
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+
 E pressiono o atalho de editar
     
     Press Combination    KEY.ALT     Key.E
@@ -235,6 +238,8 @@ Então gero a venda totalmente
     Sleep    ${SLEEP_BAIXO}
 
     Validação de geração de venda
+
+    validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}

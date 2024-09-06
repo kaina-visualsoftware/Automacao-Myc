@@ -9,37 +9,41 @@ Resource    ./utils.robot
 
 *** Variables ***
 #Sleep's    
-${SLEEP_BAIXO}                           0.3
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
+${SLEEP_BAIXO}                             0.3
+${SLEEP_MEDIO}                             1.5
+${SLEEP_ALTO}                              3
+${TEMPO_TELA}                              20
 #Imagens Tela
-${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png  
-${AVISO_ALTERAR_VENDEDOR}                aviso_DesejaAlterarVendedor.png
-${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png 
-${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
-${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
-${AVISO_CONDICIONAL_ABERTO_COND}         aviso_CondicionalAberto.png
-${ALERTA_CLIENTE}                        alertaCliente.png
-${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
-${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
-${TELA_SELECIONA_TABELA_PRECO}           tela_TabelasPreco.png
-${TELA_VENDAS_ANTERIORES}                tela_ExibeAnteriores.png
-${TELA_INDICACAO_VENDA}                  tela_QuemIndicou.png
-${TELA_LIBERAÇÃO_DESCONTO_SENHA}         tela_liberacaoDesconto.png
-${TELA_VENCIMENTO_FIM_DE_SEMANA}         tela_VencimentoFimDeSemana.png
-${BT_NÃO}                                bt_Nao.png
-${TELA_IMPRIMIR_ORDEM_ENTREGA}           tela_ImprimirOrdemEntrega.png
-${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png 
-${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
-${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png 
-${TELA_IMPRESSAO_BOLETO}                 tela_impressaoBoleto.png
-${TELA_IMPRESSAO_DUPLICATAS}             tela_ImpressaoDuplicatas.png
-${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png 
-${TELA_FATURAMENTO_NF}                   tela_FaturamentoDiretoNF.png  
-${TELA_CONFIRMAÇÃO_PAGAMENTO}            tela_DataPagamento.png
-${LABEL_LIBERAÇÃO_SUPERVISOR}            label_PasseOCartaoDeLiberacao.png
-${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}      aviso_qtde_sem_estoque_orcamento.png
+${AVISO_CLIENTE_OUTRO_VE}                  aviso_clienteOutroVendedor.png  
+${AVISO_ALTERAR_VENDEDOR}                  aviso_DesejaAlterarVendedor.png
+${TELA_INFO_CRÉDITOS}                      tela_InfoCreditos.png 
+${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}        aviso_ExigeSenhaVendedorDiferente.png
+${AVISO_CONDICIONAL_ABERTO}                aviso_CondicionalAbertoVenda.png
+${AVISO_CONDICIONAL_ABERTO_COND}           aviso_CondicionalAberto.png
+${ALERTA_CLIENTE}                          alertaCliente.png
+${TELA_SENHA_SUPERVISOR}                   tela_SolicitaSenha.png
+${TELA_EXIBE_CLIENTE}                      tela_exibeCliente.png
+${TELA_SELECIONA_TABELA_PRECO}             tela_TabelasPreco.png
+${TELA_VENDAS_ANTERIORES}                  tela_ExibeAnteriores.png
+${TELA_INDICACAO_VENDA}                    tela_QuemIndicou.png
+${TELA_LIBERAÇÃO_DESCONTO_SENHA}           tela_liberacaoDesconto.png
+${TELA_VENCIMENTO_FIM_DE_SEMANA}           tela_VencimentoFimDeSemana.png
+${BT_NÃO}                                  bt_Nao.png
+${TELA_IMPRIMIR_ORDEM_ENTREGA}             tela_ImprimirOrdemEntrega.png
+${TELA_RECIBO_ENTRADA}                     tela_ReciboEntrada.png 
+${TELA_CONTRATO_VENDA}                     tela_ContratoVenda.png
+${TELA_EMISSAO_PROMISSÓRIA}                tela_EmisssaoPromissoria.png 
+${TELA_IMPRESSAO_BOLETO}                   tela_impressaoBoleto.png
+${TELA_IMPRESSAO_DUPLICATAS}               tela_ImpressaoDuplicatas.png
+${TELA_EMISSAO_NFC}                        tela_EmissaoNFC.png 
+${TELA_FATURAMENTO_NF}                     tela_FaturamentoDiretoNF.png  
+${TELA_CONFIRMAÇÃO_PAGAMENTO}              tela_DataPagamento.png
+${LABEL_LIBERAÇÃO_SUPERVISOR}              label_PasseOCartaoDeLiberacao.png
+${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}        aviso_qtde_sem_estoque_orcamento.png
+${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}      venda_a_prazo_cliente_1_consumidor.png
+${EXPANDIR_COMBOBOX}                       expandir_combobox.png
+${FORMA_PARC_A_VISTA}                      forma_parc_à_vista.png
+${AVISO_VENCIMENTO_FERIADO_DOM_SAB}        aviso_VencimentoFeriadoSabadoDomingo.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -590,7 +594,7 @@ Verifica se cliente possui objeto vinculado
 
     ${Test_Com_OS} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    servico
 
-    Log To Console    ${SUITE_NAME}
+    Log To Console    Suite_name: ${SUITE_NAME}
 
     IF    ${Test_OS} or ${Test_Com_OS}
 
@@ -647,3 +651,13 @@ Valida aviso de quantidade não existente em estoque - Orçamento
         Press Special Key    BACKSPACE
 
    END
+
+Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
+
+    ${AVISO}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}    ${SLEEP_ALTO}
+
+    IF    ${AVISO}
+        
+        Press Combination    KEY.Alt   KEY.s
+
+    END

@@ -44,6 +44,7 @@ ${Vendedor_Selecionada_Escalonada}       ${False}
 ${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png 
 ${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
 ${TELA_CONS_FINAL}                       tela_cons_final.png
+${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -530,6 +531,8 @@ Valida parametros após incluir produto
 
     END
 
+    Valida a inserção do mesmo produto várias vezes no grid
+
     IF    ${Parametro_BloqueiaOrcamentoSemEstoque}
         
         validacaoAviso.Valida aviso de quantidade não existente em estoque - Orçamento
@@ -786,4 +789,14 @@ Verifica cliente pessoa jurídica
         Wait Until Screen Contain    ${TELA_CONS_FINAL}    ${TEMPO_TELA}
         Sleep    ${SLEEP_BAIXO}
         Press Combination    key.Alt    key.p
+    END
+
+Valida a inserção do mesmo produto várias vezes no grid
+
+    ${AVISO}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}    ${SLEEP_ALTO}
+
+    IF    ${AVISO}
+        
+        Press Combination    KEY.Alt    KEY.s
+
     END
