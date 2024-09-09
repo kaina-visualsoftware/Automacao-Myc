@@ -596,6 +596,8 @@ Verifica se cliente possui objeto vinculado
 
     Log To Console    Suite_name: ${SUITE_NAME}
 
+    Set Test Variable    ${Check_List_Objeto}    ${False}
+
     IF    ${Test_OS} or ${Test_Com_OS}
 
         ${Objeto_Cliente}    Query    SELECT NumeroSerie, Categoria FROM objetos WHERE CodigoCliente = ${Codigo_Cliente}
