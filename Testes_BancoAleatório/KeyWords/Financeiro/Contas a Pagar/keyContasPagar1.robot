@@ -37,8 +37,8 @@ ${TELA_CADASTRO_CONTAS_A_PAGAR}          tela_CadastroContasPagar.png
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
 
-Dado que acesso a tela de cadastro avulso de contas a pagar 
-    Recuperando numero documento 
+Dado que acesso a tela de cadastro avulso de contas a pagar
+    Recuperando numero documento
     SikuliLibrary.Click    ${BT_CONTAS_A_PAGAR}
     Wait Until Screen Contain    ${TELA_CONTAS_A_PAGAR_AVULSA}    ${TEMPO_TELA}
 
@@ -63,6 +63,9 @@ E insiro as informações necessárias(${Valor_Conta})
     ${Plano_de_Contas}    Seleciona plano de contas - Débito
 
     ${Modalidade_de_Cobranca}    Seleciona modalidade de cobrança
+
+    Informando data competência
+    Sleep    ${SLEEP_BAIXO}
         
     Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
     Press Special Key    TAB
@@ -87,13 +90,7 @@ E insiro as informações necessárias(${Valor_Conta})
     Valida vencimento fim de semana(1)
     
     Input Text    ${EMPTY}    ${Valor_Conta}
-    FOR    ${I}    IN RANGE    2
-        
-        Press Special Key    TAB
-        Sleep    ${SLEEP_BAIXO}
-        
-    END
-    
+    Press Special Key    TAB
     Input Text    ${EMPTY}    ${Plano_de_Contas}
     
     FOR    ${I}    IN RANGE    2
@@ -125,3 +122,15 @@ Recuperando numero documento
     ${Ultima_Sequencia} =     Evaluate    ${Ultima_Sequencia[0][0]} + 1
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Ultima_Sequencia}
+
+Informando data competência
+
+    FOR    ${I}    IN RANGE    2
+        Press Combination    KEY.SHIFT    KEY.TAB
+    END
+
+    Press Combination    KEY.CTRL    KEY.C    
+    Press Special Key    TAB
+    Press Combination    KEY.CTRL    KEY.V
+    Press Special Key    TAB
+
