@@ -202,9 +202,6 @@ Então finalizo a Ordem de Servico
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.S
-    Sleep    ${SLEEP_BAIXO}
-
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORDEM_SERVICO}
 
 Então visualizado a OS recém criada
