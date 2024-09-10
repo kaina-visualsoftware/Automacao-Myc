@@ -33,6 +33,7 @@ ${TELA_GERACAO_VENDA}                    tela_GeracaoPedido.png
 ${MODAL_FORMAS_DE_PAGAMENTO}             modal_FormasDePagamentoPedidos.png
 ${TELA_WORKFLOW}                         tela_WorkFlowPedido.png
 ${BT_WORKFLOW}                           bt_Workflow.png     
+${TELA_IMPRESSAO}                        tela_Impressao.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -248,8 +249,14 @@ Então gero a venda totalmente
 
 Valida baixa de estoque
 
+    IF    ${Parametro_BaixaEstoquePreVenda}
+        ${COD_OPERACAO}    Set Variable    ${Codigo_Pedido}
+    ELSE
+        ${COD_OPERACAO}    	Set Variable    ${COD_VENDA}
+    END
+
     Sleep    ${SLEEP_MEDIO}
-    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_VENDA}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
 
@@ -340,6 +347,12 @@ Então gero a venda parcialmente do produto selecionado
         END
 
     END
+
+    Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
 Calcula total da venda com pedido parcial
     

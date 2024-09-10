@@ -78,11 +78,11 @@ Então confirmo a geração da venda
 
             END
 
-        END
-
-    Sleep    ${SLEEP_BAIXO}
+    END
 
     KeyGeracaoDeVenda1.Validação de geração de venda
+
+    utils.Valida tela de transportadora/faturamento nota fiscal
 
     SikuliLibrary.Click    ${BT_SAIR_CTRLG}
     Sleep    ${SLEEP_BAIXO}
@@ -141,14 +141,18 @@ Validação de geração de venda
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
-    Sleep    ${SLEEP_MEDIO}
     KeyGeracaoDeVenda1.Valida baixa de estoque
-
 
 Valida baixa de estoque
 
+    IF    ${Parametro_BaixaEstoquePreVenda}
+        ${COD_OPERACAO}    Set Variable    ${Codigo_Pedido}
+    ELSE
+        ${COD_OPERACAO}    	Set Variable    ${COD_VENDA}
+    END
+
     Sleep    ${SLEEP_MEDIO}
-    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
 

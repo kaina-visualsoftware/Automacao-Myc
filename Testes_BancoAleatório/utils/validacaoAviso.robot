@@ -161,7 +161,9 @@ Verifica parametros que interferem na venda
     ${Parametro_Imprime_Boleto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
     ${Parametro_ValeCompra_Dev_Menor0} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
     ${Parametro_FaturaVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
-    ${Parametro_BloqueiaOrcamentoSemEstoque} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    OrcamentoComEstoque_Bloq 
+    ${Parametro_BloqueiaOrcamentoSemEstoque} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    OrcamentoComEstoque_Bloq
+    ${Parametro_BaixaEstoquePreVenda} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    BaixaEstoquePreVenda
+
 
     IF    ${Parametro_VendaRapida}
             
@@ -274,6 +276,8 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_ImprimeCondicional}
 
     Set Test Variable    ${Parametro_BloqueiaOrcamentoSemEstoque}
+
+    Set Test Variable    ${Parametro_BaixaEstoquePreVenda}
 
 Valida aviso exige senha para outro vendedor
 

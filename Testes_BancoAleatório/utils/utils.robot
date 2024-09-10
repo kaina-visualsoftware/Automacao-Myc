@@ -45,6 +45,7 @@ ${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png
 ${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
 ${TELA_CONS_FINAL}                       tela_cons_final.png
 ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
+${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -798,5 +799,16 @@ Valida a inserção do mesmo produto várias vezes no grid
     IF    ${AVISO}
         
         Press Combination    KEY.Alt    KEY.s
+
+    END
+
+Valida tela de transportadora/faturamento nota fiscal
+
+    ${TELA_TRANSP}    Exists    ${TELA_TRANSP_FAT_NF}
+
+    IF    ${TELA_TRANSP}
+        
+        Press Combination    KEY.ALT    KEY.C
+        Sleep    ${SLEEP_BAIXO}
 
     END
