@@ -66,7 +66,7 @@ Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
-        keyCaixa1.E pesquiso pela conta receém gerada
+        keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE
@@ -139,7 +139,7 @@ Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
-        keyCaixa1.E pesquiso pela conta receém gerada
+        keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE
@@ -219,7 +219,7 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
-        keyCaixa1.E pesquiso pela conta receém gerada
+        keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE
@@ -252,7 +252,7 @@ Dado que realizo uma ordem de serviço com funcionário comissionado por serviç
         keyCaixa1.Quando acesso o caixa aberto 
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
-        keyCaixa1.E pesquiso pela conta receém gerada
+        keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
     ELSE

@@ -14,7 +14,7 @@ Teste 01 - Recebendo conta de uma venda
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
     Quando insiro o código do cliente
-    E pesquiso pela conta receém gerada 
+    E pesquiso pela conta recém gerada
     Então faço o recebimento da conta 
     
 Teste 02 - Realizando estorno de conta recém recebida
@@ -23,13 +23,13 @@ Teste 02 - Realizando estorno de conta recém recebida
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
     Quando insiro o código do cliente
-    E pesquiso pela conta receém gerada 
+    E pesquiso pela conta recém gerada
     Então faço o recebimento da conta
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
     Quando desmarco a opção somente a receber
     Quando insiro o código do cliente
-    E pesquiso pela conta receém gerada 
+    E pesquiso pela conta recém gerada
     E dou um duplo clique na conta recém paga 
     Então estorno a conta - A receber
 
@@ -64,7 +64,7 @@ Teste 05 - Realizando adiantamento do tipo pagamento
     E vou para a aba de adiantamentos
     Quando insiro um novo cliente
     E insiro as informações do adiantamento(50)
-    Então finalizo o lançamento(Débito)
+    Então concluo o pagamento
 
 Teste 06 - Realizando adiantamento do tipo recebimento 
     [Tags]    Teste06
@@ -72,7 +72,7 @@ Teste 06 - Realizando adiantamento do tipo recebimento
     E vou para a aba de adiantamentos
     Quando insiro um novo cliente
     E insiro as informações do adiantamento - Recebimento(50)
-    Então finalizo o lançamento(Crédito)
+    Então concluo o recebimento
 
 Teste 07 - Realizando um recebimento rápido
     [Tags]    Teste07
@@ -80,7 +80,7 @@ Teste 07 - Realizando um recebimento rápido
     E vou para a aba de rec/pag rapido 
     Quando insiro um novo cliente
     E insiro as informações necessárias - recebimento rápido(20)
-    Então finalizo o lançamento(Crédito)
+    Então concluo o recebimento
 
 Teste 08 - Realizando um pagamento rápido
     [Tags]    Teste08
@@ -88,4 +88,4 @@ Teste 08 - Realizando um pagamento rápido
     E vou para a aba de rec/pag rapido 
     Quando insiro um novo cliente
     E insiro as informações necessárias - pagamento rápido(20)
-    Então finalizo o lançamento(Débito)
+    Então concluo o pagamento

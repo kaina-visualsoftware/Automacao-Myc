@@ -53,6 +53,8 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
     Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
     Sleep    ${SLEEP_MEDIO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.C
 
 Finalização com recebimento de cartão de crédito/débito
@@ -126,6 +128,7 @@ Adicionar Vendedor e Cliente(${TELA})
     Set Test Variable    ${Codigo_Cliente}    ${codCliente}
 
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
+    Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}    
 
     IF    '${TELA}' == 'Orcamento'
@@ -141,7 +144,7 @@ Adicionar Vendedor e Cliente(${TELA})
         #Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_MEDIO}
-        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
+        #SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         # Log To Console    Clicou
 
     ELSE IF     '${TELA}' == 'Condicional'
@@ -158,14 +161,14 @@ Adicionar Vendedor e Cliente(${TELA})
 
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
         Sleep    ${SLEEP_BAIXO}
-        SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
+        #SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
 
     END
     
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
-    Log To Console    Código do cliente: ${Codigo_Cliente}
+    Log To Console    Código cliente: ${Codigo_Cliente}
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
     
