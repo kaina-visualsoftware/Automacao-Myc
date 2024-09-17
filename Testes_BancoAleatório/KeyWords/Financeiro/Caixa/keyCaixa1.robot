@@ -15,7 +15,7 @@ Resource     ../utils/montadorDeCenarios.robot
 *** Variables ***
 ${IMAGES}                                ./Testes_BancoAleatório/images
 #Conexão MySQL
-${DBHost}                                10.1.1.220
+${DBHost}                                ${config.IpServidor}
 ${DBName}                                ${config.Database}
 ${DBPass}                                vssql
 ${DBPort}                                ${config.Porta}

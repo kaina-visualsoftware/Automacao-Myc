@@ -46,6 +46,7 @@ ${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
 ${TELA_CONS_FINAL}                       tela_cons_final.png
 ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
 ${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
+${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -121,7 +122,6 @@ Adicionar Vendedor e Cliente(${TELA})
 
     ${codCliente}    Seleciona cliente 
     
-
     #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
     Valida vendedor padrao
 
@@ -129,7 +129,9 @@ Adicionar Vendedor e Cliente(${TELA})
 
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
     Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}    
+    Sleep    ${SLEEP_BAIXO}
+
+    Verifica se alguma tabela de preço está definida como padrão
 
     IF    '${TELA}' == 'Orcamento'
 
@@ -172,6 +174,7 @@ Adicionar Vendedor e Cliente(${TELA})
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
     
+    Altera para vendedor vinculado ao cliente
 
     #Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos
     Set Test Variable    ${TELA}
@@ -815,3 +818,36 @@ Valida tela de transportadora/faturamento nota fiscal
         Sleep    ${SLEEP_BAIXO}
 
     END
+
+Verifica se alguma tabela de preço está definida como padrão
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${tabelaPadrao}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT * FROM tabelas AS t WHERE t.Cancelada IS NULL AND t.Padrao = 1;
+
+    IF    ${tabelaPadrao}
+        Press Special Key    DOWN
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Altera para vendedor vinculado ao cliente
+
+    ${vendedorPadrao} =    Exists    ${AVISO_USAR_ESSE_VENDEDOR}
+
+    IF    ${vendedorPadrao}
+
+        Press Combination    KEY.ALT    KEY.S
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+# Valida vendedor padrao
+    
+#     ${VENDEDOR_PADRAO}     Run Keyword And Return Status    Check If Exists In Database    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente} AND c.CodigoVendedor IS NOT NULL;
+    
+#     IF     ${VENDEDOR_PADRAO}
+
+#         ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
+
+#         Set Test Variable    ${codVendedor}    ${NOVO_VENDEDOR}
+    
+#     END

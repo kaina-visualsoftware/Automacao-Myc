@@ -3,11 +3,12 @@ import leituraConfig as config
 
 dbname = config.config.Database
 porta = config.config.Porta
+ipservidor = config.config.IpServidor
 
 class estoque:
 
     def Valida_Movimentacao_Estoque_Venda(self, idProduto, idMovimentacao):
-        connection = mysql.connector.connect(host='10.1.1.220', user='root', password='vssql', database=dbname, port=porta)
+        connection = mysql.connector.connect(host=ipservidor, user='root', password='vssql', database=dbname, port=porta)
         print("Código do produto: "+str(idProduto)+" Movimentação: "+str(idMovimentacao))
 
         if(connection.is_connected()):
