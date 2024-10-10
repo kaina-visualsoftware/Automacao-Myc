@@ -360,7 +360,9 @@ Então finalizo a venda - A Prazo
 
     SikuliLibrary.Click    ${BT_SIMULADOR_FORMAS_PARCELAMENTO}
     Wait Until Screen Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${LABEL_DESCRIÇÃO}
+    Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${FORMA_PRAZO}
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
