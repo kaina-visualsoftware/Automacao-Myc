@@ -288,7 +288,8 @@ E dou um duplo clique na conta recém paga
 
 E dou um duplo clique na conta a pagar já paga 
     
-    SikuliLibrary.Double Click    ${CHECK_BOX_CONTAS_PAGA}
+    SikuliLibrary.Double Click    ${CHECK_BOX_CONTA_PAGA}
+    #SikuliLibrary.Double Click    ${CHECK_BOX_CONTAS_PAGA}
     Wait Until Screen Contain    ${TELA_REGISTROS_ESTORNOS}    ${SLEEP_ALTO}
 
 Então estorno a conta - A pagar 
@@ -517,11 +518,6 @@ Validação movimentou caixa(${Tipo_Mov})
     
     Sleep    ${SLEEP_BAIXO}
     ${Consulta_CaixaMovimento}    Query    SELECT CodigoCliente, ValorDocumento, ValorPago, Data, TipoMovimento FROM caixamovimentos WHERE CodigoAbertura = ${Sequencia_Caixa_Abertura} AND NDocumento LIKE '%${CODIGO_OPERACAO_MOV}%' ORDER BY Sequencia DESC;
-
-    Log To Console    CODIGO CAIXA ${CODIGO_CAIXA}
-    Log To Console    SEQUENCIA CAIXA ABERTURA ${Sequencia_Caixa_Abertura}
-    Log To Console    CODIGO OPERACAO MOV ${CODIGO_OPERACAO_MOV}
-    Log To Console    CONSULTA CAIXA MOVIMENTO ${Consulta_CaixaMovimento}
 
     ${Data_Banco}    Convert To String    ${Consulta_CaixaMovimento[0][3]}
 

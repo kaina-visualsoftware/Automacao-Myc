@@ -53,8 +53,8 @@ Teste 04 - Realizando estorno de conta recém paga
     Quando acesso o caixa aberto
     E vou para a aba de contas a pagar
     Quando desmarco a opção somente a pagar
-    Quando insiro o código do cliente
-    E pesquiso pela conta a pagar gerada  
+    #Quando insiro o código do cliente
+    #E pesquiso pela conta a pagar gerada  
     E dou um duplo clique na conta a pagar já paga  
     Então estorno a conta - A pagar
 
