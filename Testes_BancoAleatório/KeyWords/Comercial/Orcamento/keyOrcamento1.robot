@@ -107,11 +107,12 @@ Então Gravo o Orcamento
     Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
 
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
 Então visualizo o mesmo
     
-    Press Combination    KEY.ALT     Key.u 
+    Press Combination    KEY.ALT     KEY.U
+    Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.r
