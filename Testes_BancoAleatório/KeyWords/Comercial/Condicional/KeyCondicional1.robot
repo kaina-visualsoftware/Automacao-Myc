@@ -202,7 +202,7 @@ E gero a venda de parte dos produtos(${Quantidade})
     
 Então cancelo a geração da venda
     
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
     Press Special Key    ESC
     Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 

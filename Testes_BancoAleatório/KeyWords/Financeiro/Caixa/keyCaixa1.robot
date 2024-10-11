@@ -70,7 +70,8 @@ Carregar dados de formas
     Set Test Variable    ${Forma_Pagamento}
 
 Quando insiro o código do cliente
-
+    
+    Press Combination    KEY.ALT    KEY.C
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
@@ -137,7 +138,8 @@ E pesquiso pela conta recém gerada
             END
         END
     END
-
+    
+    Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${INPUT_NUMERO_VENDA}
     
     Sleep    ${SLEEP_BAIXO}
@@ -230,14 +232,17 @@ E vou para a aba de contas a receber
     
     SikuliLibrary.Click    ${ABA_A_RECEBER}
     Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_MEDIO}
 
 Então faço o recebimento da conta 
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.R
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.C 
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S
 
     Valida tela de confirmação de data

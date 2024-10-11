@@ -587,8 +587,9 @@ Valida impressao direta de venda(${Parametro})
     IF    ${Parametro}
         
         Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
+        Sleep    ${SLEEP_MEDIO}
         Press Combination    KEY.ALT     Key.S
+        Sleep    ${SLEEP_BAIXO}
 
     END
 
