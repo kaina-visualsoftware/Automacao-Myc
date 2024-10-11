@@ -18,7 +18,7 @@ ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}    lb_CodClienteOS.png
 ${INPUT_COD_CLIENTE_CONDICIONAL}         lb_CodClienteCondicional.png
 ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}        lb_CodClienteDevolucao.png
 #Sleep's    
-${SLEEP_BAIXO}                           0.3
+${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
@@ -131,7 +131,7 @@ Adicionar Vendedor e Cliente(${TELA})
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    Verifica se alguma tabela de preço está definida como padrão
+    Verifica seleção de tabela de preço(${TELA})
 
     IF    '${TELA}' == 'Orcamento'
 
@@ -819,14 +819,23 @@ Valida tela de transportadora/faturamento nota fiscal
 
     END
 
-Verifica se alguma tabela de preço está definida como padrão
+Verifica seleção de tabela de preço(${TELA})
     
     Sleep    ${SLEEP_MEDIO}
     ${tabelaPadrao}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT * FROM tabelas AS t WHERE t.Cancelada IS NULL AND t.Padrao = 1;
 
-    IF    ${tabelaPadrao}
-        Press Special Key    DOWN
+    Sleep    ${SLEEP_MEDIO}
+    ${tabelaVendedor}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT * FROM tabelas_vendedores tb WHERE tb.idVendedor = ${Codigo_Vendedor} AND tb.MyCommerce = 1 AND tb.Excluido = 0;
+
+    # Validação por conta que, nas telas 'OrdemDeServico', 'Condicional' e 'Devolução' ao informar o vendedor, o sistema não seleciona no combobox a primeira tabela de preço 
+    # da listagem, conforme ocorre nas outras telas, quando o cenário das sql's acima.
+    IF    '${TELA}' == 'OrdemDeServico' or '${TELA}' == 'Condicional' or '${TELA}' == 'Devolução'
+
+        Log To Console    entrou no if
         Sleep    ${SLEEP_BAIXO}
+        Run Keyword If    ${tabelaPadrao} or ${tabelaVendedor}    Press Special Key    DOWN
+        Sleep    ${SLEEP_BAIXO}
+
     END
 
 Altera para vendedor vinculado ao cliente

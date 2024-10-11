@@ -20,7 +20,7 @@ ${DBPass}                                vssql
 ${DBPort}                                ${config.Porta}
 ${DBUser}                                root
 #Sleep's
-${SLEEP_BAIXO}                           0.3
+${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
@@ -75,10 +75,13 @@ Aguarda tela Devolução avulsa
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES_AVULSA_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-E insiro os dados do cabeçalho - vendedor, venda|cliente 
+E insiro os dados do cabeçalho - vendedor, venda|cliente(${TELA})
     
     Sleep    ${SLEEP_MEDIO}
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
+    Press Special Key    TAB
+
+    Verifica seleção de tabela de preço(${TELA})
 
     IF     ${Parametro_DevolucaoAvulsa}
 

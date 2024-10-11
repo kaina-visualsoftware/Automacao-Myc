@@ -20,7 +20,7 @@ ${DBPass}                                vssql
 ${DBPort}                                ${config.Porta}
 ${DBUser}                                root
 #Sleep's
-${SLEEP_BAIXO}                           0.3
+${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
@@ -158,6 +158,8 @@ Quando clico em gerar venda
 
     KeyVendas1.Verifica formas de recebimento da venda
 
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
 Quando cliclo em gerar venda parcial
     
     Sleep    ${SLEEP_BAIXO}
@@ -191,6 +193,8 @@ E gero a venda de parte dos produtos(${Quantidade})
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
 
     KeyVendas1.Verifica formas de recebimento da venda
+
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL};
 

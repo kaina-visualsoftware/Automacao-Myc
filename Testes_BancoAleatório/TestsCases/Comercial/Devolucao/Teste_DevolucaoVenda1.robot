@@ -14,7 +14,7 @@ Teste 01 - Adicionando uma nova Devolução de venda
     [Tags]    Teste01
     Dado que abro a tela de Devolução de vendas/os 
     Quando adiciono uma nova devolução 
-    E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
@@ -23,7 +23,7 @@ Teste 02 - Adicionando uma nova Devolução de venda - Visualizar
     [Tags]    Teste02
     Dado que abro a tela de Devolução de vendas/os 
     Quando adiciono uma nova devolução 
-    E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
@@ -34,7 +34,7 @@ Teste 03 - Adicionando uma nova Devolução de venda - Editando
     [Tags]    Teste02
     Dado que abro a tela de Devolução de vendas/os 
     Quando adiciono uma nova devolução 
-    E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Quando finalizo a devolução como aberta
@@ -46,7 +46,7 @@ Teste 04 - Adicionando uma nova Devolução de venda - Excluindo
     [Tags]    Teste04
     Dado que abro a tela de Devolução de vendas/os 
     Quando adiciono uma nova devolução 
-    E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
@@ -57,7 +57,7 @@ Teste 05 - Adicionando uma devolução de venda com mais de um produto
     [Setup]    montadorDeCenarios.Dado que realizo uma venda com mais de um produto(2)
     Dado que abro a tela de Devolução de vendas/os 
     Quando adiciono uma nova devolução 
-    E insiro os dados do cabeçalho - vendedor, venda|cliente 
+    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     Quando seleciono os produtos para a devolução(2)
     E vou para a aba de pagamentos
     Então finalizo a devolução

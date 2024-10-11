@@ -9,7 +9,7 @@ Resource    ./utils.robot
 
 *** Variables ***
 #Sleep's    
-${SLEEP_BAIXO}                             0.3
+${SLEEP_BAIXO}                             0.7
 ${SLEEP_MEDIO}                             1.5
 ${SLEEP_ALTO}                              3
 ${TEMPO_TELA}                              20
