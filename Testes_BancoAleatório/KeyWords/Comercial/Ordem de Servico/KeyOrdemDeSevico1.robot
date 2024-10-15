@@ -39,6 +39,11 @@ ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
 ${TELA_CHECKLIST}                        tela_CheckList.png
+${TELA_NFS-E}                            tela_NFSe.png
+${AVISO_NFSE_REJEITADA}                  aviso_NFSeRejeitada.png
+${AVISO_NFSE_COM_PROBLEMA}               aviso_NFSeComProblema.png
+${LABEL_AGUARDE_GERANDO_NFSE}            lb_AguardeGerandoNFSe.png
+${AVISO_NFSE_PROCESSAMENTO}              aviso_NFSeProcessamento.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -422,4 +427,83 @@ Valida check list
         Press Combination    KEY.ALT     Key.G
         Sleep    ${SLEEP_BAIXO}
 
+    END
+
+Quando clico em Faturar
+
+    Press Combination    KEY.ALT    KEY.U
+    Wait Until Screen Contain    ${TELA_NFS-E}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+Então realizo o faturamento da NFSe
+
+    Press Combination    KEY.ALT    KEY.G
+    Wait Until Screen Contain    ${LABEL_AGUARDE_GERANDO_NFSE}    ${SLEEP_ALTO}
+
+    Valida faturamento de NFSe
+    
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+Valida faturamento de NFSe
+
+    Sleep    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_MEDIO}
+        
+    ${consultaNotaFiscalServico}    Query    SELECT Situacao, motivoRejeicao FROM notafiscalservico WHERE CodigoOS = ${COD_ORDEM_SERVICO};
+
+    ${situacao} =    Set Variable    ${consultaNotaFiscalServico[0][0]}
+    ${motivoRejeicao} =    Set Variable    ${consultaNotaFiscalServico[0][1]}
+
+    Run Keyword If    '${situacao}' == 'None' and '${motivoRejeicao}' == 'None'    Fail    Nota fiscal de serviço não gerada.
+
+    IF    '${situacao}' == 'Rejeitada'
+
+        IF    '${motivoRejeicao}' == 'None'
+            
+            ${msg_nfse_com_problema}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_NFSE_COM_PROBLEMA}    ${TEMPO_TELA}
+
+            IF    ${msg_nfse_com_problema}
+                
+                Sleep    ${SLEEP_BAIXO}
+                Press Special Key    ENTER
+
+                Fail    Nota fiscal de serviço com problema.
+
+            END
+        
+        ELSE
+
+            ${msg_nfse_rejeitada}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_NFSE_REJEITADA}    ${TEMPO_TELA}
+
+            IF    ${msg_nfse_rejeitada}
+
+                Sleep    ${SLEEP_BAIXO}
+                Press Special Key    ENTER
+
+                Fail    Nota fiscal de serviço rejeitada: \n${motivoRejeicao}
+                
+            END
+
+        END
+    
+    ELSE IF    '${situacao}' == 'Impressa'
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+        Log To Console    Nota fiscal de serviço faturada com sucesso.
+    
+    ELSE IF    '${situacao}' == 'Consultar'
+
+        ${msg_nfse_processamento}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_NFSE_PROCESSAMENTO}    ${TEMPO_TELA}
+
+        IF    ${msg_nfse_processamento}
+
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    ENTER
+            
+            Log To Console    Nota fiscal de serviço em processamento.
+
+        END       
+         
     END

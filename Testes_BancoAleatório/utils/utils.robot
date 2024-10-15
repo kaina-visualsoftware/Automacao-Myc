@@ -832,7 +832,6 @@ Verifica seleção de tabela de preço(${TELA})
     # da listagem, conforme ocorre nas outras telas, quando o cenário das sql's acima.
     IF    '${TELA}' == 'OrdemDeServico' or '${TELA}' == 'Condicional' or '${TELA}' == 'Devolução'
 
-        Log To Console    entrou no if
         Sleep    ${SLEEP_BAIXO}
         Run Keyword If    ${tabelaPadrao} or ${tabelaVendedor}    Press Special Key    DOWN
         Sleep    ${SLEEP_BAIXO}

@@ -3,7 +3,7 @@ Documentation    Testes em Banco Aleatório
 
 Resource     ../KeyWords/Comercial/Orcamento/keyOrcamento1.robot
 
-Suite Setup    Run Keywords     Start Sikuli Process    AND    Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+Suite Setup    Run Keywords     Start Sikuli Process    AND    keyOrcamento1.Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
 Suite Teardown      Stop Remote Server
 
 *** Test Cases ***

@@ -52,4 +52,15 @@ Teste 04 - Excluindo nova Ordem de Serviço
     E insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a OS - A prazo
-    Então clico em excluir    
+    Então clico em excluir
+
+Teste 05 - Faturando NFSe da Ordem de Serviço - Somente serviço
+    [Tags]    Teste05
+    Dado que acesso a tela de Ordem de Servico
+    Quando pressiono o atalho de adicionar
+    E adiciono vendedor e cliente
+    Quando Insiro um servico
+    E acesso a aba pagamentos
+    Então finalizo a Ordem de Servico
+    Quando clico em Faturar
+    Então realizo o faturamento da NFSe
