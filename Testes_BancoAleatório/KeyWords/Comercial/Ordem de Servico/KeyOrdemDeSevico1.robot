@@ -448,7 +448,7 @@ Então realizo o faturamento da NFSe
 Valida faturamento de NFSe
 
     Sleep    ${SLEEP_ALTO}
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
         
     ${consultaNotaFiscalServico}    Query    SELECT Situacao, motivoRejeicao FROM notafiscalservico WHERE CodigoOS = ${COD_ORDEM_SERVICO};
 

@@ -267,3 +267,45 @@ Dado que cadastro uma conta a pagar avulsa
     keyContasPagar1.Quando clico em adicionar
     keyContasPagar1.E insiro as informações necessárias(100)
     keyContasPagar1.Então gravo o lançamento de conta a pagar avulsa
+
+Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
+    
+    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto normal
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+Dado que realizo mais de uma venda(${Quantidade_Vendas})
+    
+    ${Codigos_Vendas} =    Create List
+    ${Codigos_Produtos} =    Create List
+
+    Log To Console    Codigos vendas ${Codigos_Vendas}
+    Log To Console    Codigos produtos ${Codigos_Produtos}
+
+    FOR    ${I}    IN RANGE    ${Quantidade_Vendas}
+        Log To Console    valor de I ${I}
+
+        Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
+        
+        Append To List    ${Codigos_Vendas}    ${CODIGO_OPERACAO_MOV}
+        Log To Console    Codigo Operacao Mov ${CODIGO_OPERACAO_MOV}
+        Log To Console    if - Codigos vendas ${Codigos_Vendas}
+
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
+        Log To Console    Codigo Produto ${COD_PRODUTO}
+        Log To Console    if - Codigos produtos ${Codigos_Produtos}
+
+    END
+
+    Log To Console    Vendas Geradas: ${Codigos_Vendas}
+
+    Set Test Variable    ${Codigos_Vendas}
+
+    Log To Console    Produtos em vendas geradas: ${Codigos_Produtos}
+
+    Set Test Variable    ${Codigos_Produtos} 

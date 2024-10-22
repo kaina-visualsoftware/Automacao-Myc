@@ -44,6 +44,7 @@ ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}      venda_a_prazo_cliente_1_consumidor.pn
 ${EXPANDIR_COMBOBOX}                       expandir_combobox.png
 ${FORMA_PARC_A_VISTA}                      forma_parc_à_vista.png
 ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}        aviso_VencimentoFeriadoSabadoDomingo.png
+${TELA_IMPRESSAO_ENTREGA}                  tela_ImpressaoEntrega.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -163,6 +164,7 @@ Verifica parametros que interferem na venda
     ${Parametro_FaturaVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
     ${Parametro_BloqueiaOrcamentoSemEstoque} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    OrcamentoComEstoque_Bloq
     ${Parametro_BaixaEstoquePreVenda} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    BaixaEstoquePreVenda
+    ${Parametro_ImpressaoAposGerarEntrega} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ImpressaoEntrega
 
 
     IF    ${Parametro_VendaRapida}
@@ -278,6 +280,8 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_BloqueiaOrcamentoSemEstoque}
 
     Set Test Variable    ${Parametro_BaixaEstoquePreVenda}
+
+    Set Test Variable    ${Parametro_ImpressaoAposGerarEntrega}
 
 Valida aviso exige senha para outro vendedor
 
@@ -667,3 +671,24 @@ Valida data de vencimento em feriados, sábados e domingos para pagamentos a pra
         Press Combination    KEY.Alt   KEY.s
 
     END
+
+Valida telas/avisos presentes ao gerar ordem de entrega
+
+    ${lista_avisos_telas}    valida_Config_Empresa
+
+    ${Parametro_GerarEntregaStatusConcluido} =    Run Keyword And Return Status    Should Contain    ${lista_avisos_telas}    Entrega_StatusConcluido
+
+    Set Test Variable    ${Parametro_GerarEntregaStatusConcluido}
+
+    IF    ${Parametro_ImpressaoAposGerarEntrega} or ${Parametro_GerarEntregaStatusConcluido}
+        
+        Valida impressão após a gerar entrega
+    
+    END
+
+Valida impressão após a gerar entrega
+        
+    ${telaImpressaoEntrega}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_IMPRESSAO_ENTREGA}    ${TEMPO_TELA}
+
+    Press Special Key    ESC
+    Sleep    ${SLEEP_BAIXO}
