@@ -122,7 +122,7 @@ Quando seleciono as últimas vendas feitas
         SikuliLibrary.Click    ${LB_CODIGO_PEDIDO}
         Sleep    ${SLEEP_BAIXO}
 
-        Input Text    ${EMPTY}    ${Codigos_Pedidos[${I}]}
+        Input Text    ${EMPTY}    ${Codigos_Vendas[${I}]}
 
         E seleciono o produto
         

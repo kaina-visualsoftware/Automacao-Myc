@@ -6,6 +6,7 @@ Resource    ../KeyWords/Financeiro/Caixa/keyCaixa1.robot
 Resource    ../KeyWords/Comercial/Condicional/KeyCondicional1.robot
 Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
+Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 
 Resource    ../utils/utils.robot
 Library    SikuliLibrary
@@ -193,7 +194,7 @@ Dado que realizo uma venda total de uma condicional
     keyVendas1.Então finalizo a venda
     KeyCondicional1.Validação de vendas após a geração do condicional 
 
-    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+    #Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
 
 Dado que realizo uma venda parcial de uma condicional
     KeyCondicional1.Dado que acesso a tela de condicionais
@@ -206,7 +207,7 @@ Dado que realizo uma venda parcial de uma condicional
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
 
-    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+    #Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
 
 Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
 
@@ -228,7 +229,7 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
 
     END
 
-    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+    #Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
 
 Dado que realizo uma ordem de serviço com funcionário comissionado por serviço 
     Log To Console    É necessário que o parametro 'Habilite está opção caso deseje selecionar os funcionários em uma lista' esteja ***DESABILITADO***
@@ -277,35 +278,24 @@ Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de 
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
 
-    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+    # Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
 Dado que realizo mais de uma venda(${Quantidade_Vendas})
     
     ${Codigos_Vendas} =    Create List
-    ${Codigos_Produtos} =    Create List
-
-    Log To Console    Codigos vendas ${Codigos_Vendas}
-    Log To Console    Codigos produtos ${Codigos_Produtos}
+    ${Codigos_de_Produtos} =    Create List
 
     FOR    ${I}    IN RANGE    ${Quantidade_Vendas}
-        Log To Console    valor de I ${I}
-
+        
         Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
         
         Append To List    ${Codigos_Vendas}    ${CODIGO_OPERACAO_MOV}
-        Log To Console    Codigo Operacao Mov ${CODIGO_OPERACAO_MOV}
-        Log To Console    if - Codigos vendas ${Codigos_Vendas}
-
-        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
-        Log To Console    Codigo Produto ${COD_PRODUTO}
-        Log To Console    if - Codigos produtos ${Codigos_Produtos}
+        Append To List    ${Codigos_de_Produtos}    ${COD_PRODUTO}
 
     END
 
+    Set Test Variable    ${Codigos_Vendas}
     Log To Console    Vendas Geradas: ${Codigos_Vendas}
 
-    Set Test Variable    ${Codigos_Vendas}
-
-    Log To Console    Produtos em vendas geradas: ${Codigos_Produtos}
-
-    Set Test Variable    ${Codigos_Produtos} 
+    Set Test Variable    ${Codigos_de_Produtos}
+    Log To Console    Produtos em vendas geradas: ${Codigos_de_Produtos}
