@@ -112,7 +112,6 @@ Quando seleciono as últimas vendas feitas
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    
 
     FOR    ${I}    IN RANGE    ${Quantidade_Vendas_Feitas}
 
@@ -125,5 +124,11 @@ Quando seleciono as últimas vendas feitas
         Input Text    ${EMPTY}    ${Codigos_Vendas[${I}]}
 
         E seleciono o produto
+
+        IF    ${I} == ${Quantidade_Vendas_Feitas} - 1
+
+            Valida a geração de entregas com apenas uma venda por entrega
+
+        END
         
     END

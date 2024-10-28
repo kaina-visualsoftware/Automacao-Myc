@@ -9,42 +9,43 @@ Resource    ./utils.robot
 
 *** Variables ***
 #Sleep's    
-${SLEEP_BAIXO}                             0.7
-${SLEEP_MEDIO}                             1.5
-${SLEEP_ALTO}                              3
-${TEMPO_TELA}                              20
+${SLEEP_BAIXO}                                         0.7
+${SLEEP_MEDIO}                                         1.5
+${SLEEP_ALTO}                                          3
+${TEMPO_TELA}                                          20
 #Imagens Tela
-${AVISO_CLIENTE_OUTRO_VE}                  aviso_clienteOutroVendedor.png  
-${AVISO_ALTERAR_VENDEDOR}                  aviso_DesejaAlterarVendedor.png
-${TELA_INFO_CRÉDITOS}                      tela_InfoCreditos.png 
-${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}        aviso_ExigeSenhaVendedorDiferente.png
-${AVISO_CONDICIONAL_ABERTO}                aviso_CondicionalAbertoVenda.png
-${AVISO_CONDICIONAL_ABERTO_COND}           aviso_CondicionalAberto.png
-${ALERTA_CLIENTE}                          alertaCliente.png
-${TELA_SENHA_SUPERVISOR}                   tela_SolicitaSenha.png
-${TELA_EXIBE_CLIENTE}                      tela_exibeCliente.png
-${TELA_SELECIONA_TABELA_PRECO}             tela_TabelasPreco.png
-${TELA_VENDAS_ANTERIORES}                  tela_ExibeAnteriores.png
-${TELA_INDICACAO_VENDA}                    tela_QuemIndicou.png
-${TELA_LIBERAÇÃO_DESCONTO_SENHA}           tela_liberacaoDesconto.png
-${TELA_VENCIMENTO_FIM_DE_SEMANA}           tela_VencimentoFimDeSemana.png
-${BT_NÃO}                                  bt_Nao.png
-${TELA_IMPRIMIR_ORDEM_ENTREGA}             tela_ImprimirOrdemEntrega.png
-${TELA_RECIBO_ENTRADA}                     tela_ReciboEntrada.png 
-${TELA_CONTRATO_VENDA}                     tela_ContratoVenda.png
-${TELA_EMISSAO_PROMISSÓRIA}                tela_EmisssaoPromissoria.png 
-${TELA_IMPRESSAO_BOLETO}                   tela_impressaoBoleto.png
-${TELA_IMPRESSAO_DUPLICATAS}               tela_ImpressaoDuplicatas.png
-${TELA_EMISSAO_NFC}                        tela_EmissaoNFC.png 
-${TELA_FATURAMENTO_NF}                     tela_FaturamentoDiretoNF.png  
-${TELA_CONFIRMAÇÃO_PAGAMENTO}              tela_DataPagamento.png
-${LABEL_LIBERAÇÃO_SUPERVISOR}              label_PasseOCartaoDeLiberacao.png
-${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}        aviso_qtde_sem_estoque_orcamento.png
-${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}      venda_a_prazo_cliente_1_consumidor.png
-${EXPANDIR_COMBOBOX}                       expandir_combobox.png
-${FORMA_PARC_A_VISTA}                      forma_parc_à_vista.png
-${AVISO_VENCIMENTO_FERIADO_DOM_SAB}        aviso_VencimentoFeriadoSabadoDomingo.png
-${TELA_IMPRESSAO_ENTREGA}                  tela_ImpressaoEntrega.png
+${AVISO_CLIENTE_OUTRO_VE}                              aviso_clienteOutroVendedor.png  
+${AVISO_ALTERAR_VENDEDOR}                              aviso_DesejaAlterarVendedor.png
+${TELA_INFO_CRÉDITOS}                                  tela_InfoCreditos.png 
+${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}                    aviso_ExigeSenhaVendedorDiferente.png
+${AVISO_CONDICIONAL_ABERTO}                            aviso_CondicionalAbertoVenda.png
+${AVISO_CONDICIONAL_ABERTO_COND}                       aviso_CondicionalAberto.png
+${ALERTA_CLIENTE}                                      alertaCliente.png
+${TELA_SENHA_SUPERVISOR}                               tela_SolicitaSenha.png
+${TELA_EXIBE_CLIENTE}                                  tela_exibeCliente.png
+${TELA_SELECIONA_TABELA_PRECO}                         tela_TabelasPreco.png
+${TELA_VENDAS_ANTERIORES}                              tela_ExibeAnteriores.png
+${TELA_INDICACAO_VENDA}                                tela_QuemIndicou.png
+${TELA_LIBERAÇÃO_DESCONTO_SENHA}                       tela_liberacaoDesconto.png
+${TELA_VENCIMENTO_FIM_DE_SEMANA}                       tela_VencimentoFimDeSemana.png
+${BT_NÃO}                                              bt_Nao.png
+${TELA_IMPRIMIR_ORDEM_ENTREGA}                         tela_ImprimirOrdemEntrega.png
+${TELA_RECIBO_ENTRADA}                                 tela_ReciboEntrada.png 
+${TELA_CONTRATO_VENDA}                                 tela_ContratoVenda.png
+${TELA_EMISSAO_PROMISSÓRIA}                            tela_EmisssaoPromissoria.png 
+${TELA_IMPRESSAO_BOLETO}                               tela_impressaoBoleto.png
+${TELA_IMPRESSAO_DUPLICATAS}                           tela_ImpressaoDuplicatas.png
+${TELA_EMISSAO_NFC}                                    tela_EmissaoNFC.png 
+${TELA_FATURAMENTO_NF}                                 tela_FaturamentoDiretoNF.png  
+${TELA_CONFIRMAÇÃO_PAGAMENTO}                          tela_DataPagamento.png
+${LABEL_LIBERAÇÃO_SUPERVISOR}                          label_PasseOCartaoDeLiberacao.png
+${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}                    aviso_qtde_sem_estoque_orcamento.png
+${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_consumidor.png
+${EXPANDIR_COMBOBOX}                                   expandir_combobox.png
+${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
+${AVISO_VENCIMENTO_FERIADO_DOM_SAB}                    aviso_VencimentoFeriadoSabadoDomingo.png
+${TELA_IMPRESSAO_ENTREGA}                              tela_ImpressaoEntrega.png
+${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}    aviso_NaoPermitidoMultiplasVendasPorEntrega.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -165,6 +166,7 @@ Verifica parametros que interferem na venda
     ${Parametro_BloqueiaOrcamentoSemEstoque} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    OrcamentoComEstoque_Bloq
     ${Parametro_BaixaEstoquePreVenda} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    BaixaEstoquePreVenda
     ${Parametro_ImpressaoAposGerarEntrega} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ImpressaoEntrega
+    ${Parametro_UmaEntregaPorVenda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_UmaEntregaPorVenda
 
 
     IF    ${Parametro_VendaRapida}
@@ -282,6 +284,8 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_BaixaEstoquePreVenda}
 
     Set Test Variable    ${Parametro_ImpressaoAposGerarEntrega}
+
+    Set Test Variable    ${Parametro_UmaEntregaPorVenda}
 
 Valida aviso exige senha para outro vendedor
 
@@ -692,3 +696,20 @@ Valida impressão após a gerar entrega
 
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
+
+Valida a geração de entregas com apenas uma venda por entrega
+    
+    IF    ${Parametro_UmaEntregaPorVenda}
+
+        ${MSG}    Exists    ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}
+
+        IF    ${MSG}
+
+            Press Special Key    ENTER
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Combination    KEY.ALT    KEY.S
+            
+        END
+        Log To Console    1
+    END

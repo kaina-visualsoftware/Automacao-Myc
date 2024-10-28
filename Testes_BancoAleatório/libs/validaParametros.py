@@ -59,7 +59,7 @@ class validaParametros:
 
         parametrosMapeados = ("Venda_ImprimeCupom, ImprimirVenda_FinalizarVenda, ImprimirDup_FinalizarVenda, BaixaCentralizada, BaixaAutomatico, CodigoCX, "
                               "ImpRecEnt_FinalizarVenda, ImprimirContrato_FinalizarVenda, ImpPromissoria_FinalizarVenda, ImprimirBol_FinalizarVenda, Dev_Ativa_Vale, "
-                              "FaturaVendaDireto, Entrega_StatusConcluido, Entrega_ImpressaoEntrega")
+                              "FaturaVendaDireto, Entrega_StatusConcluido, Entrega_ImpressaoEntrega, Entrega_UmaEntregaPorVenda")
 
         cursor.execute("SELECT "+parametrosMapeados+" FROM configempresa WHERE empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);")
 
