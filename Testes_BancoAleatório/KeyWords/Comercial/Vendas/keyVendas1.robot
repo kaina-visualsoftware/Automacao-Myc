@@ -251,10 +251,16 @@ Então finalizo a venda
 
     Valida Parametros/Impressões pós venda
 
-    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    #Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
     Sleep    ${SLEEP_MEDIO}
+    Press Special Key    F2
+    Sleep    ${SLEEP_MEDIO}
+
+    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S
-    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+    Sleep    ${SLEEP_ALTO}
 
     keyVendas1.Valida baixa de estoque
 

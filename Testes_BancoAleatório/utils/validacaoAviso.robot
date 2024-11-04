@@ -46,6 +46,8 @@ ${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
 ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}                    aviso_VencimentoFeriadoSabadoDomingo.png
 ${TELA_IMPRESSAO_ENTREGA}                              tela_ImpressaoEntrega.png
 ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}    aviso_NaoPermitidoMultiplasVendasPorEntrega.png
+${TELA_ENTREGAS}                                       tela_Entregas.png
+${TELA_ORDEM_DE_ENTREGA}                               tela_OrdemDeEntrega.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -99,7 +101,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    IF     ${Parametro_ExibeVendasAnteriores}
+    IF    ${Parametro_ExibeVendasAnteriores}
 
         Valida vendas anteriores 
 
@@ -130,7 +132,7 @@ Verifica parametros que interferem na venda
     ${Parametro_ExigeSenhaMultiplo} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Senha_supervisor_multiplo
     ${Parametro_Exibe_Foto_Cliente} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ExibeFotoCli
     ${Parametro_Imprime_OrdemEntrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
-    ${Parametro_ExibeVendasAnteriores} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
+    ${Parametro_ExibeVendasAnteriores} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PVexibeAnteriores
     ${Parametro_Permite_Varias_Tabelas} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    PermiteVariasTabelas
     ${Parametro_Impre_Ordem_de_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    ImprimirOrdemEntrega
     ${Parametro_Suprime_Objetos_OS_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    SuprimirOS
@@ -167,6 +169,7 @@ Verifica parametros que interferem na venda
     ${Parametro_BaixaEstoquePreVenda} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    BaixaEstoquePreVenda
     ${Parametro_ImpressaoAposGerarEntrega} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ImpressaoEntrega
     ${Parametro_UmaEntregaPorVenda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_UmaEntregaPorVenda
+    ${Parametro_ConsideraDoacoes} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ConsideraDoacoes
 
 
     IF    ${Parametro_VendaRapida}
@@ -188,6 +191,8 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_RealizaVendaSemEstoque}    ${False}
 
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}    ${False}
+
+        Set Test Variable    ${Parametro_VendeSemEstoque}    ${False}
     
     ELSE
 
@@ -196,6 +201,8 @@ Verifica parametros que interferem na venda
         Set Test Variable    ${Parametro_RealizaVendaSemEstoque}
 
         Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
+        
+        Set Test Variable    ${Parametro_VendeSemEstoque}
 
     END
 
@@ -287,6 +294,8 @@ Verifica parametros que interferem na venda
 
     Set Test Variable    ${Parametro_UmaEntregaPorVenda}
 
+    Set Test Variable    ${Parametro_ConsideraDoacoes}
+
 Valida aviso exige senha para outro vendedor
 
     # Sleep    ${SLEEP_MEDIO}
@@ -361,9 +370,10 @@ Valida condicional aberto
     
 Valida observaco cliente
 
-    ${Observacao}     Query    SELECT Observacao FROM clientes WHERE Codigo = ${Codigo_Cliente}
+    ${consulta}     Query    SELECT Observacao FROM clientes WHERE Codigo = ${Codigo_Cliente}
+    ${Observacao} =    Set Variable    ${consulta[0][0]}
     
-    IF    "${Observacao}" != "None"
+    IF    '${Observacao}' != 'None'
 
         Sleep    ${SLEEP_MEDIO}
         ${MSG} =     Run Keyword And Return Status    Wait Until Screen Contain    ${ALERTA_CLIENTE}    ${SLEEP_ALTO}
@@ -686,11 +696,11 @@ Valida telas/avisos presentes ao gerar ordem de entrega
 
     IF    ${Parametro_ImpressaoAposGerarEntrega} or ${Parametro_GerarEntregaStatusConcluido}
         
-        Valida impressão após a gerar entrega
+        Valida impressão após gerar entrega
     
     END
 
-Valida impressão após a gerar entrega
+Valida impressão após gerar entrega
         
     ${telaImpressaoEntrega}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_IMPRESSAO_ENTREGA}    ${TEMPO_TELA}
 
@@ -707,9 +717,15 @@ Valida a geração de entregas com apenas uma venda por entrega
 
             Press Special Key    ENTER
             Sleep    ${SLEEP_BAIXO}
-
-            Press Combination    KEY.ALT    KEY.S
             
         END
-        Log To Console    1
+
+    END
+
+Valida considerar lançamento de ordem de entrega de doações
+
+    IF    '${Parametro_ConsideraDoacoes}' == 'False'
+        
+        Fail   \nNão habilitado para considerar lançamentos de doações.\nParâmetro: Considerar Lançamentos de Doações: ${Parametro_ConsideraDoacoes}
+    
     END

@@ -47,6 +47,7 @@ ${TELA_CONS_FINAL}                       tela_cons_final.png
 ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
 ${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
 ${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
+${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -164,6 +165,11 @@ Adicionar Vendedor e Cliente(${TELA})
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
         Sleep    ${SLEEP_BAIXO}
         #SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
+    
+    ELSE IF    '${TELA}' == 'Doação'
+
+        SikuliLibrary.Click    ${INPUT_COD_BENEFICIADO_DOACAO}
+        Sleep    ${SLEEP_BAIXO}
 
     END
     
@@ -540,6 +546,14 @@ Valida parametros após incluir produto
 
     Valida a inserção do mesmo produto várias vezes no grid
 
+    IF    ${Aviso_ProdutoSemEstoque}
+        
+        Aviso produto sem estoque 
+
+    END
+
+    Verifica observacao do produto 
+
     IF    ${Parametro_BloqueiaOrcamentoSemEstoque}
         
         validacaoAviso.Valida aviso de quantidade não existente em estoque - Orçamento
@@ -548,14 +562,6 @@ Valida parametros após incluir produto
             Inserir Produto normal - Necessita de estoque
             Valida parametros após incluir produto
         END
-    END
-
-    Verifica observacao do produto 
-
-    IF    ${Aviso_ProdutoSemEstoque}
-        
-        Aviso produto sem estoque 
-
     END
 
     IF    ${Parametro_Controla_Entrega}
@@ -828,9 +834,9 @@ Verifica seleção de tabela de preço(${TELA})
     Sleep    ${SLEEP_MEDIO}
     ${tabelaVendedor}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT * FROM tabelas_vendedores tb WHERE tb.idVendedor = ${Codigo_Vendedor} AND tb.MyCommerce = 1 AND tb.Excluido = 0;
 
-    # Validação por conta que, nas telas 'OrdemDeServico', 'Condicional' e 'Devolução' ao informar o vendedor, o sistema não seleciona no combobox a primeira tabela de preço 
+    # Validação por conta que, nas telas 'OrdemDeServico', 'Condicional', 'Devolução' e 'Doação' ao informar o vendedor, o sistema não seleciona no combobox a primeira tabela de preço 
     # da listagem, conforme ocorre nas outras telas, quando o cenário das sql's acima.
-    IF    '${TELA}' == 'OrdemDeServico' or '${TELA}' == 'Condicional' or '${TELA}' == 'Devolução'
+    IF    '${TELA}' == 'OrdemDeServico' or '${TELA}' == 'Condicional' or '${TELA}' == 'Devolução' or '${TELA}' == 'Doação'
 
         Sleep    ${SLEEP_BAIXO}
         Run Keyword If    ${tabelaPadrao} or ${tabelaVendedor}    Press Special Key    DOWN

@@ -7,6 +7,7 @@ Resource    ../KeyWords/Comercial/Condicional/KeyCondicional1.robot
 Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
+Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
 
 Resource    ../utils/utils.robot
 Library    SikuliLibrary
@@ -270,15 +271,13 @@ Dado que cadastro uma conta a pagar avulsa
     keyContasPagar1.Então gravo o lançamento de conta a pagar avulsa
 
 Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
-    
+
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
     keyVendas1.Quando insiro um produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
-
-    # Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
 Dado que realizo mais de uma venda(${Quantidade_Vendas})
     
@@ -288,6 +287,7 @@ Dado que realizo mais de uma venda(${Quantidade_Vendas})
     FOR    ${I}    IN RANGE    ${Quantidade_Vendas}
         
         Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
+        Sleep    ${SLEEP_MEDIO}
         
         Append To List    ${Codigos_Vendas}    ${CODIGO_OPERACAO_MOV}
         Append To List    ${Codigos_de_Produtos}    ${COD_PRODUTO}
@@ -299,3 +299,11 @@ Dado que realizo mais de uma venda(${Quantidade_Vendas})
 
     Set Test Variable    ${Codigos_de_Produtos}
     Log To Console    Produtos em vendas geradas: ${Codigos_de_Produtos}
+
+Dado que eu realizo uma doação
+    KeyDocao1.Dado que eu acesso a tela de doações
+    KeyDocao1.Quando eu clico em adicionar
+    KeyDocao1.E adiciono vendedor e cliente
+    KeyDocao1.Quando insiro um produto normal
+    KeyDocao1.E acesso a aba detalhes
+    KeyDocao1.Então finalizo a doação
