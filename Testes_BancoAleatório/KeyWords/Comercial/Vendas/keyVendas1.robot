@@ -68,6 +68,7 @@ ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.pnG
 ${Codigos_Produtos}                      ${None}
+${SETA_ULTIMA_VENDA}                     bt_SetaUltimaVenda.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -252,14 +253,15 @@ Então finalizo a venda
     Valida Parametros/Impressões pós venda
 
     #Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
-    Sleep    ${SLEEP_MEDIO}
-    Press Special Key    F2
-    Sleep    ${SLEEP_MEDIO}
+    SikuliLibrary.Click    ${SETA_ULTIMA_VENDA}
+    Sleep    ${SLEEP_BAIXO}
+    # Sleep    ${SLEEP_MEDIO}
+    # Press Special Key    F2
+    # Sleep    ${SLEEP_MEDIO}
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
     Press Combination    KEY.ALT     Key.S
-    Press Special Key    ESC
     Sleep    ${SLEEP_ALTO}
 
     keyVendas1.Valida baixa de estoque

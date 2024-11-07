@@ -48,6 +48,8 @@ ${TELA_IMPRESSAO_ENTREGA}                              tela_ImpressaoEntrega.png
 ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}    aviso_NaoPermitidoMultiplasVendasPorEntrega.png
 ${TELA_ENTREGAS}                                       tela_Entregas.png
 ${TELA_ORDEM_DE_ENTREGA}                               tela_OrdemDeEntrega.png
+${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
+${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -73,6 +75,8 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     Set Test Variable    ${Aviso_vendedor_existe}
 
     Set Test Variable    ${Observacao_existe}
+
+    Valida cadastro padrão de endereço
 
     IF    ${Observacao_existe}  
             
@@ -170,6 +174,8 @@ Verifica parametros que interferem na venda
     ${Parametro_ImpressaoAposGerarEntrega} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ImpressaoEntrega
     ${Parametro_UmaEntregaPorVenda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_UmaEntregaPorVenda
     ${Parametro_ConsideraDoacoes} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ConsideraDoacoes
+    ${Parametro_Venda_Padrao_Entregue} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    Venda_Padrao_Entregue
+    ${Parametro_TrazerDescricaoAutomaticaEntrega} =    Run Keyword And Return Status    Should Contain    ${Lista_de_pametros}    TrazerDescricaoAutomaticaEntrega
 
 
     IF    ${Parametro_VendaRapida}
@@ -295,6 +301,10 @@ Verifica parametros que interferem na venda
     Set Test Variable    ${Parametro_UmaEntregaPorVenda}
 
     Set Test Variable    ${Parametro_ConsideraDoacoes}
+
+    Set Test Variable    ${Parametro_Venda_Padrao_Entregue}
+
+    Set Test Variable    ${Parametro_TrazerDescricaoAutomaticaEntrega}
 
 Valida aviso exige senha para outro vendedor
 
@@ -728,4 +738,40 @@ Valida considerar lançamento de ordem de entrega de doações
         
         Fail   \nNão habilitado para considerar lançamentos de doações.\nParâmetro: Considerar Lançamentos de Doações: ${Parametro_ConsideraDoacoes}
     
+    END
+
+Valida descricao automatica de ordem de entrega
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    IF    '${Parametro_TrazerDescricaoAutomaticaEntrega}' == 'False'
+        Log To Console    Descricao automatica: ${Parametro_TrazerDescricaoAutomaticaEntrega}
+
+        ${aux} =    Exists    ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}
+        Log To Console    input nao automatico: ${aux}
+
+        IF    '${aux}' == 'False'
+
+            Input Text    ${EMPTY}    Entrega - Teste Automacao
+            Press Special Key    TAB
+
+        ELSE
+
+            Press Special Key    TAB
+
+        END
+        
+    END
+
+Valida cadastro padrão de endereço
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${msgTela} =    Exists    ${TELA_ENDERECO_ENTREGA_VENDA}
+
+    IF    ${msgTela}
+
+        Press Special Key    ESC
+        Sleep    ${SLEEP_BAIXO}
+        
     END

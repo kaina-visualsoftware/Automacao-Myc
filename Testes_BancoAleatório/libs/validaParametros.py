@@ -18,7 +18,7 @@ class validaParametros:
                           "ExibeFotoCli, ControlaEntregaPrevista, LocalNegociacao, ImprimirOrdemEntrega, PermiteVariasTabelas, ImprimirOrdemEntrega, "
                           "SuprimirOS, Orc_DesabilitaServico, SelecionaFunc_OS, FaturarOS, ImprimirCarneOS, ImprimirOS, Vende_Sem_Estoque_Condicional, "
                           "ImprimiCondicional, RealizaVendaSemEstoque_PreVenda, RealizaVendaSemEstoque_OS, DevolucaoAvulsa, ExigeObsTroca, Dev_PermiteAberta, "
-                          "RealizaVendaSemEstoque_Venda, PrevendaBloqueioVendaParcial, CaixaUsuario, DescontoFinalIgualmente, OrcamentoComEstoque_Bloq, BaixaEstoquePreVenda")
+                          "RealizaVendaSemEstoque_Venda, PrevendaBloqueioVendaParcial, CaixaUsuario, DescontoFinalIgualmente, OrcamentoComEstoque_Bloq, BaixaEstoquePreVenda, Venda_Padrao_Entregue, TrazerDescricaoAutomaticaEntrega")
 
         avisosMarcados = []
         updatesParametros = []

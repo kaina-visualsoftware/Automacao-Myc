@@ -47,6 +47,7 @@ ${ROW_VENDA_INCLUSA_ENTREGA}                   row_VendaInclusaEntrega.png
 ${TELA_VISUALIZACAO_ENTREGA}                   tela_VisualizacaoEntrega.png
 ${TELA_EXCLUSAO_ENTREGA}                       tela_ExclusaoEntrega.png
 ${TELA_WORKFLOW_ENTREGA}                       tela_WorkflowEntrega.png
+${BT_SETA_INCLUIR_PRODUTO_ENTREGA}             bt_SetaIncluirProdutoEntrega.png
 
 *** Keywords ***
 
@@ -54,25 +55,18 @@ Ler imagens iniciais
     Add Image Path    ${IMAGENS}
 
 Dado que eu inicio um lançamento de Ordem de Entrega Novo
-    
-    ${telaEntregas} =    Valida se a tela Entregas está aberta
-    Log To Console    telaEntregas: ${telaEntregas}
-
-    IF    '${telaEntregas}' == 'False'
         
-        SikuliLibrary.Click    ${MENU_EMISSÃO}
-        Wait Until Screen Contain    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${MENU_EMISSÃO}
+    Wait Until Screen Contain    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-        SikuliLibrary.Click    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO}
-        Wait Until Screen Contain    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO_LANCAMENTO}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO}
+    Wait Until Screen Contain    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO_LANCAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-        SikuliLibrary.Click    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO_LANCAMENTO}
-        Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
-
-    END
+    SikuliLibrary.Click    ${SUBMENU_ORDEM_DE_ENTREGA_NOVO_LANCAMENTO}
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
 Quando seleciono a última venda gerada
 
@@ -92,8 +86,11 @@ Quando seleciono a última venda gerada
 
 E seleciono o produto
 
-    Press Special Key   TAB
+    Valida descricao automatica de ordem de entrega
+
+    Wait Until Screen Contain    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
@@ -161,20 +158,20 @@ Quando seleciono a última doação gerada
     Input Text    ${EMPTY}    ${COD_DOACAO}
     Sleep    ${SLEEP_BAIXO}
 
-Valida se a tela Entregas está aberta
+# Valida se a tela Entregas está aberta
 
-    ${telaEntregas} =    Exists    ${TELA_ENTREGAS}
+#     ${telaEntregas} =    Exists    ${TELA_ENTREGAS}
 
-    IF    ${telaEntregas}
+#     IF    ${telaEntregas}
         
-        Press Combination    KEY.ALT    KEY.A
+#         Press Combination    KEY.ALT    KEY.A
 
-        Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
+#         Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
+#         Sleep    ${SLEEP_BAIXO}
 
-    END
+#     END
 
-    RETURN    ${telaEntregas}
+#     RETURN    ${telaEntregas}
 
 Valida detalhes da geração de entrega
 
@@ -322,6 +319,8 @@ E visualizo a entrega
     Press Combination    KEY.ALT    KEY.V
     Wait Until Screen Contain    ${TELA_VISUALIZACAO_ENTREGA}    ${TEMPO_TELA}
 
+    Press Combination    KEY.ALT    KEY.S
+
 E excluo a entrega
 
     Press Combination    KEY.ALT    KEY.X
@@ -335,7 +334,7 @@ E excluo a entrega
             
     END
 
-    Check If Exists In Database    SELECT * FROM entregas_pendentes ep INNER JOIN grupo_entregas gp ON ep.GrupoEntrega = gp.ID WHERE ep.GrupoEntrega = 317 AND ep.Cancelada = 1 AND gp.Empresa = ep.Empresa AND gp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+    Check If Exists In Database    SELECT * FROM entregas_pendentes ep INNER JOIN grupo_entregas gp ON ep.GrupoEntrega = gp.ID WHERE ep.GrupoEntrega = ${ID_GRUPO_ENTREGA} AND ep.Cancelada = 1 AND gp.Empresa = ep.Empresa AND gp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
 
 E visualizo o Workflow da entrega
 

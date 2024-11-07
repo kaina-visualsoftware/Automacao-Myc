@@ -58,8 +58,12 @@ Quando eu clico em adicionar
 
 Última doação feita/em aberto
     
+    Sleep    ${SLEEP_MEDIO}
     ${Consulta}    Query    SELECT d.Codigo FROM doacoes d ORDER BY d.Codigo DESC LIMIT 1;
-    Set Test Variable    ${COD_DOACAO}    ${Consulta[0][0]}  
+    Set Test Variable    ${COD_DOACAO}    ${Consulta[0][0]}
+    Sleep    ${SLEEP_BAIXO}
+
+    Log To Console    \nCódigo doação: ${COD_DOACAO}
 
 E adiciono vendedor e cliente
 
