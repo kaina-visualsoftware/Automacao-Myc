@@ -746,10 +746,8 @@ Valida descricao automatica de ordem de entrega
     Sleep    ${SLEEP_BAIXO}
 
     IF    '${Parametro_TrazerDescricaoAutomaticaEntrega}' == 'False'
-        Log To Console    Descricao automatica: ${Parametro_TrazerDescricaoAutomaticaEntrega}
 
         ${aux} =    Exists    ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}
-        Log To Console    input nao automatico: ${aux}
 
         IF    '${aux}' == 'False'
 

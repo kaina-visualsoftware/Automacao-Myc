@@ -158,21 +158,6 @@ Quando seleciono a última doação gerada
     Input Text    ${EMPTY}    ${COD_DOACAO}
     Sleep    ${SLEEP_BAIXO}
 
-# Valida se a tela Entregas está aberta
-
-#     ${telaEntregas} =    Exists    ${TELA_ENTREGAS}
-
-#     IF    ${telaEntregas}
-        
-#         Press Combination    KEY.ALT    KEY.A
-
-#         Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
-#         Sleep    ${SLEEP_BAIXO}
-
-#     END
-
-#     RETURN    ${telaEntregas}
-
 Valida detalhes da geração de entrega
 
     ${telaDetalhes} =    Exists    ${TELA_DETALHES_GERACAO_ENTREGA}

@@ -792,19 +792,6 @@ Pesquisa comissões por escalonamento
 
     RETURN    ${Descontos_Comissoes}
 
-Verifica cliente pessoa jurídica
-
-    ${Pessoa_Juridica}    Query    SELECT cl.FisicaJuridica FROM clientes AS cl WHERE cl.Codigo = ${Codigo_Cliente};
-
-    IF    $Pessoa_Juridica[0][0] == 'J'
-        Sleep    ${SLEEP_MEDIO}
-        Press Special Key    TAB
-        
-        Wait Until Screen Contain    ${TELA_CONS_FINAL}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
-        Press Combination    key.Alt    key.p
-    END
-
 Valida a inserção do mesmo produto várias vezes no grid
 
     ${AVISO}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}    ${SLEEP_ALTO}
