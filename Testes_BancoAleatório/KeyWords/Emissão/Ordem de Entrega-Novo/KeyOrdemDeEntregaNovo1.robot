@@ -95,7 +95,8 @@ E seleciono o produto
     Sleep    ${SLEEP_BAIXO}
 
 Última entrega gerada
-
+    
+    Sleep    ${SLEEP_BAIXO}
     ${consulta}    Query    SELECT ep.GrupoEntrega FROM entregas_pendentes ep ORDER BY ep.ID DESC LIMIT 1;
 
     Set Test Variable    ${ID_GRUPO_ENTREGA}    ${consulta[0][0]}
