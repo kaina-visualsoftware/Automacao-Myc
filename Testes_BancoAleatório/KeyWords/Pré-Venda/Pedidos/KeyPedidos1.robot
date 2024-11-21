@@ -343,6 +343,10 @@ Então gero a venda parcialmente do produto selecionado
                 Sleep    ${SLEEP_MEDIO}
 
             END
+            
+        ELSE
+
+            validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
         END
 
