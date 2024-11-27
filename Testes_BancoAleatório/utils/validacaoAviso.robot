@@ -714,6 +714,7 @@ Valida impressão após gerar entrega
         
     ${telaImpressaoEntrega}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_IMPRESSAO_ENTREGA}    ${TEMPO_TELA}
 
+    Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
 

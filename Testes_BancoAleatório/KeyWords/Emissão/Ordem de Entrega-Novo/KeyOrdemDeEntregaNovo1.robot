@@ -104,6 +104,7 @@ E seleciono o produto
 Então gero a entrega
 
     Press Combination    KEY.ALT    KEY.G
+    Sleep    ${SLEEP_BAIXO}
 
     Valida detalhes da geração de entrega
 
@@ -162,10 +163,10 @@ Quando seleciono a última doação gerada
 Valida detalhes da geração de entrega
 
     ${telaDetalhes} =    Exists    ${TELA_DETALHES_GERACAO_ENTREGA}
-    ${codigoEntregador}    Seleciona o entregador da entrega
-    Sleep    ${SLEEP_MEDIO}
 
     IF    ${telaDetalhes}
+
+        ${codigoEntregador}    Seleciona o entregador da entrega
 
         SikuliLibrary.Click    ${INPUT_COD_ENTREGADOR}
         Input Text    ${EMPTY}    ${codigoEntregador}
@@ -338,4 +339,4 @@ Então saio das telas de Entrega e Ordem de Entrega
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
     Press Combination    KEY.ALT    KEY.S
-    Sleep    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
