@@ -125,12 +125,11 @@ Recuperando numero documento
 
 Informando data competência
 
-    FOR    ${I}    IN RANGE    2
-        Press Combination    KEY.SHIFT    KEY.TAB
-    END
+    Press Combination    KEY.SHIFT    KEY.TAB
+    Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.CTRL    KEY.C    
-    Press Special Key    TAB
-    Press Combination    KEY.CTRL    KEY.V
-    Press Special Key    TAB
+    Type With Modifiers    H
+    Sleep    ${SLEEP_BAIXO}
 
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
