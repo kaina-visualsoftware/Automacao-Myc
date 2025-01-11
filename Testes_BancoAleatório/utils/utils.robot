@@ -211,7 +211,8 @@ Seleciona cliente
 
 Seleciona plano de contas - Débito
 
-    ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo LIKE 'D') ORDER BY RAND() LIMIT 1;
+    ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo = 'D') AND Excluido IS NULL ORDER BY RAND() LIMIT 1;
+
 
     RETURN    ${Plano_de_Contas[0][0]}
 
@@ -223,7 +224,7 @@ Seleciona plano de contas - Crédito
 
 Seleciona modalidade de cobrança 
     
-    ${Modalidade_de_Cobranca}    Query    SELECT Codigo FROM modalidadecb ORDER BY RAND() LIMIT 1;
+    ${Modalidade_de_Cobranca}    Query    SELECT Codigo FROM modalidadecb WHERE Cancelado IS NULL ORDER BY RAND() LIMIT 1;
 
     RETURN    ${Modalidade_de_Cobranca[0][0]}
 
