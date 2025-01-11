@@ -35,7 +35,8 @@ Ler imagens iniciais
     Add Image Path    ${IMAGES}
 
 Dado que acesso a tela de geração de vendas
-
+    
+    Sleep    ${SLEEP_BAIXO}
     Type With Modifiers    G    CTRL
     Wait Until Screen Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}

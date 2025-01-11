@@ -241,9 +241,16 @@ Então gero a venda totalmente
     Validação de geração de venda
 
     validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
-
-    Press Combination    KEY.ALT     Key.S
+    
+    Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
+
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_BAIXO}
+
+    #Sair da tela de Vendas
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
     KeyPedidos1.Valida baixa de estoque
 
@@ -354,6 +361,9 @@ Então gero a venda parcialmente do produto selecionado
 
     Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
+
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.S
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
