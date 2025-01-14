@@ -33,6 +33,7 @@ ${TELA_DOACOES}         tela_Doacoes.png
 ${TELA_LANC_DOACOES}    tela_LancDoacoes.png
 ${ABA_DETALHES}         aba_Detalhes.png
 ${TELA_IMPRESSAO}       tela_Impressao.png
+${BT_ADICIONAR}         bt_Adicionar.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -51,7 +52,8 @@ Quando eu clico em adicionar
     Verifica parametros que interferem na venda
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.A
+    #Press Combination    KEY.ALT    KEY.A
+    SikuliLibrary.Click    ${BT_ADICIONAR}
     Wait Until Screen Contain    ${TELA_LANC_DOACOES}    ${TEMPO_TELA}
 
     Última doação feita/em aberto

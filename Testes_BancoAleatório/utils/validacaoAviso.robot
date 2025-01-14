@@ -693,6 +693,7 @@ Valida data de vencimento em feriados, sábados e domingos para pagamentos a pra
     IF    ${AVISO}
         
         Press Combination    KEY.Alt   KEY.s
+        Sleep    ${SLEEP_BAIXO}
 
     END
 
