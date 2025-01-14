@@ -45,14 +45,15 @@ Quando seleciono o ultimo pedido feito
     
     Press Combination    KEY.ALT     Key.L
     Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_CARREGANDO_PEDIDOS}     ${TEMPO_TELA}
-    #Wait Until Screen Contain    ${GRID_LISTAGEM_PEDIDOS}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${LABEL_PEDIDO}
-    Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${LABEL_PEDIDO}
-    Sleep    ${SLEEP_BAIXO}
+    #Wait Until Screen Contain    ${TELA_CARREGANDO_PEDIDOS}     ${TEMPO_TELA}
 
+    Sleep    ${SLEEP_ALTO}
+    SikuliLibrary.Click    ${LABEL_PEDIDO}
+
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${LABEL_PEDIDO}
+
+    Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Pedido}
 
     Sleep    ${SLEEP_BAIXO}
@@ -79,6 +80,8 @@ Então confirmo a geração da venda
             END
 
     END
+
+    Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
     KeyGeracaoDeVenda1.Validação de geração de venda
 
@@ -110,8 +113,14 @@ Então confirmo a geração dos pedidos
         END
 
     END
-
+    
     Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
+                    
+       Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo         
+
+    END
     
     KeyGeracaoDeVenda1.Validação da geração de venda de mais de um pedido
 
