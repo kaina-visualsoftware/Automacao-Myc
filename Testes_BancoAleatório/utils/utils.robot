@@ -4,6 +4,7 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    Process
+Library    Collections
 
 Resource    ./validacaoAviso.robot
 *** Variables ***
@@ -48,6 +49,11 @@ ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
 ${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
 ${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
 ${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
+${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}    input_CodCliente.png
+${BT_SETA_DIREITA}                       bt_SetaDireita.png
+${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}      bt_IncluirProdutoNFeSaidaManual.png
+${LABEL_REF_PRODUTO}                     label_RefProduto.png
+${AVISO_EST_INSUFICIENTE_CONTINUAR}      aviso_EstoqueInsuficienteContinuar.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -108,31 +114,33 @@ Personalização de Pagamentos
 
 Adicionar Vendedor e Cliente(${TELA})
 
-    IF    ${Vendedor_Selecionada_Escalonada} != $True
+    IF    '${TELA}' != 'NFeSaidasManual'
 
-        Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
+        IF    ${Vendedor_Selecionada_Escalonada} != $True
+
+            Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
+            Sleep    ${SLEEP_BAIXO}
+            ${codVendedor}    Seleciona vendedor
+
+            Set Test Variable    ${Codigo_Vendedor}    ${codVendedor}
+
+            #VALIDA SE O TESTE SERÁ DE COMISSÃO
+            Valida teste de comissão
+
+        END
+
+        Valida vendedor padrao
+
+        Input Text    ${EMPTY}    ${Codigo_Vendedor}
+        Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
-        ${codVendedor}    Seleciona vendedor
 
-        Set Test Variable    ${Codigo_Vendedor}    ${codVendedor}
-
-        #VALIDA SE O TESTE SERÁ DE COMISSÃO
-        Valida teste de comissão
-
+        Verifica seleção de tabela de preço(${TELA})
+        
     END
 
-    ${codCliente}    Seleciona cliente 
-    
-    #VALIDA VENDEDOR PADRÃO DO CLIENTE SELECIONADO
-    Valida vendedor padrao
-
+    ${codCliente}    Seleciona cliente
     Set Test Variable    ${Codigo_Cliente}    ${codCliente}
-
-    Input Text    ${EMPTY}    ${Codigo_Vendedor}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-
-    Verifica seleção de tabela de preço(${TELA})
 
     IF    '${TELA}' == 'Orcamento'
 
@@ -144,11 +152,8 @@ Adicionar Vendedor e Cliente(${TELA})
 
     ELSE IF     '${TELA}' == 'OrdemDeServico'
 
-        #Press Special Key    TAB
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
         Sleep    ${SLEEP_MEDIO}
-        #SikuliLibrary.Click    ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}
-        # Log To Console    Clicou
 
     ELSE IF     '${TELA}' == 'Condicional'
         
@@ -164,11 +169,15 @@ Adicionar Vendedor e Cliente(${TELA})
 
         SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
         Sleep    ${SLEEP_BAIXO}
-        #SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
     
     ELSE IF    '${TELA}' == 'Doação'
 
         SikuliLibrary.Click    ${INPUT_COD_BENEFICIADO_DOACAO}
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE IF    '${TELA}' == 'NFeSaidasManual'
+
+        SikuliLibrary.Click    ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -186,8 +195,9 @@ Adicionar Vendedor e Cliente(${TELA})
     Set Test Variable    ${TELA}
 
     ${Forma_Padrao_Cliente}    valida_Forma_Parcelamento_Cliente    ${Codigo_Cliente}
+    Log To Console    Forma padrao cliente: ${Forma_Padrao_Cliente}
 
-    IF    ${Forma_Padrao_Cliente} != $False
+    IF    '${Forma_Padrao_Cliente}' != 'False'
         
         Log To Console    Possui forma padrão no cliente: ${Forma_Padrao_Cliente}
 
@@ -463,9 +473,27 @@ Seleciona servico com linha de comissao
 
 Inserir Produto normal - Necessita de estoque
 
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.P
-    Sleep    ${SLEEP_BAIXO}
+    Log To Console    \nNecessita de estoque
+
+    IF    '${TELA}' == 'NFeSaidasManual'
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Click    ${BT_SETA_DIREITA}
+        Sleep    ${SLEEP_BAIXO}
+        
+        Type With Modifiers    P    SHIFT
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+
+    END
 
     IF    '${TELA}' == 'Pedido'
         
@@ -489,9 +517,27 @@ Inserir Produto normal - Necessita de estoque
 
 Inserir Produto normal - Permite sem estoque
 
-    Sleep    ${SLEEP_MEDIO}
-    Press Combination    KEY.ALT     Key.P
-    Sleep    ${SLEEP_BAIXO}
+    Log To Console    \nPermite sem estoque
+
+    IF    '${TELA}' == 'NFeSaidasManual'
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Click    ${BT_SETA_DIREITA}
+        Sleep    ${SLEEP_BAIXO}
+        
+        Type With Modifiers    P    SHIFT
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+
+    END
 
     ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
@@ -539,9 +585,31 @@ Valida parametros após incluir produto
 
     IF    ${Parametro_IncluiDireto} != ${True}
         
-        Press Combination    KEY.ALT     Key.I
-        Sleep    ${SLEEP_BAIXO}
+        IF    '${TELA}' == 'NFeSaidasManual'
+            
+            SikuliLibrary.Click    ${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}
+            Sleep    ${SLEEP_BAIXO}
 
+        ELSE
+
+            Press Combination    KEY.ALT     Key.I
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+
+    END
+
+    IF    ${Parametro_RealizaVendaSemEstoque}
+
+        ${avisoProdEstoqueInsuficiente}    Exists    ${AVISO_EST_INSUFICIENTE_CONTINUAR}
+
+       IF    ${avisoProdEstoqueInsuficiente}
+           
+            Press Combination    KEY.ALT    KEY.S
+            Sleep    ${SLEEP_BAIXO}
+
+       END
+        
     END
 
     Valida a inserção do mesmo produto várias vezes no grid
@@ -841,6 +909,96 @@ Altera para vendedor vinculado ao cliente
         Sleep    ${SLEEP_BAIXO}
 
     END
+
+Quando informo um produto normal
+
+    ${Codigos_Produtos} =    Create List
+    ${numeroDeProdutos}    Evaluate    random.randint(1, 3)
+    Set Global Variable    ${valorTotalNota}    0
+    Log To Console    \nNúmero De Produtos: ${numeroDeProdutos}
+
+    FOR    ${I}    IN RANGE    ${numeroDeProdutos}
+        
+        Selecionar produto
+
+        Valida parametros após incluir produto
+
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
+
+    END
+
+    Log To Console    Produtos adicionados na venda: ${Codigos_Produtos}
+
+    Set Test Variable    ${Codigos_Produtos}
+    
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${numeroDeProdutos}
+    
+Selecionar produto
+
+    ${campoRefProd}    Exists    ${LABEL_REF_PRODUTO}
+
+    IF    '${TELA}' == 'NFeSaidasManual'
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${campoRefProd}
+            
+            SikuliLibrary.Click    ${BT_SETA_DIREITA}
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Type With Modifiers    P    SHIFT
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT     Key.P
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    ${produto}    Query    SELECT Codigo, VendaT1 FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_MEDIO}
+    #Log To Console    Retorno da Query: ${produto}
+
+    Input Text    ${EMPTY}    ${produto[0][0]}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Set Test Variable    ${COD_PRODUTO}    ${produto[0][0]}
+    
+    ${qtdeProduto}    Evaluate    random.randint(1, 3)
+    #Log To Console    Quantidade De Produto: ${qtdeProduto}
+
+    Input Text    ${EMPTY}    ${qtdeProduto}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${valorUnitario}    Set Variable    ${produto[0][1]}
+    #Log To Console    Valor Unitário: ${valorUnitario}
+    
+    ${valorTotalProduto}    Evaluate    ${qtdeProduto} * ${valorUnitario}
+    #Log To Console    Valor Total do Produto: ${valorTotalProduto}
+
+    ${valorTotalNota}    Evaluate    (${valorTotalProduto} + ${valorTotalNota})
+    Set Global Variable    ${valorTotalNota}
+
+    Set Test Variable    ${VALOR_TOTAL}    ${valorTotalNota}
+    Log To Console    Valor Total: ${VALOR_TOTAL}
+
+    
+
+
+
+
 
 # Valida vendedor padrao
     

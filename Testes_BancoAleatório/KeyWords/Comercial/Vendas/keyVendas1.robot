@@ -64,7 +64,7 @@ ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
-${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
+${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.pnG
 ${Codigos_Produtos}                      ${None}

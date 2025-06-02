@@ -90,12 +90,21 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    
-    IF    ${Aviso_Vendedor_Existe_Comissao}  
+    IF    '${TELA}' != 'NFeSaidasManual'
 
-        Valida aviso cliente outro vendedor
+        IF    ${Aviso_Vendedor_Existe_Comissao}  
 
+            Valida aviso cliente outro vendedor
+
+        END
+        
     END
+
+    # IF    ${Aviso_Vendedor_Existe_Comissao}  
+
+    #     Valida aviso cliente outro vendedor
+
+    # END
 
     Verifica se condicional existe(${Codigo_Cliente})
 
