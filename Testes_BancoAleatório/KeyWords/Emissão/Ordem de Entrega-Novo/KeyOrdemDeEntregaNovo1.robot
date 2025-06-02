@@ -168,7 +168,14 @@ Valida detalhes da geração de entrega
 
         ${codigoEntregador}    Seleciona o entregador da entrega
 
-        SikuliLibrary.Click    ${INPUT_COD_ENTREGADOR}
+        ${tela} =    Exists    ${INPUT_COD_ENTREGADOR}
+
+        IF    ${tela}
+        
+            SikuliLibrary.Click    ${INPUT_COD_ENTREGADOR}
+
+        END
+        
         Input Text    ${EMPTY}    ${codigoEntregador}
         Sleep    ${SLEEP_BAIXO}
 

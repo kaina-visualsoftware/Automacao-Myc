@@ -568,7 +568,7 @@ Valida tela de confirmação de data
     Set Test Variable    ${Controle_Pag_Rec_Diario}
 
 Recupera sequencia caixa
-    
+
     IF    ${Parametro_CaixaControladoPorUsuario}
         
         #No MyCommerce valida se o caixa que está aberto ou por usuario ou por terminal, tem marcado o recebimento ou pagamento diario, se não tiver exibe a tela de confirmação de data
@@ -580,6 +580,7 @@ Recupera sequencia caixa
 
     END
     
+    Log To Console    Controle_Pag_Rec_Diario: ${Controle_Pag_Rec_Diario[0][0]}
     Set Test Variable    ${CODIGO_CAIXA}    ${Controle_Pag_Rec_Diario[0][0]}
 
 Cria novo NDocumento a partir da sequencia do caixa

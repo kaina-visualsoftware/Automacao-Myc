@@ -221,7 +221,8 @@ Seleciona cliente
 
 Seleciona plano de contas - Débito
 
-    ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo LIKE 'D') ORDER BY RAND() LIMIT 1;
+    ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo = 'D') AND Excluido IS NULL ORDER BY RAND() LIMIT 1;
+
 
     RETURN    ${Plano_de_Contas[0][0]}
 
@@ -233,7 +234,7 @@ Seleciona plano de contas - Crédito
 
 Seleciona modalidade de cobrança 
     
-    ${Modalidade_de_Cobranca}    Query    SELECT Codigo FROM modalidadecb ORDER BY RAND() LIMIT 1;
+    ${Modalidade_de_Cobranca}    Query    SELECT Codigo FROM modalidadecb WHERE Cancelado IS NULL ORDER BY RAND() LIMIT 1;
 
     RETURN    ${Modalidade_de_Cobranca[0][0]}
 
@@ -497,8 +498,8 @@ Inserir Produto normal - Necessita de estoque
 
     IF    '${TELA}' == 'Pedido'
         
-        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND (SELECT SUM(Quantidade - QtdeGerada) AS QuantidadeEmPedidos FROM pedidosvendaprodutos WHERE CodigoProduto = codigoProduto AND Cancelada IS NULL) < pe.Estoque ORDER BY RAND() LIMIT 1;
-    
+        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+
     ELSE
 
         ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
