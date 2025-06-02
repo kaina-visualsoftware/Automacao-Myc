@@ -33,5 +33,6 @@ class config:
 
     # Obtendo o nome do terminal
     terminal_name = socket.gethostname()
+    print(terminal_name)
     # Obtendo o banco de dados, a porta e o ip retornados pelo método
     Database, Porta, IpServidor = leituraConfig()

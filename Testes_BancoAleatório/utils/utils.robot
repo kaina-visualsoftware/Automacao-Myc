@@ -470,8 +470,8 @@ Inserir Produto normal - Necessita de estoque
 
     IF    '${TELA}' == 'Pedido'
         
-        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND (SELECT SUM(Quantidade - QtdeGerada) AS QuantidadeEmPedidos FROM pedidosvendaprodutos WHERE CodigoProduto = codigoProduto AND Cancelada IS NULL) < pe.Estoque ORDER BY RAND() LIMIT 1;
-    
+        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+
     ELSE
 
         ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
