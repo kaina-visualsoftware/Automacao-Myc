@@ -6,6 +6,7 @@ Library    ../libs/validaParametros.py
 Library    Process
 
 Resource    ./utils.robot
+Resource    ../KeyWords/MyMonitorFaturamento/KeyMyMonitorFaturamento1.robot
 
 *** Variables ***
 #Sleep's    
@@ -50,6 +51,8 @@ ${TELA_ENTREGAS}                                       tela_Entregas.png
 ${TELA_ORDEM_DE_ENTREGA}                               tela_OrdemDeEntrega.png
 ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
 ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
+${AVISO_SELECAO_COI_FATURAMENTO}                       aviso_SelecaoCoiFaturamento.png
+${LABEL_COI_NFE}                                       lb_CoiNFe.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -784,3 +787,28 @@ Valida cadastro padrão de endereço
         Sleep    ${SLEEP_BAIXO}
         
     END
+
+Valida seleção de coi para faturamento
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_SELECAO_COI_FATURAMENTO}
+    ${salvar}    Set Variable    ${False}
+
+    IF    ${aviso}
+
+        Press Special Key    ENTER
+        KeyMyMonitorFaturamento1.E acesso a guia 'Configurações'
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Double Click    ${LABEL_COI_NFE}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    DOWN
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+
+        ${salvar}    Set Variable    ${True}
+        
+    END
+
+    RETURN    ${salvar}
