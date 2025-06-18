@@ -11,29 +11,37 @@ Resource    ../utils/validacaoAviso.robot
 Resource    ../utils/utils.robot
 
 *** Variables ***
+# Repositório de Imagens
 ${IMAGES}                                ./Testes_BancoAleatório/images
-#Conexão MySQL
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
-#Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
-#Imagens Telas
-${TELA_PEDIDOS}                          tela_Pedidos.png
-${TELA_PEDIDOS_ADICIONAR}                tela_PedidosAdicionar.png
-${TELA_PEDIDO_AUDITADO}                  tela_PedidoAuditado.png  
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${FORMA_RECEBIMENTO_OUTROS}              Outros...
-${TELA_GERACAO_VENDA}                    tela_GeracaoPedido.png
-${MODAL_FORMAS_DE_PAGAMENTO}             modal_FormasDePagamentoPedidos.png
-${TELA_WORKFLOW}                         tela_WorkFlowPedido.png
-${BT_WORKFLOW}                           bt_Workflow.png     
-${TELA_IMPRESSAO}                        tela_Impressao.png
+
+# Conexão com o Banco de Dados
+${DBHost}                       ${config.IpServidor}
+${DBName}                       ${config.Database}
+${DBPass}                       vssql
+${DBPort}                       ${config.Porta}
+${DBUser}                       root
+
+# Sleep's
+${SLEEP_BAIXO}                  0.7
+${SLEEP_MEDIO}                  1.5
+${SLEEP_ALTO}                   3
+${TEMPO_TELA}                   20
+${TELA_GERACAO_VENDA}           tela_GeracaoPedido.png
+${TELA_WORKFLOW}                tela_WorkFlowPedido.png
+${MODAL_FORMAS_DE_PAGAMENTO}    modal_FormasDePagamentoPedidos.png
+${TELA_IMPRESSAO}               tela_Impressao.png
+
+# Telas
+${TELA_PEDIDOS}                 tela_Pedidos.png
+${TELA_PEDIDOS_ADICIONAR}       tela_PedidosAdicionar.png
+${TELA_PEDIDO_AUDITADO}         tela_PedidoAuditado.png  
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}    tela_exclusaoVenda.png
+
+# Botões
+${BT_WORKFLOW}                  bt_Workflow.png
+
+# Outros
+${FORMA_RECEBIMENTO_OUTROS}     Outros...
 
 *** Keywords ***
 Ler imagens iniciais
@@ -51,7 +59,7 @@ Dado que acesso a tela de pedidos
 
     Set Test Variable    ${FORMA_PADRAO_PEDIDO}
 
-    ${EntradaIgualA_Outros} =     Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO_PEDIDO}    ${FORMA_RECEBIMENTO_OUTROS}
+    ${EntradaIgualA_Outros}    Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO_PEDIDO}    ${FORMA_RECEBIMENTO_OUTROS}
 
     Set Test Variable    ${EntradaIgualA_Outros}
 
@@ -65,7 +73,7 @@ E clico em adicionar
 
     Set Test Variable    ${Codigo_Pedido}     ${QUERY[0][0]}
 
-Quando adiciono vendedor e cliente 
+Quando adiciono vendedor e cliente
     
     utils.Adicionar Vendedor e Cliente(Pedido)
 
@@ -90,26 +98,28 @@ E adiciono um produto
         END
 
     END
+
     utils.Valida parametros após incluir produto
 
     ${QUERY}    Query    SELECT SUM(ValorTotal) FROM pedidosvendaprodutos WHERE CodigoPedido = ${Codigo_Pedido};
 
     Set Test Variable    ${TOTAL_PEDIDO}    ${QUERY[0][0]}
 
-Quando vou para a aba de pagamentos 
+Quando vou para a aba de pagamentos
     
     Press Combination    KEY.ALT     Key.m 
     Sleep    ${SLEEP_MEDIO}
 
-E audito o pedido 
+E audito o pedido
     
     Press Combination    KEY.ALT     Key.r
     Wait Until Screen Contain    ${TELA_PEDIDO_AUDITADO}    ${TEMPO_TELA}
 
-Então finalizo o pedido 
+Então finalizo o pedido
     
     Press Combination    KEY.ALT     Key.F
-    #Verifica se valor minimo da forma é maior que total do pedido
+
+    # Verifica se o valor mínimo da forma de pagamento é maior que o total do pedido.
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
 
         Valida tela de liberação de desconto
@@ -124,19 +134,22 @@ Então visualizo o pedido feito
 
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
+
     Press Combination    KEY.ALT     Key.V
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.C
 
 Quando finalizo o pedido sem auditar
     
     Press Combination    KEY.ALT     Key.F
     
-    #Verifica se valor minimo da forma é maior que total do pedido
+    # Verifica se o valor mínimo da forma de pagamento é maior que o total do pedido.
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
 
         Valida tela de liberação de desconto
+
     END
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
@@ -154,28 +167,31 @@ Então excluo o pedido
     
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
+
     Press Combination    KEY.ALT     Key.X
+    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
     Input Text    ${EMPTY}    Exclusao de Pedido - Teste Automacao
+
     Press Special Key    TAB
     Press Special Key    ENTER
+
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
     
     Check If Exists In Database    SELECT * FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido} AND `Status` LIKE 'x'
 
-#Criada essa Key no próprio pedido pois a ordem é totalmente diferente da ordem das outras telas 
-Valida avisos após incluir cliente e vendedor - Pré-Venda 
+# Essa key foi criada diretamente no cenário de Pedidos, pois a ordem dos elementos é totalmente diferente das demais telas.
+Valida avisos após incluir cliente e vendedor - Pré-Venda
     
     ${Lista_de_avisos}    Valida Pametros Config
 
-    ${Aviso_vendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
-    ${Aviso_infoCredito_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
-    ${Aviso_ExigeSenhaOutroVendedor_existe} =     Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
+    ${Aviso_vendedor_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
+    ${Aviso_infoCredito_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
+    ${Aviso_ExigeSenhaOutroVendedor_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
 
-    ${Observacao_existe} =    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
+    ${Observacao_existe}    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
 
     Set Test Variable    ${Aviso_vendedor_existe}
 
@@ -207,7 +223,7 @@ Valida avisos após incluir cliente e vendedor - Pré-Venda
 
     END
 
-Quando clico em gerar venda 
+Quando clico em gerar venda
 
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
@@ -248,7 +264,7 @@ Então gero a venda totalmente
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
-    #Sair da tela de Vendas
+    # Sair da tela de Vendas
     Press Combination    KEY.ALT    KEY.S
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
@@ -257,9 +273,13 @@ Então gero a venda totalmente
 Valida baixa de estoque
 
     IF    ${Parametro_BaixaEstoquePreVenda}
+
         ${COD_OPERACAO}    Set Variable    ${Codigo_Pedido}
+
     ELSE
+
         ${COD_OPERACAO}    	Set Variable    ${COD_VENDA}
+
     END
 
     Sleep    ${SLEEP_MEDIO}
@@ -287,30 +307,18 @@ Validação de geração de venda
 
     ${Produtos_Vendas}     Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM vendasprodutos WHERE CodigoVenda = ${Codigo_Venda_Gerada[0][0]}
 
-    ${Comparacao_Produtos} =     Run Keyword And Return Status     Should Be Equal    ${Produtos_Pedidos}    ${Produtos_Vendas}
-
-    IF     ${Comparacao_Produtos}
-
-        Log To Console    \nProdutos foram incluidos corretamenta na venda - Código do Pedido: ${Codigo_Pedido}
-
-    ELSE
-
-        Log To Console    \nProdutos *NÃO* foram incluidos corretamenta na venda, verifique! - Código do Pedido: ${Codigo_Pedido}
-
-    END
+    ${Comparacao_Produtos}    Should Be Equal    ${Produtos_Pedidos}    ${Produtos_Vendas}
 
     Set Test Variable    ${COD_VENDA}    ${Codigo_Venda_Gerada[0][0]}
-
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
 Quando seleciono um produto para a geração da venda
 
     IF    ${Parametro_BloqueiaGeracaoVendaParcial}
 
-        Log To Console    Parametro que bloqueia venda parcial está ativado!\nGeração de venda será cancelada!
+        Log To Console    Parâmetro que bloqueia venda parcial está ativado!\nA geração da venda será cancelada!
 
         Press Combination    KEY.ALT     Key.F
-        Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
         Sleep    ${SLEEP_BAIXO}
 
@@ -319,23 +327,24 @@ Quando seleciono um produto para a geração da venda
         Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    1
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    ENTER
 
     END
 
-Então gero a venda parcialmente do produto selecionado 
+Então gero a venda parcialmente do produto selecionado
     
     IF    ${Parametro_BloqueiaGeracaoVendaParcial}
 
-        Log To Console    Parametro que bloqueia venda parcial está ativado!\nGeração de venda foi cancelada!
+        Log To Console    Parâmetro que bloqueia venda parcial está ativado!\nA geração da venda será cancelada!
 
     ELSE
         
         Sleep    ${SLEEP_BAIXO}
         Press Combination    KEY.ALT     Key.P
-        Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${MODAL_FORMAS_DE_PAGAMENTO}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
+
         Press Combination    KEY.ALT     Key.S
         Sleep    ${SLEEP_BAIXO}
 
@@ -382,9 +391,10 @@ Então verifico se o pedido retornou corretamente
 
     SikuliLibrary.Click    ${BT_WORKFLOW}
     Wait Until Screen Contain    ${TELA_WORKFLOW}    ${SLEEP_ALTO}
+
     Press Special Key    ESC
 
-    ${VendaGerada} =     Query    SELECT Gerado FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido}
+    ${VendaGerada}    Query    SELECT Gerado FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido}
 
     Should Be Equal    ${VendaGerada[0][0]}    ${0}
 
@@ -392,13 +402,12 @@ E clico em salvar
 
     IF    ${Parametro_BloqueiaGeracaoVendaParcial}
 
-        Log To Console    Parametro que bloqueia venda parcial está ativado!\nGeração de venda foi cancelada!
+        Log To Console    Parâmetro que bloqueia venda parcial está ativado!\nA geração da venda será cancelada!
 
     ELSE
         
         Sleep    ${SLEEP_BAIXO}
         Press Combination    KEY.ALT     Key.P
-        Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${MODAL_FORMAS_DE_PAGAMENTO}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
 
