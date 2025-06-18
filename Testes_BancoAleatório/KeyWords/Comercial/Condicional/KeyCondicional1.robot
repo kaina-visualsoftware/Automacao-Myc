@@ -12,29 +12,39 @@ Resource    ../utils/utils.robot
 Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
+# Repositório de Imagens
 ${IMAGES}                                ./Testes_BancoAleatório/images
-#Conexão MySQL
+
+# Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
 ${DBName}                                ${config.Database}
 ${DBPass}                                vssql
 ${DBPort}                                ${config.Porta}
 ${DBUser}                                root
-#Sleep's
+
+# Sleep's
 ${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
-#Imagens Telas
-${TELA_CONDICIONAIS}                     tela_Condicionais.png 
+
+# Telas
+${TELA_CONDICIONAIS}                     tela_Condicionais.png
 ${TELA_ADICIONAR_CONDICIONAL}            tela_CondicionaisAdicionar.png
 ${TELA_DETALHES_CONDICIONAL}             tela_DetalhesCondicional.png
-${TELA_VISUALIZA_CONDICIONAL}            tela_VisualizaVenda.png 
+${TELA_VISUALIZA_CONDICIONAL}            tela_VisualizaVenda.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${AVISO_DESEJA_EXCLUIR}                  aviso_DesejaExcluir.png
-${MODAL_GERAR_VENDA_CONDICIONAL}         modal_GerarVendaCondicional.png
 ${TELA_VENDAS_ADICIONAR}                 atacado_TelaVendaBalcao_Adicionar.png
-${MODAL_GERAR_VENDA_PARCIAL}             modal_GerarVendaParcialCondicional.png    
 ${TELA_GERAÇÃO_VENDA_PARICAL}            tela_GeracaoVendaParcialCondicional.png
+
+# Telas Avisos
+${AVISO_DESEJA_EXCLUIR}                  aviso_DesejaExcluir.png
+
+# Botões
+
+# Outros
+${MODAL_GERAR_VENDA_CONDICIONAL}         modal_GerarVendaCondicional.png
+${MODAL_GERAR_VENDA_PARCIAL}             modal_GerarVendaParcialCondicional.png
 ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}     row_ProdInclusoVendaParcialCond.png
 ${MODAL_CANCELAR_VENDA}                  modal_CancelarVenda.png
 
@@ -46,6 +56,7 @@ Dado que acesso a tela de condicionais
     
     Press Special Key    F11
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    
     Verifica parametros que interferem na venda
 
 E adiciono uma nova Condicional
@@ -55,6 +66,7 @@ E adiciono uma nova Condicional
     Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
     ${Consulta}    Query    SELECT Codigo FROM condicionais ORDER BY Codigo DESC LIMIT 1;
+
     Set Test Variable    ${COD_CONDICIONAL}    ${Consulta[0][0]}
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_CONDICIONAL}
 
@@ -83,6 +95,7 @@ E insiro um produto normal
         END
 
     END
+
     utils.Valida parametros após incluir produto
 
 E insiro mais de um produto normal(${Quantidade})
@@ -93,12 +106,14 @@ E insiro mais de um produto normal(${Quantidade})
         
     END
 
-Então finalizo a condicional 
+Então finalizo a condicional
     
     Press Combination    KEY.ALT     Key.D
     Wait Until Screen Contain    ${TELA_DETALHES_CONDICIONAL}    ${TEMPO_TELA}
+
     Input Text    ${EMPTY}    Automacao Condicional
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.F
 
     Valida impressao direta de venda(${Parametro_ImprimeCondicional})
@@ -110,16 +125,18 @@ Então visualizo a condicional
     Press Combination    KEY.ALT     Key.U
     Wait Until Screen Contain    ${TELA_VISUALIZA_CONDICIONAL}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.r
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
-Quando clico em editar 
+Quando clico em editar
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.E
 
     utils.Valida solicitacao de senha do usuário
+
     Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
@@ -128,13 +145,14 @@ Então excluo a condicional
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.x
-
     Wait Until Screen Contain    ${AVISO_DESEJA_EXCLUIR}    ${SLEEP_ALTO}
+
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
-
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
+
     Input Text    ${EMPTY}    Exclusao de Condicional - Teste Automacao
+
     Press Special Key    TAB
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
@@ -219,13 +237,13 @@ Então cancelo a geração da venda
 
     Validação de vendas canceladas vindas do condicional
 
-Validação de vendas canceladas vindas do condicional 
+Validação de vendas canceladas vindas do condicional
     
     Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'x';
 
     Check If Not Exists In Database    SELECT * FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = ${COD_CONDICIONAL} AND QtdeGerada = 1;
 
-Validação de vendas após a geração do condicional 
+Validação de vendas após a geração do condicional
     
     Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
 

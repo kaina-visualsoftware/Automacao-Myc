@@ -203,7 +203,7 @@ Verifica parametros que interferem na venda
 
     IF    ${Parametro_VendeSemEstoque} == ${False}
         
-        Log To Console    Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
+        # Log To Console    Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
 
         Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
 

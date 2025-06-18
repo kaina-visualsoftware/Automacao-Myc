@@ -10,6 +10,7 @@ Suite Teardown      Stop Remote Server
 *** Test Cases ***
 Teste 01 - Adicionando nova Condicional
     [Tags]    Teste01
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
@@ -18,6 +19,7 @@ Teste 01 - Adicionando nova Condicional
 
 Teste 02 - Adicionando nova Condicional e visualizando
     [Tags]    Teste02
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
@@ -27,6 +29,7 @@ Teste 02 - Adicionando nova Condicional e visualizando
 
 Teste 03 - Adicionando nova Condicional e editando
     [Tags]    Teste03
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
@@ -38,15 +41,17 @@ Teste 03 - Adicionando nova Condicional e editando
 
 Teste 04 - Adicionando nova Condicional e Excluindo
     [Tags]    Teste04
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
     E insiro um produto normal
     Então finalizo a condicional
-    Então excluo a condicional        
+    Então excluo a condicional
 
 Teste 05 - Gerando venda total de uma condicional
     [Tags]    Teste05
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
@@ -55,10 +60,11 @@ Teste 05 - Gerando venda total de uma condicional
     Quando clico em gerar venda
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
-    Validação de vendas após a geração do condicional 
+    Validação de vendas após a geração do condicional
 
 Teste 06 - Gerando venda Parcial de uma condicional
     [Tags]    Teste06
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
@@ -71,6 +77,7 @@ Teste 06 - Gerando venda Parcial de uma condicional
 
 Teste 07 - Cancelando a venda total de uma condicional
     [Tags]    Teste07
+
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
@@ -81,6 +88,7 @@ Teste 07 - Cancelando a venda total de uma condicional
 
 Teste 08 - Cancelando venda Parcial de uma condicional
     [Tags]    Teste08
+    
     Dado que acesso a tela de condicionais
     E adiciono uma nova Condicional
     Quando insiro vendedor e cliente
