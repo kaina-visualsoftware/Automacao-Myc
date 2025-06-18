@@ -9,6 +9,7 @@ Suite Teardown      Stop Remote Server
 *** Test Cases ***
 Teste 01 - Venda com produto Normal
     [Tags]    Teste01
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -16,8 +17,9 @@ Teste 01 - Venda com produto Normal
     E acesso a aba pagamentos
     Então finalizo a venda
 
-Teste 02 - Visualizando uma venda 
+Teste 02 - Visualizando uma venda
     [Tags]    Teste02
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -28,6 +30,7 @@ Teste 02 - Visualizando uma venda
 
 Teste 03 - Editando venda
     [Tags]    Teste03
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -40,8 +43,9 @@ Teste 03 - Editando venda
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
 
-Teste 04 - Excluindo uma venda 
+Teste 04 - Excluindo uma venda
     [Tags]    Teste04
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -50,8 +54,9 @@ Teste 04 - Excluindo uma venda
     Então finalizo a venda - A Prazo
     Então clico em excluir
 
-Teste 05 - Realizando venda com mais de um produto 
+Teste 05 - Realizando venda com mais de um produto
     [Tags]    Teste05
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -61,6 +66,7 @@ Teste 05 - Realizando venda com mais de um produto
 
 Teste 06 - Realizando venda com desconto ao finalizar
     [Tags]    Teste06
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -70,9 +76,10 @@ Teste 06 - Realizando venda com desconto ao finalizar
 
 Teste 07 - Realizando venda com mais de um produto 
     [Tags]    Teste07
+
     Dado que acesso a tela de vendas de balcao
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro mais de um produto normal(2)
     E acesso a aba pagamentos
-    Então finalizo a venda - Desconto(25) 
+    Então finalizo a venda - Desconto(25)
