@@ -11,39 +11,51 @@ Resource    ../utils/validacaoAviso.robot
 Resource    ../utils/utils.robot
 
 *** Variables ***
+# Repositório de Imagens
 ${IMAGES}                                ./Testes_BancoAleatório/images
-#Conexão MySQL
+
+# Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
 ${DBName}                                ${config.Database}
 ${DBPass}                                vssql
 ${DBPort}                                ${config.Porta}
 ${DBUser}                                root
-#Sleep's
+
+# Sleep's
 ${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
 ${TEMPO_TELA}                            20
-#Imagens Telas
+
+# Telas
 ${TELA_ORDEM_DE_SERVICO}                 tela_OrdemDeServico.png
-${TELA_ADICIONAR_ORDEM_DE_SERVICO}       tela_OrdemDeServicoAdicionar.png 
-${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
-${FORMA_RECEBIMENTO_OUTROS}              Outros...
-${TELA_FATURAMENTO_OS}                   modal_OpcoesDeFaturamento.png 
+${TELA_ADICIONAR_ORDEM_DE_SERVICO}       tela_OrdemDeServicoAdicionar.png
+${TELA_FATURAMENTO_OS}                   modal_OpcoesDeFaturamento.png
 ${TELA_IMPRIME_CARNE_OS}                 tela_ImprimeCarneOS.png
-${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png 
-${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
-${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
+${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png
 ${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPagOS.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
-${LABEL_DESCRIÇÃO}                       lb_Descricao.png 
-${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png  
+${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
 ${TELA_CHECKLIST}                        tela_CheckList.png
 ${TELA_NFS-E}                            tela_NFSe.png
+${TELA_OPCOES_FATURAMENTO}               tela_OpcoesFaturamento.png
+
+# Telas Avisos
 ${AVISO_NFSE_REJEITADA}                  aviso_NFSeRejeitada.png
 ${AVISO_NFSE_COM_PROBLEMA}               aviso_NFSeComProblema.png
-${LABEL_AGUARDE_GERANDO_NFSE}            lb_AguardeGerandoNFSe.png
 ${AVISO_NFSE_PROCESSAMENTO}              aviso_NFSeProcessamento.png
+
+# Botões
+${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
+${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
+
+# Outros
+${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+${FORMA_RECEBIMENTO_OUTROS}              Outros...
+${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+${LABEL_DESCRIÇÃO}                       lb_Descricao.png
+${LABEL_AGUARDE_GERANDO_NFSE}            lb_AguardeGerandoNFSe.png
+${LABEL_EMITIR_BOLETOS}                  lb_EmitirBoletos.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -209,6 +221,8 @@ Então finalizo a Ordem de Servico
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORDEM_SERVICO}
 
+    Extrair dados da ordem de serviço gerada
+
 Então visualizado a OS recém criada
     
     Sleep    ${SLEEP_MEDIO}
@@ -343,13 +357,13 @@ Valida avisos ao finalizar Ordem de serviço
 
         Valida impressao carne OS 
 
-    END 
-
-    IF    ${Parametro_Fatura_OS}
-        
-        Valida faturamento os pos finalizar
-
     END
+
+    # IF    ${Parametro_Fatura_OS}
+        
+    #     Valida faturamento os pos finalizar
+
+    # END
 
 Valida faturamento os pos finalizar
     
@@ -429,11 +443,100 @@ Valida check list
 
     END
 
-Quando clico em Faturar
+Quando pressiono o atalho de faturar
 
-    Press Combination    KEY.ALT    KEY.U
+    Log To Console    Parametro_FaturamentoAoFinalizarOS: ${Parametro_FaturamentoAoFinalizarOS}
+
+    ${aberturaDiretaTelaNFS-e}    Valida a modalidade de cobrança da OS para o faturamento
+    Log To Console    aberturaDiretaTelaNFS-e: ${aberturaDiretaTelaNFS-e}
+
+    IF    ${Parametro_FaturamentoAoFinalizarOS}
+
+        IF    ${aberturaDiretaTelaNFS-e}
+
+            Wait Until Screen Contain    ${TELA_NFS-E}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_BAIXO}
+
+        ELSE
+
+           Valida opções de faturamento 
+
+        END
+
+    ELSE
+
+        Press Combination    KEY.ALT    KEY.U
+        Log To Console    clicou
+
+        IF    ${aberturaDiretaTelaNFS-e}
+
+            Wait Until Screen Contain    ${TELA_NFS-E}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_BAIXO}
+
+        ELSE
+
+           Valida opções de faturamento 
+
+        END
+        
+    END
+
+Valida opções de faturamento
+
+    Wait Until Screen Contain    ${TELA_OPCOES_FATURAMENTO}    ${TEMPO_TELA}
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${vendasprodutos}    Run Keyword And Return Status    Check If Exists In Database    SELECT vp.CodigoVenda FROM vendasprodutos AS vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+    Log To Console    vendasprodutos: ${vendasprodutos}
+
+    Sleep    ${SLEEP_BAIXO}
+    ${vendasservicos}    Run Keyword And Return Status    Check If Exists In Database    SELECT vs.CodigoVenda FROM vendasservicos AS vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
+
+    SikuliLibrary.Click    ${TELA_OPCOES_FATURAMENTO}
+
+    Press Special Key    TAB
+
+    IF    not ${vendasprodutos}
+
+        Press Special Key    TAB
+        
+        ${emitirBoletos}    Exists    ${LABEL_EMITIR_BOLETOS}
+
+        IF    ${emitirBoletos}
+
+            SikuliLibrary.Click    ${LABEL_EMITIR_BOLETOS}
+            
+        END
+
+    ELSE IF    ${vendasprodutos}
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    SPACE
+
+    END
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.T
     Wait Until Screen Contain    ${TELA_NFS-E}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
+Valida a modalidade de cobrança da OS para o faturamento
+
+    Sleep    ${SLEEP_BAIXO}
+    ${vendasprodutos}    Run Keyword And Return Status    Check If Exists In Database    SELECT vp.CodigoVenda FROM vendasprodutos AS vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+    
+    ${telaNFS-E}    Set Variable    ${False}
+
+    # Essa validação é necessária porque, ao faturar uma OS sem produto e com modalidade de cobrança diferente de boleto, o sistema não exibe a tela 'Opções de Faturamento', mas sim vai diretamente para a tela 'NFS-e'.
+
+    IF    '${modalidadeCB_OS}' != 'BOLETO' and '${vendasprodutos}' == 'False'
+
+        ${telaNFS-E}    Set Variable    ${True}
+        
+    END
+
+    RETURN    ${telaNFS-E}
 
 Então realizo o faturamento da NFSe
 
@@ -507,3 +610,11 @@ Valida faturamento de NFSe
         END       
          
     END
+
+Extrair dados da ordem de serviço gerada
+
+    ${consulta}    Query    SELECT v.ModalidadeCB FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO} AND v.Tipo = 'OS' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+    ${modalidadeCB}    Set Variable    ${consulta[0][0]}
+
+    Set Test Variable    ${modalidadeCB_OS}    ${modalidadeCB}
