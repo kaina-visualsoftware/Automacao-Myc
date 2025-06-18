@@ -8,8 +8,9 @@ Suite Teardown      Stop Remote Server
 
 *** Test Cases ***
 Teste 01 - Adicionando Orcamento com produto normal
-    [Tags]    Teste01 
-    Dado que acesso a tela de orçamento 
+    [Tags]    Teste01
+
+    Dado que acesso a tela de orçamento
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro um produto normal
@@ -17,7 +18,8 @@ Teste 01 - Adicionando Orcamento com produto normal
 
 Teste 02 - Visualizando o orcamento
     [Tags]    Teste02
-    Dado que acesso a tela de orçamento 
+
+    Dado que acesso a tela de orçamento
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro um produto normal
@@ -26,7 +28,8 @@ Teste 02 - Visualizando o orcamento
 
 Teste 03 - Editando um orcamento
     [Tags]    Teste03
-    Dado que acesso a tela de orçamento 
+
+    Dado que acesso a tela de orçamento
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro um produto normal
@@ -37,7 +40,8 @@ Teste 03 - Editando um orcamento
 
 Teste 04 - Excluindo um orcamento
     [Tags]    Teste04
-    Dado que acesso a tela de orçamento 
+
+    Dado que acesso a tela de orçamento
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro um produto normal
