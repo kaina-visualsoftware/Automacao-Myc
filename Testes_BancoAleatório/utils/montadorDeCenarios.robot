@@ -16,7 +16,7 @@ Library    Collections
 *** Variables ***
 
 *** Keywords ***
-Dado que realizo uma venda completa, com produto normal 
+Dado que realizo uma venda completa, com produto normal
     
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Quando pressiono o atalho de adicionar
@@ -28,7 +28,7 @@ Dado que realizo uma venda completa, com produto normal
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
-Dado que realizo uma venda completa, com produto normal - A prazo 
+Dado que realizo uma venda completa, com produto normal - A prazo
     
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Quando pressiono o atalho de adicionar
@@ -47,17 +47,18 @@ Dado que realizo um pedido, com produto normal
     KeyPedidos1.Quando adiciono vendedor e cliente
     KeyPedidos1.E adiciono um produto
     KeyPedidos1.Quando vou para a aba de pagamentos
-    KeyPedidos1.E audito o pedido 
-    KeyPedidos1.Então finalizo o pedido 
+    KeyPedidos1.E audito o pedido
+    KeyPedidos1.Então finalizo o pedido
 
-Dado que realizo um pedido e gero uma venda total sobre ele 
+Dado que realizo um pedido e gero uma venda total sobre ele
+
     Dado que realizo um pedido, com produto normal
     KeyPedidos1.Quando clico em gerar venda
     KeyPedidos1.Então gero a venda totalmente
 
-Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida 
+Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
 
-    Dado que realizo um pedido e gero uma venda total sobre ele 
+    Dado que realizo um pedido e gero uma venda total sobre ele
     
     Set Suite Variable    ${FORMA_PADRAO}    ${FORMA_PADRAO_PEDIDO}
 
@@ -65,7 +66,7 @@ Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
         
-        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
@@ -79,41 +80,37 @@ Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
 
 Dado que realizo mais de um pedido(${Quantidade_Pedidos})
     
-    ${Codigos_Pedidos} =    Create List
-    ${Codigos_Produtos} =    Create List
+    ${Codigos_Pedidos}     Create List
+    ${Codigos_Produtos}    Create List
 
     FOR    ${I}    IN RANGE    ${Quantidade_Pedidos}
         
         Dado que realizo um pedido, com produto normal
         
-        Append To List    ${Codigos_Pedidos}    ${Codigo_Pedido}
+        Append To List    ${Codigos_Pedidos}     ${Codigo_Pedido}
         Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
 
     END
 
-    Log To Console    Pedidos Gerados: ${Codigos_Pedidos}
-
     Set Test Variable    ${Codigos_Pedidos}
-
-    Log To Console    Produtos em pedidos Gerados: ${Codigos_Produtos}
-
     Set Test Variable    ${Codigos_Produtos}
 
 Dado que realizo uma devolução qualquer
 
-    KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os 
-    KeyDevolucaoVenda1.Quando adiciono uma nova devolução 
+    KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os
+    KeyDevolucaoVenda1.Quando adiciono uma nova devolução
     KeyDevolucaoVenda1.E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     KeyDevolucaoVenda1.Quando seleciono um produto para a devolução
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução
 
-Dado que realizo uma devolução avulsa 
+Dado que realizo uma devolução avulsa
     
-    Dado que realizo uma venda completa, com produto normal 
+    Dado que realizo uma venda completa, com produto normal
     Dado que realizo uma devolução qualquer
 
 Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
+
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
@@ -123,22 +120,24 @@ Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
     utils.Exclui ordem de entrega(${COD_VENDA})
 
 Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
+
     Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
-    KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os 
-    KeyDevolucaoVenda1.Quando adiciono uma nova devolução 
+    KeyDevolucaoVenda1.Dado que abro a tela de Devolução de vendas/os
+    KeyDevolucaoVenda1.Quando adiciono uma nova devolução
     KeyDevolucaoVenda1.E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
     KeyDevolucaoVenda1.Quando seleciono os produtos para a devolução(${Quantidade_Inserir})
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução
 
 Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
+
     Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
     
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
         
-        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
@@ -151,6 +150,7 @@ Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
     END
 
 Realizando venda com desconto ao finalizar(${desconto})
+
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
@@ -160,13 +160,14 @@ Realizando venda com desconto ao finalizar(${desconto})
 
 Realizando vendas com o mesmo produto porém com descontos diferentes
     
-    ${Codigo_Vendas} =     Create List
-    ${Valor_Final_Vendas} =     Create List
+    ${Codigo_Vendas}         Create List
+    ${Valor_Final_Vendas}    Create List
 
     ${DESCONTOS_COMISSOES}    Pesquisa comissões por escalonamento
+
     Realizando venda com desconto ao finalizar(${DESCONTOS_COMISSOES[0][0]})
 
-    Append To List    ${Codigo_Vendas}    ${COD_VENDA}
+    Append To List    ${Codigo_Vendas}         ${COD_VENDA}
     Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
 
     keyVendas1.Dado que acesso a tela de vendas de balcao
@@ -176,15 +177,16 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - Desconto(${DESCONTOS_COMISSOES[1][0]})
 
-    Append To List    ${Codigo_Vendas}    ${COD_VENDA}
+    Append To List    ${Codigo_Vendas}         ${COD_VENDA}
     Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
 
     Set Test Variable    ${DESCONTOS_COMISSOES}
-    Set Test Variable    ${Codigo_Vendas} 
+    Set Test Variable    ${Codigo_Vendas}
     Set Test Variable    ${Valor_Final_Vendas}
 
 
 Dado que realizo uma venda total de uma condicional
+
     KeyCondicional1.Dado que acesso a tela de condicionais
     KeyCondicional1.E adiciono uma nova Condicional
     KeyCondicional1.Quando insiro vendedor e cliente
@@ -193,9 +195,7 @@ Dado que realizo uma venda total de uma condicional
     KeyCondicional1.Quando clico em gerar venda
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
-    KeyCondicional1.Validação de vendas após a geração do condicional 
-
-    #Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+    KeyCondicional1.Validação de vendas após a geração do condicional
 
 Dado que realizo uma venda parcial de uma condicional
     KeyCondicional1.Dado que acesso a tela de condicionais
@@ -208,8 +208,6 @@ Dado que realizo uma venda parcial de uma condicional
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
 
-    #Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
-
 Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
 
     Dado que realizo uma venda parcial de uma condicional
@@ -218,7 +216,7 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
             
-        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
@@ -230,10 +228,10 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
 
     END
 
-    #Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+Dado que realizo uma ordem de serviço com funcionário comissionado por serviço
 
-Dado que realizo uma ordem de serviço com funcionário comissionado por serviço 
     Log To Console    É necessário que o parametro 'Habilite está opção caso deseje selecionar os funcionários em uma lista' esteja ***DESABILITADO***
+
     KeyOrdemDeSevico1.Dado que acesso a tela de Ordem de Servico
     KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
     KeyOrdemDeSevico1.E adiciono vendedor e cliente
@@ -242,16 +240,15 @@ Dado que realizo uma ordem de serviço com funcionário comissionado por serviç
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a Ordem de Servico
 
-
-Dado que realizo uma ordem de serviço com funcionário comissionado por serviço - Totalmente recebida 
+Dado que realizo uma ordem de serviço com funcionário comissionado por serviço - Totalmente recebida
     
-    Dado que realizo uma ordem de serviço com funcionário comissionado por serviço 
+    Dado que realizo uma ordem de serviço com funcionário comissionado por serviço
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_OS}
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
             
-        keyCaixa1.Quando acesso o caixa aberto 
+        keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
@@ -263,9 +260,10 @@ Dado que realizo uma ordem de serviço com funcionário comissionado por serviç
 
     END
 
-Dado que cadastro uma conta a pagar avulsa 
+Dado que cadastro uma conta a pagar avulsa
+
     keyContasPagar1.Dado que acesso a tela de cadastro avulso de contas a pagar
-    keyContasPagar1.E insiro um cliente qualquer 
+    keyContasPagar1.E insiro um cliente qualquer
     keyContasPagar1.Quando clico em adicionar
     keyContasPagar1.E insiro as informações necessárias(100)
     keyContasPagar1.Então gravo o lançamento de conta a pagar avulsa
@@ -281,15 +279,15 @@ Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de 
 
 Dado que realizo mais de uma venda(${Quantidade_Vendas})
     
-    ${Codigos_Vendas} =    Create List
-    ${Codigos_de_Produtos} =    Create List
+    ${Codigos_Vendas}         Create List
+    ${Codigos_de_Produtos}    Create List
 
     FOR    ${I}    IN RANGE    ${Quantidade_Vendas}
         
         Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
         Sleep    ${SLEEP_MEDIO}
         
-        Append To List    ${Codigos_Vendas}    ${CODIGO_OPERACAO_MOV}
+        Append To List    ${Codigos_Vendas}         ${CODIGO_OPERACAO_MOV}
         Append To List    ${Codigos_de_Produtos}    ${COD_PRODUTO}
 
     END
@@ -301,6 +299,7 @@ Dado que realizo mais de uma venda(${Quantidade_Vendas})
     Log To Console    Produtos em vendas geradas: ${Codigos_de_Produtos}
 
 Dado que eu realizo uma doação
+
     KeyDocao1.Dado que eu acesso a tela de doações
     KeyDocao1.Quando eu clico em adicionar
     KeyDocao1.E adiciono vendedor e cliente

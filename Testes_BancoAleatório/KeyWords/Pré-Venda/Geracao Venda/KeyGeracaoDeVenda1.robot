@@ -8,27 +8,37 @@ Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/utils.robot
 Resource    ../utils/validacaoAviso.robot
-Resource     ../utils/montadorDeCenarios.robot
+Resource    ../utils/montadorDeCenarios.robot
 
 *** Variables ***
-${IMAGES}                                ./Testes_BancoAleatório/images
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
-#Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
-#Imagens
-${TELA_GERACAO_VENDAS}                   tela_GeracaoVenda.png
-${LABEL_PEDIDO}                          lb_Pedido.png
-${GRID_LISTAGEM_PEDIDOS}                 grid_PedidosGeracaoVenda.png
-${AVISO_DESEJA_GERAR_VENDA}              aviso_DesejaGerarVenda.png
-${TELA_CARREGANDO_PEDIDOS}               tela_CarregandoPedidos.png
-${BT_SAIR_CTRLG}                         bt_SairCTRLG.png
+# Repositório de Imagens
+${IMAGES}                      ./Testes_BancoAleatório/images
+
+# Conexão com o Banco de Dados
+${DBHost}                      ${config.IpServidor}
+${DBName}                      ${config.Database}
+${DBPass}                      vssql
+${DBPort}                      ${config.Porta}
+${DBUser}                      root
+
+# Sleep's
+${SLEEP_BAIXO}                 0.7
+${SLEEP_MEDIO}                 1.5
+${SLEEP_ALTO}                  3
+${TEMPO_TELA}                  20
+
+# Telas
+${TELA_GERACAO_VENDAS}         tela_GeracaoVenda.png
+${TELA_CARREGANDO_PEDIDOS}     tela_CarregandoPedidos.png
+
+# Telas Avisos
+${AVISO_DESEJA_GERAR_VENDA}    aviso_DesejaGerarVenda.png
+
+${LABEL_PEDIDO}                lb_Pedido.png
+${GRID_LISTAGEM_PEDIDOS}       grid_PedidosGeracaoVenda.png
+
+# Botões
+${BT_SAIR_CTRLG}               bt_SairCTRLG.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -45,7 +55,6 @@ Quando seleciono o ultimo pedido feito
     
     Press Combination    KEY.ALT     Key.L
     Sleep    ${SLEEP_BAIXO}
-    #Wait Until Screen Contain    ${TELA_CARREGANDO_PEDIDOS}     ${TEMPO_TELA}
 
     Sleep    ${SLEEP_ALTO}
     SikuliLibrary.Click    ${LABEL_PEDIDO}
@@ -65,9 +74,10 @@ E clico em gerar
     Press Combination    KEY.ALT     Key.G 
     Sleep    ${SLEEP_BAIXO}
 
-Então confirmo a geração da venda 
+Então confirmo a geração da venda
     
     Wait Until Screen Contain    ${AVISO_DESEJA_GERAR_VENDA}    ${SLEEP_ALTO}
+
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
@@ -90,9 +100,10 @@ Então confirmo a geração da venda
     SikuliLibrary.Click    ${BT_SAIR_CTRLG}
     Sleep    ${SLEEP_BAIXO}
 
-Então confirmo a geração dos pedidos 
+Então confirmo a geração dos pedidos
     
     Wait Until Screen Contain    ${AVISO_DESEJA_GERAR_VENDA}    ${SLEEP_ALTO}
+
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
@@ -137,19 +148,9 @@ Validação de geração de venda
 
     ${Produtos_Pedidos}    Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM pedidosvendaprodutos WHERE codigoPedido = ${Codigo_Pedido};
 
-    ${Produtos_Vendas}     Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM vendasprodutos WHERE CodigoVenda = ${Codigo_Venda_Gerada[0][0]}
+    ${Produtos_Vendas}    Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM vendasprodutos WHERE CodigoVenda = ${Codigo_Venda_Gerada[0][0]}
 
-    ${Comparacao_Produtos} =     Run Keyword And Return Status     Should Be Equal    ${Produtos_Pedidos}    ${Produtos_Vendas}
-
-    IF     ${Comparacao_Produtos}
-
-        Log To Console    \nProdutos foram incluidos corretamenta na venda - Código do Pedido: ${Codigo_Pedido}
-
-    ELSE
-
-        Log To Console    \nProdutos *NÃO* foram incluidos corretamenta na venda, verifique! - Código do Pedido: ${Codigo_Pedido}
-
-    END
+    ${Comparacao_Produtos}    Should Be Equal    ${Produtos_Pedidos}    ${Produtos_Vendas}
 
     Set Test Variable    ${COD_VENDA}    ${Codigo_Venda_Gerada[0][0]}
 
@@ -160,12 +161,17 @@ Validação de geração de venda
 Valida baixa de estoque
 
     IF    ${Parametro_BaixaEstoquePreVenda}
+
         ${COD_OPERACAO}    Set Variable    ${Codigo_Pedido}
+
     ELSE
+
         ${COD_OPERACAO}    	Set Variable    ${COD_VENDA}
+
     END
 
     Sleep    ${SLEEP_MEDIO}
+
     ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
@@ -180,24 +186,12 @@ Valida baixa de estoque
 
     END
 
-E clico em visualizar 
-    
-    # Press Special Key    UP
-
-    # @{RegiaoLeitura_CodigoPedido} =    Create List    540    311    49    22
+E clico em visualizar
 
     Press Combination    KEY.ALT     Key.V
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    # ${CodigoPedido_Leitura} =     Read Text From Region    ${RegiaoLeitura_CodigoPedido}
-
-    # ${CodigoPedido_Visualizado} =     Convert To Integer    ${CodigoPedido_Leitura}
-
-    # Should Be Equal    ${CodigoPedido_Visualizado}    ${Codigo_Pedido}
-
-    # A validação por região estava falhando devido à troca de monitor. Não faz sentido definir as coordenadas de tela da região do código do pedido para um monitor 
-    # específico, já que os testes agora são executados em duas máquinas diferentes, com monitores de tamanhos distintos.
 Quando volto para a tela de geração de venda
 
     Press Special Key    ESC
@@ -206,27 +200,28 @@ Quando volto para a tela de geração de venda
 
 Então verifico se o pedido retornou como aberto
     
-    ${VendaGerada} =     Query    SELECT Gerado FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido}
+    ${VendaGerada}    Query    SELECT Gerado FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido}
 
     Should Be Equal    ${VendaGerada[0][0]}    ${0}
 
-Quando seleciono os ultimos pedidos feitos 
+Quando seleciono os ultimos pedidos feitos
     
-    ${Quantidade_Pedidos_Feitos} =     Get Length    ${Codigos_Pedidos}
+    ${Quantidade_Pedidos_Feitos}    Get Length    ${Codigos_Pedidos}
+
     Set Test Variable    ${Quantidade_Pedidos_Feitos}
 
-    Press Combination    KEY.ALT     Key.L 
-    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.L
     Wait Until Screen Not Contain    ${TELA_CARREGANDO_PEDIDOS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     SikuliLibrary.Click    ${LABEL_PEDIDO}
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
 
         Input Text    ${EMPTY}    ${Codigos_Pedidos[${I}]}
-
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    SPACE
         Sleep    ${SLEEP_MEDIO}
         
@@ -240,7 +235,7 @@ Recupera total do pedido(${Contador})
 
     Sleep    ${SLEEP_BAIXO}
 
-Validação da geração de venda de mais de um pedido 
+Validação da geração de venda de mais de um pedido
     
     FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
         
