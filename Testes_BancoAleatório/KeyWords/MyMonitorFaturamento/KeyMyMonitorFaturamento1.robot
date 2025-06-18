@@ -9,33 +9,33 @@ Resource    ../../utils/validacaoAviso.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./Testes_BancoAleatório/images
+${IMAGES}                             ./Testes_BancoAleatório/images
 
 # Conexão MySQL
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
+${DBHost}                             ${config.IpServidor}
+${DBName}                             ${config.Database}
+${DBPass}                             vssql
+${DBPort}                             ${config.Porta}
+${DBUser}                             root
 
 # Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
+${SLEEP_BAIXO}                        0.7
+${SLEEP_MEDIO}                        1.5
+${SLEEP_ALTO}                         3
+${TEMPO_TELA}                         20
 
 # Telas
-${TELA_MY_MONITOR_FATURAMENTO}           tela_MyMonitorFaturamento.png
-${TELA_GUIA_CONFIGURACOES}               tela_GuiaConfiguracoes.png
-${TELA_GUIA_CONFIGURACOES_EXTRAS}        tela_GuiaConfiguracoesExtras.png
+${TELA_MY_MONITOR_FATURAMENTO}        tela_MyMonitorFaturamento.png
+${TELA_GUIA_CONFIGURACOES}            tela_GuiaConfiguracoes.png
+${TELA_GUIA_CONFIGURACOES_EXTRAS}     tela_GuiaConfiguracoesExtras.png
 
 # Outros
-${LABEL_GUIA_CONFIGURACOES}              lb_GuiaConfiguracoes.png
-${LABEL_GUIA_CONTINGENCIA}               lb_GuiaContingencia.png
-${LABEL_GUIA_CONFIGURACOES_EXTRAS}       lb_GuiaConfiguracoesExtras.png
+${LABEL_GUIA_CONFIGURACOES}           lb_GuiaConfiguracoes.png
+${LABEL_GUIA_CONTINGENCIA}            lb_GuiaContingencia.png
+${LABEL_GUIA_CONFIGURACOES_EXTRAS}    lb_GuiaConfiguracoesExtras.png
 
 # Mensagem de Erro
-${ERRO_RUN_TIME_ERROR}                   run-timeerror.png
+${ERRO_RUN_TIME_ERROR}                run-timeerror.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -71,6 +71,7 @@ E acesso a guia 'Configurações extras'
 Então salvo as configurações
 
     Press Combination    KEY.ALT    KEY.S
+    
     ${selecao_coi}    Valida seleção de coi para faturamento
 
     IF    ${selecao_coi}
