@@ -61,20 +61,22 @@ ${LABEL_EMITIR_BOLETOS}                  lb_EmitirBoletos.png
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
 
-Dado que acesso a tela de Ordem de Servico 
+Dado que acesso a tela de Ordem de Servico
     
     ${FORMA_PADRAO}    Valida Configuracoes OS
-    ${FORMA_PRAZO}    Seleciona Forma Prazo
+    ${FORMA_PRAZO}     Seleciona Forma Prazo
 
     Set Test Variable    ${FORMA_PADRAO}
     Set Test Variable    ${FORMA_PRAZO} 
 
     Verifica parametros que interferem na venda
+
     Press Special Key    F3
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
 Quando pressiono o atalho de adicionar
+
     Press Combination    KEY.ALT     Key.A 
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
@@ -93,15 +95,14 @@ Quando pressiono o atalho de adicionar
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_ORDEM_SERVICO}    ${Consulta[0][0]}
-    Log To Console    ${COD_ORDEM_SERVICO}
 
-E adiciono vendedor e cliente 
+E adiciono vendedor e cliente
     
     utils.Adicionar Vendedor e Cliente(OrdemDeServico)
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-Quando Insiro um servico 
+Quando Insiro um servico
     
     IF    ${SelecionaProdutoComLinha}
 
@@ -134,7 +135,7 @@ E acesso a aba pagamentos
 
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
 
-    ${EntradaIgualA_Outros} =     Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO}    ${FORMA_RECEBIMENTO_OUTROS}
+    ${EntradaIgualA_Outros}    Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO}    ${FORMA_RECEBIMENTO_OUTROS}
 
     Set Test Variable    ${EntradaIgualA_Outros}
 
@@ -144,7 +145,7 @@ E acesso a aba pagamentos
 
     END 
 
-    IF     ${DESCONTO_FORMA} > 0
+    IF    ${DESCONTO_FORMA} > 0
 
         Valida tela de liberação de desconto 
 
@@ -193,7 +194,7 @@ Então finalizo a Ordem de Servico
 
     END
 
-    #Deixado aqui por que pode ser QUE quando a forma for a vista, apareça antes das duplicatas, mas ainda é necessário validar
+    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
         
         Valida solicitacao de senha do usuário
@@ -248,8 +249,10 @@ E excluo os pagamentos lançados
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
+
     SikuliLibrary.Click    ${BT_EXCLUIR_PAGAMENTOS}
     Wait Until Screen Contain    ${TELA_EXCLUIR_PAGAMENTOS}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
@@ -275,8 +278,11 @@ Então finalizo a OS - A prazo
     END
 
     Wait Until Screen Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
+
     SikuliLibrary.Click    ${LABEL_DESCRIÇÃO}
+
     Input Text    ${EMPTY}    ${FORMA_PRAZO}
+
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
@@ -293,6 +299,7 @@ Então finalizo a OS - A prazo
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.F
 
     IF    ${Parametro_ControlaCredito}
@@ -311,7 +318,7 @@ Então finalizo a OS - A prazo
     END
 
 
-    #Deixado aqui por que pode ser QUE quando a forma for a vista, apareça antes das duplicatas, mas ainda é necessário validar
+    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
         
         Valida solicitacao de senha do usuário
@@ -331,9 +338,13 @@ Então clico em excluir
     Valida solicitacao de senha do usuário
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
+
     Input Text    ${EMPTY}    Exclusao de OS - Teste Automacao
+
     Press Special Key    TAB
+
     Press Special Key    ENTER
+
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
     
@@ -445,10 +456,7 @@ Valida check list
 
 Quando pressiono o atalho de faturar
 
-    Log To Console    Parametro_FaturamentoAoFinalizarOS: ${Parametro_FaturamentoAoFinalizarOS}
-
     ${aberturaDiretaTelaNFS-e}    Valida a modalidade de cobrança da OS para o faturamento
-    Log To Console    aberturaDiretaTelaNFS-e: ${aberturaDiretaTelaNFS-e}
 
     IF    ${Parametro_FaturamentoAoFinalizarOS}
 
@@ -466,7 +474,6 @@ Quando pressiono o atalho de faturar
     ELSE
 
         Press Combination    KEY.ALT    KEY.U
-        Log To Console    clicou
 
         IF    ${aberturaDiretaTelaNFS-e}
 
@@ -487,10 +494,6 @@ Valida opções de faturamento
     
     Sleep    ${SLEEP_BAIXO}
     ${vendasprodutos}    Run Keyword And Return Status    Check If Exists In Database    SELECT vp.CodigoVenda FROM vendasprodutos AS vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
-    Log To Console    vendasprodutos: ${vendasprodutos}
-
-    Sleep    ${SLEEP_BAIXO}
-    ${vendasservicos}    Run Keyword And Return Status    Check If Exists In Database    SELECT vs.CodigoVenda FROM vendasservicos AS vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
 
     SikuliLibrary.Click    ${TELA_OPCOES_FATURAMENTO}
 
@@ -529,7 +532,6 @@ Valida a modalidade de cobrança da OS para o faturamento
     ${telaNFS-E}    Set Variable    ${False}
 
     # Essa validação é necessária porque, ao faturar uma OS sem produto e com modalidade de cobrança diferente de boleto, o sistema não exibe a tela 'Opções de Faturamento', mas sim vai diretamente para a tela 'NFS-e'.
-
     IF    '${modalidadeCB_OS}' != 'BOLETO' and '${vendasprodutos}' == 'False'
 
         ${telaNFS-E}    Set Variable    ${True}
@@ -555,8 +557,8 @@ Valida faturamento de NFSe
         
     ${consultaNotaFiscalServico}    Query    SELECT Situacao, motivoRejeicao FROM notafiscalservico WHERE CodigoOS = ${COD_ORDEM_SERVICO};
 
-    ${situacao} =    Set Variable    ${consultaNotaFiscalServico[0][0]}
-    ${motivoRejeicao} =    Set Variable    ${consultaNotaFiscalServico[0][1]}
+    ${situacao}    Set Variable    ${consultaNotaFiscalServico[0][0]}
+    ${motivoRejeicao}    Set Variable    ${consultaNotaFiscalServico[0][1]}
 
     Run Keyword If    '${situacao}' == 'None' and '${motivoRejeicao}' == 'None'    Fail    Nota fiscal de serviço não gerada.
 
@@ -594,6 +596,7 @@ Valida faturamento de NFSe
 
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER
+        
         Log To Console    Nota fiscal de serviço faturada com sucesso.
     
     ELSE IF    '${situacao}' == 'Consultar'

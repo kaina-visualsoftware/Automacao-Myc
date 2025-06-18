@@ -120,11 +120,12 @@ Adicionar Vendedor e Cliente(${TELA})
 
             Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
             Sleep    ${SLEEP_BAIXO}
+
             ${codVendedor}    Seleciona vendedor
 
             Set Test Variable    ${Codigo_Vendedor}    ${codVendedor}
 
-            #VALIDA SE O TESTE SERÁ DE COMISSÃO
+            # Valida se o teste será de comissão.
             Valida teste de comissão
 
         END
@@ -185,17 +186,16 @@ Adicionar Vendedor e Cliente(${TELA})
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
-    Log To Console    Código cliente: ${Codigo_Cliente}
+
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
     
     Altera para vendedor vinculado ao cliente
 
-    #Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos
+    # Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos.
     Set Test Variable    ${TELA}
 
     ${Forma_Padrao_Cliente}    valida_Forma_Parcelamento_Cliente    ${Codigo_Cliente}
-    Log To Console    Forma padrao cliente: ${Forma_Padrao_Cliente}
 
     IF    '${Forma_Padrao_Cliente}' != 'False'
         
@@ -474,8 +474,6 @@ Seleciona servico com linha de comissao
 
 Inserir Produto normal - Necessita de estoque
 
-    Log To Console    \nNecessita de estoque
-
     IF    '${TELA}' == 'NFeSaidasManual'
 
         Sleep    ${SLEEP_MEDIO}
@@ -517,8 +515,6 @@ Inserir Produto normal - Necessita de estoque
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
 
 Inserir Produto normal - Permite sem estoque
-
-    Log To Console    \nPermite sem estoque
 
     IF    '${TELA}' == 'NFeSaidasManual'
 
@@ -650,9 +646,10 @@ Valida local da negociação
 
     IF    ${MSG}  
         
-        Press Special Key    TAB 
+        Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
         Press Special Key    DOWN
+
         SikuliLibrary.Click    ${BT_CONFIRMA_CANAL_NEGOCIACAO}
 
     END
@@ -737,13 +734,11 @@ Verifica vendedor com senha
 
     IF    ${VendedorComSenha}
         
-        Log To Console    \nConsiderou que tem senha
         Execute Sql String    UPDATE clientes SET SenhaVendedor = 'W' WHERE Codigo = ${Codigo_Vendedor}
         Set Test Variable    ${VendedorPossuiSenha}    ${True}
 
     ELSE
 
-        Log To Console    \nConsiderou como sem senha
         Set Test Variable    ${VendedorPossuiSenha}    ${False}
 
     END
@@ -994,21 +989,3 @@ Selecionar produto
 
     Set Test Variable    ${VALOR_TOTAL}    ${valorTotalNota}
     Log To Console    Valor Total: ${VALOR_TOTAL}
-
-    
-
-
-
-
-
-# Valida vendedor padrao
-    
-#     ${VENDEDOR_PADRAO}     Run Keyword And Return Status    Check If Exists In Database    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente} AND c.CodigoVendedor IS NOT NULL;
-    
-#     IF     ${VENDEDOR_PADRAO}
-
-#         ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
-
-#         Set Test Variable    ${codVendedor}    ${NOVO_VENDEDOR}
-    
-#     END

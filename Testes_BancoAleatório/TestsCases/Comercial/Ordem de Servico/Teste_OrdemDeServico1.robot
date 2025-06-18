@@ -8,7 +8,8 @@ Suite Teardown      Stop Remote Server
 
 *** Test Cases ***
 Teste 01 - Adicionando nova Ordem de Serviço
-    [Tags]    Teste01 
+    [Tags]    Teste01
+
     Dado que acesso a tela de Ordem de Servico
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -19,6 +20,7 @@ Teste 01 - Adicionando nova Ordem de Serviço
 
 Teste 02 - Visualizando nova Ordem de Serviço
     [Tags]    Teste02
+
     Dado que acesso a tela de Ordem de Servico
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -30,6 +32,7 @@ Teste 02 - Visualizando nova Ordem de Serviço
 
 Teste 03 - Editando nova Ordem de Serviço
     [Tags]    Teste03
+
     Dado que acesso a tela de Ordem de Servico
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -45,6 +48,7 @@ Teste 03 - Editando nova Ordem de Serviço
 
 Teste 04 - Excluindo nova Ordem de Serviço
     [Tags]    Teste04
+
     Dado que acesso a tela de Ordem de Servico
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -56,6 +60,7 @@ Teste 04 - Excluindo nova Ordem de Serviço
 
 Teste 05 - Faturando NFSe da Ordem de Serviço - Somente serviço
     [Tags]    Teste05
+
     Dado que acesso a tela de Ordem de Servico
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
@@ -66,7 +71,8 @@ Teste 05 - Faturando NFSe da Ordem de Serviço - Somente serviço
     Então realizo o faturamento da NFSe
 
 Teste 06 - Faturando NFSe da Ordem de Serviço - Com produto e serviço
-    [Tags]    Teste05
+    [Tags]    Teste06
+
     Dado que acesso a tela de Ordem de Servico
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente

@@ -193,7 +193,7 @@ Verifica parametros que interferem na venda
 
     IF    ${Parametro_VendaRapida}
             
-        Log To Console    \nParametro Venda_Rapida interfere diretamente na venda\nTeste sendo finalizado${\n}Caminho do parametro: ADM Sistema >> +Config >> Geral >> Mais - Trazer vendedor e cliente padrão...
+        Log To Console    \nO parâmetro "Venda_Rapida" interfere diretamente no processo de venda. Teste sendo finalizado.${\n}Caminho do parâmetro: ADM Sistema → +Config → Geral → Mais → Trazer vendedor e cliente padrão...
         Terminate Process
 
     END
@@ -203,7 +203,7 @@ Verifica parametros que interferem na venda
 
     IF    ${Parametro_VendeSemEstoque} == ${False}
         
-        Log To Console     Parametro de vende sem estoque é falso, logo todos os outros serão falsos
+        Log To Console    Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
 
         Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
 
@@ -640,8 +640,6 @@ Verifica se cliente possui objeto vinculado
     ${Test_OS} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    servico
 
     ${Test_Com_OS} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    servico
-
-    Log To Console    Suite_name: ${SUITE_NAME}
 
     Set Test Variable    ${Check_List_Objeto}    ${False}
 
