@@ -8,71 +8,84 @@ Library    Collections
 
 Resource    ./validacaoAviso.robot
 *** Variables ***
+# Sleep's    
+${SLEEP_BAIXO}                           0.7
+${SLEEP_MEDIO}                           1.5
+${SLEEP_ALTO}                            3
+${TEMPO_TELA}                            20
+
+# Telas
 ${TELA_RECB_DUPLICATAS}                  tela_RecebimentoDuplicatas.png
-${MODAL_LOCAL_NEGOCIACAO}                tela_LocalNegociacao.png
-${BT_CONFIRMA_CANAL_NEGOCIACAO}          bt_ConfirmarCanal.png
 ${TELA_IMPRESSAO}                        tela_Impressao.png
 ${TELA_SOLICITACAO_SENHA_USUARIO}        tela_SolicitaSenha.png
+${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png
+${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
+${TELA_SOLICITACAO_CREDITO}              tela_SolicitaLiberacaoCredito.png
+${TELA_CONTROLE_CRÉDITO}                 tela_ControleDeCredito.png
+${TELA_CONFIRMA_LIBERACAO_CREDITO}       tela_ConfirmaLiberacao.png
+${TELA_DETALHAMENTO_SERVIÇO}             tela_DetalhamentoServico.png
+${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.png
+${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png
+${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png
+${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
+${TELA_CONS_FINAL}                       tela_cons_final.png
+${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
+${MODAL_LOCAL_NEGOCIACAO}                tela_LocalNegociacao.png
+
+# Telas Avisos
+${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
+${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
+${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
+${AVISO_EST_INSUFICIENTE_CONTINUAR}      aviso_EstoqueInsuficienteContinuar.png
+
+# Botões
+${BT_CONFIRMA_CANAL_NEGOCIACAO}          bt_ConfirmarCanal.png
+${BT_SOLICITAR_CRÉDITO}                  bt_SolicitarCredito.png
+${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
+${BT_SETA_DIREITA}                       bt_SetaDireita.png
+${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}      bt_IncluirProdutoNFeSaidaManual.png
+
+# Outros
 ${INPUT_COD_CLIENTE}                     lb_CodCliente.png
 ${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
 ${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}    lb_CodClienteOS.png
 ${INPUT_COD_CLIENTE_CONDICIONAL}         lb_CodClienteCondicional.png
 ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}        lb_CodClienteDevolucao.png
-#Sleep's    
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
-#Imagens Produtos
-${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png 
-${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
-${ROW_PROD_INCLUSO}                      row_ProdIncluso.png    
-${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
+${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
 ${CORRIGE_FOCO}                          corrigeFoco.png
-${TELA_SOLICITACAO_CREDITO}              tela_SolicitaLiberacaoCredito.png
-${BT_SOLICITAR_CRÉDITO}                  bt_SolicitarCredito.png
-${TELA_CONTROLE_CRÉDITO}                 tela_ControleDeCredito.png
-${TELA_CONFIRMA_LIBERACAO_CREDITO}       tela_ConfirmaLiberacao.png
 ${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
 ${LABEL_AVISO_CREDITO_LIBERADO2}         lb_CreditoLiberado2.png
-${TELA_DETALHAMENTO_SERVIÇO}             tela_DetalhamentoServico.png
-${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.png 
-${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png           
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
-${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
-${SelecionaProdutoComLinha}              ${False}                 
+${SelecionaProdutoComLinha}              ${False}
 ${Vendedor_Selecionada_Escalonada}       ${False}
-${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png 
-${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
-${TELA_CONS_FINAL}                       tela_cons_final.png
-${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
-${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
-${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
 ${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
 ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}    input_CodCliente.png
-${BT_SETA_DIREITA}                       bt_SetaDireita.png
-${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}      bt_IncluirProdutoNFeSaidaManual.png
 ${LABEL_REF_PRODUTO}                     label_RefProduto.png
-${AVISO_EST_INSUFICIENTE_CONTINUAR}      aviso_EstoqueInsuficienteContinuar.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
 
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
+
     Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
     Sleep    ${SLEEP_MEDIO}
+
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.C
 
 Finalização com recebimento de cartão de crédito/débito
     
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_CARTAO}    ${TEMPO_TELA}
+
     Press Special Key    ENTER
 
     Input Text    ${EMPTY}    1
+
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
+
     Input Text    ${EMPTY}    1
 
     FOR    ${I}    IN RANGE    3
@@ -96,7 +109,7 @@ Finalização com o tipo bancaria
 
 Personalização de Pagamentos
     
-    ${msg} =     Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}
+    ${msg}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}
 
     IF    ${msg}
 
@@ -133,6 +146,7 @@ Adicionar Vendedor e Cliente(${TELA})
         Valida vendedor padrao
 
         Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
 
@@ -223,7 +237,6 @@ Seleciona plano de contas - Débito
 
     ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo = 'D') AND Excluido IS NULL ORDER BY RAND() LIMIT 1;
 
-
     RETURN    ${Plano_de_Contas[0][0]}
 
 Seleciona plano de contas - Crédito
@@ -242,12 +255,12 @@ Seleciona modalidade de cobrança
 #Ela simplesmente valida o nome do teste em execução e se for de comissão, irá selecionar um funcionário que seja comissionado 
 Valida teste de comissão
     
-    ${Test_Comissao} =     Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
+    ${Test_Comissao}    Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
 
-    ${Teste_Comissao_Escalonada} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
-    ${Teste_Comissao_Total_Venda} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
-    ${Teste_Comissao_Linha} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
-    ${Teste_Comissao_Forma_Parcelamento} =     Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma
+    ${Teste_Comissao_Escalonada}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
+    ${Teste_Comissao_Total_Venda}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
+    ${Teste_Comissao_Linha}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
+    ${Teste_Comissao_Forma_Parcelamento}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma
 
     IF    ${Test_Comissao}
         
@@ -338,11 +351,11 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
 
 Valida vendedor padrao
     
-    ${VENDEDOR_PADRAO}     Run Keyword And Return Status    Check If Exists In Database    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente} AND c.CodigoVendedor IS NOT NULL;
+    ${VENDEDOR_PADRAO}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente} AND c.CodigoVendedor IS NOT NULL;
     
     IF     ${VENDEDOR_PADRAO}
 
-        ${NOVO_VENDEDOR}     Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
+        ${NOVO_VENDEDOR}    Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente};
 
         Set Test Variable    ${codVendedor}    ${NOVO_VENDEDOR}
     
@@ -357,7 +370,7 @@ Inserir serviço
     ${codServico}    Query    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
     
-    ${condicao} =    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
+    ${condicao}    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
 
     IF    ${condicao}
     
@@ -398,8 +411,8 @@ Inserir serviço
         Sleep    ${SLEEP_BAIXO}
         Press Combination    KEY.ALT    key.I
         Sleep    ${SLEEP_BAIXO}
+
         Press Combination    KEY.ALT     key.S
-        Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
         Set Test Variable    ${COD_SERVICO}    ${codServico[0][0]} 
@@ -419,7 +432,7 @@ Seleciona servico com linha de comissao
     ${codServico}    Query    SELECT codigo, Detalha FROM servicos s WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 and s.TabelaComissao in (select Codigo from comissaoporlinha where Tipo like 'N' and Aliquota > 0)ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
     
-    ${condicao} =    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
+    ${condicao}    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
 
     IF    ${condicao}
     
@@ -460,8 +473,8 @@ Seleciona servico com linha de comissao
         Sleep    ${SLEEP_BAIXO}
         Press Combination    KEY.ALT    key.I
         Sleep    ${SLEEP_BAIXO}
+
         Press Combination    KEY.ALT     key.S
-        Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
         Set Test Variable    ${COD_SERVICO}    ${codServico[0][0]} 
@@ -496,7 +509,7 @@ Inserir Produto normal - Necessita de estoque
 
     IF    '${TELA}' == 'Pedido'
         
-        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto LEFT JOIN (SELECT CodigoProduto, Empresa, SUM(Quantidade - QtdeGerada) AS QuantidadePendente FROM pedidosvendaprodutos WHERE Cancelada IS NULL AND Quantidade > QtdeGerada GROUP BY CodigoProduto, Empresa) AS pendente ON p.Codigo = pendente.CodigoProduto AND pe.Empresa = pendente.Empresa WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pe.Estoque > 1 AND pe.Estoque > COALESCE(pendente.QuantidadePendente, 0) ORDER BY RAND() LIMIT 1;
 
     ELSE
 
@@ -624,8 +637,10 @@ Valida parametros após incluir produto
         validacaoAviso.Valida aviso de quantidade não existente em estoque - Orçamento
 
         IF    ${AVISO_SEM_ESTOQUE}
+
             Inserir Produto normal - Necessita de estoque
             Valida parametros após incluir produto
+
         END
     END
 
@@ -660,6 +675,7 @@ Valida impressao direta de venda(${Parametro})
         
         Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
         Sleep    ${SLEEP_MEDIO}
+
         Press Combination    KEY.ALT     Key.S
         Sleep    ${SLEEP_BAIXO}
 
@@ -672,10 +688,11 @@ Valida solicitacao de senha do usuário
     IF    ${MSG}
 
         ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 LIMIT 1;
-        ${senhaUsuarioDescriptografada}=    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
+        ${senhaUsuarioDescriptografada}    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
 
         Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    ENTER 
         Sleep    ${SLEEP_MEDIO}
 
@@ -683,7 +700,7 @@ Valida solicitacao de senha do usuário
 
 Verifica observacao do produto 
     
-    ${ObservaçãoProduto} =     Run Keyword And Return Status     Check If Exists In Database    SELECT ObservaVenda FROM produtos WHERE Codigo = ${COD_PRODUTO} AND ObservaVenda <> 0 AND ObservaVenda IS NOT NULL
+    ${ObservaçãoProduto}    Run Keyword And Return Status    Check If Exists In Database    SELECT ObservaVenda FROM produtos WHERE Codigo = ${COD_PRODUTO} AND ObservaVenda <> 0 AND ObservaVenda IS NOT NULL
 
     IF    ${ObservaçãoProduto}
         
@@ -693,6 +710,7 @@ Verifica observacao do produto
         IF    ${MSG}  
             
             Input Text    ${EMPTY}    Obs Produto Teste
+
             Press Combination    KEY.ALT     Key.O
             Sleep    ${SLEEP_MEDIO}
 
@@ -709,6 +727,7 @@ Valida controle de entrega
         
         Input Text    ${EMPTY}    S
         Sleep    ${SLEEP_BAIXO}
+
         Press Combination    KEY.ALT     Key.G
         Sleep    ${SLEEP_MEDIO}
 
@@ -759,9 +778,11 @@ Valida Controle de Credito - Liberação(${VALOR_FINAL})
             SikuliLibrary.Click    ${BT_SOLICITAR_CRÉDITO}
             Wait Until Screen Contain    ${TELA_CONTROLE_CRÉDITO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
+
             Press Combination    KEY.ALT    Key.L
             Wait Until Screen Contain    ${TELA_CONFIRMA_LIBERACAO_CREDITO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
+
             Press Combination    KEY.ALT    Key.o
             
             #Valida o status = Liberado e a label Crédito liberado, por que na OS não existe o status = Liberado
@@ -775,8 +796,8 @@ Valida Controle de Credito - Liberação(${VALOR_FINAL})
                 
                 #Correção temporária até a correção da tarefa: 144920
                 SikuliLibrary.Click    ${BT_OK_LIBERACAO_CRÉDITO}
-
                 Sleep    ${SLEEP_MEDIO}
+
                 Press Combination    KEY.ALT    Key.F
                 Sleep    ${SLEEP_BAIXO}
 
@@ -794,6 +815,7 @@ Insere detalhamento no serviço
         
         Input Text    ${EMPTY}    Detalhamento de Servico - Teste de Automacao
         Sleep    ${SLEEP_BAIXO}
+
         Press Combination    KEY.ALT     Key.C 
         Sleep    ${SLEEP_BAIXO}
 
@@ -803,7 +825,7 @@ Exclui ordem de entrega(${COD_OPERACAO})
     
     Execute Sql String    DELETE FROM produtos_entregues WHERE IDEntrega = (SELECT ID FROM entregas WHERE CodigoVenda = ${COD_OPERACAO});
     Execute Sql String    DELETE FROM entregas WHERE CodigoVenda = ${COD_OPERACAO};
-    Log To Console    Apagou a ordem de entrega(Velha) e produtos entregues da operação de Código: ${COD_OPERACAO}
+    # Log To Console    Apagou a ordem de entrega(Velha) e produtos entregues da operação de Código: ${COD_OPERACAO}
 
 Cancela venda com senha 
     
@@ -811,9 +833,9 @@ Cancela venda com senha
     #Sistema não reconhece a imagem do modal de jeito nenhum, então deixei dessa maneira, já que se estiver com o parametro marcado irá aparecer de certeza
 
     Sleep    ${SLEEP_ALTO}
-        
     Input Text    ${EMPTY}    1
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.O
     Sleep    ${SLEEP_BAIXO}
 
@@ -908,10 +930,10 @@ Altera para vendedor vinculado ao cliente
 
 Quando informo um produto normal
 
-    ${Codigos_Produtos} =    Create List
+    ${Codigos_Produtos}    Create List
     ${numeroDeProdutos}    Evaluate    random.randint(1, 3)
+
     Set Global Variable    ${valorTotalNota}    0
-    Log To Console    \nNúmero De Produtos: ${numeroDeProdutos}
 
     FOR    ${I}    IN RANGE    ${numeroDeProdutos}
         
@@ -922,8 +944,6 @@ Quando informo um produto normal
         Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
 
     END
-
-    Log To Console    Produtos adicionados na venda: ${Codigos_Produtos}
 
     Set Test Variable    ${Codigos_Produtos}
     
@@ -959,7 +979,6 @@ Selecionar produto
 
     ${produto}    Query    SELECT Codigo, VendaT1 FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
-    #Log To Console    Retorno da Query: ${produto}
 
     Input Text    ${EMPTY}    ${produto[0][0]}
     Sleep    ${SLEEP_BAIXO}
@@ -970,7 +989,6 @@ Selecionar produto
     Set Test Variable    ${COD_PRODUTO}    ${produto[0][0]}
     
     ${qtdeProduto}    Evaluate    random.randint(1, 3)
-    #Log To Console    Quantidade De Produto: ${qtdeProduto}
 
     Input Text    ${EMPTY}    ${qtdeProduto}
     Sleep    ${SLEEP_BAIXO}
@@ -979,13 +997,11 @@ Selecionar produto
     Sleep    ${SLEEP_BAIXO}
 
     ${valorUnitario}    Set Variable    ${produto[0][1]}
-    #Log To Console    Valor Unitário: ${valorUnitario}
     
     ${valorTotalProduto}    Evaluate    ${qtdeProduto} * ${valorUnitario}
-    #Log To Console    Valor Total do Produto: ${valorTotalProduto}
 
     ${valorTotalNota}    Evaluate    (${valorTotalProduto} + ${valorTotalNota})
-    Set Global Variable    ${valorTotalNota}
 
+    Set Global Variable    ${valorTotalNota}
+    
     Set Test Variable    ${VALOR_TOTAL}    ${valorTotalNota}
-    Log To Console    Valor Total: ${VALOR_TOTAL}

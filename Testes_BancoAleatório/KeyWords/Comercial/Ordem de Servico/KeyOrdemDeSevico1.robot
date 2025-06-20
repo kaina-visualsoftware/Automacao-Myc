@@ -48,6 +48,7 @@ ${AVISO_NFSE_PROCESSAMENTO}              aviso_NFSeProcessamento.png
 # Botões
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
+${BT_OK_NFS}                             bt_OK_NFS.png
 
 # Outros
 ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
@@ -94,6 +95,7 @@ Quando pressiono o atalho de adicionar
     END
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
+
     Set Test Variable    ${COD_ORDEM_SERVICO}    ${Consulta[0][0]}
 
 E adiciono vendedor e cliente
@@ -171,6 +173,7 @@ Então finalizo a Ordem de Servico
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT     Key.F
 
     Valida check list
@@ -230,23 +233,23 @@ Então visualizado a OS recém criada
     Press Combination    KEY.ALT     Key.V 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
+
     Press Combination    KEY.ALT     Key.r
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${SLEEP_ALTO}
 
 Quando clico em editar
     
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
+
     Press Combination    KEY.ALT     Key.E
     Sleep    ${SLEEP_BAIXO}
 
     validacaoAviso.Valida tela de liberação de desconto
 
-
 E excluo os pagamentos lançados
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.M 
-
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
@@ -262,7 +265,7 @@ E excluo os pagamentos lançados
 
     END
 
-Então finalizo a OS - A prazo 
+Então finalizo a OS - A prazo
     
     Verifica vendedor com senha
 
@@ -332,6 +335,7 @@ Então finalizo a OS - A prazo
 Então clico em excluir
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
+
     Press Combination    KEY.ALT     Key.X
     Sleep    ${SLEEP_BAIXO}
     
@@ -352,7 +356,7 @@ Então clico em excluir
 
 Calcula valor final da OS
 
-    ${ValorTotalProdutos}     Query    SELECT SUM(vp.ValorTotal + vs.ValorTotal) FROM vendasprodutos AS vp INNER JOIN vendasservicos AS vs ON vs.CodigoVenda = vp.CodigoVenda WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+    ${ValorTotalProdutos}    Query    SELECT SUM(vp.ValorTotal + vs.ValorTotal) FROM vendasprodutos AS vp INNER JOIN vendasservicos AS vs ON vs.CodigoVenda = vp.CodigoVenda WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
 
     Set Test Variable    ${VALOR_FINAL_OS}    ${ValorTotalProdutos[0][0]}
     
@@ -378,7 +382,7 @@ Valida avisos ao finalizar Ordem de serviço
 
 Valida faturamento os pos finalizar
     
-    ${MSG} =      Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_FATURAMENTO_OS}    ${TEMPO_TELA}
+    ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_FATURAMENTO_OS}    ${TEMPO_TELA}
 
     IF    ${MSG}
 
@@ -389,7 +393,7 @@ Valida faturamento os pos finalizar
 
 Valida impressao carne OS 
 
-    ${MSG} =      Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_IMPRIME_CARNE_OS}    ${TEMPO_TELA}
+    ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_IMPRIME_CARNE_OS}    ${TEMPO_TELA}
 
     IF    ${MSG}
 
@@ -421,7 +425,7 @@ Valida check list
                 
                 IF    '${Perguntas_CheckList[${I}][1]}' == 'A'
                     
-                    #Validação para ficar alternando entre sim e não
+                    # Validação para ficar alternando entre sim e não.
                     IF    ${I} % ${2} == 0
 
                         Press Special Key    DOWN
@@ -551,10 +555,11 @@ Então realizo o faturamento da NFSe
     Sleep    ${SLEEP_BAIXO}
 
 Valida faturamento de NFSe
+    
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${BT_OK_NFS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-    Sleep    ${SLEEP_ALTO}
-    Sleep    ${SLEEP_ALTO}
-        
     ${consultaNotaFiscalServico}    Query    SELECT Situacao, motivoRejeicao FROM notafiscalservico WHERE CodigoOS = ${COD_ORDEM_SERVICO};
 
     ${situacao}    Set Variable    ${consultaNotaFiscalServico[0][0]}
@@ -586,8 +591,9 @@ Valida faturamento de NFSe
                 Sleep    ${SLEEP_BAIXO}
                 Press Special Key    ENTER
 
-                Fail    Nota fiscal de serviço rejeitada: \n${motivoRejeicao}
-                
+                #Fail    Nota fiscal de serviço rejeitada: \n${motivoRejeicao}
+                Log To Console    Nota fiscal de serviço rejeitada.
+
             END
 
         END

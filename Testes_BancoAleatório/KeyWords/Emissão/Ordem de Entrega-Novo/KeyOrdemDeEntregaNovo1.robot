@@ -9,45 +9,53 @@ Variables    ../libs/leituraConfig.py
 
 Resource    ../utils/validacaoAviso.robot
 Resource    ../utils/utils.robot
-Resource     ../utils/montadorDeCenarios.robot
+Resource    ../utils/montadorDeCenarios.robot
 
 *** Variables ***
-#Imagens
+# Repositório de Imagens
 ${IMAGENS}    ./Testes_BancoAleatório/images
 
-#Conexão com banco de dados
+# Conexão com o Banco de Dados
 ${DBHost}                                      ${config.IpServidor}
 ${DBName}                                      ${config.Database}
 ${DBPass}                                      vssql
 ${DBPort}                                      ${config.Porta}
 ${DBUser}                                      root
 
-#Sleep's
+# Sleep's
 ${SLEEP_BAIXO}                                 0.7
 ${SLEEP_MEDIO}                                 1.7
 ${SLEEP_ALTO}                                  3
 ${TEMPO_TELA}                                  20
 
-#Imagens Telas
+# Telas
 ${MENU_EMISSÃO}                                menu_Emissão.png
 ${SUBMENU_ORDEM_DE_ENTREGA_NOVO}               subMenu_OrdemDeEntregaNovo.png
 ${SUBMENU_ORDEM_DE_ENTREGA_NOVO_LANCAMENTO}    subMenu_OrdemDeEntregaNovoLancamento.png
 ${TELA_ORDEM_DE_ENTREGA}                       tela_OrdemDeEntrega.png
+${TELA_ENTREGAS}                               tela_Entregas.png
+${TELA_EDICAO_ENTREGA}                         tela_EdicaoEntrega.png
+${TELA_VISUALIZACAO_ENTREGA}                   tela_VisualizacaoEntrega.png
+${TELA_DETALHES_GERACAO_ENTREGA}               tela_DetalhesGeracaoEntrega.png
+${TELA_EXCLUSAO_ENTREGA}                       tela_ExclusaoEntrega.png
+${TELA_WORKFLOW_ENTREGA}                       tela_WorkflowEntrega.png
+
+# Telas Avisos
+${AVISO_ENTREGADOR_JA_VINCULADO_ENTREGA}       aviso_EntregadorJaVinculadoComEntrega.png
+
+# Botões
+${BT_SETA_INCLUIR_PRODUTO_ENTREGA}             bt_SetaIncluirProdutoEntrega.png
+
+# Outros
 ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}             grid_PedidosOrdemDeEntregaNovo.png
 ${LB_CODIGO_PEDIDO}                            lb_CodigoPedido.png
-${TELA_ENTREGAS}                               tela_Entregas.png
-${TELA_DETALHES_GERACAO_ENTREGA}               tela_DetalhesGeracaoEntrega.png
 ${INPUT_COD_ENTREGADOR}                        input_CodEntregador.png
-${AVISO_ENTREGADOR_JA_VINCULADO_ENTREGA}       aviso_EntregadorJaVinculadoComEntrega.png
 ${LABEL_ID_ENTERGA}                            label_IdEntrega.png
-${TELA_EDICAO_ENTREGA}                         tela_EdicaoEntrega.png
 ${ABA_IMAGEM_ENTREGA}                          aba_ImagemEntrega.png
 ${ABA_VENDAS_ENTREGAS}                         aba_VendasEntregas.png
 ${ROW_VENDA_INCLUSA_ENTREGA}                   row_VendaInclusaEntrega.png
-${TELA_VISUALIZACAO_ENTREGA}                   tela_VisualizacaoEntrega.png
-${TELA_EXCLUSAO_ENTREGA}                       tela_ExclusaoEntrega.png
-${TELA_WORKFLOW_ENTREGA}                       tela_WorkflowEntrega.png
-${BT_SETA_INCLUIR_PRODUTO_ENTREGA}             bt_SetaIncluirProdutoEntrega.png
+${CHECKBOX_VENDA_SELECIONA}                    checkbox_VendaSelecionadaOrdemDeEntrega.png
+${CHECKBOX_SELECIONAR_PRODUTO_VENDA}           checkbox_SelecaoProdutosOrdemDeEntrega.png
 
 *** Keywords ***
 
@@ -84,12 +92,24 @@ Quando seleciono a última venda gerada
     Input Text    ${EMPTY}    ${COD_VENDA}
     Sleep    ${SLEEP_BAIXO}
 
+    FOR    ${i}    IN RANGE    3
+        
+        Press Special Key    LEFT
+        
+    END
+
+    Press Special Key    SPACE
+
+    Wait Until Screen Contain    ${CHECKBOX_VENDA_SELECIONA}    ${SLEEP_ALTO}
+    Sleep    ${SLEEP_BAIXO}
+
 E seleciono o produto
 
     Valida descricao automatica de ordem de entrega
 
-    Wait Until Screen Contain    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_PRODUTO_VENDA}
+
+    SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
 
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
@@ -115,9 +135,9 @@ Então gero a entrega
 
     Última entrega gerada
 
-Quando seleciono as últimas vendas feitas 
+Quando seleciono as últimas vendas feitas
     
-    ${Quantidade_Vendas_Feitas} =     Get Length    ${Codigos_Vendas}
+    ${Quantidade_Vendas_Feitas}    Get Length    ${Codigos_Vendas}
     Set Test Variable    ${Quantidade_Vendas_Feitas}
 
     Press Combination    KEY.ALT     Key.F
@@ -162,13 +182,13 @@ Quando seleciono a última doação gerada
 
 Valida detalhes da geração de entrega
 
-    ${telaDetalhes} =    Exists    ${TELA_DETALHES_GERACAO_ENTREGA}
+    ${telaDetalhes}    Exists    ${TELA_DETALHES_GERACAO_ENTREGA}
 
     IF    ${telaDetalhes}
 
         ${codigoEntregador}    Seleciona o entregador da entrega
 
-        ${tela} =    Exists    ${INPUT_COD_ENTREGADOR}
+        ${tela}    Exists    ${INPUT_COD_ENTREGADOR}
 
         IF    ${tela}
         
@@ -210,6 +230,7 @@ Seleciona a região da entrega
     
     ${possuiRegiao}    Run Keyword And Return Status    Check If Exists In Database    SELECT Codigo FROM regioes;
     Sleep    ${SLEEP_BAIXO}
+
     ${codRegiao}    Query    SELECT Codigo FROM regioes ORDER BY RAND() LIMIT 1;
 
     IF    ${possuiRegiao}
@@ -234,11 +255,13 @@ Seleciona o veículo da entrega
 
     ${possuiVeiculo}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.ID FROM veiculos v WHERE v.Cancelado IS NULL;
     Sleep    ${SLEEP_BAIXO}
+
     ${codVeiculo}    Query    SELECT v.ID FROM veiculos v WHERE v.Cancelado IS NULL ORDER BY RAND() LIMIT 1;
 
     IF    ${possuiVeiculo}
         
         Input Text    ${EMPTY}    ${codVeiculo}
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
         
@@ -300,7 +323,7 @@ E edito a entrega
 
 Valida se venda consta inclusa na entrega
 
-    ${vendaExiste} =    Exists    ${ROW_VENDA_INCLUSA_ENTREGA}
+    ${vendaExiste}    Exists    ${ROW_VENDA_INCLUSA_ENTREGA}
 
     IF    '${vendaExiste}' == 'False'
 
@@ -321,6 +344,7 @@ E excluo a entrega
     Wait Until Screen Contain    ${TELA_EXCLUSAO_ENTREGA}    ${TEMPO_TELA}
 
     Input Text    ${EMPTY}    Exclusao de Entrega - Teste Automacao
+
     FOR    ${I}    IN RANGE    2
             
         Press Special Key    ENTER

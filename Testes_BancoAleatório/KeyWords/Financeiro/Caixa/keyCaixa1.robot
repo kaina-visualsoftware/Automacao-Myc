@@ -181,7 +181,7 @@ E pesquiso pela conta a pagar gerada
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
 Então concluo o pagamento da mesma
     
