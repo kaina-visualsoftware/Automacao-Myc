@@ -55,7 +55,9 @@ ${ABA_IMAGEM_ENTREGA}                          aba_ImagemEntrega.png
 ${ABA_VENDAS_ENTREGAS}                         aba_VendasEntregas.png
 ${ROW_VENDA_INCLUSA_ENTREGA}                   row_VendaInclusaEntrega.png
 ${CHECKBOX_VENDA_SELECIONA}                    checkbox_VendaSelecionadaOrdemDeEntrega.png
-${CHECKBOX_SELECIONAR_PRODUTO_VENDA}           checkbox_SelecaoProdutosOrdemDeEntrega.png
+${CHECKBOX_SELECIONAR_ITENS_ENTREGA}           checkbox_SelecionarItensEntrega.png
+${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}         checkbox_ItensEntregaSelecionados.png
+${LABEL_VENDA_SELECIONADA_ENTREGA}             lb_VendaSelecionadaEntrega
 
 *** Keywords ***
 
@@ -107,9 +109,11 @@ E seleciono o produto
 
     Valida descricao automatica de ordem de entrega
 
-    SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_PRODUTO_VENDA}
+    SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}
+    Wait Until Screen Contain    ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
+    Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
 
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
@@ -155,6 +159,17 @@ Quando seleciono as últimas vendas feitas
 
         Input Text    ${EMPTY}    ${Codigos_Vendas[${I}]}
 
+        FOR    ${i}    IN RANGE    3
+        
+            Press Special Key    LEFT
+        
+        END
+
+        Press Special Key    SPACE
+
+        Wait Until Screen Contain    ${CHECKBOX_VENDA_SELECIONA}    ${SLEEP_ALTO}
+        Sleep    ${SLEEP_BAIXO}
+
         E seleciono o produto
 
         IF    ${I} == ${Quantidade_Vendas_Feitas} - 1
@@ -178,6 +193,17 @@ Quando seleciono a última doação gerada
     Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${COD_DOACAO}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${i}    IN RANGE    3
+        
+        Press Special Key    LEFT
+        
+    END
+
+    Press Special Key    SPACE
+
+    Wait Until Screen Contain    ${CHECKBOX_VENDA_SELECIONA}    ${SLEEP_ALTO}
     Sleep    ${SLEEP_BAIXO}
 
 Valida detalhes da geração de entrega

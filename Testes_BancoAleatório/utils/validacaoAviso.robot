@@ -49,6 +49,7 @@ ${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}                    aviso_qtde_sem_estoque_or
 ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}                    aviso_VencimentoFeriadoSabadoDomingo.png
 ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}    aviso_NaoPermitidoMultiplasVendasPorEntrega.png
 ${AVISO_SELECAO_COI_FATURAMENTO}                       aviso_SelecaoCoiFaturamento.png
+${AVISO_CLIENTE_POSSUI_VALES_COMPRA}                   aviso_ClientePossuiValesCompra.png
 
 # Botões
 ${BT_NÃO}                                              bt_Nao.png
@@ -60,6 +61,7 @@ ${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
 ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_consumidor.png
 ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
 ${LABEL_COI_NFE}                                       lb_CoiNFe.png
+${LABEL_VALES_COMPRA_DISPONIVEIS}                      lb_ValesCompraDisponiveis.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -808,3 +810,15 @@ Valida seleção de coi para faturamento
     END
 
     RETURN    ${salvar}
+
+Valida cliente com vales compra disponíveis
+
+    ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
+
+    IF    ${aviso}
+
+        Press Special Key    ENTER
+        Wait Until Screen Contain    ${LABEL_VALES_COMPRA_DISPONIVEIS}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+        
+    END

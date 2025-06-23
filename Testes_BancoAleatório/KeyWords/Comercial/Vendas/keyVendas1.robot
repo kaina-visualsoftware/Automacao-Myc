@@ -179,7 +179,10 @@ Quando insiro um produto normal
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M 
+    Press Combination    KEY.ALT     Key.M
+
+    Valida cliente com vales compra disponíveis
+
     Sleep    ${SLEEP_ALTO}
 
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
