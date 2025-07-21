@@ -57,7 +57,7 @@ ${ROW_VENDA_INCLUSA_ENTREGA}                   row_VendaInclusaEntrega.png
 ${CHECKBOX_VENDA_SELECIONA}                    checkbox_VendaSelecionadaOrdemDeEntrega.png
 ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}           checkbox_SelecionarItensEntrega.png
 ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}         checkbox_ItensEntregaSelecionados.png
-${LABEL_VENDA_SELECIONADA_ENTREGA}             lb_VendaSelecionadaEntrega
+${LABEL_VENDA_SELECIONADA_ENTREGA}             lb_VendaSelecionadaEntrega.png
 
 *** Keywords ***
 
@@ -113,10 +113,19 @@ E seleciono o produto
     Wait Until Screen Contain    ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
-    Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
-
-    Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
+
+    ${entregaComMaisDeUmaVenda}    Valida a geração de entregas com apenas uma venda por entrega
+
+    IF    '${entregaComMaisDeUmaVenda}' == 'False'
+        
+        #Log To Console    entrou na condicao
+        Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
+        
+    END
+
+    # Press Special Key    ENTER
+    # Sleep    ${SLEEP_BAIXO}
 
 Última entrega gerada
     
@@ -145,7 +154,6 @@ Quando seleciono as últimas vendas feitas
     Set Test Variable    ${Quantidade_Vendas_Feitas}
 
     Press Combination    KEY.ALT     Key.F
-    Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -171,14 +179,20 @@ Quando seleciono as últimas vendas feitas
         Sleep    ${SLEEP_BAIXO}
 
         E seleciono o produto
-
-        IF    ${I} == ${Quantidade_Vendas_Feitas} - 1
-
-            Valida a geração de entregas com apenas uma venda por entrega
-
-        END
         
     END
+
+E seleciono os produtos
+
+    Valida descricao automatica de ordem de entrega
+
+    SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}
+    Wait Until Screen Contain    ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
+    Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
+
+    Valida a geração de entregas com apenas uma venda por entrega
 
 Quando seleciono a última doação gerada
     

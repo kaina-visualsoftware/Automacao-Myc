@@ -736,11 +736,13 @@ Valida impressão após gerar entrega
 
 Valida a geração de entregas com apenas uma venda por entrega
 
+    ${aviso}    Set Variable    False
+
     IF    ${Parametro_UmaEntregaPorVenda}
 
-        ${MSG}    Exists    ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}
+        ${aviso}    Exists    ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}
 
-        IF    ${MSG}
+        IF    ${aviso}
 
             Press Special Key    ENTER
             Sleep    ${SLEEP_BAIXO}
@@ -748,6 +750,9 @@ Valida a geração de entregas com apenas uma venda por entrega
         END
 
     END
+    
+    #Log To Console    aviso: ${aviso}
+    RETURN    ${aviso}
 
 Valida considerar lançamento de ordem de entrega de doações
 
@@ -812,8 +817,10 @@ Valida seleção de coi para faturamento
     RETURN    ${salvar}
 
 Valida cliente com vales compra disponíveis
-
+    
+    Sleep    ${SLEEP_BAIXO}
     ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
+    Log To Console    ${aviso}
 
     IF    ${aviso}
 

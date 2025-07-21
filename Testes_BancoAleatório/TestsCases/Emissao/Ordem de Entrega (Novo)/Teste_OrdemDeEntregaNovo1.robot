@@ -24,6 +24,7 @@ Teste 02 - Lançando uma nova Ordem de Entrega com mais de uma venda
 
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
     Quando seleciono as últimas vendas feitas
+    E seleciono os produtos
     Então gero a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
