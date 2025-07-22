@@ -820,12 +820,11 @@ Valida cliente com vales compra disponíveis
     
     Sleep    ${SLEEP_BAIXO}
     ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
-    Log To Console    ${aviso}
 
     IF    ${aviso}
-
+        
+        Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER
         Wait Until Screen Contain    ${LABEL_VALES_COMPRA_DISPONIVEIS}    ${TEMPO_TELA}
-        Sleep    ${SLEEP_BAIXO}
         
     END
