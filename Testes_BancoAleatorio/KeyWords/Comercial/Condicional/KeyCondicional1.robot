@@ -64,8 +64,7 @@ E adiciono uma nova Condicional
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.A 
-    #Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
-    Wait Until Screen Contain    ${TELA_GERAÇÃO_VENDA_PARICAL}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
     ${Consulta}    Query    SELECT Codigo FROM condicionais ORDER BY Codigo DESC LIMIT 1;
 

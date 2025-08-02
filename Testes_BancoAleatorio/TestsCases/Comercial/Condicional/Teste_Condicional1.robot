@@ -6,7 +6,6 @@ Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyCondicional1.Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
 Suite Teardown    Stop Remote Server
-Test Teardown     Close Application    myCommerce.exe
 
 *** Test Cases ***
 Teste 01 - Adicionando nova Condicional
