@@ -16,6 +16,7 @@ Teste 01 - Venda com produto Normal
     Quando insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a venda
+    E saio da tela(Venda)
 
 Teste 02 - Visualizando uma venda
     [Tags]    Teste02
@@ -27,6 +28,7 @@ Teste 02 - Visualizando uma venda
     E acesso a aba pagamentos
     Então finalizo a venda
     Então visualizo a mesma
+    E saio da tela(Venda)
 
 Teste 03 - Editando venda
     [Tags]    Teste03
@@ -42,6 +44,7 @@ Teste 03 - Editando venda
     Quando insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
+    E saio da tela(Venda)
 
 Teste 04 - Excluindo uma venda
     [Tags]    Teste04
@@ -53,6 +56,7 @@ Teste 04 - Excluindo uma venda
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
     Então clico em excluir
+    E saio da tela(Venda)
 
 Teste 05 - Realizando venda com mais de um produto
     [Tags]    Teste05
@@ -63,6 +67,7 @@ Teste 05 - Realizando venda com mais de um produto
     Quando insiro mais de um produto normal(2)
     E acesso a aba pagamentos
     Então finalizo a venda
+    E saio da tela(Venda)
 
 Teste 06 - Realizando venda com desconto ao finalizar
     [Tags]    Teste06
@@ -73,6 +78,7 @@ Teste 06 - Realizando venda com desconto ao finalizar
     Quando insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a venda - Desconto(5)
+    E saio da tela(Venda)
 
 Teste 07 - Realizando venda com mais de um produto 
     [Tags]    Teste07
@@ -83,3 +89,4 @@ Teste 07 - Realizando venda com mais de um produto
     Quando insiro mais de um produto normal(2)
     E acesso a aba pagamentos
     Então finalizo a venda - Desconto(25)
+    E saio da tela(Venda)

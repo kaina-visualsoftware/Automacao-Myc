@@ -16,3 +16,4 @@ Teste 01 - Adicionando uma nova conta a pagar avulsa
     Quando clico em adicionar
     E insiro as informações necessárias(100)
     Então gravo o lançamento de conta a pagar avulsa
+    E saio da tela(ContasAPagar)

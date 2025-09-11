@@ -13,7 +13,7 @@ Teste 01 - Lançando uma nota fiscal de saída preenchimento Manual
 
     Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
     E adiciono vendedor e cliente
-    #Quando seleciono um produto
     Quando informo um produto normal
     E acesso a aba pagamentos
     Então finalizo a nota fiscal de saída manual
+    E saio da tela(nfManual)

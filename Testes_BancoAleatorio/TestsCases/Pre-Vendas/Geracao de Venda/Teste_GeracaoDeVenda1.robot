@@ -38,6 +38,7 @@ Teste 03 - Excluindo venda feita pelo gerar venda
     Então confirmo a geração da venda
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Então clico em excluir
+    E saio da tela(Venda)
     Então verifico se o pedido retornou como aberto
 
 Teste 04 - Gerando venda de mais de um pedido

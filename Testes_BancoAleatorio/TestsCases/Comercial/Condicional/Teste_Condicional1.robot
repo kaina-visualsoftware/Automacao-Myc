@@ -16,6 +16,7 @@ Teste 01 - Adicionando nova Condicional
     Quando insiro vendedor e cliente
     E insiro um produto normal
     Então finalizo a condicional
+    E saio da tela(Condicional)
 
 Teste 02 - Adicionando nova Condicional e visualizando
     [Tags]    Teste02
@@ -26,6 +27,7 @@ Teste 02 - Adicionando nova Condicional e visualizando
     E insiro um produto normal
     Então finalizo a condicional
     Então visualizo a condicional
+    E saio da tela(Condicional)
 
 Teste 03 - Adicionando nova Condicional e editando
     [Tags]    Teste03
@@ -38,6 +40,7 @@ Teste 03 - Adicionando nova Condicional e editando
     KeyCondicional1.Quando clico em editar
     E insiro um produto normal
     Então finalizo a condicional
+    E saio da tela(Condicional)
 
 Teste 04 - Adicionando nova Condicional e Excluindo
     [Tags]    Teste04
@@ -48,6 +51,7 @@ Teste 04 - Adicionando nova Condicional e Excluindo
     E insiro um produto normal
     Então finalizo a condicional
     Então excluo a condicional
+    E saio da tela(Condicional)
 
 Teste 05 - Gerando venda total de uma condicional
     [Tags]    Teste05
@@ -74,6 +78,7 @@ Teste 06 - Gerando venda Parcial de uma condicional
     E gero a venda de parte dos produtos(2)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    # E saio da tela(Condicional)
 
 Teste 07 - Cancelando a venda total de uma condicional
     [Tags]    Teste07
@@ -85,6 +90,7 @@ Teste 07 - Cancelando a venda total de uma condicional
     Então finalizo a condicional
     Quando clico em gerar venda
     Então cancelo a geração da venda
+    E saio da tela(Condicional)
 
 Teste 08 - Cancelando venda Parcial de uma condicional
     [Tags]    Teste08
@@ -97,3 +103,4 @@ Teste 08 - Cancelando venda Parcial de uma condicional
     Quando cliclo em gerar venda parcial
     E gero a venda de parte dos produtos(2)
     Então cancelo a geração da venda
+    E saio da tela(Condicional)

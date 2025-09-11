@@ -52,7 +52,6 @@ Quando eu clico em adicionar
     Verifica parametros que interferem na venda
     
     Sleep    ${SLEEP_BAIXO}
-    #Press Combination    KEY.ALT    KEY.A
     SikuliLibrary.Click    ${BT_ADICIONAR}
     Wait Until Screen Contain    ${TELA_LANC_DOACOES}    ${TEMPO_TELA}
 

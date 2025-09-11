@@ -1,6 +1,6 @@
 *** Settings ***
 Library    SikuliLibrary
-Library    ImageHorizonLibrary 
+Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
 Library    ../../../libs/estoque.py
@@ -31,8 +31,8 @@ ${TEMPO_TELA}                            20
 # Telas
 ${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png
 ${TELA_ALTERAR_NUMERO}                   aviso_DesejaAlterarNumero.png
-${TELA_VENDAS}                           atacado_TelaVendaBalcao.png
-${TELA_VENDAS_ADICIONAR}                 atacado_TelaVendaBalcao_Adicionar.png
+${TELA_VENDAS}                           tela_VendasDeBalcao.png
+${TELA_VENDAS_ADICIONAR}                 tela_VendaBalcaoAdicionar.png
 ${TELA_RECB_DUPLICATAS}                  tela_RecebimentoDuplicatas.png
 ${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
 ${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
@@ -77,43 +77,46 @@ ${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
 ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png
 ${Codigos_Produtos}                      ${None}
-${SETA_ULTIMA_VENDA}                     bt_SetaUltimaVenda.png
+${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGES}
 
 Verifica formas de recebimento da venda
-    
+
     ${FORMA_PADRAO}    Valida Configuracoes Venda
     ${FORMA_PRAZO}     Seleciona Forma Prazo
 
     Set Test Variable    ${FORMA_PADRAO}
-    Set Test Variable    ${FORMA_PRAZO}   
+    Set Test Variable    ${FORMA_PRAZO}
 
 Dado que acesso a tela de vendas de balcao
 
     Verifica formas de recebimento da venda
 
     Press Special Key    F2
+
+    Valida lançamento de venda em aberto
+
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
 Quando pressiono o atalho de adicionar
 
     Verifica parametros que interferem na venda
 
-    Press Combination    KEY.ALT     Key.A 
+    Press Combination    KEY.ALT     Key.A
 
     Sleep    ${SLEEP_BAIXO}
 
-    IF    ${Parametro_Local_Negociacao} 
+    IF    ${Parametro_Local_Negociacao}
 
         Valida local da negociação
 
     END
 
     IF    ${Parametro_IndicacaoVenda}
-        
+
         Valida indicacao Venda
 
     END
@@ -128,10 +131,10 @@ Quando pressiono o atalho de adicionar
     Set Test Variable    ${Codigos_Produtos}
 
 Ultima venda feita/em aberto
-    
+
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
 
-    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}  
+    Set Test Variable    ${COD_VENDA}    ${Consulta[0][0]}
 
 E adiciono vendedor e cliente
 
@@ -140,11 +143,11 @@ E adiciono vendedor e cliente
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando insiro mais de um produto normal(${Quantidade_Inserir})
-    
+
     ${Codigos_Produtos} =    Create List
 
     FOR    ${I}    IN RANGE    ${Quantidade_Inserir}
-        
+
         Quando insiro um produto normal
 
         Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
@@ -167,7 +170,7 @@ Quando insiro um produto normal
             utils.Inserir Produto normal - Permite sem estoque
 
         ELSE
-        
+
             utils.Inserir Produto normal - Necessita de estoque
 
         END
@@ -193,12 +196,12 @@ E acesso a aba pagamentos
 
     IF     ${DESCONTO_FORMA} > 0
 
-        Valida tela de liberação de desconto 
+        Valida tela de liberação de desconto
 
     END
 
 Então finalizo a venda
-    
+
     Ultima venda feita/em aberto
 
     Verifica vendedor com senha
@@ -212,8 +215,8 @@ Então finalizo a venda
     Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
-        
-        Valida tela de liberação de desconto 
+
+        Valida tela de liberação de desconto
 
     END
 
@@ -225,11 +228,11 @@ Então finalizo a venda
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
         IF    ${Parametro_ControlaCredito}
-            
+
             Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
             IF    ${VendedorPossuiSenha}
-        
+
                 Valida solicitacao de senha do usuário
 
             END
@@ -240,18 +243,18 @@ Então finalizo a venda
 
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
-        
+
         Valida solicitacao de senha do usuário
 
     END
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
-        
+
         IF    ${EntradaIgualA_Outros}
 
             IF     ${Parametro_BaixaAutomatico}
-                
-                Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA}) 
+
+                Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
 
             END
 
@@ -262,26 +265,22 @@ Então finalizo a venda
     Valida Parametros/Impressões pós venda
 
     # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
-    SikuliLibrary.Click    ${SETA_ULTIMA_VENDA}
+    SikuliLibrary.Click    ${AJUSTE_FOCO}
     Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
-    Sleep    ${SLEEP_ALTO}
-
-    Press Combination    KEY.ALT     Key.S
-    Sleep    ${SLEEP_ALTO}
 
     keyVendas1.Valida baixa de estoque
 
 Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
-    
+
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB 
+    Press Special Key    TAB
 
     Input Text    ${EMPTY}    ${PERCENT_DESCONTO}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Special Key    TAB 
+    Press Special Key    TAB
 
     Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
@@ -298,24 +297,24 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
-        
-        Valida tela de liberação de desconto 
+
+        Valida tela de liberação de desconto
 
     END
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    
+
     Press Combination    KEY.ALT     Key.F
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
         IF    ${Parametro_ControlaCredito}
-            
+
             Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
             IF    ${VendedorPossuiSenha}
-        
+
                 Valida solicitacao de senha do usuário
 
             END
@@ -326,18 +325,18 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
-        
+
         Valida solicitacao de senha do usuário
 
     END
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
-        
+
         IF    ${EntradaIgualA_Outros}
 
             IF     ${Parametro_BaixaAutomatico}
-                
-                Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA}) 
+
+                Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
 
             END
 
@@ -350,16 +349,13 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.S
-    Sleep    ${SLEEP_BAIXO}
-
     keyVendas1.Valida baixa de estoque
 
 Então visualizo a mesma
-    
+
     Dado que acesso a tela de vendas de balcao
 
-    Press Combination    KEY.ALT     Key.V 
+    Press Combination    KEY.ALT     Key.V
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -369,7 +365,7 @@ Então visualizo a mesma
 E acesso a aba pagamentos - A Prazo
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M 
+    Press Combination    KEY.ALT     Key.M
     Sleep    ${SLEEP_ALTO}
 
 Então finalizo a venda - A Prazo
@@ -397,7 +393,7 @@ Então finalizo a venda - A Prazo
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${FORMA_PADRAO[2]} > 0
-        
+
         Valida tela de liberação de desconto
 
     END
@@ -410,11 +406,11 @@ Então finalizo a venda - A Prazo
     Press Combination    KEY.ALT     Key.F
 
     IF    ${Parametro_ControlaCredito}
-            
+
         Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
         IF    ${VendedorPossuiSenha}
-        
+
             Valida solicitacao de senha do usuário
 
         END
@@ -423,7 +419,7 @@ Então finalizo a venda - A Prazo
 
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
-        
+
         Valida solicitacao de senha do usuário
 
     END
@@ -435,16 +431,16 @@ Então finalizo a venda - A Prazo
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
 Quando clico em editar
-    
+
     utils.Exclui ordem de entrega(${COD_VENDA})
-    
+
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
     Press Combination    KEY.ALT     Key.E
     Sleep    ${SLEEP_BAIXO}
-    
+
     IF    ${VendedorPossuiSenha}
-        
+
         Valida solicitacao de senha do usuário
 
     END
@@ -452,7 +448,7 @@ Quando clico em editar
     Valida solicitacao de senha do usuário
 
     IF    ${Parametro_IndicacaoVenda}
-        
+
         Valida indicacao Venda
 
     END
@@ -460,10 +456,10 @@ Quando clico em editar
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}     ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-E excluo os pagamentos lançados 
-    
+E excluo os pagamentos lançados
+
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M 
+    Press Combination    KEY.ALT     Key.M
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
@@ -479,7 +475,7 @@ Então clico em excluir
 
     Press Combination    KEY.ALT     Key.X
     Sleep    ${SLEEP_BAIXO}
-    
+
     Valida solicitacao de senha do usuário
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
@@ -490,19 +486,16 @@ Então clico em excluir
     Press Special Key    ENTER
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
-    Sleep    ${SLEEP_MEDIO}
-    
-    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
-
-    Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
-Valida ncm invalido ao faturar nota 
-    
+    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
+
+Valida ncm invalido ao faturar nota
+
     Sleep    ${SLEEP_BAIXO}
     ${MSG}    Exists    ${AVISO_NCM_INVALIDO}
 
-    IF    ${MSG}  
+    IF    ${MSG}
 
         Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
@@ -514,10 +507,10 @@ Valida ncm invalido ao faturar nota
 
     END
 
-Valida erro ao faturar NFC 
-    
+Valida erro ao faturar NFC
+
     Sleep    ${SLEEP_BAIXO}
-    ${ERRO}    Exists    ${ERRO_FATURAR_NFC}    
+    ${ERRO}    Exists    ${ERRO_FATURAR_NFC}
 
     IF     ${ERRO}
 
@@ -531,8 +524,8 @@ Valida erro ao faturar NFC
 
     END
 
-Calcula valor final da venda 
-    
+Calcula valor final da venda
+
     ${ValorTotalProdutos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
@@ -546,7 +539,7 @@ Calcula valor final da venda
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
 Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
-    
+
     ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
 
     IF    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
@@ -570,13 +563,13 @@ Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
 Calcula desconto final por produto(${PERCENT_DESCONTO})
-    
+
     IF    ${Codigos_Produtos} is None
-        
+
         ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
 
         IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
-            
+
             ${Valor_Final_Atual}    Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${Produto[0][1]} / 100))),4)
 
             Log To Console    Desconto ultrapassou o máximo do produto, novo valor final: ${Valor_Final_Atual}
@@ -596,15 +589,15 @@ Calcula desconto final por produto(${PERCENT_DESCONTO})
         RETURN    ${Valor_Final_Atual}
 
     ELSE
-        
+
         ${Valor_Final_Atual}    Evaluate    0
 
         FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
             ${Produto}     Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${Codigos_Produtos[${I}]}
-            
+
             IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
-            
+
                 ${Valor_Produto_Desconto}    Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${Produto[0][1]} / 100))),4)
                 Log To Console    Desconto ultrapassou o máximo do produto, novo valor final: ${Valor_Produto_Desconto}
 
@@ -615,7 +608,7 @@ Calcula desconto final por produto(${PERCENT_DESCONTO})
 
                 ${Valor_Produto_Desconto}    Evaluate    round((${Produto[0][0]} - (${Produto[0][0]} * (${PERCENT_DESCONTO} / 100))),4)
                 Log To Console    Desconto está no limite do máximo do produto, novo valor final: ${Valor_Produto_Desconto}
-                
+
                 ${Valor_Final_Atual}    Evaluate    ${Valor_Final_Atual} + ${Valor_Produto_Desconto}
                 ${Valor_Final_Atual}    Evaluate    round((${Valor_Final_Atual}),2)
 
@@ -628,14 +621,14 @@ Calcula desconto final por produto(${PERCENT_DESCONTO})
     END
 
 Valida baixa de estoque
-    
+
     Sleep    ${SLEEP_MEDIO}
     ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
 
     IF    ${Baixa_De_Estoque}
-        
+
         Log To Console    Baixou estoque corretamente!
 
     ELSE
@@ -645,31 +638,31 @@ Valida baixa de estoque
     END
 
 Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
-    
+
     IF    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} == False
-        
+
         IF    ${Codigos_Produtos} is None
-            
+
             ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
 
             IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
-                    
-                Valida tela de liberação de desconto 
-                
-            END       
+
+                Valida tela de liberação de desconto
+
+            END
 
         ELSE
-                
+
             ${Valor_Final_Atual}    Evaluate    0
 
             FOR    ${I}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
                 ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${Codigos_Produtos[${I}]}
-                    
+
                 IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
-                    
-                    Valida tela de liberação de desconto 
-                    
+
+                    Valida tela de liberação de desconto
+
                     BREAK
 
                 END
@@ -682,7 +675,7 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
     END
 
 Quando insiro um produto já definido(${Produto})
-    
+
     IF    ${SelecionaProdutoComLinha}
 
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})

@@ -125,9 +125,6 @@ Então gravo o lançamento de conta a pagar avulsa
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.G
     Wait Until Screen Not Contain    ${TELA_CADASTRO_CONTAS_A_PAGAR}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Combination    KEY.ALT     Key.S
 
 Recuperando numero documento 
 

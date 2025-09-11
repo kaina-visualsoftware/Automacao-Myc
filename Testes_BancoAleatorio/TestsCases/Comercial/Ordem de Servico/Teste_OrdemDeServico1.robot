@@ -17,6 +17,7 @@ Teste 01 - Adicionando nova Ordem de Serviço
     E insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a Ordem de Servico
+    E saio da tela(OrdemDeServico)
 
 Teste 02 - Visualizando nova Ordem de Serviço
     [Tags]    Teste02
@@ -29,6 +30,7 @@ Teste 02 - Visualizando nova Ordem de Serviço
     E acesso a aba pagamentos
     Então finalizo a Ordem de Servico
     Então visualizado a OS recém criada
+    E saio da tela(OrdemDeServico)
 
 Teste 03 - Editando nova Ordem de Serviço
     [Tags]    Teste03
@@ -45,6 +47,7 @@ Teste 03 - Editando nova Ordem de Serviço
     E insiro um produto normal
     E acesso a aba pagamentos
     Então finalizo a OS - A prazo
+    E saio da tela(OrdemDeServico)
 
 Teste 04 - Excluindo nova Ordem de Serviço
     [Tags]    Teste04
@@ -57,6 +60,7 @@ Teste 04 - Excluindo nova Ordem de Serviço
     E acesso a aba pagamentos
     Então finalizo a OS - A prazo
     Então clico em excluir
+    E saio da tela(OrdemDeServico)
 
 Teste 05 - Faturando NFSe da Ordem de Serviço - Somente serviço
     [Tags]    Teste05
@@ -69,6 +73,7 @@ Teste 05 - Faturando NFSe da Ordem de Serviço - Somente serviço
     Então finalizo a Ordem de Servico
     Quando pressiono o atalho de faturar
     Então realizo o faturamento da NFSe
+    E saio da tela(OrdemDeServico)
 
 Teste 06 - Faturando NFSe da Ordem de Serviço - Com produto e serviço
     [Tags]    Teste06
@@ -82,3 +87,4 @@ Teste 06 - Faturando NFSe da Ordem de Serviço - Com produto e serviço
     Então finalizo a Ordem de Servico
     Quando pressiono o atalho de faturar
     Então realizo o faturamento da NFSe
+    E saio da tela(OrdemDeServico)

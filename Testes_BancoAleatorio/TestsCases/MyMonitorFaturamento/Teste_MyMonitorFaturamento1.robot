@@ -13,5 +13,5 @@ Teste 01 - Abertura do MyMonitorFaturamento
     E acesso a guia 'Contigência'
     E acesso a guia 'Configurações extras'
     Então salvo as configurações
-    
+    E encerro o myMonitorFaturamento    
 

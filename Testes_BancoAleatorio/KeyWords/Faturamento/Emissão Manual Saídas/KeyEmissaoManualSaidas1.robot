@@ -158,6 +158,10 @@ Então finalizo a nota fiscal de saída manual
         END
 
     END
+    
+    Sleep    ${SLEEP_MEDIO}
+    Press Special Key    ENTER
+    Wait Until Screen Contain    ${TELA_NOTA_FISCAL_PREENCHIMENTO_MANUAL}    ${TEMPO_TELA}
 
 Calcula valor final da NFe Saídas Manual
 

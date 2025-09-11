@@ -52,6 +52,9 @@ Dado que acesso a tela de orçamento
     Verifica parametros que interferem na venda
 
     Type With Modifiers    O    CTRL
+
+    Valida lançamento de orçamento em aberto
+
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 

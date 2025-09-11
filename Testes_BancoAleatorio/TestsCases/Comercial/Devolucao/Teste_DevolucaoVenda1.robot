@@ -19,6 +19,7 @@ Teste 01 - Adicionando uma nova Devolução de venda
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
+    E saio da tela(Devolução)
 
 Teste 02 - Adicionando uma nova Devolução de venda - Visualizar
     [Tags]    Teste02
@@ -30,6 +31,7 @@ Teste 02 - Adicionando uma nova Devolução de venda - Visualizar
     E vou para a aba de pagamentos
     Então finalizo a devolução
     Então visualizo a devolução
+    E saio da tela(Devolução)
 
 #O teste de edição só funciona se os parametros de Dev. Avulsa e permite aberta estiverem habilitados!
 Teste 03 - Adicionando uma nova Devolução de venda - Editando
@@ -44,6 +46,7 @@ Teste 03 - Adicionando uma nova Devolução de venda - Editando
     E edito a devolução
     Quando insiro um produto para a troca
     Então finalizo a devolução após a edição
+    E saio da tela(Devolução)
 
 Teste 04 - Adicionando uma nova Devolução de venda - Excluindo 
     [Tags]    Teste04
@@ -55,6 +58,7 @@ Teste 04 - Adicionando uma nova Devolução de venda - Excluindo
     E vou para a aba de pagamentos
     Então finalizo a devolução
     Então excluo a devolução
+    E saio da tela(Devolução)
 
 Teste 05 - Adicionando uma devolução de venda com mais de um produto
     [Tags]    Teste05
@@ -66,3 +70,4 @@ Teste 05 - Adicionando uma devolução de venda com mais de um produto
     Quando seleciono os produtos para a devolução(2)
     E vou para a aba de pagamentos
     Então finalizo a devolução
+    E saio da tela(Devolução)

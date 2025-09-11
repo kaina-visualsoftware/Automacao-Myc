@@ -92,64 +92,6 @@ class validaParametros:
             parametrosMarcados = cursor.fetchone()
 
         return parametrosValidados
-    
-    def valida_Usuarios_Auxiliar(self):
-        
-        avisosInicializacaoMapeados = ("Uau_Avisos_Cotacao_Moeda, Uau_Avisa_Ferias, Uau_Importa_Produtos")
-
-        cursor.execute("SELECT "+avisosInicializacaoMapeados+" FROM usuarios_auxiliar AS uax INNER JOIN usuarios AS u ON u.Codigo = uax.uau_codigo_usuario INNER JOIN usuario_acesso AS ua ON ua.ua_usuario_mycommerce = u. UserName WHERE ua.ua_data = CURDATE() ORDER BY ua.ua_id DESC LIMIT 1;")
-
-        parametrosValidadosUserAux = []
-
-        parametrosMarcados = cursor.fetchone()
-
-        while parametrosMarcados is not None:
-
-            for i in range(len(cursor.description)):
-
-                desc = cursor.description[i] 
-                nomeColuna = str("{}".format(desc[0]))
-
-                if parametrosMarcados[i] is None:
-
-                    break
-
-                elif parametrosMarcados[i] == 1:
-
-                    parametrosValidadosUserAux.append(nomeColuna)
-
-            parametrosMarcados = cursor.fetchone()
-
-        return parametrosValidadosUserAux
-    
-    def valida_Config_Usuarios(self):
-        
-        avisosInicializacaoMapeados = ("AvisoClienteSemCompra, ContaAviso, AvisoChequeCompensar, AvisoChequesCompensarVencidos, AvisoCortes, prod_EstAviso")
-
-        cursor.execute("SELECT "+avisosInicializacaoMapeados+" FROM usuarios AS u INNER JOIN usuario_acesso AS ua ON ua.ua_usuario_mycommerce = u.UserName WHERE ua.ua_data = CURDATE() ORDER BY ua.ua_id DESC LIMIT 1;")
-
-        parametrosValidadosUser = []
-
-        parametrosMarcados = cursor.fetchone()
-
-        while parametrosMarcados is not None:
-
-            for i in range(len(cursor.description)):
-
-                desc = cursor.description[i] 
-                nomeColuna = str("{}".format(desc[0]))
-
-                if parametrosMarcados[i] is None:
-
-                    break
-
-                elif parametrosMarcados[i] == 1:
-
-                    parametrosValidadosUser.append(nomeColuna)
-
-            parametrosMarcados = cursor.fetchone()
-
-        return parametrosValidadosUser
 
     def valida_Configuracoes_Venda(self):
 

@@ -15,6 +15,7 @@ Teste 01 - Adicionando Orcamento com produto normal
     E adiciono vendedor e cliente
     Quando insiro um produto normal
     Então Gravo o Orcamento
+    E saio da tela(Orçamento)
 
 Teste 02 - Visualizando o orcamento
     [Tags]    Teste02
@@ -25,6 +26,7 @@ Teste 02 - Visualizando o orcamento
     Quando insiro um produto normal
     Então Gravo o Orcamento
     Então visualizo o mesmo
+    E saio da tela(Orçamento)
 
 Teste 03 - Editando um orcamento
     [Tags]    Teste03
@@ -37,6 +39,7 @@ Teste 03 - Editando um orcamento
     Quando clico em editar
     Quando insiro um produto normal
     Então Gravo o Orcamento
+    E saio da tela(Orçamento)
 
 Teste 04 - Excluindo um orcamento
     [Tags]    Teste04
@@ -48,3 +51,4 @@ Teste 04 - Excluindo um orcamento
     Então Gravo o Orcamento
     Quando clico em excluir
     Então finalizo a exclusão
+    E saio da tela(Orçamento)

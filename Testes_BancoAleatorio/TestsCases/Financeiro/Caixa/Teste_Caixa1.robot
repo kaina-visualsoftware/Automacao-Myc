@@ -14,7 +14,7 @@ Teste 01 - Recebendo conta de uma venda
 
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
-    Quando insiro o código do cliente
+    Quando insiro o código do cliente(aReceber)
     E pesquiso pela conta recém gerada
     Então faço o recebimento da conta
     
@@ -24,13 +24,13 @@ Teste 02 - Realizando estorno de conta recém recebida
 
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
-    Quando insiro o código do cliente
+    Quando insiro o código do cliente(aReceber)
     E pesquiso pela conta recém gerada
     Então faço o recebimento da conta
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
     Quando desmarco a opção somente a receber
-    Quando insiro o código do cliente
+    Quando insiro o código do cliente(aReceber)
     E pesquiso pela conta recém gerada
     E dou um duplo clique na conta recém paga
     Então estorno a conta - A receber
@@ -41,7 +41,7 @@ Teste 03 - Realizando pagamento de conta
 
     Quando acesso o caixa aberto
     E vou para a aba de contas a pagar
-    Quando insiro o código do cliente
+    Quando insiro o código do cliente(aPagar)
     E pesquiso pela conta a pagar gerada
     Então concluo o pagamento da mesma
 
@@ -51,7 +51,7 @@ Teste 04 - Realizando estorno de conta recém paga
 
     Quando acesso o caixa aberto
     E vou para a aba de contas a pagar
-    Quando insiro o código do cliente
+    Quando insiro o código do cliente(aPagar)
     E pesquiso pela conta a pagar gerada
     Então concluo o pagamento da mesma
     Quando acesso o caixa aberto

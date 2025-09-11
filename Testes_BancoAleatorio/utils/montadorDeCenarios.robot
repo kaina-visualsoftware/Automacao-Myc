@@ -37,6 +37,7 @@ Dado que realizo uma venda completa, com produto normal - A prazo
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - A Prazo
     utils.Exclui ordem de entrega(${COD_VENDA})
+    utils.E saio da tela(Venda)
     
     Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
 
@@ -49,6 +50,7 @@ Dado que realizo um pedido, com produto normal
     KeyPedidos1.Quando vou para a aba de pagamentos
     KeyPedidos1.E audito o pedido
     KeyPedidos1.Então finalizo o pedido
+    utils.E saio da tela(Pedido)
 
 Dado que realizo um pedido e gero uma venda total sobre ele
 
@@ -267,6 +269,7 @@ Dado que cadastro uma conta a pagar avulsa
     keyContasPagar1.Quando clico em adicionar
     keyContasPagar1.E insiro as informações necessárias(100)
     keyContasPagar1.Então gravo o lançamento de conta a pagar avulsa
+    utils.E saio da tela(ContasAPagar)
 
 Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
 
@@ -276,6 +279,7 @@ Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de 
     keyVendas1.Quando insiro um produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    utils.E saio da tela(Venda)
 
 Dado que realizo mais de uma venda(${Quantidade_Vendas})
     

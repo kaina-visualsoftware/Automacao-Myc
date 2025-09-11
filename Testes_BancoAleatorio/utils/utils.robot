@@ -31,6 +31,14 @@ ${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
 ${TELA_CONS_FINAL}                       tela_cons_final.png
 ${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
 ${MODAL_LOCAL_NEGOCIACAO}                tela_LocalNegociacao.png
+${TELA_CONDICIONAIS}                     tela_Condicionais.png
+${TELA_DEVOLUÇÕES}                       tela_Devolucoes.png
+${TELA_ORCAMENTO}                        tela_Orcamento.png
+${TELA_ORDEM_DE_SERVICO}                 tela_OrdemDeServico.png
+${TELA_VENDAS}                           tela_VendasDeBalcao.png
+${TELA_PEDIDOS}                          tela_Pedidos.png
+${TELA_CONTAS_A_PAGAR_AVULSA}            tela_CadastroContasAPagar.png
+${TELA_NOTA_FISCAL_MANUAL}               tela_NotaFiscalPreenchimentoManual.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
@@ -61,6 +69,8 @@ ${Vendedor_Selecionada_Escalonada}       ${False}
 ${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
 ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}    input_CodCliente.png
 ${LABEL_REF_PRODUTO}                     label_RefProduto.png
+${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
+${AJUSTE_FOCO_DEVOLUCAO}                 ajusteFocoDevolucao.png
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -1011,3 +1021,73 @@ Valida quantidade de empresas
     ${qtdeEmpresa}    Query    SELECT COUNT(*) FROM empresas e WHERE e.`Status` = 'ATIVA' AND e.Ativo = 1;
 
     RETURN    ${qtdeEmpresa[0][0]}
+
+Desativa avisos de inicialização nas permissões de usuário
+    
+    Execute Sql String    UPDATE usuarios AS u SET u.MenuInicializacao = 0, u.Avisos_menu = 0, u.AvisoChequeCompensar = 0, u.AvisoChequesCompensarVencidos = 0, u.ContaAvisoTodas = 0, u.AvisoCortes = 0, u.Crm_Notify = 0, u.prod_EstAviso = 0, u.AvisoNcmCest = 0, u.Entrega_Aviso = 0, u.AvisoVendaAberta = 0, u.AvisoProdutosLoteValidade = 0, u.AvisoAniversariantes = 0, u.AvisoClienteSemCompra = 0, u.ContaAviso = 0, u.AvisoNFCPendente = 0 WHERE u.UserName = 'Visual';
+    
+    Sleep    ${SLEEP_BAIXO}
+
+    Execute Sql String    UPDATE usuarios_auxiliar AS uax JOIN usuarios AS u ON u.Codigo = uax.uau_codigo_usuario SET uax.uau_avisa_ferias = 0, uax.Uau_Cons_Avisos_Manutencoes_Inicializar = 0, uax.Uau_Cons_Avisos_TransfRecusadas_Inicializar = 0, uax.Uau_Avisos_Cotacao_Moeda = 0, uax.Uau_Importa_Produtos = 0 WHERE u.UserName = 'Visual';
+
+E saio da tela(${TELA})
+
+    IF    '${TELA}' == 'Condicional'
+            
+        SikuliLibrary.Click    ${AJUSTE_FOCO}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    
+    ELSE IF    '${TELA}' == 'Devolução'
+        
+        SikuliLibrary.Click    ${AJUSTE_FOCO_DEVOLUCAO}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'Orçamento'
+
+        SikuliLibrary.Click    ${AJUSTE_FOCO}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'OrdemDeServico'
+
+        SikuliLibrary.Click    ${AJUSTE_FOCO}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'Venda'
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'Pedido'
+        
+        SikuliLibrary.Click    ${TELA_PEDIDOS}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'ContasAPagar'
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_CONTAS_A_PAGAR_AVULSA}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'nfManual'
+
+        Press Special Key    ESC
+        Sleep    ${SLEEP_BAIXO}`
+
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${TELA_NOTA_FISCAL_MANUAL}    ${TEMPO_TELA}
+
+    END

@@ -78,10 +78,17 @@ Carregar dados de formas
     Set Test Variable    ${Forma_Recebimento}
     Set Test Variable    ${Forma_Pagamento}
 
-Quando insiro o código do cliente
+Quando insiro o código do cliente(${GUIA})
     
-    Press Combination    KEY.ALT    KEY.C
-    Sleep    ${SLEEP_BAIXO}
+    IF    '${GUIA}' == 'aReceber'
+        
+        Press Combination    KEY.ALT    KEY.C
+
+    ELSE IF    '${GUIA}' == 'aPagar'
+
+        Press Combination    KEY.ALT    KEY.F
+        
+    END
 
     Input Text    ${EMPTY}    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
@@ -306,8 +313,8 @@ Quando desmarco a opção somente a pagar
     SikuliLibrary.Click    ${LABEL_APENAS_A_PAGAR}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Special Key    TAB
-    Press Special Key    TAB
+    #Press Special Key    TAB
+    #Press Special Key    TAB
 
 E dou um duplo clique na conta recém paga
     

@@ -48,7 +48,7 @@ ${AVISO_NFSE_PROCESSAMENTO}              aviso_NFSeProcessamento.png
 # Botões
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
-${BT_OK_NFS}                             bt_OK_NFS.png
+${RETORNO_NFS}                             retornoNFS.png
 
 # Outros
 ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
@@ -73,12 +73,15 @@ Dado que acesso a tela de Ordem de Servico
     Verifica parametros que interferem na venda
 
     Press Special Key    F3
+
+    Valida lançamento de ordem de serviço em aberto
+
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
 Quando pressiono o atalho de adicionar
 
-    Press Combination    KEY.ALT     Key.A 
+    Press Combination    KEY.ALT     Key.A
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
@@ -350,7 +353,7 @@ Então clico em excluir
     Press Special Key    ENTER
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
-    Sleep    ${SLEEP_MEDIO}
+    # Sleep    ${SLEEP_MEDIO}
     
     Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_ORDEM_SERVICO} AND `Status` LIKE 'x'
 
@@ -545,7 +548,8 @@ Valida a modalidade de cobrança da OS para o faturamento
     RETURN    ${telaNFS-E}
 
 Então realizo o faturamento da NFSe
-
+    
+    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.G
     Wait Until Screen Contain    ${LABEL_AGUARDE_GERANDO_NFSE}    ${SLEEP_ALTO}
 
@@ -556,13 +560,18 @@ Então realizo o faturamento da NFSe
 
 Valida faturamento de NFSe
     
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${BT_OK_NFS}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    ${retornoFatNFS}    Run Keyword And Return Status    Wait Until Screen Contain    ${RETORNO_NFS}    ${TEMPO_TELA}
 
+    IF    ${retornoFatNFS}
+
+       Press Special Key    ENTER
+
+    END
+    
+    Sleep    ${SLEEP_BAIXO}
     ${consultaNotaFiscalServico}    Query    SELECT Situacao, motivoRejeicao FROM notafiscalservico WHERE CodigoOS = ${COD_ORDEM_SERVICO};
 
-    ${situacao}    Set Variable    ${consultaNotaFiscalServico[0][0]}
+    ${situacao}          Set Variable    ${consultaNotaFiscalServico[0][0]}
     ${motivoRejeicao}    Set Variable    ${consultaNotaFiscalServico[0][1]}
 
     Run Keyword If    '${situacao}' == 'None' and '${motivoRejeicao}' == 'None'    Fail    Nota fiscal de serviço não gerada.
@@ -584,17 +593,18 @@ Valida faturamento de NFSe
         
         ELSE
 
-            ${msg_nfse_rejeitada}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_NFSE_REJEITADA}    ${TEMPO_TELA}
+            # ${msg_nfse_rejeitada}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_NFSE_REJEITADA}    ${TEMPO_TELA}
 
-            IF    ${msg_nfse_rejeitada}
+            # IF    ${msg_nfse_rejeitada}
 
-                Sleep    ${SLEEP_BAIXO}
-                Press Special Key    ENTER
+            #     Sleep    ${SLEEP_BAIXO}
+            #     Press Special Key    ENTER
 
-                #Fail    Nota fiscal de serviço rejeitada: \n${motivoRejeicao}
-                Log To Console    Nota fiscal de serviço rejeitada.
+            #     Log To Console    Nota fiscal de serviço rejeitada.
 
-            END
+            # END
+
+            Log To Console    Nota fiscal de serviço rejeitada.
 
         END
     

@@ -35,7 +35,7 @@ ${TELA_ADICIONAR_CONDICIONAL}            tela_CondicionaisAdicionar.png
 ${TELA_DETALHES_CONDICIONAL}             tela_DetalhesCondicional.png
 ${TELA_VISUALIZA_CONDICIONAL}            tela_VisualizaVenda.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${TELA_VENDAS_ADICIONAR}                 atacado_TelaVendaBalcao_Adicionar.png
+${TELA_VENDAS_ADICIONAR}                 tela_VendaBalcaoAdicionar.png
 ${TELA_GERAÇÃO_VENDA_PARICAL}            tela_GeracaoVendaParcialCondicional.png
 
 # Telas Avisos
@@ -56,6 +56,9 @@ Ler imagens iniciais
 Dado que acesso a tela de condicionais
     
     Press Special Key    F11
+
+    Valida lançamento de condicional em aberto
+
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
     Verifica parametros que interferem na venda
@@ -159,8 +162,11 @@ Então excluo a condicional
     Sleep    ${SLEEP_BAIXO}
     
     Valida solicitacao de senha do usuário
+    
+    Sleep    ${SLEEP_BAIXO}
+    Check If Exists In Database    SELECT * FROM condicionais AS c WHERE c.Codigo = ${COD_CONDICIONAL} AND c.`Status` = 'x' AND c.Cancelada = 1;
 
-    Check If Exists In Database    SELECT * FROM condicionais WHERE Codigo = ${COD_CONDICIONAL} AND `Status` LIKE 'x'
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
 Quando clico em gerar venda
     

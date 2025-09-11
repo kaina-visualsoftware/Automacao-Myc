@@ -43,6 +43,7 @@ ${BT_WORKFLOW}                  bt_Workflow.png
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}     Outros...
 ${LABEL_SITUACAO_TODOS}         lb_SituacaoTodosPreVenda.png
+${AJUSTE_FOCO}                  bt_SetaUltimaVenda.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -55,6 +56,9 @@ Dado que acesso a tela de pedidos
     Verifica parametros que interferem na venda
 
     Press Special Key    F10
+
+    Valida lançamento de pré-venda em aberto
+
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -111,6 +115,8 @@ Quando vou para a aba de pagamentos
     Press Combination    KEY.ALT     Key.m
     Sleep    ${SLEEP_MEDIO}
 
+    Valida cliente com vales compra disponíveis
+
 E audito o pedido
 
     Press Combination    KEY.ALT     Key.r
@@ -140,7 +146,9 @@ Então visualizo o pedido feito
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.C
+    Press Combination    KEY.ALT     KEY.C
+
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
 Quando finalizo o pedido sem auditar
 
@@ -259,10 +267,10 @@ Então gero a venda totalmente
 
     validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
-    Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_MEDIO}
+    Valida Parametros/Impressões pós venda
 
-    Press Combination    KEY.ALT    KEY.S
+    # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
+    SikuliLibrary.Click    ${AJUSTE_FOCO}
     Sleep    ${SLEEP_BAIXO}
 
     # Sair da tela de Vendas
@@ -393,13 +401,12 @@ Então verifico se o pedido retornou corretamente
     ${situacao_todos}    Exists    ${LABEL_SITUACAO_TODOS}
     Log To Console    situacao_todos: ${situacao_todos}
 
-    IF    not ${situacao_todos}
-
-        # SikuliLibrary.Click    ${LABEL_TODOS}
-        # Sleep    ${SLEEP_BAIXO}
+    IF    '${situacao_todos}' == 'False'
 
         Press Combination    KEY.ALT    KEY.P
+
         Press Special Key    ENTER
+        
         Sleep    ${SLEEP_BAIXO}
 
     END

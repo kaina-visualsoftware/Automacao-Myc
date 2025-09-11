@@ -50,17 +50,26 @@ ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}                    aviso_VencimentoFeriadoSa
 ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}    aviso_NaoPermitidoMultiplasVendasPorEntrega.png
 ${AVISO_SELECAO_COI_FATURAMENTO}                       aviso_SelecaoCoiFaturamento.png
 ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}                   aviso_ClientePossuiValesCompra.png
-${AVISO_CONEXAO_SERVIDOR_FRANQUIA}                     aviso_ConexaoServidorFranquia.png
-${AVISO_COTACAO_MOEDAS_PRODUTOS}                       aviso_CotacaoAtualizacaoProdutos.png
-${AVISO_CONTROLE_DE_FERIAS}                            aviso_ControleFerias.png
-${AVISO_POSITIVIDADE_NEGATIVIDADE}                     aviso_PositividadeNegatividade.png
-${AVISO_CONTAS}                                        aviso_Contas.png
-${AVISO_CHEQUES_A_COMPENSAR}                           aviso_ChequesACompensar.png
-${AVISO_CORTES_PDA}                                    aviso_CortesPDA.png
-${AVISO_ESTOQUE}                                       aviso_Estoque.png
+${AVISO_INFORMATIVO_SAIBA_MAIS}                        aviso_InformativoSaibaMais.png
+${AVISO_ENVIO_XML_CONTABILIDADE}                       aviso_EnvioXmlContabilidade.png
+${AVISO_LANC_CONDICIONAL_EM_ABERTO}                    aviso_LancCondicionalEmAberto.png
+${AVISO_LANC_DEVOLUCAO_EM_ABERTO}                      aviso_LancDevolucaoEmAberto.png
+${AVISO_LANC_ORÇAMENTO_EM_ABERTO}                      aviso_LancOrçamentoEmAberto.png
+${AVISO_LANC_OS_EM_ABERTO}                             aviso_LancOSEmAberto.png
+${AVISO_LANC_VENDA_EM_ABERTO}                          aviso_LancVendaEmAberto.png
+${AVISO_LANC_PRE_VENDA_EM_ABERTO}                      aviso_LancPreVendaEmAberto.png
+# ${AVISO_CONEXAO_SERVIDOR_FRANQUIA}                     aviso_ConexaoServidorFranquia.png
+# ${AVISO_COTACAO_MOEDAS_PRODUTOS}                       aviso_CotacaoAtualizacaoProdutos.png
+# ${AVISO_CONTROLE_DE_FERIAS}                            aviso_ControleFerias.png
+# ${AVISO_POSITIVIDADE_NEGATIVIDADE}                     aviso_PositividadeNegatividade.png
+# ${AVISO_CONTAS}                                        aviso_Contas.png
+# ${AVISO_CHEQUES_A_COMPENSAR}                           aviso_ChequesACompensar.png
+# ${AVISO_CORTES_PDA}                                    aviso_CortesPDA.png
+# ${AVISO_ESTOQUE}                                       aviso_Estoque.png
 
 # Botões
 ${BT_NÃO}                                              bt_Nao.png
+${BT_FECHAR_X}                                         bt_FecharX.png
 
 # Outros
 ${LABEL_LIBERAÇÃO_SUPERVISOR}                          label_PasseOCartaoDeLiberacao.png
@@ -837,163 +846,146 @@ Valida cliente com vales compra disponíveis
         
     END
 
-Valida aviso conexão com o servidor da franquia
+Valida mensagem informativa não lida
 
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CONEXAO_SERVIDOR_FRANQUIA}    10
+    ${informativo}    Run Keyword And Return Status    	Check If Not Exists In Database    SELECT il.* FROM (SELECT * FROM informativos WHERE DataLimite > CURDATE() AND Titulo <> 'Curso Gratuito do MyMilk' ORDER BY ID DESC LIMIT 1) AS i LEFT JOIN informativos_lidos il ON il.IDInformativo = i.ID WHERE il.Usuario = 'Visual';
+    # A validação [AND i.Titulo <> 'Curso Gratuito do MyMilk'] foi adicionada porque possui [DataLimite] muito distante (até 2050) e a mensagem nunca é exibida.
 
-    IF    ${aviso}
+    IF    ${informativo}
 
-        Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
+        ${msg}    Exists    ${AVISO_INFORMATIVO_SAIBA_MAIS}
+
+        IF    ${msg}
+
+            SikuliLibrary.Click    ${BT_FECHAR_X}
+                        
+        END
         
     END
 
-Valida avisos de inicialização
+Valida envio de xml à contabilidade
 
-    ${ListaAvisos_UsuariosAuxiliar}    valida_Usuarios_Auxiliar
-    ${ListaAvisos_Usuarios}            valida_Config_Usuarios
+    ${aviso}    Exists    ${AVISO_ENVIO_XML_CONTABILIDADE}
 
-    ${aviso_CotacaoMoedas}               Run Keyword And Return Status    Should Contain    ${ListaAvisos_UsuariosAuxiliar}    Uau_Avisos_Cotacao_Moeda
-    ${aviso_ServidorFranquia}            Run Keyword And Return Status    Should Contain    ${ListaAvisos_UsuariosAuxiliar}    Uau_Importa_Produtos
-    ${aviso_ControleFerias}              Run Keyword And Return Status    Should Contain    ${ListaAvisos_UsuariosAuxiliar}    Uau_Avisa_Ferias
-    ${aviso_Positividade}                Run Keyword And Return Status    Should Contain    ${ListaAvisos_Usuarios}    AvisoClienteSemCompra
-    ${aviso_DeContas}                    Run Keyword And Return Status    Should Contain    ${ListaAvisos_Usuarios}    ContaAviso
-    ${aviso_ChequeCompensar}             Run Keyword And Return Status    Should Contain    ${ListaAvisos_Usuarios}    AvisoChequeCompensar
-    ${aviso_ChequesCompensarVencidos}    Run Keyword And Return Status    Should Contain    ${ListaAvisos_Usuarios}    AvisoChequesCompensarVencidos
-    ${aviso_CortesDePDA}                 Run Keyword And Return Status    Should Contain    ${ListaAvisos_Usuarios}    AvisoCortes
-    ${aviso_DeEstoque}                   Run Keyword And Return Status    Should Contain    ${ListaAvisos_Usuarios}    prod_EstAviso
-
-    Set Test Variable    ${aviso_CotacaoMoedas}
-    Set Test Variable    ${aviso_ServidorFranquia}
-    Set Test Variable    ${aviso_ControleFerias}
-    Set Test Variable    ${aviso_Positividade}
-    Set Test Variable    ${aviso_DeContas}
-    Set Test Variable    ${aviso_ChequeCompensar}
-    Set Test Variable    ${aviso_ChequesCompensarVencidos}
-    Set Test Variable    ${aviso_CortesDePDA}
-    Set Test Variable    ${aviso_Estoque}
-
-    IF    ${aviso_CotacaoMoedas}
-
-        Valida aviso de cotação para atualização de preços de produtos
+    IF    ${aviso}
         
+        SikuliLibrary.Click    ${AVISO_ENVIO_XML_CONTABILIDADE}
+
+        Press Special Key    ESC
+
     END
 
-    IF    ${aviso_ServidorFranquia}
- 
-        Valida aviso conexão com o servidor da franquia
-        
-    END
+Valida lançamento de condicional em aberto
     
-    IF    ${aviso_ControleFerias}
+    Sleep    ${SLEEP_BAIXO}
+    ${condicionalEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM condicionais AS c WHERE c.`Status` = 'a' AND c.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND c.Cancelada IS NULL ORDER BY c.Codigo DESC LIMIT 1;
 
-        Valida aviso de controle de férias
+    IF    ${condicionalEmAberto}
+        
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_LANC_CONDICIONAL_EM_ABERTO}
+
+        IF    ${aviso}
+
+            Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+        
+        END
         
     END
 
-    IF    ${aviso_Positividade}
+Valida lançamento de devolução em aberto
 
-        Valida aviso de consulta de positividade e negatividade
+    Sleep    ${SLEEP_BAIXO}
+    ${devolucaoEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` = 'a' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'DV' ORDER BY v.Codigo DESC LIMIT 1;
+
+    IF    ${devolucaoEmAberto}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_LANC_DEVOLUCAO_EM_ABERTO}
+
+        IF    ${aviso}
+
+            Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
         
     END
 
-    IF    ${aviso_DeContas}
+Valida lançamento de orçamento em aberto
 
-        Valida aviso de contas
+    Sleep    ${SLEEP_BAIXO}
+    ${orcamentoEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT o.Codigo FROM orcamentos AS o WHERE o.`Status` = 'a' AND o.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND o.Cancelada IS NULL AND TIMESTAMP(o.`Data`, o.Hora) <= NOW() - INTERVAL 5 MINUTE ORDER BY o.Codigo DESC LIMIT 1;
+
+    IF    ${orcamentoEmAberto}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_LANC_ORÇAMENTO_EM_ABERTO}
+
+        IF    ${aviso}
+            
+            Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+
+        END
         
     END
 
-    IF    ${aviso_ChequeCompensar} and ${aviso_ChequesCompensarVencidos}
+Valida lançamento de ordem de serviço em aberto
 
-        Valida aviso de cheques a compensar
+    Sleep    ${SLEEP_BAIXO}
+    ${OSEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` = 'a' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'OS' ORDER BY v.Codigo DESC LIMIT 1;
+
+    IF    ${OSEmAberto}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_LANC_OS_EM_ABERTO}
+
+        IF    ${aviso}
+
+            Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
         
     END
 
-    IF    ${aviso_CortesDePDA}
+Valida lançamento de venda em aberto
 
-        Valida aviso de cortes pda
+    Sleep    ${SLEEP_BAIXO}
+    ${VendaEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` = 'a' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'VP' AND TIMESTAMP(v.`Data`, v.Hora) <= NOW() - INTERVAL 5 MINUTE ORDER BY v.Codigo DESC LIMIT 1;
+
+    IF    ${VendaEmAberto}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_LANC_VENDA_EM_ABERTO}
+
+        IF    ${aviso}
+
+            Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
         
     END
 
-    IF    ${aviso_DeEstoque}
-
-        Valida aviso de estoque
-        
-    END
-
-Valida aviso de cotação para atualização de preços de produtos
+Valida lançamento de pré-venda em aberto
     
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_COTACAO_MOEDAS_PRODUTOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    ${PreVendaEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT pv.Codigo FROM pedidosvenda AS pv WHERE pv.`Status` = 'a' AND pv.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pv.Cancelada IS NULL ORDER BY pv.Codigo DESC LIMIT 1;
 
-    IF    ${aviso}
+    IF    ${PreVendaEmAberto}
 
-        SikuliLibrary.Click    ${AVISO_COTACAO_MOEDAS_PRODUTOS}
-        Press Combination    KEY.ALT    KEY.S
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_LANC_PRE_VENDA_EM_ABERTO}
 
-    END
+        IF    ${aviso}
 
-Valida aviso de controle de férias
-
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CONTROLE_DE_FERIAS}    ${TEMPO_TELA}
-
-    IF    ${aviso}
-
-        SikuliLibrary.Click    ${AVISO_CONTROLE_DE_FERIAS}
-        Press Combination    KEY.ALT    KEY.S
-
-    END
-
-Valida aviso de consulta de positividade e negatividade
-
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_POSITIVIDADE_NEGATIVIDADE}    ${TEMPO_TELA}
-
-    IF    ${aviso}
-
-        SikuliLibrary.Click    ${AVISO_POSITIVIDADE_NEGATIVIDADE}
-        Press Combination    KEY.ALT    KEY.F
-        
-    END
-
-Valida aviso de contas
-
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CONTAS}    ${TEMPO_TELA}
-
-    IF    ${aviso}
-
-        SikuliLibrary.Click    ${AVISO_CONTAS}
-        Press Special Key    ESC
-        
-    END
-
-Valida aviso de cheques a compensar
-
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CHEQUES_A_COMPENSAR}    ${TEMPO_TELA}
-
-    IF    ${aviso}
-
-        SikuliLibrary.Click    ${AVISO_CHEQUES_A_COMPENSAR}
-        Press Special Key    ESC
-        
-    END
-
-Valida aviso de cortes pda
-
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CORTES_PDA}    ${TEMPO_TELA}
-
-    IF    ${aviso}
-
-        SikuliLibrary.Click    ${AVISO_CORTES_PDA}
-        Press Special Key    ESC
-        
-    END
-
-Valida aviso de estoque
-
-    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_ESTOQUE}    ${TEMPO_TELA}
-
-    IF    ${aviso}
-
-        SikuliLibrary.Click    ${AVISO_ESTOQUE}
-        Press Combination    KEY.ALT    KEY.O
+            Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
         
     END

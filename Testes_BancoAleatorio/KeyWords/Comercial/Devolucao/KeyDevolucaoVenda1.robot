@@ -48,6 +48,9 @@ Dado que abro a tela de Devolução de vendas/os
     Verifica parametros que interferem na venda
 
     Press Special Key    F6
+
+    Valida lançamento de devolução em aberto
+
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -240,9 +243,6 @@ Então finalizo a devolução
     Valida impressao direta de venda(${True})
 
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
 Então visualizo a devolução

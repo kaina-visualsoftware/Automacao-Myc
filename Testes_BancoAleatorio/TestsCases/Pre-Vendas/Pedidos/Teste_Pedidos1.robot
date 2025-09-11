@@ -18,6 +18,7 @@ Teste 01 - Adicionando Pedido
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E saio da tela(Pedido)
 
 Teste 02 - Adicionando Pedido e visualizando
     [Tags]    Teste02
@@ -30,6 +31,7 @@ Teste 02 - Adicionando Pedido e visualizando
     E audito o pedido
     Então finalizo o pedido
     Então visualizo o pedido feito
+    E saio da tela(Pedido)
 
 Teste 03 - Adicionando Pedido e editando
     [Tags]    Teste03
@@ -45,6 +47,7 @@ Teste 03 - Adicionando Pedido e editando
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E saio da tela(Pedido)
 
 Teste 04 - Adicionando Pedido e excluindo
     [Tags]    Teste04
@@ -57,6 +60,7 @@ Teste 04 - Adicionando Pedido e excluindo
     E audito o pedido
     Então finalizo o pedido
     Então excluo o pedido
+    E saio da tela(Pedido)
 
 Teste 05 - Gerando venda total de um pedido
     [Tags]    Teste05
@@ -70,6 +74,7 @@ Teste 05 - Gerando venda total de um pedido
     Então finalizo o pedido
     Quando clico em gerar venda
     Então gero a venda totalmente
+    E saio da tela(Pedido)
 
 Teste 06 - Gerando venda Parcial de um pedido
     [Tags]    Teste06
@@ -84,6 +89,7 @@ Teste 06 - Gerando venda Parcial de um pedido
     Quando clico em gerar venda
     Quando seleciono um produto para a geração da venda
     Então gero a venda parcialmente do produto selecionado
+    E saio da tela(Pedido)
 
 Teste 07 - Excluindo venda gerada através do pedidos
     [Tags]    Teste07
@@ -99,6 +105,7 @@ Teste 07 - Excluindo venda gerada através do pedidos
     Então gero a venda totalmente
     keyVendas1.Dado que acesso a tela de vendas de balcao
     keyVendas1.Então clico em excluir
+    E saio da tela(Venda)
     Então verifico se o pedido retornou corretamente
 
 Teste 08 - Cancelando a geração de venda
@@ -115,3 +122,4 @@ Teste 08 - Cancelando a geração de venda
     Quando seleciono um produto para a geração da venda
     E clico em salvar
     Então cancelo a geração da venda
+    E saio da tela(Pedido)

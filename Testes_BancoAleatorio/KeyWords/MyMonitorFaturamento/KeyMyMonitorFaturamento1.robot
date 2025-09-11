@@ -29,10 +29,14 @@ ${TELA_MY_MONITOR_FATURAMENTO}        tela_MyMonitorFaturamento.png
 ${TELA_GUIA_CONFIGURACOES}            tela_GuiaConfiguracoes.png
 ${TELA_GUIA_CONFIGURACOES_EXTRAS}     tela_GuiaConfiguracoesExtras.png
 
+# Telas avisos
+${AVISO_ENCERRAR_MYMONITOR}           aviso_EncerrarMyMonitorFat.png
+
 # Outros
 ${LABEL_GUIA_CONFIGURACOES}           lb_GuiaConfiguracoes.png
 ${LABEL_GUIA_CONTINGENCIA}            lb_GuiaContingencia.png
 ${LABEL_GUIA_CONFIGURACOES_EXTRAS}    lb_GuiaConfiguracoesExtras.png
+${ICONE_MYMONITOR_INATIVO}            icone_MyMonitorInativo.png
 
 # Mensagem de Erro
 ${ERRO_RUN_TIME_ERROR}                run-timeerror.png
@@ -92,5 +96,26 @@ Valida mensagens de erro
     IF    ${run_time_error}
         
         Fail    Run-time error.
+        
+    END
+
+E encerro o myMonitorFaturamento
+
+    ${iconeMyMonitor}    Exists    ${ICONE_MYMONITOR_INATIVO}
+
+    IF    ${iconeMyMonitor}
+
+        SikuliLibrary.Right Click    ${ICONE_MYMONITOR_INATIVO}
+
+        Press Special Key    DOWN
+        Press Special Key    DOWN
+
+        Press Special Key    ENTER
+
+        Wait Until Screen Contain    ${AVISO_ENCERRAR_MYMONITOR}    ${TEMPO_TELA}
+
+        Press Combination    KEY.ALT    KEY.S
+
+        Wait Until Screen Not Contain    ${ICONE_MYMONITOR_INATIVO}    ${TEMPO_TELA}
         
     END

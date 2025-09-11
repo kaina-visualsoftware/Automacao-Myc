@@ -1,6 +1,6 @@
 *** Settings ***
 Library    SikuliLibrary
-Library    ImageHorizonLibrary 
+Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 
 Variables    ../../libs/leituraConfig.py
@@ -42,6 +42,8 @@ Ler imagens iniciais
 
 Dado que eu abro o MyCommerce
 
+    Desativa avisos de inicialização nas permissões de usuário
+
     Press Combination    KEY.WIN    KEY.r
     Input Text    ${EMPTY}    ${EXECUTAVEL_MYCOMMERCE}
     Press Special Key    ENTER
@@ -49,7 +51,7 @@ Dado que eu abro o MyCommerce
     Wait Until Screen Contain    ${TELA_LOGIN_SISTEMA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    # SikuliLibrary.Click    ${TELA_LOGIN_SISTEMA}
+    SikuliLibrary.Click    ${TELA_LOGIN_SISTEMA}
 
 Então realizo o login no MyCommerce
 
@@ -57,10 +59,9 @@ Então realizo o login no MyCommerce
 
     IF    ${qtdeEmpresa} > 1
 
-        SikuliLibrary.Click    ${LABEL_CODIGO_EMPRESA}
         Press Special Key    F1
-        Press Special Key    ENTER 
-        
+        Press Special Key    ENTER
+
     END
 
     Key Down    CTRL
@@ -74,6 +75,11 @@ Então realizo o login no MyCommerce
     Input Text    ${EMPTY}    zwBt4@24
     Press Special Key    ENTER
 
+    Wait Until Screen Not Contain    ${TELA_LOGIN_SISTEMA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_INICIAL_SISTEMA}    ${TEMPO_TELA}
 
-    Valida avisos de inicialização
+    Valida mensagem informativa não lida
+
+    Valida envio de xml à contabilidade
