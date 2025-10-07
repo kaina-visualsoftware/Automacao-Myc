@@ -25,6 +25,7 @@ Dado que realizo uma venda completa, com produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
     utils.Exclui ordem de entrega(${COD_VENDA})
+    utils.E saio da tela(Venda)
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
@@ -105,6 +106,7 @@ Dado que realizo uma devolução qualquer
     KeyDevolucaoVenda1.Quando seleciono um produto para a devolução
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução
+    utils.E saio da tela(Devolução)
 
 Dado que realizo uma devolução avulsa
     
@@ -119,6 +121,7 @@ Dado que realizo uma venda com mais de um produto(${Quantidade_Inserir})
     keyVendas1.Quando insiro mais de um produto normal(${Quantidade_Inserir})
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    utils.E saio da tela(Venda)
     utils.Exclui ordem de entrega(${COD_VENDA})
 
 Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
@@ -130,6 +133,8 @@ Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
     KeyDevolucaoVenda1.Quando seleciono os produtos para a devolução(${Quantidade_Inserir})
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução
+    utils.E saio da tela(Devolução)
+    utils.E saio da tela(Venda)
 
 Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
 
@@ -141,7 +146,6 @@ Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
         
         keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
-        keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
@@ -159,6 +163,7 @@ Realizando venda com desconto ao finalizar(${desconto})
     keyVendas1.Quando insiro um produto normal
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - Desconto(${desconto})
+    utils.E saio da tela(Venda)
 
 Realizando vendas com o mesmo produto porém com descontos diferentes
     
@@ -166,9 +171,10 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     ${Valor_Final_Vendas}    Create List
 
     ${DESCONTOS_COMISSOES}    Pesquisa comissões por escalonamento
-
+    
     Realizando venda com desconto ao finalizar(${DESCONTOS_COMISSOES[0][0]})
-
+    
+    Sleep    ${SLEEP_BAIXO}
     Append To List    ${Codigo_Vendas}         ${COD_VENDA}
     Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
 
@@ -178,7 +184,9 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO})
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - Desconto(${DESCONTOS_COMISSOES[1][0]})
+    utils.E saio da tela(Venda)
 
+    Sleep    ${SLEEP_BAIXO}
     Append To List    ${Codigo_Vendas}         ${COD_VENDA}
     Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
 
@@ -186,6 +194,9 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     Set Test Variable    ${Codigo_Vendas}
     Set Test Variable    ${Valor_Final_Vendas}
 
+    Log To Console    DESCONTOS_COMISSOES: ${DESCONTOS_COMISSOES}
+    Log To Console    Codigo_Vendas: ${Codigo_Vendas}
+    Log To Console    Valor_Final_Vendas: ${Valor_Final_Vendas}
 
 Dado que realizo uma venda total de uma condicional
 

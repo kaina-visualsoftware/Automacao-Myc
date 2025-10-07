@@ -525,7 +525,8 @@ Valida erro ao faturar NFC
     END
 
 Calcula valor final da venda
-
+    
+    Sleep    ${SLEEP_BAIXO}
     ${ValorTotalProdutos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}

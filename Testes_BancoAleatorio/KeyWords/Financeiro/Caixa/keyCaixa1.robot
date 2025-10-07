@@ -621,7 +621,7 @@ Recupera sequencia caixa
     IF    ${Parametro_CaixaControladoPorUsuario}
         
         # No MyCommerce, valida se o caixa aberto — seja por usuário ou por terminal — possui marcado o recebimento ou pagamento diário. Caso contrário, exibe a tela de confirmação de data.
-        ${Controle_Pag_Rec_Diario}    Query    SELECT Codigo FROM caixas WHERE Usuario = ( SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1 ) AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
+        ${Controle_Pag_Rec_Diario}    Query    SELECT Codigo FROM caixas WHERE Usuario = (SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1) AND `Status` LIKE 'Aberto' AND Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
         
     ELSE
         

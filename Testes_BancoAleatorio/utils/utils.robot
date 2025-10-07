@@ -39,6 +39,7 @@ ${TELA_VENDAS}                           tela_VendasDeBalcao.png
 ${TELA_PEDIDOS}                          tela_Pedidos.png
 ${TELA_CONTAS_A_PAGAR_AVULSA}            tela_CadastroContasAPagar.png
 ${TELA_NOTA_FISCAL_MANUAL}               tela_NotaFiscalPreenchimentoManual.png
+${TELA_COMISSOES}                        tela_Comissoes.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
@@ -868,7 +869,7 @@ Seleciona produto com linha cadastrada(${Paremtro_Operação_Sem_Estoque})
     
         ELSE
 
-            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
+            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;    
         
         END
 
@@ -1065,6 +1066,9 @@ E saio da tela(${TELA})
         Wait Until Screen Not Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
 
     ELSE IF    '${TELA}' == 'Venda'
+        
+        SikuliLibrary.Double Click    ${AJUSTE_FOCO}
+        Sleep    ${SLEEP_BAIXO}
 
         Press Combination    KEY.ALT    KEY.S
         Wait Until Screen Not Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
@@ -1085,9 +1089,17 @@ E saio da tela(${TELA})
     ELSE IF    '${TELA}' == 'nfManual'
 
         Press Special Key    ESC
-        Sleep    ${SLEEP_BAIXO}`
+        Sleep    ${SLEEP_BAIXO}
 
         Press Combination    KEY.ALT    KEY.S
+        Press Special Key    ESC
         Wait Until Screen Not Contain    ${TELA_NOTA_FISCAL_MANUAL}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'Comissoes'
+        
+        SikuliLibrary.Click    ${TELA_COMISSOES}
+
+        Press Combination    KEY.ALT    KEY.F
+        Wait Until Screen Not Contain    ${TELA_COMISSOES}    ${TEMPO_TELA}
 
     END
