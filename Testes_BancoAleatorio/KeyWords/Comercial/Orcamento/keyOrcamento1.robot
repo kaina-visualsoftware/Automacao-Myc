@@ -100,6 +100,8 @@ Então Gravo o Orcamento
     Press Combination    KEY.ALT     Key.M 
     Sleep    ${SLEEP_BAIXO}
 
+    Valida cliente com vales compra disponíveis
+
     IF    '${FORMA_PACELAMENTO_CLIENTE}' == 'Personalizada'
         
         Wait Until Screen Contain    ${MODAL_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}

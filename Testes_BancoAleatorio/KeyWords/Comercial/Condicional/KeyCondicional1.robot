@@ -163,7 +163,7 @@ Então excluo a condicional
     
     Valida solicitacao de senha do usuário
     
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Check If Exists In Database    SELECT * FROM condicionais AS c WHERE c.Codigo = ${COD_CONDICIONAL} AND c.`Status` = 'x' AND c.Cancelada = 1;
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}

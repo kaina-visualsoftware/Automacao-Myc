@@ -170,6 +170,8 @@ E vou para a aba de pagamentos
     Press Combination    KEY.ALT     Key.m
     Sleep    ${SLEEP_MEDIO}
 
+    Valida cliente com vales compra disponíveis
+
     ${EntradaIgualA_Outros_dev}    Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO_DEV}    ${FORMA_RECEBIMENTO_OUTROS}
 
     Set Test Variable    ${EntradaIgualA_Outros_dev}

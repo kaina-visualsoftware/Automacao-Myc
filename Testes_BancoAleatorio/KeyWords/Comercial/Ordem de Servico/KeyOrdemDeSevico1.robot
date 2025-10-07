@@ -138,6 +138,8 @@ E acesso a aba pagamentos
     Press Combination    KEY.ALT     Key.M 
     Sleep    ${SLEEP_ALTO}
 
+    Valida cliente com vales compra disponíveis
+
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
 
     ${EntradaIgualA_Outros}    Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO}    ${FORMA_RECEBIMENTO_OUTROS}
