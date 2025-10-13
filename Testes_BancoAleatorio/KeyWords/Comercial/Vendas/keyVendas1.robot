@@ -268,7 +268,7 @@ Então finalizo a venda
     SikuliLibrary.Click    ${AJUSTE_FOCO}
     Sleep    ${SLEEP_BAIXO}
 
-    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
     keyVendas1.Valida baixa de estoque
 
@@ -539,9 +539,12 @@ Calcula valor final da venda
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
-Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
-    ${ValorTotalProdutos}     Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
+    
+    Sleep    ${SLEEP_MEDIO}
+    ${ValorTotalProdutos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV}
 
     IF    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
 
@@ -549,7 +552,7 @@ Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
 
     ELSE
 
-        ${Valor_Final_Com_Desconto}    Evaluate    ${ValorTotalProdutos[0][0]} - (${ValorTotalProdutos[0][0]} * (${PERCENT_DESCONTO} / 100))
+        ${Valor_Final_Com_Desconto}    Evaluate    (${ValorTotalProdutos[0][0]} - (${ValorTotalProdutos[0][0]} * (${PERCENT_DESCONTO} / 100)))
 
     END
 
@@ -624,17 +627,47 @@ Calcula desconto final por produto(${PERCENT_DESCONTO})
 Valida baixa de estoque
 
     Sleep    ${SLEEP_MEDIO}
-    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+    Log To Console    CODIGO_OPERACAO_MOV: ${CODIGO_OPERACAO_MOV}
+    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
 
-    Should Be Equal    ${Baixa_De_Estoque}    ${True}
+    ${Teste_Condicional}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    condicional
+    Log To Console    Teste_Condicional: ${Teste_Condicional}
 
-    IF    ${Baixa_De_Estoque}
+    IF    ${QUANTIDADE_PRODUTOS} > 1
+        
+        FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+            
+            Log To Console    Codigos_Produtos NA POS ${i}: ${Codigos_Produtos[${i}]}
 
-        Log To Console    Baixou estoque corretamente!
+            ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
+            Log To Console    COD_PRODUTO: ${COD_PRODUTO}
+            
+            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
+            IF    ${Baixa_De_Estoque}
+                Log To Console    Baixou estoque corretamente do produto [${COD_PRODUTO}] na Venda de Balcão!
+            ELSE
+                IF    ${Teste_Condicional}
+                    Log To Console    Não baixou estoque! (Isso é correto para os Testes 05 e 06 de Condicional).
+                ELSE
+                    Fail    Falha na baixa do estoque na Venda de Balcão! Verifique!
+                END
+            END
+        END
 
     ELSE
 
-        Log To Console    Falha na baixa do estoque! Verifique!
+        ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
+        IF    ${Baixa_De_Estoque}
+            Log To Console    Baixou estoque corretamente na Venda de Balcão!
+        ELSE
+            IF    ${Teste_Condicional}
+                Log To Console    Não baixou estoque! (Isso é correto para os Testes 05 e 06 de Condicional).
+            ELSE
+                Fail    Falha na baixa do estoque na Venda de Balcão! Verifique!
+            END
+        END
 
     END
 

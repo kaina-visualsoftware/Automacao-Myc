@@ -835,7 +835,7 @@ Valida seleção de coi para faturamento
 
 Valida cliente com vales compra disponíveis
     
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
 
     IF    ${aviso}

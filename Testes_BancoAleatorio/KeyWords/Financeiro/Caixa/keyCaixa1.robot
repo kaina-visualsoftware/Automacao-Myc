@@ -51,6 +51,7 @@ ${AVISO_REALMENTE_EFETUAR_BAIXA}        aviso_PerguntaQualquer.png
 # Botões
 ${BT_ESTORNAR}                          bt_Estornar.png
 ${BT_SETA_DIREITA}                      bt_SetaDireita.png
+${BT_SETA_DIREITA_DATAS}                bt_SetaDireitaDatas.png
 
 # Outros
 ${INPUT_NUMERO_DOCUMENTO}               caixa_PesquisaPorNDoc.png
@@ -65,6 +66,9 @@ ${INPUT_NUMERO_DOCUMENTO}               caixa_PesquisaPorNDoc.png
 ${LABEL_APENAS_A_PAGAR}                 label_ApenasAPagar.png
 ${CHECK_BOX_CONTAS_PAGA}                checkBox_Marcado_Selecionado.png
 ${INPUT_NUMERO_NFS}                     input_NumeroNFS.png
+${LABEL_DATA_LANCAMENTO}                lb_CaixaDataLancamento.png
+${INPUT_DATA_LANCAMENTO_A_RECEBER}      input_DataLancamentoAReceber.png
+${CHECKBOX_CONTA_A_PAGAR}               checkBox_CaixaContaAPagar.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -167,6 +171,7 @@ E pesquiso pela conta recém gerada
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
+    #Informa a data de lançamento da conta a receber
     Sleep    ${SLEEP_MEDIO}
 
     FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
@@ -183,11 +188,14 @@ E pesquiso pela conta a pagar gerada
 
     Input Text    ${EMPTY}    ${CODIGO_OPERACAO_MOV}
     Sleep    ${SLEEP_BAIXO}
-
+    
     Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
+    #Informa a data de lançamento da conta
 
-    Press Special Key    SPACE
+    #Press Special Key    SPACE
+    SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
+    SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
+
     Sleep    ${SLEEP_MEDIO}
 
 Então concluo o pagamento da mesma
@@ -233,6 +241,7 @@ Então concluo o pagamento da mesma
 
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
+    Sleep    ${SLEEP_BAIXO}
 
 Quando acesso o caixa aberto
     
@@ -263,7 +272,7 @@ Então faço o recebimento da conta
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.R
-    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.C 
@@ -292,16 +301,11 @@ Então faço o recebimento da conta
 
     END
 
-    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${SLEEP_ALTO}
-
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
+    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${TEMPO_TELA}
 
     Consulta sequencia caixa(${CODIGO_CAIXA})
 
     Validação movimentou caixa(Crédito)
-
-    Sleep    ${SLEEP_MEDIO}
 
 Quando desmarco a opção somente a receber
     
@@ -340,9 +344,6 @@ Então estorno a conta - A pagar
 
     Validação movimentou caixa(Crédito)
 
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
-
 Então estorno a conta - A receber
     
     SikuliLibrary.Click    ${BT_ESTORNAR}
@@ -362,8 +363,6 @@ Então estorno a conta - A receber
 
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
-
-    Press Special Key    ESC
 
 E vou para a aba de adiantamentos
     
@@ -678,8 +677,6 @@ Então concluo o pagamento
     Validação movimentou caixa(Débito)
     Sleep    ${SLEEP_MEDIO}
 
-    Press Special Key    ESC
-
 Então concluo o recebimento
 
     Press Combination    KEY.ALT     KEY.I
@@ -711,7 +708,47 @@ Então concluo o recebimento
     Validação movimentou caixa(Crédito)
     Sleep    ${SLEEP_MEDIO}
 
-    Press Special Key    ESC
+Informa a data de lançamento da conta a receber
+
+    Sleep    ${SLEEP_BAIXO}
+    ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
+    Log To Console    CampoDataLancamentoAReceber: ${CampoDataLancamentoAReceber}
+
+    # WHILE    '${CampoDataLancamentoAReceber}' == 'False'
+    
+    #     SikuliLibrary.Click    ${BT_SETA_DIREITA_DATAS}
+
+    #     ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
+    #     Log To Console    CampoDataLancamentoAReceber DENTRO DO WHILE: ${CampoDataLancamentoAReceber}
+
+    #     IF    ${CampoDataLancamentoAReceber}
+                
+    #         Log To Console    Entrou no IF. CampoDataLancamentoAReceber: ${CampoDataLancamentoAReceber}
+    #         Exit For Loop
+            
+    #     END
+        
+    #     ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
+    # END
+
+    IF    '${CampoDataLancamentoAReceber}' == 'False'
+
+        FOR    ${i}    IN RANGE    1
+            
+            Sleep    ${SLEEP_BAIXO}
+            SikuliLibrary.Double Click    ${BT_SETA_DIREITA_DATAS}
+            Wait Until Screen Contain    ${LABEL_DATA_LANCAMENTO}    ${SLEEP_ALTO}
+            
+        END
+        ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
+    END
+    
+    SikuliLibrary.Click    ${INPUT_DATA_LANCAMENTO_A_RECEBER}
+
+    Type With Modifiers    H
+    Press Special Key    TAB
+    Type With Modifiers    H
+    Press Special Key    TAB
 
 # Então faço o pagamento da comissao
     

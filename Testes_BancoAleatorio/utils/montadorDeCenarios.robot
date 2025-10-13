@@ -58,6 +58,7 @@ Dado que realizo um pedido e gero uma venda total sobre ele
     Dado que realizo um pedido, com produto normal
     KeyPedidos1.Quando clico em gerar venda
     KeyPedidos1.Então gero a venda totalmente
+    utils.E saio da tela(Pedido)
 
 Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
 
@@ -71,7 +72,6 @@ Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
         
         keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
-        keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
@@ -134,7 +134,6 @@ Dado que realizo uma devolução com mais de um produto(${Quantidade_Inserir})
     KeyDevolucaoVenda1.E vou para a aba de pagamentos
     KeyDevolucaoVenda1.Então finalizo a devolução
     utils.E saio da tela(Devolução)
-    utils.E saio da tela(Venda)
 
 Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
 
@@ -208,9 +207,11 @@ Dado que realizo uma venda total de uma condicional
     KeyCondicional1.Quando clico em gerar venda
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    utils.E saio da tela(Venda)
     KeyCondicional1.Validação de vendas após a geração do condicional
 
 Dado que realizo uma venda parcial de uma condicional
+
     KeyCondicional1.Dado que acesso a tela de condicionais
     KeyCondicional1.E adiciono uma nova Condicional
     KeyCondicional1.Quando insiro vendedor e cliente
@@ -220,6 +221,7 @@ Dado que realizo uma venda parcial de uma condicional
     KeyCondicional1.E gero a venda de parte dos produtos(2)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
+    utils.E saio da tela(Venda)
 
 Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
 
@@ -231,7 +233,6 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
             
         keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
-        keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 
@@ -252,6 +253,7 @@ Dado que realizo uma ordem de serviço com funcionário comissionado por serviç
     KeyOrdemDeSevico1.E insiro um produto normal
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a Ordem de Servico
+    utils.E saio da tela(OrdemDeServico)
 
 Dado que realizo uma ordem de serviço com funcionário comissionado por serviço - Totalmente recebida
     
@@ -263,7 +265,6 @@ Dado que realizo uma ordem de serviço com funcionário comissionado por serviç
             
         keyCaixa1.Quando acesso o caixa aberto
         keyCaixa1.E vou para a aba de contas a receber
-        keyCaixa1.Quando insiro o código do cliente
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
 

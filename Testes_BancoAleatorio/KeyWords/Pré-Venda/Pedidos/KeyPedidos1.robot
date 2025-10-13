@@ -287,7 +287,7 @@ Valida baixa de estoque
 
     ELSE
 
-        ${COD_OPERACAO}    	Set Variable    ${COD_VENDA}
+        ${COD_OPERACAO}    Set Variable    ${COD_VENDA}
 
     END
 

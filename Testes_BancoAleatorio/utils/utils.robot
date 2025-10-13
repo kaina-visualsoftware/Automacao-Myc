@@ -40,6 +40,7 @@ ${TELA_PEDIDOS}                          tela_Pedidos.png
 ${TELA_CONTAS_A_PAGAR_AVULSA}            tela_CadastroContasAPagar.png
 ${TELA_NOTA_FISCAL_MANUAL}               tela_NotaFiscalPreenchimentoManual.png
 ${TELA_COMISSOES}                        tela_Comissoes.png
+${CAIXA_PRINCIPAL}                       tela_CaixaPrinicipal.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
@@ -72,6 +73,7 @@ ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}    input_CodCliente.png
 ${LABEL_REF_PRODUTO}                     label_RefProduto.png
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${AJUSTE_FOCO_DEVOLUCAO}                 ajusteFocoDevolucao.png
+${QUANTIDADE_PRODUTOS}                   1
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
@@ -157,6 +159,7 @@ Adicionar Vendedor e Cliente(${TELA})
         Valida vendedor padrao
 
         Input Text    ${EMPTY}    ${Codigo_Vendedor}
+        Log To Console    Codigo_Vendedor (Vendedor da OS): ${Codigo_Vendedor}
 
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
@@ -440,14 +443,13 @@ Seleciona servico com linha de comissao
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_BAIXO}
 
-    ${codServico}    Query    SELECT codigo, Detalha FROM servicos s WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 and s.TabelaComissao in (select Codigo from comissaoporlinha where Tipo like 'N' and Aliquota > 0)ORDER BY RAND() LIMIT 1;
+    ${codServico}    Query    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 and s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo LIKE 'N' AND cl.Aliquota > 0) ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
-    
     ${condicao}    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
 
     IF    ${condicao}
     
-        Input Text    ${EMPTY}    ${codServico[0][0]} 
+        Input Text    ${EMPTY}    ${codServico[0][0]}
         Sleep    ${SLEEP_BAIXO}
 
         Press Special Key    TAB
@@ -468,7 +470,7 @@ Seleciona servico com linha de comissao
         Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${SLEEP_ALTO}
 
         IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
-            
+            Log To Console    Entrou em Parametro_Seleciona_Funcionario_Comissao_Servico
             Press Special Key    DOWN
 
             #Validação temporária pra ver se precisa informar horas
@@ -478,6 +480,7 @@ Seleciona servico com linha de comissao
         ELSE
             
             Input Text    ${EMPTY}    ${Codigo_Vendedor}
+            Log To Console    Codigo_Vendedor - COMISSÃO LINHA: ${Codigo_Vendedor}
 
         END
 
@@ -864,18 +867,18 @@ Seleciona produto com linha cadastrada(${Paremtro_Operação_Sem_Estoque})
     ELSE
         
         IF    '${TELA}' == 'Pedido'
-        
-            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND (SELECT SUM(Quantidade - QtdeGerada) AS QuantidadeEmPedidos FROM pedidosvendaprodutos WHERE CodigoProduto = codigoProduto AND Cancelada IS NULL) < pe.Estoque AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
+            
+            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON pe.CodigoProduto = p.Codigo WHERE pe.Estoque > 1 AND p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND COALESCE((SELECT SUM(pvp.Quantidade - pvp.QtdeGerada) FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoProduto = p.Codigo AND pvp.Cancelada IS NULL), 0) < pe.Estoque AND p.CodigoComissao IN (SELECT cpl.Codigo FROM comissaoporlinha AS cpl WHERE cpl.Tipo = 'N' AND cpl.Aliquota > 0) ORDER BY RAND() LIMIT 1;
     
         ELSE
 
-            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;    
+            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
         
         END
 
     END
-
-    Input Text    ${EMPTY}    ${codProduto[0][0]} 
+    
+    Input Text    ${EMPTY}    ${codProduto[0][0]}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
@@ -1101,5 +1104,11 @@ E saio da tela(${TELA})
 
         Press Combination    KEY.ALT    KEY.F
         Wait Until Screen Not Contain    ${TELA_COMISSOES}    ${TEMPO_TELA}
+
+    ELSE IF    '${TELA}' == 'CaixaPrincipal'
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    KEY.S
+        Wait Until Screen Not Contain    ${CAIXA_PRINCIPAL}    ${TEMPO_TELA}
 
     END

@@ -17,6 +17,7 @@ Teste 01 - Recebendo conta de uma venda
     Quando insiro o código do cliente(aReceber)
     E pesquiso pela conta recém gerada
     Então faço o recebimento da conta
+    E saio da tela(CaixaPrincipal)
     
 Teste 02 - Realizando estorno de conta recém recebida
     [Tags]    Teste02
@@ -34,6 +35,7 @@ Teste 02 - Realizando estorno de conta recém recebida
     E pesquiso pela conta recém gerada
     E dou um duplo clique na conta recém paga
     Então estorno a conta - A receber
+    E saio da tela(CaixaPrincipal)
 
 Teste 03 - Realizando pagamento de conta
     [Tags]    Teste03
@@ -44,6 +46,7 @@ Teste 03 - Realizando pagamento de conta
     Quando insiro o código do cliente(aPagar)
     E pesquiso pela conta a pagar gerada
     Então concluo o pagamento da mesma
+    E saio da tela(CaixaPrincipal)
 
 Teste 04 - Realizando estorno de conta recém paga
     [Tags]    Teste04
@@ -59,6 +62,7 @@ Teste 04 - Realizando estorno de conta recém paga
     Quando desmarco a opção somente a pagar
     E dou um duplo clique na conta a pagar já paga
     Então estorno a conta - A pagar
+    E saio da tela(CaixaPrincipal)
 
 Teste 05 - Realizando adiantamento do tipo pagamento
     [Tags]    Teste05
@@ -68,6 +72,7 @@ Teste 05 - Realizando adiantamento do tipo pagamento
     Quando insiro um novo cliente
     E insiro as informações do adiantamento(50)
     Então concluo o pagamento
+    E saio da tela(CaixaPrincipal)
 
 Teste 06 - Realizando adiantamento do tipo recebimento
     [Tags]    Teste06
@@ -77,6 +82,7 @@ Teste 06 - Realizando adiantamento do tipo recebimento
     Quando insiro um novo cliente
     E insiro as informações do adiantamento - Recebimento(50)
     Então concluo o recebimento
+    E saio da tela(CaixaPrincipal)
 
 Teste 07 - Realizando um recebimento rápido
     [Tags]    Teste07
@@ -86,6 +92,7 @@ Teste 07 - Realizando um recebimento rápido
     Quando insiro um novo cliente
     E insiro as informações necessárias - recebimento rápido(20)
     Então concluo o recebimento
+    E saio da tela(CaixaPrincipal)
 
 Teste 08 - Realizando um pagamento rápido
     [Tags]    Teste08
@@ -95,3 +102,4 @@ Teste 08 - Realizando um pagamento rápido
     Quando insiro um novo cliente
     E insiro as informações necessárias - pagamento rápido(20)
     Então concluo o pagamento
+    E saio da tela(CaixaPrincipal)

@@ -74,6 +74,9 @@ E adiciono uma nova Condicional
     Set Test Variable    ${COD_CONDICIONAL}    ${Consulta[0][0]}
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_CONDICIONAL}
 
+    # Seta a lista de produtos como None para dar certo em ambos os casos (venda com mais de um produto e com apenas 1 produto)
+    Set Test Variable    ${Codigos_Produtos}
+
 Quando insiro vendedor e cliente
 
     utils.Adicionar Vendedor e Cliente(Condicional)
@@ -103,12 +106,21 @@ E insiro um produto normal
     utils.Valida parametros após incluir produto
 
 E insiro mais de um produto normal(${Quantidade})
+
+    ${Codigos_Produtos}    Create List
     
     FOR    ${I}    IN RANGE    ${Quantidade}
         
         E insiro um produto normal
+
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
         
     END
+
+    Log To Console    Codigos_Produtos: ${Codigos_Produtos}
+
+    Set Test Variable    ${Codigos_Produtos}
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${Quantidade}
 
 Então finalizo a condicional
     
@@ -121,6 +133,8 @@ Então finalizo a condicional
     Press Combination    KEY.ALT     Key.F
 
     Valida impressao direta de venda(${Parametro_ImprimeCondicional})
+
+    KeyCondicional1.Valida baixa de estoque
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
@@ -181,6 +195,8 @@ Quando clico em gerar venda
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
+    KeyCondicional1.Consulta venda gerada a partir da condicional
+
     KeyVendas1.Verifica formas de recebimento da venda
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
@@ -190,7 +206,7 @@ Quando cliclo em gerar venda parcial
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.V
 
-    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${TEMPO_TELA}
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S
@@ -199,22 +215,28 @@ Quando cliclo em gerar venda parcial
 
 E gero a venda de parte dos produtos(${Quantidade})
     
+    ${Produtos_Condicional}    Create List
+    ${Codigos_Produtos}        Create List
+    
+    ${prodsCond}    Query    SELECT CodigoProduto FROM CondicionaisProdutos WHERE CodigoCondicional = ${COD_CONDICIONAL} AND (QtdeOriginal > QtdeDevolvida or QtdeDevolvida is NULL) AND Cancelada IS NULL;
+    
     FOR    ${I}    IN RANGE    ${Quantidade}
         
-        Press Special Key    SPACE 
+        Press Special Key    SPACE
         Sleep    ${SLEEP_BAIXO}
+
+        Append To List    ${Produtos_Condicional}    ${prodsCond[${I}][0]}
         
     END
+    Log To Console    prodsCond: ${prodsCond}
+    Log To Console    Produtos_Condicional: ${Produtos_Condicional}
 
     Wait Until Screen Contain    ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    ${SLEEP_ALTO}
 
     Press Combination    KEY.ALT     Key.G
+    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${TEMPO_TELA}
 
-    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${SLEEP_ALTO}
-
-    Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.S
-
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
 
     KeyVendas1.Verifica formas de recebimento da venda
@@ -224,6 +246,14 @@ E gero a venda de parte dos produtos(${Quantidade})
     ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL};
 
     Set Test Variable    ${Codigo_Venda_Gerada}    ${Codigo_Venda_Gerada_Cond[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+
+    Set Test Variable    ${Codigos_Produtos}    ${Produtos_Condicional}
+
+    ${QUANTIDADE_PRODUTOS}    Get Length    ${Codigos_Produtos}
+
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}
     
 Então cancelo a geração da venda
     
@@ -258,4 +288,51 @@ Validação de vendas após a geração do condicional
 
     ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
 
+    Should Be Equal    ${CODIGO_VENDA_GERADA_CONDICIONAL}    ${Codigo_Venda_Gerada_Cond[0][0]}
+
     Set Test Variable    ${Codigo_Venda_Gerada}    ${Codigo_Venda_Gerada_Cond[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+
+Valida baixa de estoque
+
+    Sleep    ${SLEEP_MEDIO}
+    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
+
+    IF    ${QUANTIDADE_PRODUTOS} > 1
+        
+        FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+            
+            Log To Console    Codigos_Produtos NA POS ${i}: ${Codigos_Produtos[${i}]}
+
+            ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
+            Log To Console    COD_PRODUTO: ${COD_PRODUTO}
+            
+            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}
+
+            IF    ${Baixa_De_Estoque}
+                Log To Console    Baixou estoque corretamente do produto [${COD_PRODUTO}] na Condicional!
+            ELSE
+                Fail    Falha na baixa do estoque na Condicional! Verifique!
+            END
+        END
+
+    ELSE
+
+        ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}
+
+        IF    ${Baixa_De_Estoque}
+            Log To Console    Baixou estoque corretamente na Condicional!
+        ELSE
+            Log To Console    Falha na baixa do estoque na Condicional! Verifique!
+        END
+
+    END
+
+Consulta venda gerada a partir da condicional
+
+    ${Consulta}    Query    SELECT v.Codigo FROM vendas v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND v.`Status` = 'e';
+
+    Set Test Variable    ${CODIGO_VENDA_GERADA_CONDICIONAL}    ${Consulta[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${CODIGO_VENDA_GERADA_CONDICIONAL}
