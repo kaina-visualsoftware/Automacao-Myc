@@ -712,7 +712,6 @@ Informa a data de lançamento da conta a receber
 
     Sleep    ${SLEEP_BAIXO}
     ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
-    Log To Console    CampoDataLancamentoAReceber: ${CampoDataLancamentoAReceber}
 
     # WHILE    '${CampoDataLancamentoAReceber}' == 'False'
     

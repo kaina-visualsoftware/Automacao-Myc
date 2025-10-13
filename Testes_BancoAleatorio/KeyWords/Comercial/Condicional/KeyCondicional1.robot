@@ -117,8 +117,6 @@ E insiro mais de um produto normal(${Quantidade})
         
     END
 
-    Log To Console    Codigos_Produtos: ${Codigos_Produtos}
-
     Set Test Variable    ${Codigos_Produtos}
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${Quantidade}
 
@@ -228,8 +226,6 @@ E gero a venda de parte dos produtos(${Quantidade})
         Append To List    ${Produtos_Condicional}    ${prodsCond[${I}][0]}
         
     END
-    Log To Console    prodsCond: ${prodsCond}
-    Log To Console    Produtos_Condicional: ${Produtos_Condicional}
 
     Wait Until Screen Contain    ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    ${SLEEP_ALTO}
 
@@ -297,16 +293,12 @@ Validação de vendas após a geração do condicional
 Valida baixa de estoque
 
     Sleep    ${SLEEP_MEDIO}
-    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
 
     IF    ${QUANTIDADE_PRODUTOS} > 1
         
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-            
-            Log To Console    Codigos_Produtos NA POS ${i}: ${Codigos_Produtos[${i}]}
 
             ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
-            Log To Console    COD_PRODUTO: ${COD_PRODUTO}
             
             ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}
 
@@ -324,7 +316,7 @@ Valida baixa de estoque
         IF    ${Baixa_De_Estoque}
             Log To Console    Baixou estoque corretamente na Condicional!
         ELSE
-            Log To Console    Falha na baixa do estoque na Condicional! Verifique!
+            Fail    Falha na baixa do estoque na Condicional! Verifique!
         END
 
     END

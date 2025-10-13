@@ -193,10 +193,6 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     Set Test Variable    ${Codigo_Vendas}
     Set Test Variable    ${Valor_Final_Vendas}
 
-    Log To Console    DESCONTOS_COMISSOES: ${DESCONTOS_COMISSOES}
-    Log To Console    Codigo_Vendas: ${Codigo_Vendas}
-    Log To Console    Valor_Final_Vendas: ${Valor_Final_Vendas}
-
 Dado que realizo uma venda total de uma condicional
 
     KeyCondicional1.Dado que acesso a tela de condicionais

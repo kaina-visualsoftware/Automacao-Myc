@@ -103,7 +103,6 @@ Dado que acesso a tela de comissoes
 Quando insiro o vendedor comissionado
     
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
-    Log To Console    Codigo_Vendedor (NA COMISSÃO): ${Codigo_Vendedor}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB

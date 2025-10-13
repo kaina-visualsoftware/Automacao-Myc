@@ -399,7 +399,6 @@ Então verifico se o pedido retornou corretamente
     Sleep    ${SLEEP_BAIXO}
 
     ${situacao_todos}    Exists    ${LABEL_SITUACAO_TODOS}
-    Log To Console    situacao_todos: ${situacao_todos}
 
     IF    '${situacao_todos}' == 'False'
 

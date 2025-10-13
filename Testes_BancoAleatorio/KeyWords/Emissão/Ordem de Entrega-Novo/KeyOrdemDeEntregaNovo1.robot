@@ -119,7 +119,6 @@ E seleciono o produto
 
     IF    '${entregaComMaisDeUmaVenda}' == 'False'
         
-        #Log To Console    entrou na condicao
         Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
         
     END

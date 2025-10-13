@@ -768,7 +768,6 @@ Valida a geração de entregas com apenas uma venda por entrega
 
     END
     
-    #Log To Console    aviso: ${aviso}
     RETURN    ${aviso}
 
 Valida considerar lançamento de ordem de entrega de doações

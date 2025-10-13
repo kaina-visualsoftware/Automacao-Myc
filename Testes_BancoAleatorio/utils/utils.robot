@@ -159,7 +159,6 @@ Adicionar Vendedor e Cliente(${TELA})
         Valida vendedor padrao
 
         Input Text    ${EMPTY}    ${Codigo_Vendedor}
-        Log To Console    Codigo_Vendedor (Vendedor da OS): ${Codigo_Vendedor}
 
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
@@ -470,7 +469,6 @@ Seleciona servico com linha de comissao
         Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${SLEEP_ALTO}
 
         IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
-            Log To Console    Entrou em Parametro_Seleciona_Funcionario_Comissao_Servico
             Press Special Key    DOWN
 
             #Validação temporária pra ver se precisa informar horas

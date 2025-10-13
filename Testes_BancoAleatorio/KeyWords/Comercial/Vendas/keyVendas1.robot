@@ -627,20 +627,14 @@ Calcula desconto final por produto(${PERCENT_DESCONTO})
 Valida baixa de estoque
 
     Sleep    ${SLEEP_MEDIO}
-    Log To Console    CODIGO_OPERACAO_MOV: ${CODIGO_OPERACAO_MOV}
-    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
 
     ${Teste_Condicional}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    condicional
-    Log To Console    Teste_Condicional: ${Teste_Condicional}
 
     IF    ${QUANTIDADE_PRODUTOS} > 1
         
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-            
-            Log To Console    Codigos_Produtos NA POS ${i}: ${Codigos_Produtos[${i}]}
 
             ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
-            Log To Console    COD_PRODUTO: ${COD_PRODUTO}
             
             ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
 
