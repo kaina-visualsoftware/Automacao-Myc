@@ -8,62 +8,101 @@ ipservidor = config.config.IpServidor
 class estoque:
 
     def Valida_Movimentacao_Estoque_Venda(self, idProduto, idMovimentacao):
+
         connection = mysql.connector.connect(host=ipservidor, user='root', password='vssql', database=dbname, port=porta)
-        print("Código do produto: "+str(idProduto)+" Movimentação: "+str(idMovimentacao))
 
-        if(connection.is_connected()):
+        print("Código do produto: " + str(idProduto) + " Movimentação: " + str(idMovimentacao))
 
-            cursor = connection.cursor()
-            
-            tabelaProdutosEstoque = []
-            tabelaAuditoriaEstoque = []
-            tabelaAuditoriaEstoqueMovAnterior = []
+        cursor = None
+        try:
+            if connection.is_connected():
 
-            #Essa parte será usada mais a frente, quando forem feitos cenários com produtos de outras modalidades
-            consultaProdutos = "SELECT ModalidadeControle FROM produtos WHERE Codigo = "+str(idProduto)
-            cursor.execute(consultaProdutos)
-            tabelaProdutos = cursor.fetchall()
-            Modalidade = tabelaProdutos[0][0]
-            #Essa parte será usada mais a frente, quando forem feitos cenários com produtos de outras modalidades
+                cursor = connection.cursor()
 
-            if(Modalidade == "Normal"):
+                tabelaProdutosEstoque = []
+                tabelaAuditoriaEstoque = []
 
-                consultaProdutosEstoque = "SELECT Estoque, Tela, Operacao FROM produtosestoque WHERE CodigoOperacao = "+str(idMovimentacao)+" AND CodigoProduto = "+str(idProduto)+";"
-                cursor.execute(consultaProdutosEstoque)
-                tabelaProdutosEstoque = cursor.fetchall()
+                # Modalidade do produto
+                consultaProdutos = "SELECT ModalidadeControle FROM produtos WHERE Codigo = " + str(idProduto)
+                cursor.execute(consultaProdutos)
 
-                print("-------- "+consultaProdutosEstoque+"--------")
-                
-                estoqueAtual = tabelaProdutosEstoque[0][0] 
+                row_produto = cursor.fetchone()
+                if row_produto is None:
+                    print("Produto não encontrado.")
+                    return False
 
-                consultaAuditoriaEstoque = "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque WHERE IDMov = "+str(idMovimentacao)+" AND CodigoProduto = "+str(idProduto)+" ORDER BY ID DESC LIMIT 1;"
-                cursor.execute(consultaAuditoriaEstoque)
-                tabelaAuditoriaEstoque = cursor.fetchall()
-                print(tabelaAuditoriaEstoque)
+                Modalidade = row_produto[0]
 
-                print(consultaAuditoriaEstoque)
+                if (Modalidade == "Normal"):
 
-                consultaAuditoriaEstoqueMovAnterior = "SELECT EstoqueAnterior FROM auditoriaestoque WHERE IDMov = "+str(idMovimentacao)+" AND CodigoProduto = "+str(idProduto)+" ORDER BY ID DESC LIMIT 1;"
-                cursor.execute(consultaAuditoriaEstoqueMovAnterior)
-                tabelaAuditoriaEstoqueMovAnterior = cursor.fetchall()
+                    # produtosestoque
+                    consultaProdutosEstoque = ("SELECT Estoque, Tela, Operacao FROM produtosestoque WHERE CodigoOperacao = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto))
+                    cursor.execute(consultaProdutosEstoque)
 
-                if(tabelaProdutosEstoque == tabelaAuditoriaEstoque):
-                    
-                    print("Auditoria de estoque está de acordo.")
-                    estoqueValidacao = tabelaAuditoriaEstoqueMovAnterior[0][0] - 1
+                    row_pe = cursor.fetchone()
+                    if row_pe is None:
+                        print("Linha em produtosestoque não encontrada para a operação/produto.")
+                        return False
 
-                    if(estoqueAtual == estoqueValidacao):
-                        print("Estoque baixou corretamente.")
-                        return True
+                    print("-------- " + consultaProdutosEstoque + "--------")
+
+                    estoqueAtual = row_pe[0]
+                    tabelaProdutosEstoque = [(row_pe[0], row_pe[1], row_pe[2])]
+
+                    # auditoriaestoque (último registro)
+                    consultaAuditoriaEstoque = (
+                        "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque "
+                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "ORDER BY ID DESC LIMIT 1;"
+                    )
+                    cursor.execute(consultaAuditoriaEstoque)
+
+                    row_aud = cursor.fetchone()
+                    if row_aud is None:
+                        print("Auditoria não encontrada para a operação/produto.")
+                        return False
+
+                    tabelaAuditoriaEstoque = [(row_aud[0], row_aud[1], row_aud[2])]
+                    print(tabelaAuditoriaEstoque)
+                    print(consultaAuditoriaEstoque)
+
+                    # EstoqueAnterior da mesma linha mais recente
+                    consultaAuditoriaEstoqueMovAnterior = (
+                        "SELECT EstoqueAnterior FROM auditoriaestoque "
+                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "ORDER BY ID DESC LIMIT 1;"
+                    )
+                    cursor.execute(consultaAuditoriaEstoqueMovAnterior)
+
+                    row_prev = cursor.fetchone()
+                    if row_prev is None:
+                        print("Auditoria (EstoqueAnterior) não encontrada.")
+                        return False
+
+                    estoqueValidacao = row_prev[0] - 1
+
+                    if (tabelaProdutosEstoque == tabelaAuditoriaEstoque):
+                        print("Auditoria de estoque está de acordo.")
+                        if (estoqueAtual == estoqueValidacao):
+                            print("Estoque baixou corretamente.")
+                            return True
+                        else:
+                            print("Estoque NÃO baixou corretamente.")
+                            return False
                     else:
-                        print("Estoque NÃO baixou corretamente.")
-                        return False 
-                else:
-                    print("Auditoria não está de acordo!")
-                    print("Auditoria de estoque = "+str(tabelaAuditoriaEstoque)+" Produtos Estoque = "+str(tabelaProdutosEstoque))
-                    return False  
-                
-            cursor.close() 
-            connection.close()
+                        print("Auditoria não está de acordo!")
+                        print("Auditoria de estoque = " + str(tabelaAuditoriaEstoque) + " Produtos Estoque = " + str(tabelaProdutosEstoque))
+                        return False
 
-#estoque.Valida_Movimentacao_Estoque_Venda(1284, 921)
+            return False
+
+        finally:
+            try:
+                if cursor:
+                    cursor.close()
+            except Exception:
+                pass
+            try:
+                connection.close()
+            except Exception:
+                pass
