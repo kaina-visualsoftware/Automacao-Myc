@@ -369,8 +369,6 @@ Então faço o pagamento da comissao
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    keyCaixa1.Informa a data de lançamento da conta
-
     SikuliLibrary.Click    ${CHECKBOX_CONTA_FOCO_GRID}
     Press Special Key    SPACE
     Sleep    ${SLEEP_BAIXO}

@@ -231,6 +231,7 @@ Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalme
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
+        utils.E saio da tela(CaixaPrincipal)
 
     ELSE
             
@@ -263,9 +264,10 @@ Dado que realizo uma ordem de serviço com funcionário comissionado por serviç
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
+        utils.E saio da tela(CaixaPrincipal)
 
     ELSE
-            
+        
         Log To Console    Venda foi finalizada com a forma - A vista, portanto está totalmente paga
 
     END
