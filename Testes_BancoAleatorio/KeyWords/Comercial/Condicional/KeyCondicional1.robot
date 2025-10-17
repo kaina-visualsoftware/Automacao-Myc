@@ -151,7 +151,7 @@ Quando clico em editar
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.E
 
-    utils.Valida solicitacao de senha do usuário
+    utils.Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
@@ -173,7 +173,7 @@ Então excluo a condicional
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
     
-    Valida solicitacao de senha do usuário
+    Valida solicitação de senha do usuário supervisor
     
     Sleep    ${SLEEP_MEDIO}
     Check If Exists In Database    SELECT * FROM condicionais AS c WHERE c.Codigo = ${COD_CONDICIONAL} AND c.`Status` = 'x' AND c.Cancelada = 1;

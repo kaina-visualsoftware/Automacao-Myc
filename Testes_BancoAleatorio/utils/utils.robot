@@ -41,6 +41,7 @@ ${TELA_CONTAS_A_PAGAR_AVULSA}            tela_CadastroContasAPagar.png
 ${TELA_NOTA_FISCAL_MANUAL}               tela_NotaFiscalPreenchimentoManual.png
 ${TELA_COMISSOES}                        tela_Comissoes.png
 ${CAIXA_PRINCIPAL}                       tela_CaixaPrinicipal.png
+${TELA_LIBERACAO_DESCONTO_MAXIMO}        tela_liberacaoDesconto.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
@@ -601,7 +602,7 @@ Valida parametros após incluir produto
 
     IF     ${Parametro_ExigeSenhaMultiplo}
     
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
     
     END
 
@@ -693,7 +694,7 @@ Valida impressao direta de venda(${Parametro})
 
     END
 
-Valida solicitacao de senha do usuário
+Valida solicitação de senha do usuário supervisor
 
     ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_SOLICITACAO_SENHA_USUARIO}     ${SLEEP_ALTO}
 

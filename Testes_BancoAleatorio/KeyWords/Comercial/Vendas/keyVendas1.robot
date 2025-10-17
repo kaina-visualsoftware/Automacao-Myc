@@ -108,7 +108,6 @@ Quando pressiono o atalho de adicionar
     Verifica parametros que interferem na venda
 
     Press Combination    KEY.ALT     Key.A
-
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${Parametro_Local_Negociacao}
@@ -184,7 +183,7 @@ Quando insiro um produto normal
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M
+    Press Combination    KEY.ALT    Key.M
 
     Valida cliente com vales compra disponíveis
 
@@ -235,7 +234,7 @@ Então finalizo a venda
 
             IF    ${VendedorPossuiSenha}
 
-                Valida solicitacao de senha do usuário
+                Valida solicitação de senha do usuário supervisor
 
             END
 
@@ -246,7 +245,7 @@ Então finalizo a venda
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
 
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
     END
 
@@ -317,7 +316,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
             IF    ${VendedorPossuiSenha}
 
-                Valida solicitacao de senha do usuário
+                Valida solicitação de senha do usuário supervisor
 
             END
 
@@ -328,7 +327,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
 
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
     END
 
@@ -413,7 +412,7 @@ Então finalizo a venda - A Prazo
 
         IF    ${VendedorPossuiSenha}
 
-            Valida solicitacao de senha do usuário
+            Valida solicitação de senha do usuário supervisor
 
         END
 
@@ -422,7 +421,7 @@ Então finalizo a venda - A Prazo
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
 
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
     END
 
@@ -443,11 +442,11 @@ Quando clico em editar
 
     IF    ${VendedorPossuiSenha}
 
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
     END
 
-    Valida solicitacao de senha do usuário
+    Valida solicitação de senha do usuário supervisor
 
     IF    ${Parametro_IndicacaoVenda}
 
@@ -478,7 +477,7 @@ Então clico em excluir
     Press Combination    KEY.ALT     Key.X
     Sleep    ${SLEEP_BAIXO}
 
-    Valida solicitacao de senha do usuário
+    Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 

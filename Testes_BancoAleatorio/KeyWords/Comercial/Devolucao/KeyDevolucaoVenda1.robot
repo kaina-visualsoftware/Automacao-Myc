@@ -288,7 +288,7 @@ E edito a devolução
 
         Press Combination    KEY.ALT     Key.E
 
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
         Aguarda tela Devolução avulsa
 
@@ -333,7 +333,7 @@ Então excluo a devolução
     Press Combination     KEY.ALT     Key.x 
     Sleep    ${SLEEP_BAIXO}
     
-    Valida solicitacao de senha do usuário
+    Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 

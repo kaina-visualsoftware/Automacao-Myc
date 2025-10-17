@@ -240,7 +240,7 @@ Quando clico em gerar venda
 
     Press Combination    KEY.ALT     Key.G
 
-    Valida solicitacao de senha do usuário
+    Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_GERACAO_VENDA}    ${TEMPO_TELA}
 

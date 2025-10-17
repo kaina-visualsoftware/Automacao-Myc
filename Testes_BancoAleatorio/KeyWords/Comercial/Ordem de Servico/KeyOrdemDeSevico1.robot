@@ -194,7 +194,7 @@ Então finalizo a Ordem de Servico
 
             IF    ${VendedorPossuiSenha}
         
-                Valida solicitacao de senha do usuário
+                Valida solicitação de senha do usuário supervisor
 
             END
 
@@ -205,7 +205,7 @@ Então finalizo a Ordem de Servico
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
         
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
     END
 
@@ -319,7 +319,7 @@ Então finalizo a OS - A prazo
 
         IF    ${VendedorPossuiSenha}
         
-            Valida solicitacao de senha do usuário
+            Valida solicitação de senha do usuário supervisor
 
         END
 
@@ -329,7 +329,7 @@ Então finalizo a OS - A prazo
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
         
-        Valida solicitacao de senha do usuário
+        Valida solicitação de senha do usuário supervisor
 
     END
 
@@ -344,7 +344,7 @@ Então clico em excluir
     Press Combination    KEY.ALT     Key.X
     Sleep    ${SLEEP_BAIXO}
     
-    Valida solicitacao de senha do usuário
+    Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
