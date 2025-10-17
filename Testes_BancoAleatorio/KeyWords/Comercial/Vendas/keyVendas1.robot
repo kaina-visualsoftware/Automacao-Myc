@@ -78,6 +78,8 @@ ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png
 ${Codigos_Produtos}                      ${None}
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
+${LABEL_DESCONTO_FINAL_VENDA}            lb_DescontoFinalVenda.png
+${LABEL_FOCO_DESCONTO_FINAL_VENDA}       lb_FocoDescontoFinalVenda.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -274,8 +276,8 @@ Então finalizo a venda
 
 Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
+    SikuliLibrary.Double Click    ${LABEL_DESCONTO_FINAL_VENDA}
+    Wait Until Screen Contain    ${LABEL_FOCO_DESCONTO_FINAL_VENDA}    ${SLEEP_ALTO}
 
     Input Text    ${EMPTY}    ${PERCENT_DESCONTO}
     Sleep    ${SLEEP_BAIXO}
@@ -527,7 +529,7 @@ Valida erro ao faturar NFC
 Calcula valor final da venda
     
     Sleep    ${SLEEP_BAIXO}
-    ${ValorTotalProdutos}    Query    SELECT SUM(ValorTotal) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+    ${ValorTotalProdutos}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
 
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
 

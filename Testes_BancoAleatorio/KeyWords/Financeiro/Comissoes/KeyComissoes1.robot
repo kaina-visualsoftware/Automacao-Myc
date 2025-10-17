@@ -79,6 +79,7 @@ ${CHECKBOX_CONTA_FOCO_GRID_2}            checkBox_ComissaoFocoGrid2.png
 ${GRID_SEM_REGISTROS}    	             grid_ComissoesSemRegistros.png
 ${NomeTerminalExecucao}                  ${config.terminal_name}
 ${GUIA_COMISSOES_PAGAS_AGENDADAS}        guia_ComissoesPagasAgendadas.png
+${LABEL_STATUS_ABERTO}                   lb_StatusAbertoCaixa.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -341,9 +342,7 @@ Quando acesso o caixa aberto
     
     Press Special Key    F12
     Wait Until Screen Contain    ${CAIXA_PRINCIPAL}     ${TEMPO_TELA}
-        
-    #Ignora o erro pq tem bancos em que carrega muito rápido, então ele não percebe a mudança e da erro
-    Run Keyword And Ignore Error    Wait Until Screen Not Contain    ${TELA_CAIXA_CARREGANDO}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${LABEL_STATUS_ABERTO}    ${TEMPO_TELA}
 
 E vou para a aba de contas a pagar
 
@@ -413,19 +412,16 @@ Então faço o pagamento da comissao
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C
-    Sleep    ${SLEEP_BAIXO}
-
-    ${telaDeImpressao}    Exists    ${TELA_IMPRESSAO}
     
-    IF    ${telaDeImpressao}
+    Sleep    ${SLEEP_ALTO}
+    ${telaDeImpressao}    Exists    ${TELA_IMPRESSAO}
 
+    IF    ${telaDeImpressao}
+        
         Press Special Key    ESC
-        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
         
     END
-
-    Press Special Key    ESC
-    Wait Until Screen Not Contain    ${CAIXA_PRINCIPAL}    ${TEMPO_TELA}
 
     Valida baixa comissao
 
@@ -476,9 +472,9 @@ E seleciono somente as recebidas
 
 Calcula total da comissao
     
-    ${Calculo_Comissao}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissao} / 100)), 3)
+    ${Calculo_Comissao}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissao} / 100)), 2)
     
-    ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Calculo_Comissao}),2)
+    ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Calculo_Comissao}), 2)
 
     Set Test Variable    ${Total_Comissao}
     
@@ -592,7 +588,7 @@ E seleciono as comissaos das vendas
         
         Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendas[${I}]}
     
-        Set Test Variable    ${VALOR_FINAL_VENDA}    ${Valor_Final_Vendas[${I}]}
+        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Final_Vendas[${I}]}
 
         Set Test Variable    ${PercentualComissao}    ${DESCONTOS_COMISSOES[${I}][1]}
         

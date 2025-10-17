@@ -69,6 +69,7 @@ ${INPUT_NUMERO_NFS}                     input_NumeroNFS.png
 ${LABEL_DATA_LANCAMENTO}                lb_CaixaDataLancamento.png
 ${INPUT_DATA_LANCAMENTO_A_RECEBER}      input_DataLancamentoAReceber.png
 ${CHECKBOX_CONTA_A_PAGAR}               checkBox_CaixaContaAPagar.png
+${LABEL_STATUS_ABERTO}                  lb_StatusAbertoCaixa.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -254,8 +255,7 @@ Quando acesso o caixa aberto
     Sleep    ${SLEEP_ALTO}
     Press Special Key    F12
     Wait Until Screen Contain    ${CAIXA_PRINCIPAL}     ${TEMPO_TELA}
-    
-    Run Keyword And Ignore Error    Wait Until Screen Not Contain    ${TELA_CAIXA_CARREGANDO}    ${TEMPO_LIMITE_CARREGAMENTO_GRID}
+    Wait Until Screen Contain    ${LABEL_STATUS_ABERTO}    ${TEMPO_TELA}
 
 E vou para a aba de contas a pagar
 
@@ -276,10 +276,11 @@ Então faço o recebimento da conta
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
 
     Valida tela de confirmação de data
 
@@ -620,10 +621,12 @@ Recupera sequencia caixa
     IF    ${Parametro_CaixaControladoPorUsuario}
         
         # No MyCommerce, valida se o caixa aberto — seja por usuário ou por terminal — possui marcado o recebimento ou pagamento diário. Caso contrário, exibe a tela de confirmação de data.
+        Sleep    ${SLEEP_BAIXO}
         ${Controle_Pag_Rec_Diario}    Query    SELECT Codigo FROM caixas WHERE Usuario = (SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1) AND `Status` LIKE 'Aberto' AND Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
-        
+
     ELSE
         
+        Sleep    ${SLEEP_BAIXO}
         ${Controle_Pag_Rec_Diario}    Query    SELECT Codigo FROM caixas WHERE Terminal LIKE '${NomeTerminalExecucao}' AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
 
     END

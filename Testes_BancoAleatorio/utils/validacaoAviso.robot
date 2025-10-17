@@ -129,12 +129,6 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    # IF    ${Aviso_Vendedor_Existe_Comissao}
-
-    #     Valida aviso cliente outro vendedor
-
-    # END
-
     Verifica se condicional existe(${Codigo_Cliente})
 
     IF    ${Aviso_infoCredito_existe}
@@ -395,7 +389,7 @@ Valida informações de crédito
 Valida condicional aberto
 
     Sleep    ${SLEEP_MEDIO}
-    ${MSG}     Exists    ${AVISO_CONDICIONAL_ABERTO}
+    ${MSG}    Exists    ${AVISO_CONDICIONAL_ABERTO}
     ${MSG2}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
 
     IF    ${MSG}
@@ -609,8 +603,8 @@ Valida impressão de boleto
 Valida vencimento fim de semana(${VALOR_I})
 
     FOR    ${I}    IN RANGE    ${VALOR_I}
-
-        ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_MEDIO}
+        
+        ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_ALTO}
 
         IF    ${MSG}
 
@@ -839,7 +833,6 @@ Valida cliente com vales compra disponíveis
 
     IF    ${aviso}
         
-        Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER
         Wait Until Screen Contain    ${LABEL_VALES_COMPRA_DISPONIVEIS}    ${TEMPO_TELA}
         

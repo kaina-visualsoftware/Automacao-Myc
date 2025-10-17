@@ -21,6 +21,7 @@ Teste 01 - Gerando comissao sobre venda simples - Total Venda
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
 
 Teste 02 - Gerando comissão sobre venda e devolução - Linha
     [Tags]    Teste02 
@@ -59,6 +60,7 @@ Teste 04 - Gerando comissao sobre somente recebidas - Total Venda
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)
 
@@ -87,6 +89,7 @@ Teste 06 - Gerando comissao de venda oriunda de pedidp - Linha
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
 
 Teste 07 - Gerando comissao de venda oriunda de pedido - Total Venda
     [Tags]    Teste07
@@ -101,6 +104,7 @@ Teste 07 - Gerando comissao de venda oriunda de pedido - Total Venda
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)
 
@@ -116,6 +120,7 @@ Teste 08 - Gerando comissao de uma venda oriunda de uma condicional - Linha
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
 
 Teste 09 - Gerando comissao de uma venda parcial oriunda de uma condicional - Total Venda
     [Tags]    Teste09
@@ -129,6 +134,7 @@ Teste 09 - Gerando comissao de uma venda parcial oriunda de uma condicional - To
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
 
 Teste 10 - Gerando comissao de uma venda parcial oriunda de uma condicional totalmente recebida - Total Venda
     [Tags]    Teste10
@@ -143,7 +149,9 @@ Teste 10 - Gerando comissao de uma venda parcial oriunda de uma condicional tota
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
+    utils.E saio da tela(Comissoes)
 
 Teste 11 - Gerando comissao por servico - Linha
     [Tags]    Teste11
@@ -158,6 +166,7 @@ Teste 11 - Gerando comissao por servico - Linha
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
 
 Teste 12 - Gerando comissao por servico totalmente recebido - Linha
     [Tags]    Teste12
@@ -173,5 +182,6 @@ Teste 12 - Gerando comissao por servico totalmente recebido - Linha
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
 
     

@@ -74,6 +74,7 @@ Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
+        utils.E saio da tela(CaixaPrincipal)
 
     ELSE
         
@@ -147,6 +148,7 @@ Dado que realizo uma venda totalmente recebida(${Quantidade_Inserir})
         keyCaixa1.E vou para a aba de contas a receber
         keyCaixa1.E pesquiso pela conta recém gerada
         keyCaixa1.Então faço o recebimento da conta
+        utils.E saio da tela(CaixaPrincipal)
 
     ELSE
         
@@ -171,6 +173,7 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
 
     ${DESCONTOS_COMISSOES}    Pesquisa comissões por escalonamento
     
+    Log To Console    DESCONTOS_COMISSOES[0][0]: ${DESCONTOS_COMISSOES[0][0]}
     Realizando venda com desconto ao finalizar(${DESCONTOS_COMISSOES[0][0]})
     
     Sleep    ${SLEEP_BAIXO}
@@ -182,6 +185,7 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     keyVendas1.E adiciono vendedor e cliente
     keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO})
     keyVendas1.E acesso a aba pagamentos
+    Log To Console    DESCONTOS_COMISSOES[1][0]: ${DESCONTOS_COMISSOES[1][0]}
     keyVendas1.Então finalizo a venda - Desconto(${DESCONTOS_COMISSOES[1][0]})
     utils.E saio da tela(Venda)
 
@@ -189,9 +193,17 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     Append To List    ${Codigo_Vendas}         ${COD_VENDA}
     Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
 
+    Log To Console    Codigo_Vendas: ${Codigo_Vendas}
+    Log To Console    Valor_Final_Vendas: ${Valor_Final_Vendas}
+
     Set Test Variable    ${DESCONTOS_COMISSOES}
     Set Test Variable    ${Codigo_Vendas}
     Set Test Variable    ${Valor_Final_Vendas}
+
+    ${somatorioVenda}    Evaluate    round(sum(${Valor_Final_Vendas}), 2)
+    Log To Console    somatorioVenda: ${somatorioVenda}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${somatorioVenda}
 
 Dado que realizo uma venda total de uma condicional
 
@@ -222,8 +234,6 @@ Dado que realizo uma venda parcial de uma condicional
 Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
 
     Dado que realizo uma venda parcial de uma condicional
-
-    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
             

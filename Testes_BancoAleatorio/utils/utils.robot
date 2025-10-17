@@ -931,7 +931,7 @@ Verifica seleção de tabela de preço(${TELA})
 
 Altera para vendedor vinculado ao cliente
 
-    ${vendedorPadrao} =    Exists    ${AVISO_USAR_ESSE_VENDEDOR}
+    ${vendedorPadrao}    Exists    ${AVISO_USAR_ESSE_VENDEDOR}
 
     IF    ${vendedorPadrao}
 
