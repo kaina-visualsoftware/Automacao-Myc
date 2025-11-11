@@ -70,6 +70,8 @@ ${LABEL_DATA_LANCAMENTO}                lb_CaixaDataLancamento.png
 ${INPUT_DATA_LANCAMENTO_A_RECEBER}      input_DataLancamentoAReceber.png
 ${CHECKBOX_CONTA_A_PAGAR}               checkBox_CaixaContaAPagar.png
 ${LABEL_STATUS_ABERTO}                  lb_StatusAbertoCaixa.png
+${POSICAO_PARCELA}                      ${None}
+${Total_Recebido_Venda}                 ${0}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -752,59 +754,77 @@ Informa a data de lançamento da conta a receber
     Type With Modifiers    H
     Press Special Key    TAB
 
-# Então faço o pagamento da comissao
+Então faço o recebimento das parcelas da conta
     
-#     Sleep    ${SLEEP_BAIXO}
-#     Input Text    ${EMPTY}    ${Codigo_Vendedor}
-#     Sleep    ${SLEEP_BAIXO}
-#     Press Special Key    TAB
-#     Wait Until Screen Contain    ${GRID_COMISSOES_PAGAR}    ${SLEEP_ALTO}
-#     SikuliLibrary.Click    ${INPUT_NUMERO_DOCUMENTO}
-#     Sleep    ${SLEEP_BAIXO}
-#     Input Text    ${EMPTY}    ${NDoc_Comissao}
-#     Sleep    ${SLEEP_BAIXO}
-#     Press Special Key    TAB
-#     Sleep    ${SLEEP_BAIXO}
-#     Press Special Key    SPACE
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.R
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-#     Press Combination    KEY.ALT     Key.g 
-#     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
-#     Press Combination    KEY.ALT     Key.C 
-#     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
-#     Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT     Key.C 
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-#     IF    ${Parametro_CaixaControladoPorUsuario}
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida tela de confirmação de data
+
+    IF    '${Forma_Recebimento}' == 'Outros'
+
+        Finalização com recebimento de duplicatas(${Valores_Parcelas[${POSICAO_PARCELA}]})
+    
+    ELSE IF     '${Forma_Recebimento}' == 'Cartão Oper.'
         
-#         #No MyCommerce valida se o caixa que está aberto ou por usuario ou por terminal, tem marcado o recebimento ou pagamento diario, se não tiver exibe a tela de confirmação de data
-#         ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec FROM caixas WHERE Usuario = ( SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1 ) AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
+        Finalização com recebimento de cartão de crédito/débito
+
+    ELSE IF     '${Forma_Recebimento}' == 'Moeda'
         
-#         IF    ${Controle_Pag_Rec_Diario[0][0]} == 0
+        Log To Console    Tipo moeda não executada novas telas
 
-#             Valida tela de confirmação data - caixa 
-
-#         END
-
-#     ELSE
+    ELSE IF     '${Forma_Recebimento}' == 'Bancária'
         
-#         ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec FROM caixas WHERE Terminal LIKE '${NomeTerminalExecucao}' AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
+        Finalização com o tipo bancaria
 
-#         IF    ${Controle_Pag_Rec_Diario[0][0]} == 0
+    END
 
-#             Valida tela de confirmação data - caixa 
+    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${TEMPO_TELA}
 
-#         END
+    Consulta sequencia caixa(${CODIGO_CAIXA})
 
-#     END
+    Consulta o valor pago da parcela(${POSICAO_PARCELA})
 
-#     Wait Until Screen Contain    ${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}    ${SLEEP_ALTO}
+    Valida o recebimento da venda com base no somatório das parcelas pagas
 
-#     Input Text    ${EMPTY}    ${Total_Comissao}
-#     Sleep    ${SLEEP_BAIXO}
-#     Press Special Key    TAB
-#     Sleep    ${SLEEP_BAIXO}
-#     Press Combination    KEY.ALT     Key.C
+    Validação movimentou parcelas no caixa(Crédito)
 
-#     Sleep    ${SLEEP_BAIXO}
-#     Press Special Key    ESC
+Validação movimentou parcelas no caixa(${Tipo_Mov})
+    
+    ${DATA_ATUAL}    Get Current Date    result_format=%Y-%m-%d
+    Sleep    ${SLEEP_BAIXO}
 
-#     Valida baixa comissao
+    ${Consulta_CaixaMovimento}    Query    SELECT CodigoCliente, ValorDocumento, ValorPago, Data, TipoMovimento FROM caixamovimentos WHERE CodigoAbertura = ${Sequencia_Caixa_Abertura} AND NDocumento LIKE '%${CODIGO_OPERACAO_MOV}%' ORDER BY Sequencia DESC;
+
+    ${Data_Banco}    Convert To String    ${Consulta_CaixaMovimento[0][3]}
+
+    ${Valores_Parcelas_Convertido}    Convert To Number    ${Valores_Parcelas[${POSICAO_PARCELA}]}
+
+    Should Be Equal    ${Consulta_CaixaMovimento[0][0]}    ${Codigo_Cliente}
+    Should Be Equal    ${Consulta_CaixaMovimento[0][1]}    ${Valores_Parcelas_Convertido}
+    Should Be Equal    ${Consulta_CaixaMovimento[0][1]}    ${Consulta_CaixaMovimento[0][2]}
+    Should Be Equal    ${Data_Banco}    ${DATA_ATUAL}
+    Should Be Equal    ${Consulta_CaixaMovimento[0][4]}    ${Tipo_Mov}
+
+Consulta o valor pago da parcela(${i})
+        
+    ${valorPagoParc}    Query    SELECT cr.ValorPago FROM contasareceber cr WHERE cr.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND cr.NDocumento LIKE '%${N_Documento_Parcelas[${i}]}%' AND cr.Quitado = 1 ORDER BY cr.Npagamento LIMIT 1;
+
+    Set Test Variable    ${Valor_Pago_Parcela}    ${valorPagoParc[0][0]}
+    Log To Console    Valor_Pago_Parcela: ${Valor_Pago_Parcela}
+
+Valida o recebimento da venda com base no somatório das parcelas pagas
+
+    ${Total_Recebido_Venda}    Evaluate    ${Total_Recebido_Venda} + ${Valor_Pago_Parcela}
+
+    Set Test Variable    ${Total_Recebido_Venda}
+    Log To Console    Total_Recebido_Venda: ${Total_Recebido_Venda}

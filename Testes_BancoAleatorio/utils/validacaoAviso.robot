@@ -714,6 +714,7 @@ Valida aviso de quantidade não existente em estoque - Orçamento
 
 Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
+    Sleep    ${SLEEP_BAIXO}
     ${AVISO}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}    ${SLEEP_ALTO}
 
     IF    ${AVISO}

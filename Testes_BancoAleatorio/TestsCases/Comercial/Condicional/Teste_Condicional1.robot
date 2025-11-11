@@ -65,6 +65,7 @@ Teste 05 - Gerando venda total de uma condicional
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
     Validação de vendas após a geração do condicional
+    utils.E saio da tela(Venda)
 
 Teste 06 - Gerando venda Parcial de uma condicional
     [Tags]    Teste06
@@ -78,7 +79,7 @@ Teste 06 - Gerando venda Parcial de uma condicional
     E gero a venda de parte dos produtos(2)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
-    # E saio da tela(Condicional)
+    utils.E saio da tela(Venda)
 
 Teste 07 - Cancelando a venda total de uma condicional
     [Tags]    Teste07

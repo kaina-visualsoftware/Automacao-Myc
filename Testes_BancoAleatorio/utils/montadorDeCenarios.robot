@@ -330,3 +330,26 @@ Dado que eu realizo uma doação
     KeyDocao1.Quando insiro um produto normal
     KeyDocao1.E acesso a aba detalhes
     KeyDocao1.Então finalizo a doação
+
+Dado que realizo uma venda com mais de um produto e finalizo com múltiplas parcelas personalizadas(${Quantidade_Inserir})
+
+    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro mais de um produto normal(${Quantidade_Inserir})
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda personalizada com múltiplas parcelas(3)
+    utils.E saio da tela(Venda)
+    utils.Exclui ordem de entrega(${COD_VENDA})
+
+Dado que realizo uma venda com mais de um produto e com múltiplas parcelas personalizadas - Totalmente recebida
+
+    Dado que realizo uma venda com mais de um produto e finalizo com múltiplas parcelas personalizadas(3)
+
+Dado que realizo o recebimento de uma venda com múltiplas parcelas personalizadas
+
+    keyCaixa1.Quando acesso o caixa aberto
+    keyCaixa1.E vou para a aba de contas a receber
+    keyCaixa1.E pesquiso pela conta recém gerada
+    keyCaixa1.Então faço o recebimento das parcelas da conta
+    utils.E saio da tela(CaixaPrincipal)

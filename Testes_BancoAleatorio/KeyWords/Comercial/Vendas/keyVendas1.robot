@@ -6,6 +6,7 @@ Library    ../../../libs/validaParametros.py
 Library    ../../../libs/estoque.py
 Library    Process
 Library    Collections
+#Library    XML
 Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/utils.robot
@@ -54,6 +55,7 @@ ${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPag.png
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
+${MODAL_PERSONALIZACAO_PAGAMENTO}        modal_PersonalizacaoPagamento.png
 
 # Telas Avisos
 ${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png
@@ -80,6 +82,7 @@ ${Codigos_Produtos}                      ${None}
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${LABEL_DESCONTO_FINAL_VENDA}            lb_DescontoFinalVenda.png
 ${LABEL_FOCO_DESCONTO_FINAL_VENDA}       lb_FocoDescontoFinalVenda.png
+${LABEL_QUANT_PARCELAS}                  lb_QuatParcelasPagPersonalizada.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -159,6 +162,8 @@ Quando insiro mais de um produto normal(${Quantidade_Inserir})
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${Quantidade_Inserir}
 
 Quando insiro um produto normal
+
+    #utils.Valida teste que utiliza o desconto máximo do produto
 
     IF    ${SelecionaProdutoComLinha}
 
@@ -672,7 +677,7 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
         IF    ${Codigos_Produtos} is None
 
-            ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
+            ${Produto}    Query    SELECT p.VendaT1, p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
 
             IF    ${PERCENT_DESCONTO} > ${Produto[0][1]}
 
@@ -700,7 +705,6 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
         END
 
-
     END
 
 Quando insiro um produto já definido(${Produto})
@@ -716,3 +720,110 @@ Quando insiro um produto já definido(${Produto})
     END
 
     utils.Valida parametros após incluir produto
+
+Então finalizo a venda personalizada com múltiplas parcelas(${qtdeParcelas})
+
+    ${formaPersonalizada}    utils.Seleciona uma forma de parcelamento personalizável
+
+    Verifica vendedor com senha
+
+    Calcula valor final da venda
+
+    # Essa validação é necessária, pois caso há grids personalizados, não funciona a pesquisa da forma de parcelamento pela sua descrição.
+    utils.Remove os grids personalizados de simulação de parcelas
+
+    SikuliLibrary.Click    ${BT_SIMULADOR_FORMAS_PARCELAMENTO}
+    Wait Until Screen Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${LABEL_DESCRIÇÃO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${formaPersonalizada}
+
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Contain    ${MODAL_PERSONALIZACAO_PAGAMENTO}    ${TEMPO_TELA}
+
+    SikuliLibrary.Double Click    ${LABEL_QUANT_PARCELAS}
+
+    Input Text    ${EMPTY}    ${qtdeParcelas}
+    Sleep    ${SLEEP_BAIXO}
+    
+    Press Special Key    TAB
+
+    Press Combination    KEY.ALT    KEY.G
+    Wait Until Screen Not Contain    ${MODAL_PERSONALIZACAO_PAGAMENTO}    ${TEMPO_TELA}
+    Wait Until Screen Not Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
+
+    Press Combination    KEY.ALT    KEY.D
+
+    FOR    ${i}    IN RANGE    ${qtdeParcelas}
+        
+        validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
+        
+    END
+
+    Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.F
+
+    IF    ${Parametro_ControlaCredito}
+
+        Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
+
+        IF    ${VendedorPossuiSenha}
+
+            Valida solicitação de senha do usuário supervisor
+
+        END
+
+    END
+
+    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
+    IF    ${VendedorPossuiSenha}
+
+        Valida solicitação de senha do usuário supervisor
+
+    END
+
+    Valida Parametros/Impressões pós venda
+
+    keyVendas1.Valida baixa de estoque
+
+    Set Test Variable    ${QTDE_PARCELAS_PAG_PERSONALIZADA}    ${qtdeParcelas}
+
+    Consulta valores das parcelas
+
+    Consulta NDocumento das parcelas
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+Consulta valores das parcelas
+    
+    ${consulta}    Query    SELECT cr.Valor FROM contasareceber cr WHERE cr.CodigoVenda = ${COD_VENDA} ORDER BY cr.Npagamento;
+
+    ${Valores_Parcelas}    Create List
+
+    FOR    ${i}    IN RANGE    ${QTDE_PARCELAS_PAG_PERSONALIZADA}
+        
+        Append To List    ${Valores_Parcelas}    ${consulta[${i}][0]}
+        
+    END
+
+    Set Test Variable    ${Valores_Parcelas}
+
+Consulta NDocumento das parcelas
+
+    ${consulta}    Query    SELECT cr.NDocumento FROM contasareceber cr WHERE cr.CodigoVenda = ${COD_VENDA} ORDER BY cr.Npagamento;
+    
+    ${N_Documento_Parcelas}    Create List
+
+    FOR    ${i}    IN RANGE    ${QTDE_PARCELAS_PAG_PERSONALIZADA}
+
+        Append To List    ${N_Documento_Parcelas}    ${consulta[${i}][0]}
+
+    END
+
+    Set Test Variable    ${N_Documento_Parcelas}
+    Log To Console    N_Documento_Parcelas: ${N_Documento_Parcelas}

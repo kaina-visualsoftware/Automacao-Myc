@@ -80,7 +80,7 @@ Teste 06 - Realizando venda com desconto ao finalizar
     Então finalizo a venda - Desconto(5)
     E saio da tela(Venda)
 
-Teste 07 - Realizando venda com mais de um produto 
+Teste 07 - Realizando venda com mais de um produto e com desconto ao finalizar
     [Tags]    Teste07
 
     Dado que acesso a tela de vendas de balcao

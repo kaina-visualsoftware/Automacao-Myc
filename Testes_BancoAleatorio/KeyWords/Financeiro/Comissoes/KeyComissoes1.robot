@@ -80,6 +80,9 @@ ${GRID_SEM_REGISTROS}    	             grid_ComissoesSemRegistros.png
 ${NomeTerminalExecucao}                  ${config.terminal_name}
 ${GUIA_COMISSOES_PAGAS_AGENDADAS}        guia_ComissoesPagasAgendadas.png
 ${LABEL_STATUS_ABERTO}                   lb_StatusAbertoCaixa.png
+${TOOLTIP_ATALHOS_DATA}                  tooltip_AtalhosData.png
+${Somatorio_Comissao_Parcela}            ${0}
+${j}                                     ${0}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -190,9 +193,19 @@ E seleciono a comissao da venda
             Calcula comissao com por produto - apenas 1 produto
 
         ELSE
-
+            
             Set Test Variable    ${POSIÇÃO_VALOR}    ${0}
-            Calcula comissao por produto
+            
+            Log To Console    Valores_Parcelas: ${Valores_Parcelas}
+            IF    ${Valores_Parcelas} is not None
+                
+                Calcula comissao por produto em cada parcela personalizada
+
+            ELSE
+
+               Calcula comissao por produto
+
+            END
 
         END
 
@@ -470,6 +483,8 @@ E seleciono somente as recebidas
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
+    Informa a data atual na data de recebimento
+
 Calcula total da comissao
     
     ${Calculo_Comissao}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissao} / 100)), 2)
@@ -489,7 +504,7 @@ Calcula comissao por produto
 
     FOR    ${I}    IN RANGE    ${Quantidade_Produtos_Calculo}
 
-        ${Comisssao_Produto}    Query    SELECT SUM(p.VendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+        ${Comisssao_Produto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
 
         ${Total_Comissao}    Evaluate    round((${Comisssao_Produto[0][0]} + ${Total_Comissao}), 4)
         
@@ -614,3 +629,51 @@ Calcula total comissao por servico
     Set Test Variable    ${Total_Comissao}
 
     Log To Console    Total parcial da comissão do servico: ${Total_Comissao}
+
+Informa a data atual na data de recebimento
+
+    Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+
+    Type With Modifiers    H
+    Press Special Key    TAB
+    Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+
+    Type With Modifiers    H
+    Press Special Key    TAB
+
+
+Calcula comissao por produto em cada parcela personalizada
+
+    ${Quantidade_Produtos_Calculo}    Get Length    ${Codigos_Produtos}
+
+    FOR    ${I}    IN RANGE    ${Quantidade_Produtos_Calculo}
+
+        ${Comisssao_Produto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+        Log To Console    Comisssao_Produto[${I}]: ${Comisssao_Produto}
+
+        ${Somatorio_Comissao_Parcela}    Evaluate    round((${Comisssao_Produto[0][0]} + ${Somatorio_Comissao_Parcela}), 4)
+        Log To Console    Somatorio_Comissao_Parcela: ${Somatorio_Comissao_Parcela}
+
+    END
+    
+    #Vai definir a % de comissão apenas positiva
+    IF    ${Valores_Parcelas[${j}]} > 0
+
+        ${PERCENT_COMISSAO}    Evaluate    round(((${Somatorio_Comissao_Parcela} / ${DADOS_VENDA_DEVOLUÇÃO[0][1]}) * 100), 4)
+
+        Set Suite Variable    ${PERCENT_COMISSAO}
+        Log To Console    PERCENT_COMISSAO: ${PERCENT_COMISSAO}
+
+    END
+
+    ${Total_Comissao_Parcela}    Evaluate    (${Valores_Parcelas[${j}]} * (${PERCENT_COMISSAO} / 100))
+    Log To Console    Total_Comissao_Parcela: ${Total_Comissao_Parcela}
+
+    ${Total_Comissao_Parcela}    Evaluate    round(${Total_Comissao_Parcela}, 2)
+    Log To Console    roundTotal_Comissao_Parcela: ${Total_Comissao_Parcela}
+
+    Set Test Variable    ${Total_Comissao_Final}    ${Total_Comissao_Parcela}
+    Log To Console    Total_Comissao_Final: ${Total_Comissao_Final}
+
+    ${j}    Evaluate    ${j} + 1
+    Set Test Variable    ${j}

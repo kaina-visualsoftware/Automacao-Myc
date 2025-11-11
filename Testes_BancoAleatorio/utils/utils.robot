@@ -69,19 +69,29 @@ ${LABEL_AVISO_CREDITO_LIBERADO2}         lb_CreditoLiberado2.png
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
 ${SelecionaProdutoComLinha}              ${False}
 ${Vendedor_Selecionada_Escalonada}       ${False}
+${Valores_Parcelas}                      ${None}
 ${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
 ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}    input_CodCliente.png
 ${LABEL_REF_PRODUTO}                     label_RefProduto.png
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${AJUSTE_FOCO_DEVOLUCAO}                 ajusteFocoDevolucao.png
 ${QUANTIDADE_PRODUTOS}                   1
+${POSICAO_PARCELA}                       ${None}
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
 
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
+    IF    ${Valores_Parcelas} is not None
+
+        Input Text    ${EMPTY}    ${Valores_Parcelas[${POSICAO_PARCELA}]}
+        
+    ELSE
+
+        Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
+
+    END
     Sleep    ${SLEEP_MEDIO}
 
     Press Special Key    TAB
@@ -538,7 +548,7 @@ Inserir Produto normal - Necessita de estoque
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}   
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
 
 Inserir Produto normal - Permite sem estoque
 
@@ -1111,3 +1121,13 @@ E saio da tela(${TELA})
         Wait Until Screen Not Contain    ${CAIXA_PRINCIPAL}    ${TEMPO_TELA}
 
     END
+
+Seleciona uma forma de parcelamento personalizável
+
+    ${formaParc}    Query    SELECT fp.Descricao FROM formaparcelamento fp WHERE fp.Personalizavel = 1 AND fp.Cancelado IS NULL LIMIT 1
+
+    RETURN    ${formaParc[0][0]}
+
+Remove os grids personalizados de simulação de parcelas
+
+    Execute Sql String    DELETE FROM usuariogridflex WHERE FormName = 'frmSimulacaodeParcelas';

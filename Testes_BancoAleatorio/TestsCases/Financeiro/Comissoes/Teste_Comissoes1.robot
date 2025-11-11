@@ -35,7 +35,7 @@ Teste 02 - Gerando comissão sobre venda e devolução - Linha
     # KeyComissoes1.E vou para a aba de contas a pagar
     #Então faço o pagamento da comissao
 
-Teste 03 - Gerando comissão sobre venda e devolução - Linha
+Teste 03 - Gerando comissão sobre venda e devolução com múltiplos produtos e baixa de vale-compra da devolução - Linha
     [Tags]    Teste03
     [Setup]    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
 
@@ -77,7 +77,7 @@ Teste 05 - Gerando comissão escalonada sobre mesmos produtos, com desconto dife
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
 
-Teste 06 - Gerando comissao de venda oriunda de pedidp - Linha
+Teste 06 - Gerando comissao de venda oriunda de pedido - Linha
     [Tags]    Teste06
     [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele
 
@@ -184,4 +184,27 @@ Teste 12 - Gerando comissao por servico totalmente recebido - Linha
     Então faço o pagamento da comissao
     utils.E saio da tela(CaixaPrincipal)
 
-    
+Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela por parcela - Linha
+    [Tags]    Teste13
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda com mais de um produto e finalizo com múltiplas parcelas personalizadas(3)
+
+    FOR    ${i}    IN RANGE    ${QTDE_PARCELAS_PAG_PERSONALIZADA}
+
+        Set Test Variable    ${POSICAO_PARCELA}    ${i}
+
+        montadorDeCenarios.Dado que realizo o recebimento de uma venda com múltiplas parcelas personalizadas
+        
+        Dado que acesso a tela de comissoes
+        Quando insiro o vendedor comissionado
+        E seleciono somente as recebidas
+        E seleciono a comissao da venda
+        E baixo a comissao recém recebida
+        utils.E saio da tela(Comissoes)
+        KeyComissoes1.Quando acesso o caixa aberto
+        KeyComissoes1.E vou para a aba de contas a pagar
+        Então faço o pagamento da comissao
+        utils.E saio da tela(CaixaPrincipal)
+        Então visualizo os detalhes da comissao recem paga
+        utils.E saio da tela(Comissoes)
+        
+    END

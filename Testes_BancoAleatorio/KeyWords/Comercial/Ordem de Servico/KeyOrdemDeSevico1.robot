@@ -252,6 +252,8 @@ Quando clico em editar
     validacaoAviso.Valida tela de liberação de desconto
 
 E excluo os pagamentos lançados
+
+    validacaoAviso.Valida cliente com vales compra disponíveis
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.M 
@@ -562,7 +564,7 @@ Então realizo o faturamento da NFSe
 
 Valida faturamento de NFSe
     
-    ${retornoFatNFS}    Run Keyword And Return Status    Wait Until Screen Contain    ${RETORNO_NFS}    ${TEMPO_TELA}
+    ${retornoFatNFS}    Run Keyword And Return Status    Wait Until Screen Contain    ${RETORNO_NFS}    60
 
     IF    ${retornoFatNFS}
 
