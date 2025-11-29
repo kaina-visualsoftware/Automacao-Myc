@@ -12,7 +12,7 @@ Resource    ../../../utils/utils.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./testes_bancoAleatorio/images
+${IMAGENS}                      ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                       ${config.IpServidor}
@@ -26,12 +26,12 @@ ${SLEEP_BAIXO}                  0.7
 ${SLEEP_MEDIO}                  1.5
 ${SLEEP_ALTO}                   3
 ${TEMPO_TELA}                   20
+
+# Telas
 ${TELA_GERACAO_VENDA}           tela_GeracaoPedido.png
 ${TELA_WORKFLOW}                tela_WorkFlowPedido.png
 ${MODAL_FORMAS_DE_PAGAMENTO}    modal_FormasDePagamentoPedidos.png
 ${TELA_IMPRESSAO}               tela_Impressao.png
-
-# Telas
 ${TELA_PEDIDOS}                 tela_Pedidos.png
 ${TELA_PEDIDOS_ADICIONAR}       tela_PedidosAdicionar.png
 ${TELA_PEDIDO_AUDITADO}         tela_PedidoAuditado.png
@@ -39,21 +39,24 @@ ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    tela_exclusaoVenda.png
 
 # Botões
 ${BT_WORKFLOW}                  bt_Workflow.png
+${AJUSTE_FOCO}                  bt_SetaUltimaVenda.png
+
+# Labels
+${LABEL_SITUACAO_TODOS}         lb_SituacaoTodosPreVenda.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}     Outros...
-${LABEL_SITUACAO_TODOS}         lb_SituacaoTodosPreVenda.png
-${AJUSTE_FOCO}                  bt_SetaUltimaVenda.png
+${QTDE_BAIXA_PRODUTO}           ${1}
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que acesso a tela de pedidos
 
     ${FORMA_PADRAO_PEDIDO}    Valida Forma Parcelamento    Pedido
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
     Press Special Key    F10
 
@@ -137,7 +140,7 @@ Então finalizo o pedido
     Press Combination    KEY.ALT     Key.S
     Sleep    ${SLEEP_MEDIO}
 
-Então visualizo o pedido feito
+Então visualizo o pedido
 
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
@@ -292,13 +295,13 @@ Valida baixa de estoque
     END
 
     Sleep    ${SLEEP_MEDIO}
-    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}    ${QTDE_BAIXA_PRODUTO}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
 
     IF    ${Baixa_De_Estoque}
 
-        Log To Console    Baixou estoque corretamente!
+        Log To Console    Baixou estoque corretamente na venda gerada a partir do pedido!
 
     ELSE
 

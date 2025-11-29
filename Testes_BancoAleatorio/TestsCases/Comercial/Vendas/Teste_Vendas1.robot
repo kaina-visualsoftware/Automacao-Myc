@@ -7,61 +7,61 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    keyVendas1.Ler im
 Suite Teardown      Stop Remote Server
 
 *** Test Cases ***
-Teste 01 - Venda com produto Normal
+Teste 01 - Lançamento de venda com produto normal
     [Tags]    Teste01
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
+    Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda
     E saio da tela(Venda)
 
-Teste 02 - Visualizando uma venda
+Teste 02 - Lançamento e visualização de venda
     [Tags]    Teste02
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
+    Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda
-    Então visualizo a mesma
+    Então visualizo a venda
     E saio da tela(Venda)
 
-Teste 03 - Editando venda
+Teste 03 - Lançamento e edição de venda
     [Tags]    Teste03
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
+    Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
     Quando clico em editar
     E excluo os pagamentos lançados
-    Quando insiro um produto normal
+    Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
     E saio da tela(Venda)
 
-Teste 04 - Excluindo uma venda
+Teste 04 - Lançamento e exclusão de venda
     [Tags]    Teste04
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
+    Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
     Então clico em excluir
     E saio da tela(Venda)
 
-Teste 05 - Realizando venda com mais de um produto
+Teste 05 - Lançamento de venda com múltiplos produtos
     [Tags]    Teste05
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro mais de um produto normal(2)
@@ -69,24 +69,35 @@ Teste 05 - Realizando venda com mais de um produto
     Então finalizo a venda
     E saio da tela(Venda)
 
-Teste 06 - Realizando venda com desconto ao finalizar
+Teste 06 – Lançamento de venda com aplicação de desconto na finalização
     [Tags]    Teste06
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
+    Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda - Desconto(5)
     E saio da tela(Venda)
 
-Teste 07 - Realizando venda com mais de um produto e com desconto ao finalizar
+Teste 07 – Lançamento de venda com múltiplos produtos e aplicação de desconto na finalização
     [Tags]    Teste07
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
     Quando insiro mais de um produto normal(2)
     E acesso a aba pagamentos
     Então finalizo a venda - Desconto(25)
     E saio da tela(Venda)
+
+# Teste 08 – Lançamento de venda com desconto acima do limite de liberação do supervisor e do desconto máximo do produto
+#     [Tags]    Teste08
+
+#     Dado que acesso a tela de vendas de balcão
+#     Quando pressiono o atalho de adicionar
+#     E adiciono vendedor e cliente
+#     Quando insiro um produto normal informando a quantidade(1)
+#     E acesso a aba pagamentos
+#     Então finalizo a venda - Desconto(25)
+    

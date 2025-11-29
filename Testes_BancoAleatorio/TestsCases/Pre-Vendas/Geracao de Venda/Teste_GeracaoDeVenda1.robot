@@ -11,37 +11,37 @@ Suite Teardown    Stop Remote Server
 Test Setup    montadorDeCenarios.Dado que realizo um pedido, com produto normal
 
 *** Test Cases ***
-Teste 01 - Fazendo a geração de venda de um pedido
+Teste 01 – Geração de venda a partir de pedido
     [Tags]    Teste01
 
     Dado que acesso a tela de geração de vendas
-    Quando seleciono o ultimo pedido feito
+    Quando seleciono o último pedido feito
     E clico em gerar
     Então confirmo a geração da venda
 
-Teste 02 - Visualizando o pedido antes de gerar a venda
+Teste 02 – Visualização do pedido antes da geração da venda
     [Tags]    Teste02
 
     Dado que acesso a tela de geração de vendas
-    Quando seleciono o ultimo pedido feito
+    Quando seleciono o último pedido feito
     E clico em visualizar
     Quando volto para a tela de geração de venda
     E clico em gerar
     Então confirmo a geração da venda
 
-Teste 03 - Excluindo venda feita pelo gerar venda
+Teste 03 – Exclusão da venda originada de pedido
     [Tags]    Teste03
 
     Dado que acesso a tela de geração de vendas
-    Quando seleciono o ultimo pedido feito
+    Quando seleciono o último pedido feito
     E clico em gerar
     Então confirmo a geração da venda
-    keyVendas1.Dado que acesso a tela de vendas de balcao
+    keyVendas1.Dado que acesso a tela de vendas de balcão
     keyVendas1.Então clico em excluir
     E saio da tela(Venda)
     Então verifico se o pedido retornou como aberto
 
-Teste 04 - Gerando venda de mais de um pedido
+Teste 04 – Geração de venda a partir de múltiplos pedidos
     [Tags]    Teste04
     [Setup]    montadorDeCenarios.Dado que realizo mais de um pedido(2)
     

@@ -14,7 +14,7 @@ Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./testes_bancoAleatorio/images
+${IMAGENS}                               ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
@@ -83,10 +83,14 @@ ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${LABEL_DESCONTO_FINAL_VENDA}            lb_DescontoFinalVenda.png
 ${LABEL_FOCO_DESCONTO_FINAL_VENDA}       lb_FocoDescontoFinalVenda.png
 ${LABEL_QUANT_PARCELAS}                  lb_QuatParcelasPagPersonalizada.png
+${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
+${Quantidade_Produto}                    ${1}
+${QUANTIDADE_PRODUTOS}                   ${1}
+${QTDE_BAIXA_PRODUTO}                    ${1}
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Verifica formas de recebimento da venda
 
@@ -96,7 +100,7 @@ Verifica formas de recebimento da venda
     Set Test Variable    ${FORMA_PADRAO}
     Set Test Variable    ${FORMA_PRAZO}
 
-Dado que acesso a tela de vendas de balcao
+Dado que acesso a tela de vendas de balcão
 
     Verifica formas de recebimento da venda
 
@@ -104,13 +108,13 @@ Dado que acesso a tela de vendas de balcao
 
     Valida lançamento de venda em aberto
 
-    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
 Quando pressiono o atalho de adicionar
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
-    Press Combination    KEY.ALT     Key.A
+    Press Combination    KEY.ALT    KEY.A
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${Parametro_Local_Negociacao}
@@ -128,13 +132,13 @@ Quando pressiono o atalho de adicionar
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
-    Ultima venda feita/em aberto
+    Última venda feita/em aberto
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
     # Seta a lista de produtos como None para dar certo em ambos os casos (venda com mais de um produto e com apenas 1 produto)
     Set Test Variable    ${Codigos_Produtos}
 
-Ultima venda feita/em aberto
+Última venda feita/em aberto
 
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
 
@@ -146,44 +150,37 @@ E adiciono vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-Quando insiro mais de um produto normal(${Quantidade_Inserir})
+Quando insiro mais de um produto normal(${QuantidadeDeProduto})
 
-    ${Codigos_Produtos} =    Create List
+    ${Codigos_Produtos}    Create List
 
-    FOR    ${I}    IN RANGE    ${Quantidade_Inserir}
+    FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
 
-        Quando insiro um produto normal
+        Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
         Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
 
     END
 
     Set Test Variable    ${Codigos_Produtos}
-    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${Quantidade_Inserir}
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
 
-Quando insiro um produto normal
+Informa a quantidade do produto(${Quantidade_Produto})
 
-    #utils.Valida teste que utiliza o desconto máximo do produto
-
-    IF    ${SelecionaProdutoComLinha}
-
-        utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
-
-    ELSE
-
-        IF     ${Parametro_RealizaVendaSemEstoque}
-
-            utils.Inserir Produto normal - Permite sem estoque
-
-        ELSE
-
-            utils.Inserir Produto normal - Necessita de estoque
-
-        END
+    IF    ${Quantidade_Produto} != 1
+        
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+    
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${Quantidade_Produto}
 
     END
 
-    utils.Valida parametros após incluir produto
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Produto}
+
+    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
 
 E acesso a aba pagamentos
 
@@ -208,7 +205,7 @@ E acesso a aba pagamentos
 
 Então finalizo a venda
 
-    Ultima venda feita/em aberto
+    Última venda feita/em aberto
 
     Verifica vendedor com senha
 
@@ -290,14 +287,14 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
     Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
-    Ultima venda feita/em aberto
+    Última venda feita/em aberto
 
     Verifica vendedor com senha
 
     Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.D
+    Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
     Valida vencimento fim de semana(${FORMA_PADRAO[4]})
@@ -311,7 +308,9 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
+
+    Valida desconto que não se encaixa em nenhuma escala de comissão
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
@@ -357,9 +356,9 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
     keyVendas1.Valida baixa de estoque
 
-Então visualizo a mesma
+Então visualizo a venda
 
-    Dado que acesso a tela de vendas de balcao
+    Dado que acesso a tela de vendas de balcão
 
     Press Combination    KEY.ALT     Key.V
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
@@ -379,7 +378,10 @@ Então finalizo a venda - A Prazo
     Verifica vendedor com senha
 
     Calcula valor final da venda
-
+    
+    # Essa validação é necessária, pois caso há grids personalizados, não funciona a pesquisa da forma de parcelamento pela sua descrição.
+    utils.Remove os grids personalizados de simulação de parcelas
+    
     SikuliLibrary.Click    ${BT_SIMULADOR_FORMAS_PARCELAMENTO}
     Wait Until Screen Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -532,16 +534,51 @@ Valida erro ao faturar NFC
 
 Calcula valor final da venda
     
+    ${somaValorTotalProdutos}    Evaluate    0
+
+    ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
+    Log To Console    ${consultaVendasProdutos}
+
+    ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA};
+
+    ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
+    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
+
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+        ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
+        Log To Console    ProdutoValorUnitario: ${ProdutoValorUnitario}
+
+        ${ProdutoValorTotal}       Set Variable    ${consultaVendasProdutos[${i}][2]}
+        Log To Console    ProdutoValorTotal: ${ProdutoValorTotal}
+        
+        ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
+        Log To Console    calcValorTotalProduto: ${calcValorTotalProduto}
+
+        Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}
+        
+        ${somaValorTotalProdutos}    Evaluate    round((${somaValorTotalProdutos} + ${calcValorTotalProduto}), 2)
+        Log To Console    somaValorTotalProdutos: ${somaValorTotalProdutos}
+        
+    END
+    
     Sleep    ${SLEEP_BAIXO}
     ${ValorTotalProdutos}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
-
+    
+    Log To Console    ValorTotalProdutos[0][0]: ${ValorTotalProdutos[0][0]}
+    Should Be Equal    ${ValorTotalProdutos[0][0]}    ${somaValorTotalProdutos}
+    
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
+    Log To Console    VALOR_FINAL_VENDA: ${VALOR_FINAL_VENDA}
 
-    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}     ${VALOR_FINAL_VENDA}
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}    ${VALOR_FINAL_VENDA}
+    Log To Console    DADOS_VENDA_DEVOLUÇÃO[0][1]: ${DADOS_VENDA_DEVOLUÇÃO[0][1]}
 
     ${DADOS_VENDA}    Create List    ${COD_VENDA}    ${VALOR_FINAL_VENDA}
+    Log To Console    DADOS_VENDA: ${DADOS_VENDA}
 
     ${DADOS_VENDA_DEVOLUÇÃO}    Create List    ${DADOS_VENDA}
+    Log To Console    DADOS_VENDA_DEVOLUÇÃO: ${DADOS_VENDA_DEVOLUÇÃO}
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
@@ -642,7 +679,7 @@ Valida baixa de estoque
 
             ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
             
-            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}    ${QTDE_BAIXA_PRODUTO}
 
             IF    ${Baixa_De_Estoque}
                 Log To Console    Baixou estoque corretamente do produto [${COD_PRODUTO}] na Venda de Balcão!
@@ -657,7 +694,7 @@ Valida baixa de estoque
 
     ELSE
 
-        ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+        ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}    ${QTDE_BAIXA_PRODUTO}
 
         IF    ${Baixa_De_Estoque}
             Log To Console    Baixou estoque corretamente na Venda de Balcão!
@@ -827,3 +864,27 @@ Consulta NDocumento das parcelas
 
     Set Test Variable    ${N_Documento_Parcelas}
     Log To Console    N_Documento_Parcelas: ${N_Documento_Parcelas}
+
+Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
+
+    IF    ${SelecionaProdutoComLinha}
+
+        utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
+
+    ELSE
+
+        IF     ${Parametro_RealizaVendaSemEstoque}
+
+            utils.Inserir Produto normal - Permite sem estoque
+
+        ELSE
+
+            utils.Inserir Produto normal - Necessita de estoque
+
+        END
+
+    END
+
+    Informa a quantidade do produto(${Quantidade_Produto})
+
+    utils.Valida parametros após incluir produto

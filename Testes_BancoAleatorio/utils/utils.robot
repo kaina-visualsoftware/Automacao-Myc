@@ -48,6 +48,7 @@ ${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
 ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
 ${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
 ${AVISO_EST_INSUFICIENTE_CONTINUAR}      aviso_EstoqueInsuficienteContinuar.png
+${AVISO_PRODUTO_JA_INCLUSO}              aviso_ProdutoJaIncluso.png
 
 # Botões
 ${BT_CONFIRMA_CANAL_NEGOCIACAO}          bt_ConfirmarCanal.png
@@ -68,6 +69,7 @@ ${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
 ${LABEL_AVISO_CREDITO_LIBERADO2}         lb_CreditoLiberado2.png
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
 ${SelecionaProdutoComLinha}              ${False}
+${SelecionaServicoComLinha}              ${False}
 ${Vendedor_Selecionada_Escalonada}       ${False}
 ${Valores_Parcelas}                      ${None}
 ${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
@@ -78,8 +80,14 @@ ${AJUSTE_FOCO_DEVOLUCAO}                 ajusteFocoDevolucao.png
 ${QUANTIDADE_PRODUTOS}                   1
 ${POSICAO_PARCELA}                       ${None}
 
+${Teste_Comissao_Escalonada}             ${False}
+${Teste_Comissao_Total_Venda}            ${False}
+${Teste_Comissao_Linha}                  ${False}
+${Teste_Comissao_Forma_Parcelamento}     ${False}
+${PercentualComissaoTotalVenda_Servico}    ${None}
+
 *** Keywords ***
-Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
+Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
 
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
 
@@ -88,8 +96,11 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_VENDA})
         Input Text    ${EMPTY}    ${Valores_Parcelas[${POSICAO_PARCELA}]}
         
     ELSE
-
-        Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
+    
+        Log To Console    VALOR_FINAL_OPERAÇÃO: ${VALOR_FINAL_OPERAÇÃO}
+        
+        #Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
+        Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
 
     END
     Sleep    ${SLEEP_MEDIO}
@@ -281,16 +292,31 @@ Valida teste de comissão
     
     ${Test_Comissao}    Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
 
-    ${Teste_Comissao_Escalonada}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
-    ${Teste_Comissao_Total_Venda}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
-    ${Teste_Comissao_Linha}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
+    ${Teste_Comissao_Escalonada}            Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
+    ${Teste_Comissao_Total_Venda}           Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
+    ${Teste_Comissao_Linha}                 Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
     ${Teste_Comissao_Forma_Parcelamento}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma
+    ${Teste_Comissao_Serviço}               Run Keyword And Return Status    Should Contain    ${TEST_NAME}    serviço
+
+    Set Test Variable    ${Teste_Comissao_Escalonada}
+    Set Test Variable    ${Teste_Comissao_Total_Venda}
+    Set Test Variable    ${Teste_Comissao_Linha}
+    Set Test Variable    ${Teste_Comissao_Forma_Parcelamento}
+
+    Set Test Variable    ${Teste_Comissao_Serviço}
 
     IF    ${Test_Comissao}
-        
-        ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos FROM clientes WHERE Codigo = ${Codigo_Vendedor}
+
+        ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos, ComissaoServicos, ComissaoPercentualServicos, ComissaoVendaProdutos FROM clientes WHERE Codigo = ${Codigo_Vendedor}
+        Log To Console    Tipo_Comissao: ${Tipo_Comissao}
 
         IF    ${Teste_Comissao_Escalonada}
+
+            IF    '${Tipo_Comissao[0][0]}' != '1'
+
+                Seleciona vendedor comissionado('D')
+                
+            END
                        
             IF    '${Tipo_Comissao[0][0]}' != 'D'
 
@@ -300,33 +326,63 @@ Valida teste de comissão
 
             Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
 
-            Log To Console    Teste sobre comissão escalonada${\n}Selecionar vendedor por tipo D
+            Log To Console    Comissão escalonada${\n}Selecionar vendedor por tipo D
 
-        ELSE IF    ${Teste_Comissao_Total_Venda}           
-        
-            IF    '${Tipo_Comissao[0][1]}' != 'None' and '${Tipo_Comissao[0][1]}' > '0.0'
-                    
-                Set Test Variable    ${PercentualComissao}    ${Tipo_Comissao[0][1]}
+        ELSE IF    ${Teste_Comissao_Total_Venda}
 
-            ELSE
-                    
+            IF    '${Tipo_Comissao[0][0]}' != 'T'
+
+                Seleciona vendedor comissionado('T')
+
+            ELSE IF    '${Teste_Comissao_Serviço}' == 'True' and (${Tipo_Comissao[0][2]} == None or '${Tipo_Comissao[0][2]}' != '1')
+
                 Seleciona vendedor comissionado('T')
 
             END
 
-            Log To Console    Comissao por total de vendas
+            IF    '${Tipo_Comissao[0][1]}' != 'None' and '${Tipo_Comissao[0][1]}' > '0.0'
+
+                Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Tipo_Comissao[0][1]}
+
+            ELSE
+
+                Seleciona vendedor comissionado('T')
+                
+            END
+
+            IF    ${Teste_Comissao_Serviço}
+
+                IF    '${Tipo_Comissao[0][3]}' != 'None' and '${Tipo_Comissao[0][3]}' > '0.0'
+
+                    Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Tipo_Comissao[0][3]}
+
+                ELSE
+
+                    Seleciona vendedor comissionado('T')
+                    
+                END
+
+            END
+
+            Log To Console    Comissão sobre o total da venda.
 
         ELSE IF    ${Teste_Comissao_Linha}
 
-            IF     '${Tipo_Comissao[0][0]}' != 'L'
-                
+            IF    '${Tipo_Comissao[0][0]}' != 'L'
+
                 Seleciona vendedor comissionado('L')
 
             END
 
+            IF    ${Teste_Comissao_Serviço}
+
+                Set Test Variable    ${SelecionaServicoComLinha}    ${True}
+                    
+            END
+
             Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
 
-            Log To Console    Comissao por linha
+            Log To Console    Comissão por linha.
         
         ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
 
@@ -336,8 +392,7 @@ Valida teste de comissão
 
             END
 
-            Log To Console    Comissao do tipo sobre forma de parcelamento - SEM CASOS DE TESTE POR ENQUANTO
-
+            Log To Console    Comissão do tipo sobre forma de parcelamento - SEM CASOS DE TESTE POR ENQUANTO.
 
         END
     
@@ -347,11 +402,44 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
 
     IF    ${Tipo_Selecionar} == 'T'
 
-        ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoPercentualProdutos > 0) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+        IF    ${Teste_Comissao_Serviço}
+
+            ${sql}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor, ComissaoPercentualServicos FROM clientes WHERE ComissaoServicos = 1 AND ComissaoPercentualServicos > 0 AND ComissaoVendaProdutos = 1 AND ComissaoPercentualProdutos > 0 AND Tipo IN ('D','V') AND Ativo = -1 AND Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
+
+            ${vendComissServicoTotalVenda}    Run Keyword And Return Status    Check If Exists In Database    ${sql}
+            Log To Console    vendComissServicoTotalVenda: ${vendComissServicoTotalVenda}
+
+            IF    not ${vendComissServicoTotalVenda}
+                
+                Fail    Não há cadastro de vendedor comissionado por serviço sobre o total da venda.
+                
+            END
+
+            ${codVendedor_Comissionado}    Query    ${sql}
+            Log To Console    codVendedor_Comissionado_IF_TotalVenda: ${codVendedor_Comissionado}
+
+            Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${codVendedor_Comissionado[0][3]}
+
+        ELSE
+
+            ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE ComissaoVendaProdutos = 1 AND ComissaoPercentualProdutos > 0 AND Tipo IN ('D','V') AND Ativo = -1 AND Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
+            Log To Console    codVendedor_Comissionado_ELSE_TotalVenda: ${codVendedor_Comissionado}
+
+        END
 
     ELSE
 
-        ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoDiferenciadapor LIKE ${Tipo_Selecionar}) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+        IF    ${Teste_Comissao_Serviço}
+
+            ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoDiferenciadapor LIKE ${Tipo_Selecionar}) AND Ativo = -1 AND `Status` LIKE 'ATIVA' AND ComissaoServicos = 1 ORDER BY RAND() LIMIT 1;
+            Log To Console    codVendedor_Comissionado_IF: ${codVendedor_Comissionado}
+
+        ELSE
+         
+            ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoDiferenciadapor LIKE ${Tipo_Selecionar}) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+            Log To Console    codVendedor_Comissionado_ELSE: ${codVendedor_Comissionado}
+
+        END
 
     END
 
@@ -359,7 +447,7 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
         
         Set Test Variable    ${Codigo_Vendedor}    ${codVendedor_Comissionado[0][0]}
 
-        Set Test Variable    ${PercentualComissao}    ${codVendedor_Comissionado[0][1]}
+        Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${codVendedor_Comissionado[0][1]}
 
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
 
@@ -388,17 +476,17 @@ Valida vendedor padrao
 Inserir serviço 
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
-    ${codServico}    Query    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
+    ${codServico}    Query    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 AND TabelaComissao IS NULL;
     Sleep    ${SLEEP_MEDIO}
     
     ${condicao}    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
 
     IF    ${condicao}
     
-        Input Text    ${EMPTY}    ${codServico[0][0]} 
+        Input Text    ${EMPTY}    ${codServico[0][0]}
         Sleep    ${SLEEP_BAIXO}
 
         Press Special Key    TAB
@@ -416,7 +504,7 @@ Inserir serviço
 
         END
 
-        Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${SLEEP_ALTO}
+        Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${TEMPO_TELA}
 
         IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
             
@@ -430,13 +518,15 @@ Inserir serviço
             
             Input Text    ${EMPTY}    ${Codigo_Vendedor}
 
+            Press Special Key    TAB
+            Sleep    ${SLEEP_BAIXO}
+
         END
 
-        Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT    key.I
+        Press Combination    KEY.ALT    KEY.I
         Sleep    ${SLEEP_BAIXO}
 
-        Press Combination    KEY.ALT     key.S
+        Press Combination    KEY.ALT     KEY.S
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
         Set Test Variable    ${COD_SERVICO}    ${codServico[0][0]} 
@@ -550,6 +640,12 @@ Inserir Produto normal - Necessita de estoque
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
 
+    # IF    ${TesteUtilizaDescontoMaximoProduto}
+
+    #     Altera o desconto máximo do produto
+        
+    # END
+
 Inserir Produto normal - Permite sem estoque
 
     IF    '${TELA}' == 'NFeSaidasManual'
@@ -582,6 +678,12 @@ Inserir Produto normal - Permite sem estoque
     Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
+
+    # IF    ${TesteUtilizaDescontoMaximoProduto}
+
+    #     Altera o desconto máximo do produto
+        
+    # END
     
 Inserir produto pré-definido(${Produto})
     
@@ -629,6 +731,8 @@ Valida parametros após incluir produto
             Sleep    ${SLEEP_BAIXO}
             
         END
+
+        Valida produto já incluso
 
     END
 
@@ -1122,6 +1226,39 @@ E saio da tela(${TELA})
 
     END
 
+Valida teste que utiliza o desconto máximo do produto
+
+    ${TesteUtilizaDescontoMaximoProduto}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    desconto máximo do produto
+
+    IF    ${TesteUtilizaDescontoMaximoProduto}
+
+        Altera o desconto máximo do produto
+        
+    END
+    
+    Set Test Variable    ${TesteUtilizaDescontoMaximoProduto}
+
+Altera o desconto máximo do produto
+
+    Execute Sql String    UPDATE produtos p SET p.DescontoMaximo = 10 WHERE p.Codigo = ${COD_PRODUTO}
+
+Valida solicitação de senha do usuário supervisor para liberação de desconto
+
+    ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_SOLICITACAO_SENHA_USUARIO}     ${SLEEP_ALTO}
+
+    IF    ${MSG}
+
+        ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 LIMIT 1;
+        ${senhaUsuarioDescriptografada}    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
+
+        Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ENTER 
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
 Seleciona uma forma de parcelamento personalizável
 
     ${formaParc}    Query    SELECT fp.Descricao FROM formaparcelamento fp WHERE fp.Personalizavel = 1 AND fp.Cancelado IS NULL LIMIT 1
@@ -1131,3 +1268,7 @@ Seleciona uma forma de parcelamento personalizável
 Remove os grids personalizados de simulação de parcelas
 
     Execute Sql String    DELETE FROM usuariogridflex WHERE FormName = 'frmSimulacaodeParcelas';
+
+Remove os grids personalizados do caixa
+
+    Execute Sql String    DELETE FROM usuariogridflex WHERE FormName = 'frmCaixa';

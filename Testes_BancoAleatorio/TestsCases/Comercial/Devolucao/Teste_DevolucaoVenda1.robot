@@ -10,23 +10,23 @@ Suite Teardown      Stop Remote Server
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
 
 *** Test Cases ***
-Teste 01 - Adicionando uma nova Devolução de venda
+Teste 01 - Lançamento de devolução de venda
     [Tags]    Teste01
 
-    Dado que abro a tela de Devolução de vendas/os
+    Dado que acesso a tela de devoluções de vendas/OS
     Quando adiciono uma nova devolução
-    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
+    E insiro os dados da venda no cabeçalho da devolução(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
     E saio da tela(Devolução)
 
-Teste 02 - Adicionando uma nova Devolução de venda - Visualizar
+Teste 02 - Visualização de devolução de venda
     [Tags]    Teste02
 
-    Dado que abro a tela de Devolução de vendas/os
+    Dado que acesso a tela de devoluções de vendas/OS
     Quando adiciono uma nova devolução
-    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
+    E insiro os dados da venda no cabeçalho da devolução(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
@@ -34,12 +34,12 @@ Teste 02 - Adicionando uma nova Devolução de venda - Visualizar
     E saio da tela(Devolução)
 
 #O teste de edição só funciona se os parametros de Dev. Avulsa e permite aberta estiverem habilitados!
-Teste 03 - Adicionando uma nova Devolução de venda - Editando
+Teste 03 - Edição de devolução de venda
     [Tags]    Teste03
 
-    Dado que abro a tela de Devolução de vendas/os
+    Dado que acesso a tela de devoluções de vendas/OS
     Quando adiciono uma nova devolução
-    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
+    E insiro os dados da venda no cabeçalho da devolução(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Quando finalizo a devolução como aberta
@@ -48,25 +48,25 @@ Teste 03 - Adicionando uma nova Devolução de venda - Editando
     Então finalizo a devolução após a edição
     E saio da tela(Devolução)
 
-Teste 04 - Adicionando uma nova Devolução de venda - Excluindo 
+Teste 04 - Exclusão de devolução de venda 
     [Tags]    Teste04
 
-    Dado que abro a tela de Devolução de vendas/os
+    Dado que acesso a tela de devoluções de vendas/OS
     Quando adiciono uma nova devolução
-    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
+    E insiro os dados da venda no cabeçalho da devolução(Devolução)
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
     Então excluo a devolução
     E saio da tela(Devolução)
 
-Teste 05 - Adicionando uma devolução de venda com mais de um produto
+Teste 05 - Lançamento de devolução de venda com múltiplos produtos
     [Tags]    Teste05
     [Setup]    montadorDeCenarios.Dado que realizo uma venda com mais de um produto(2)
     
-    Dado que abro a tela de Devolução de vendas/os
+    Dado que acesso a tela de devoluções de vendas/OS
     Quando adiciono uma nova devolução
-    E insiro os dados do cabeçalho - vendedor, venda|cliente(Devolução)
+    E insiro os dados da venda no cabeçalho da devolução(Devolução)
     Quando seleciono os produtos para a devolução(2)
     E vou para a aba de pagamentos
     Então finalizo a devolução

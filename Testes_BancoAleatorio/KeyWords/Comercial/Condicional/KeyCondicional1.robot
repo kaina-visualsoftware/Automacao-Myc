@@ -14,44 +14,44 @@ Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./Testes_BancoAleatorio/images
+${IMAGENS}                              ./Testes_BancoAleatorio/images
 
 # Conexão com o Banco de Dados
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
+${DBHost}                               ${config.IpServidor}
+${DBName}                               ${config.Database}
+${DBPass}                               vssql
+${DBPort}                               ${config.Porta}
+${DBUser}                               root
 
 # Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
+${SLEEP_BAIXO}                          0.7
+${SLEEP_MEDIO}                          1.5
+${SLEEP_ALTO}                           3
+${TEMPO_TELA}                           20
 
 # Telas
-${TELA_CONDICIONAIS}                     tela_Condicionais.png
-${TELA_ADICIONAR_CONDICIONAL}            tela_CondicionaisAdicionar.png
-${TELA_DETALHES_CONDICIONAL}             tela_DetalhesCondicional.png
-${TELA_VISUALIZA_CONDICIONAL}            tela_VisualizaVenda.png
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${TELA_VENDAS_ADICIONAR}                 tela_VendaBalcaoAdicionar.png
-${TELA_GERAÇÃO_VENDA_PARICAL}            tela_GeracaoVendaParcialCondicional.png
+${TELA_CONDICIONAIS}                    tela_Condicionais.png
+${TELA_ADICIONAR_CONDICIONAL}           tela_CondicionaisAdicionar.png
+${TELA_DETALHES_CONDICIONAL}            tela_DetalhesCondicional.png
+${TELA_VISUALIZA_CONDICIONAL}           tela_VisualizaVenda.png
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}            tela_exclusaoVenda.png
+${TELA_VENDAS_ADICIONAR}                tela_VendaBalcaoAdicionar.png
+${TELA_GERAÇÃO_VENDA_PARICAL}           tela_GeracaoVendaParcialCondicional.png
+${MODAL_GERAR_VENDA_CONDICIONAL}        modal_GerarVendaCondicional.png
+${MODAL_GERAR_VENDA_PARCIAL}            modal_GerarVendaParcialCondicional.png
+${MODAL_CANCELAR_VENDA}                 modal_CancelarVenda.png
 
 # Telas Avisos
-${AVISO_DESEJA_EXCLUIR}                  aviso_DesejaExcluir.png
-
-# Botões
+${AVISO_DESEJA_EXCLUIR}                 aviso_DesejaExcluir.png
 
 # Outros
-${MODAL_GERAR_VENDA_CONDICIONAL}         modal_GerarVendaCondicional.png
-${MODAL_GERAR_VENDA_PARCIAL}             modal_GerarVendaParcialCondicional.png
-${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}     row_ProdInclusoVendaParcialCond.png
-${MODAL_CANCELAR_VENDA}                  modal_CancelarVenda.png
+${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    row_ProdInclusoVendaParcialCond.png
+${QTDE_BAIXA_PRODUTO}                   ${1}
+${Quantidade_Produto}                   ${1}
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que acesso a tela de condicionais
     
@@ -61,9 +61,9 @@ Dado que acesso a tela de condicionais
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
-E adiciono uma nova Condicional
+E adiciono uma nova condicional
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.A 
@@ -83,42 +83,44 @@ Quando insiro vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-E insiro um produto normal
+Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
     IF    ${SelecionaProdutoComLinha}
 
-        utils.Seleciona produto com linha cadastrada(${Parametro_VendeSemEstoqueCondicional})
+        utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
 
     ELSE
 
-        IF     ${Parametro_VendeSemEstoqueCondicional}
+        IF     ${Parametro_RealizaVendaSemEstoque}
 
             utils.Inserir Produto normal - Permite sem estoque
 
         ELSE
-            
+
             utils.Inserir Produto normal - Necessita de estoque
 
         END
 
     END
 
+    Informa a quantidade do produto(${Quantidade_Produto})
+
     utils.Valida parametros após incluir produto
 
-E insiro mais de um produto normal(${Quantidade})
+E insiro mais de um produto normal(${QuantidadeDeProduto})
 
     ${Codigos_Produtos}    Create List
     
-    FOR    ${I}    IN RANGE    ${Quantidade}
+    FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
         
-        E insiro um produto normal
+        KeyCondicional1.Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
         Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
         
     END
 
     Set Test Variable    ${Codigos_Produtos}
-    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${Quantidade}
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
 
 Então finalizo a condicional
     
@@ -160,10 +162,10 @@ Quando clico em editar
 Então excluo a condicional
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.x
+    Press Combination    KEY.ALT    KEY.x
     Wait Until Screen Contain    ${AVISO_DESEJA_EXCLUIR}    ${SLEEP_ALTO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
@@ -253,7 +255,9 @@ E gero a venda de parte dos produtos(${Quantidade})
     
 Então cancelo a geração da venda
     
-    Sleep    ${SLEEP_ALTO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ESC
     Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 
@@ -300,7 +304,7 @@ Valida baixa de estoque
 
             ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
             
-            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}
+            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}    ${QTDE_BAIXA_PRODUTO}
 
             IF    ${Baixa_De_Estoque}
                 Log To Console    Baixou estoque corretamente do produto [${COD_PRODUTO}] na Condicional!
@@ -311,7 +315,7 @@ Valida baixa de estoque
 
     ELSE
 
-        ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}
+        ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_CONDICIONAL}    ${QTDE_BAIXA_PRODUTO}
 
         IF    ${Baixa_De_Estoque}
             Log To Console    Baixou estoque corretamente na Condicional!

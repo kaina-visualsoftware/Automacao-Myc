@@ -12,7 +12,7 @@ Resource    ../../../utils/utils.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                            ./testes_bancoAleatorio/images
+${IMAGENS}                           ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                            ${config.IpServidor}
@@ -32,24 +32,27 @@ ${TELA_ORCAMENTO}                    tela_Orcamento.png
 ${TELA_ORC_ADICIONAR}                tela_OrcamentoAdicionar.png
 ${TELA_VISUALIZA_VENDA}              tela_VisualizaVenda.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}         tela_exclusaoVenda.png
+${MODAL_PERSONALIZACAO_PAGAMENTO}    modal_PersonalizacaoPagamento.png
 
 # Telas Avisos
 ${AVISO_DESEJA_EXCLUIR}              aviso_DesejaExcluir.png
 
+# Inputs
+${INPUT_QUANTIDADE_PRODUTO}          input_QuantidadeProduto.png
+
 # Outros
 ${ABA_PAGAMENTOS}                    aba_Pagamentos.png
-${MODAL_PERSONALIZACAO_PAGAMENTO}    modal_PersonalizacaoPagamento.png
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
-Dado que acesso a tela de orçamento
+Dado que acesso a tela de orçamentos
     
     ${FORMA_PADRAO}    Valida Configuracoes Venda
     ${FORMA_PRAZO}    Seleciona Forma Prazo
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
     Type With Modifiers    O    CTRL
 
@@ -86,13 +89,23 @@ E adiciono vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
 
-Quando insiro um produto normal
+Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
-    utils.Inserir Produto normal - Permite sem estoque
-    
+    IF     ${Parametro_RealizaVendaSemEstoque}
+
+        utils.Inserir Produto normal - Permite sem estoque
+
+    ELSE
+
+        utils.Inserir Produto normal - Necessita de estoque
+
+    END
+
+    Informa a quantidade do produto(${Quantidade_Produto})
+
     utils.Valida parametros após incluir produto
 
-Então Gravo o Orcamento
+Então gravo o orçamento
 
     ${FORMA_PACELAMENTO_CLIENTE}    Verifica Forma Parcelamento Cliente    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
@@ -126,7 +139,7 @@ Então Gravo o Orcamento
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-Então visualizo o mesmo
+Então visualizo o orçamento
     
     Press Combination    KEY.ALT     KEY.U
     Sleep    ${SLEEP_MEDIO}
@@ -181,3 +194,20 @@ Então finalizo a exclusão
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
 
     Check If Exists In Database    SELECT * FROM orcamentos WHERE Codigo = ${COD_ORCAMENTO} AND `Status` LIKE 'x'
+
+Informa a quantidade do produto(${Quantidade_Produto})
+
+    IF    ${Quantidade_Produto} != 1
+        
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+    
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${Quantidade_Produto}
+
+    END
+
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Produto}
+
+    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}

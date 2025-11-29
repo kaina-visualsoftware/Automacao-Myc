@@ -28,6 +28,7 @@ Teste 02 - Realizando estorno de conta recém recebida
     Quando insiro o código do cliente(aReceber)
     E pesquiso pela conta recém gerada
     Então faço o recebimento da conta
+    utils.E saio da tela(CaixaPrincipal)
     Quando acesso o caixa aberto
     E vou para a aba de contas a receber
     Quando desmarco a opção somente a receber
@@ -57,9 +58,11 @@ Teste 04 - Realizando estorno de conta recém paga
     Quando insiro o código do cliente(aPagar)
     E pesquiso pela conta a pagar gerada
     Então concluo o pagamento da mesma
+    utils.E saio da tela(CaixaPrincipal)
     Quando acesso o caixa aberto
     E vou para a aba de contas a pagar
     Quando desmarco a opção somente a pagar
+    E pesquiso pela conta a pagar gerada
     E dou um duplo clique na conta a pagar já paga
     Então estorno a conta - A pagar
     E saio da tela(CaixaPrincipal)

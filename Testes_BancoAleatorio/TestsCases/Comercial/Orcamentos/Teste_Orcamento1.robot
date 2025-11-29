@@ -7,48 +7,48 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    keyOrcamento1.Ler
 Suite Teardown      Stop Remote Server
 
 *** Test Cases ***
-Teste 01 - Adicionando Orcamento com produto normal
+Teste 01 - Lançamento de orçamento
     [Tags]    Teste01
 
-    Dado que acesso a tela de orçamento
+    Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
-    Então Gravo o Orcamento
+    Quando insiro um produto normal informando a quantidade(1)
+    Então gravo o orçamento
     E saio da tela(Orçamento)
 
-Teste 02 - Visualizando o orcamento
+Teste 02 - Visualização de orçamento
     [Tags]    Teste02
 
-    Dado que acesso a tela de orçamento
+    Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
-    Então Gravo o Orcamento
-    Então visualizo o mesmo
+    Quando insiro um produto normal informando a quantidade(1)
+    Então gravo o orçamento
+    Então visualizo o orçamento
     E saio da tela(Orçamento)
 
-Teste 03 - Editando um orcamento
+Teste 03 - Edição de orçamento
     [Tags]    Teste03
 
-    Dado que acesso a tela de orçamento
+    Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
-    Então Gravo o Orcamento
+    Quando insiro um produto normal informando a quantidade(1)
+    Então gravo o orçamento
     Quando clico em editar
-    Quando insiro um produto normal
-    Então Gravo o Orcamento
+    Quando insiro um produto normal informando a quantidade(1)
+    Então gravo o orçamento
     E saio da tela(Orçamento)
 
-Teste 04 - Excluindo um orcamento
+Teste 04 - Exclusão de orçamento
     [Tags]    Teste04
 
-    Dado que acesso a tela de orçamento
+    Dado que acesso a tela de orçamentos
     Quando pressiono o atalho de adicionar
     E adiciono vendedor e cliente
-    Quando insiro um produto normal
-    Então Gravo o Orcamento
+    Quando insiro um produto normal informando a quantidade(1)
+    Então gravo o orçamento
     Quando clico em excluir
     Então finalizo a exclusão
     E saio da tela(Orçamento)

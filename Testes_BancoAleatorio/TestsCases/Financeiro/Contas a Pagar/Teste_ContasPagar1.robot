@@ -8,7 +8,7 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    keyContasPagar1.L
 Suite Teardown    Stop Remote Server
 
 *** Test Cases ***
-Teste 01 - Adicionando uma nova conta a pagar avulsa
+Teste 01 - Lançamento de conta a pagar avulsa
     [Tags]    Teste01
 
     Dado que acesso a tela de cadastro avulso de contas a pagar

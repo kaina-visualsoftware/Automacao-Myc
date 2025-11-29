@@ -9,7 +9,7 @@ Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produt
 
 *** Test Cases ***
 
-Teste 01 - Lançando uma nova Ordem de Entrega
+Teste 01 - Lançamento de ordem de entrega com uma venda
     [Tags]    Teste01
     
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
@@ -18,7 +18,7 @@ Teste 01 - Lançando uma nova Ordem de Entrega
     Então gero a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 02 - Lançando uma nova Ordem de Entrega com mais de uma venda
+Teste 02 - Lançamento de ordem de entrega com múltiplas vendas
     [Tags]    Teste02
     [Setup]    montadorDeCenarios.Dado que realizo mais de uma venda(2)
 
@@ -28,7 +28,7 @@ Teste 02 - Lançando uma nova Ordem de Entrega com mais de uma venda
     Então gero a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 03 - Lançando uma nova Ordem de Entrega de uma doação
+Teste 03 - Lançamento de ordem de entrega de doação
     [Tags]    Teste03
     [Setup]    montadorDeCenarios.Dado que eu realizo uma doação
 
@@ -38,7 +38,8 @@ Teste 03 - Lançando uma nova Ordem de Entrega de uma doação
     Então gero a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 04 - Lançando uma Ordem de Entrega e definindo detalhes
+Teste 04 - Lançamento de ordem de entrega informando os detalhes da entrega
+    [Tags]    Teste04
 
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
     Quando seleciono a última venda gerada
@@ -46,7 +47,8 @@ Teste 04 - Lançando uma Ordem de Entrega e definindo detalhes
     Então gero a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 05 - Edição de Entrega
+Teste 05 - Edição de entrega
+    [Tags]    Teste05
 
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
     Quando seleciono a última venda gerada
@@ -56,7 +58,8 @@ Teste 05 - Edição de Entrega
     E edito a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 06 - Visualização de Entrega
+Teste 06 - Visualização de entrega
+    [Tags]    Teste06
 
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
     Quando seleciono a última venda gerada
@@ -66,7 +69,8 @@ Teste 06 - Visualização de Entrega
     E visualizo a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 07 - Exclusão de Entrega
+Teste 07 - Exclusão de entrega
+    [Tags]    Teste07
 
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
     Quando seleciono a última venda gerada
@@ -76,7 +80,8 @@ Teste 07 - Exclusão de Entrega
     E excluo a entrega
     Então saio das telas de Entrega e Ordem de Entrega
 
-Teste 08 - Visualizando Workflow de Entrega
+Teste 08 - Visualização do workflow da entrega
+    [Tags]    Teste08
 
     Dado que eu inicio um lançamento de Ordem de Entrega Novo
     Quando seleciono a última venda gerada

@@ -13,7 +13,7 @@ Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                              ./testes_bancoAleatorio/images
+${IMAGENS}                             ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                              ${config.IpServidor}
@@ -31,21 +31,24 @@ ${TEMPO_TELA}                          20
 # Telas
 ${TELA_DEVOLUÇÕES}                     tela_Devolucoes.png
 ${TELA_DEVOLUÇÕES_AVULSA_ADICIONAR}    tela_DevolucaoAvulsaAdicionar.png
-${FORMA_RECEBIMENTO_OUTROS}            Outros...
 
-# Outros
+# Inputs
 ${INPUT_VENDA/OS}                      lb_CodVendaOs.png
 ${INPUTBOX_OBS}                        inputBox_Observacoes.png
 
+# Outros
+${FORMA_RECEBIMENTO_OUTROS}            Outros...
+${Qtde_Devolvida_Produto}              ${1}
+
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
-Dado que abro a tela de Devolução de vendas/os
+Dado que acesso a tela de devoluções de vendas/OS
 
     ${FORMA_PADRAO_DEV}    Valida Forma Parcelamento    Devolução
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
     Press Special Key    F6
 
@@ -84,7 +87,7 @@ Aguarda tela Devolução avulsa
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES_AVULSA_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-E insiro os dados do cabeçalho - vendedor, venda|cliente(${TELA})
+E insiro os dados da venda no cabeçalho da devolução(${TELA})
     
     Sleep    ${SLEEP_MEDIO}
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
@@ -164,6 +167,46 @@ Quando seleciono os produtos para a devolução(${Quantidade_Devolver})
         Quando seleciono um produto para a devolução
         
     END
+    
+Quando seleciono um produto para devolver parcialmente a quantidade vendida(${QtdeADevolver})
+
+    IF     ${Parametro_DevolucaoAvulsa}
+
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${COD_PRODUTO}
+
+        FOR    ${I}    IN RANGE    3
+
+            Press Special Key    TAB
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${Parametro_IncluiDireto} != ${True}
+        
+            Press Combination    KEY.ALT     Key.I
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+        
+        Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+    
+    ELSE
+
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${QtdeADevolver}
+        
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    Set Test Variable    ${Qtde_Devolvida_Produto}    ${QtdeADevolver}
 
 E vou para a aba de pagamentos
     
@@ -178,19 +221,19 @@ E vou para a aba de pagamentos
 
 Então finalizo a devolução
     
-    IF     ${Parametro_ValeCompra_Dev_Menor0} != $True
+    IF    ${Parametro_ValeCompra_Dev_Menor0} != $True
 
-        IF     ${Parametro_DevolucaoAvulsa}
+        IF    ${Parametro_DevolucaoAvulsa}
 
-            Press Combination    KEY.ALT     Key.e 
+            Press Combination    KEY.ALT    KEY.e
 
         ELSE 
 
-            Press Combination    KEY.ALT     Key.b 
+            Press Combination    KEY.ALT    KEY.b
 
         END
 
-        IF     ${Parametro_DevolucaoExigeOBS}
+        IF    ${Parametro_DevolucaoExigeOBS}
             
             Input Text    ${EMPTY}    Devolucao de Mercadoria - Automacao
 
@@ -215,9 +258,9 @@ Então finalizo a devolução
     
     ELSE
         
-        IF     ${Parametro_DevolucaoExigeOBS}
+        IF    ${Parametro_DevolucaoExigeOBS}
 
-            IF     ${Parametro_DevolucaoAvulsa}
+            IF    ${Parametro_DevolucaoAvulsa}
 
                 Input Text    ${INPUTBOX_OBS}    Devolucao de Mercadoria - Automacao
 
@@ -240,6 +283,8 @@ Então finalizo a devolução
         Set Test Variable    ${ID_VALE_COMPRA}    ${CodigoVale[0][0]}
 
     END
+
+    Calcula valor final da devolução
     
     # É True porque só não imprime ao finalizar se o botão "Imprimir" estiver bloqueado.
     Valida impressao direta de venda(${True})
@@ -345,3 +390,46 @@ Então excluo a devolução
 
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
+Calcula valor final da devolução
+
+    ${somaValorTotalProdutosDevolucao}    Evaluate    0
+    
+    ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
+    Log To Console    consultaVendasProdutos: ${consultaVendasProdutos}
+
+    ${consultaVendasProdutosDevolucao}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO} ORDER BY vp.Sequencia;
+    Log To Console    consultaVendasProdutosDevolucao: ${consultaVendasProdutosDevolucao}
+
+    ${consultaQtdeProdutosDevolucao}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
+
+    ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutosDevolucao[0][0]}
+    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
+
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+        
+        ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
+        Log To Console    ProdutoValorUnitario: ${ProdutoValorUnitario}
+
+        ${Produto_ValorTotalDev}    Set Variable    ${consultaVendasProdutosDevolucao[${i}][2]}
+        Log To Console    Produto_ValorTotalDev: ${Produto_ValorTotalDev}
+
+        ${calcValorTotalProdutoDevolucao}    Evaluate    round((${Qtde_Devolvida_Produto} * ${ProdutoValorUnitario}), 2)
+        ${calcValorTotalProdutoDevolucao}    Evaluate    ${calcValorTotalProdutoDevolucao} * (-1)
+        Log To Console    calcValorTotalProdutoDevolucao: ${calcValorTotalProdutoDevolucao}
+
+        Should Be Equal    ${Produto_ValorTotalDev}    ${calcValorTotalProdutoDevolucao}
+
+        ${somaValorTotalProdutosDevolucao}    Evaluate    round((${somaValorTotalProdutosDevolucao} + ${calcValorTotalProdutoDevolucao}), 2)
+        Log To Console    somaValorTotalProdutosDevolucao: ${somaValorTotalProdutosDevolucao}
+        
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    ${ValorTotalProdutosDevolucao}    Query    SELECT ROUND(SUM(vp.ValorTotal), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
+    Log To Console    ValorTotalProdutosDevolucao: ${ValorTotalProdutosDevolucao}
+
+    Should Be Equal    ${ValorTotalProdutosDevolucao[0][0]}    ${somaValorTotalProdutosDevolucao}
+
+    Set Test Variable    ${VALOR_FINAL_DEVOLUCAO}    ${ValorTotalProdutosDevolucao[0][0]}
+    Log To Console    VALOR_FINAL_DEVOLUCAO: ${VALOR_FINAL_DEVOLUCAO}

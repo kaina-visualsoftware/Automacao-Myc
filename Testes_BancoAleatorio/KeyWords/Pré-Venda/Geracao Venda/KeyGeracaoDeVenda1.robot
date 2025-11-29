@@ -12,7 +12,7 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                      ./testes_bancoAleatorio/images
+${IMAGENS}                     ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                      ${config.IpServidor}
@@ -34,15 +34,19 @@ ${TELA_CARREGANDO_PEDIDOS}     tela_CarregandoPedidos.png
 # Telas Avisos
 ${AVISO_DESEJA_GERAR_VENDA}    aviso_DesejaGerarVenda.png
 
-${LABEL_PEDIDO}                lb_Pedido.png
-${GRID_LISTAGEM_PEDIDOS}       grid_PedidosGeracaoVenda.png
-
 # Botões
 ${BT_SAIR_CTRLG}               bt_SairCTRLG.png
 
+# Labels
+${LABEL_PEDIDO}                lb_Pedido.png
+
+# Outros
+${GRID_LISTAGEM_PEDIDOS}       grid_PedidosGeracaoVenda.png
+${QTDE_BAIXA_PRODUTO}          ${1}
+
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que acesso a tela de geração de vendas
     
@@ -51,7 +55,7 @@ Dado que acesso a tela de geração de vendas
     Wait Until Screen Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-Quando seleciono o ultimo pedido feito
+Quando seleciono o último pedido feito
     
     Press Combination    KEY.ALT     Key.L
     Sleep    ${SLEEP_BAIXO}
@@ -172,13 +176,13 @@ Valida baixa de estoque
 
     Sleep    ${SLEEP_MEDIO}
 
-    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}
+    ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}    ${QTDE_BAIXA_PRODUTO}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
 
     IF    ${Baixa_De_Estoque}
         
-        Log To Console    Baixou estoque corretamente!
+        Log To Console    Baixou estoque corretamente na geração da venda do pedido!
 
     ELSE
 

@@ -1,6 +1,6 @@
 *** Settings ***
 Library    SikuliLibrary
-Library    ImageHorizonLibrary 
+Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
 Library    ../../../libs/verificacoesExtras.py
@@ -13,7 +13,7 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./testes_bancoAleatorio/images
+${IMAGENS}                                ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
@@ -26,7 +26,7 @@ ${DBUser}                                root
 ${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20 
+${TEMPO_TELA}                            20
 
 # Telas
 ${TELA_COMISSOES}                        tela_Comissoes.png
@@ -51,7 +51,6 @@ ${AVISO_COMISSAO_ZERADA}                 aviso_ComissaoZerada.png
 ${BT_BAIXAR}                             bt_Baixar.png
 ${BT_OK}                                 bt_OkComisssao.png
 ${BT_FECHAR}                             bt_fechar.png
-${BT_JÁ_SELECIONADO}                     ${False}
 
 # Outros
 
@@ -60,7 +59,7 @@ ${MENU_COMERCIAL}                        menu_Comercial.png
 ${SUB_MENU_COMISSOES}                    subMenu_Comissoes.png
 ${LISTAGEM_GRID}                         grid_Comissoes.png
 ${CHECK_BOX_SELE_TODOS}                  checkBox_Comissao.png
-${Quantidade_Zeros_Incluidos}            
+${Quantidade_Zeros_Incluidos}
 ${ABA_A_PAGAR}                           aba_contasAPagar.png
 ${GRID_COMISSOES_PAGAR}                  grid_ComissoesPagar.png
 ${CHECKBOX_CONTASPAGAR}                  checkBox_ContasPagar.png
@@ -84,19 +83,29 @@ ${TOOLTIP_ATALHOS_DATA}                  tooltip_AtalhosData.png
 ${Somatorio_Comissao_Parcela}            ${0}
 ${j}                                     ${0}
 
+${MENU_RELATORIOS}                       menu_Relatorios.png
+${SUBMENU_RELATORIOS_COMISSOES}          subMenu_Relatorios_Comissoes.png
+${TELA_RELATORIO_COMISSOES}              tela_RelatorioComissoes.png
+${RADIOBT_COMISSOES_AGENDADAS}           radioBT_Agendadas.png
+${LABEL_GERANDO_RELATORIO_AGUARDE}       lb_GerandoRelatorioAguarde.png
+${TELA_IMPRESSAO}                        tela_Impressao.png
+${RADIOBT_VISUALIZAR_IMPRESSAO}          radioBT_Visualizar_Impressao.png
+${TELA_VISUALIZACAO_IMPRESSAO}           tela_VisualizacaoImpressao.png
+${RADIOBT_COMISSOES_PENDENTES}           radioBT_Pendentes.png
+
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que acesso a tela de comissoes
 
     SikuliLibrary.Click    ${MENU_FINANCEIRO}
     Wait Until Screen Contain    ${SUB_MENU_COMISSOES}    ${TEMPO_TELA}
-    
+
     FOR    ${I}    IN RANGE    4
-        
+
         Press Special Key    DOWN
-        
+
     END
 
     Sleep    ${SLEEP_BAIXO}
@@ -105,27 +114,28 @@ Dado que acesso a tela de comissoes
     Wait Until Screen Contain    ${TELA_COMISSOES}    ${TEMPO_TELA}
 
 Quando insiro o vendedor comissionado
-    
+
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
+    
+    Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    Press Special Key    TAB
-    Wait Until Screen Contain    ${LISTAGEM_GRID}    ${SLEEP_ALTO}
-
 Pesquisa código da operação com zeros a esquerda
-    
+
+    Log To Console    CODIGO_OPERACAO_MOV: ${CODIGO_OPERACAO_MOV}
+
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
     ${Cod_Venda_String}    Convert To String    ${CODIGO_OPERACAO_MOV}
-    
+
     ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Venda_String}
 
     ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
-    
+
 
     FOR    ${I}    IN RANGE    ${Quantidade_de_zeros_esquerda}
-        
+
         ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
-        
+
     END
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
 
@@ -133,72 +143,55 @@ Pesquisa código da operação com zeros a esquerda
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    9
-        
+
         Press Special Key    RIGHT
-        
-    END
-
-    Sleep    ${SLEEP_BAIXO}
-    ${gridBranco}    Exists    ${CHECKBOX_COMISSAO_FOCO_GRID}
-    Sleep    ${SLEEP_BAIXO}
-    ${gridAmarelo}    Exists    ${CHECKBOX_CONTA_FOCO_GRID_2}
-
-    IF    ${gridBranco}
-
-        SikuliLibrary.Click    ${CHECKBOX_COMISSAO_FOCO_GRID}
-
-    ELSE IF    ${gridAmarelo}
-            
-        SikuliLibrary.Click    ${CHECKBOX_CONTA_FOCO_GRID_2}
 
     END
+
+    Press Special Key    SPACE
 
 E seleciono a comissao da venda
-    
+
     Sleep    ${SLEEP_BAIXO}
     ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
 
     IF    ${gridSemRegistro}
-        
+
         Press Combination    KEY.ALT    KEY.I
         Sleep    ${SLEEP_ALTO}
         Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
 
     END
 
-    IF    '${BT_JÁ_SELECIONADO}' == 'False'
-
-        SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
-
-    END
+    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
 
     Sleep    ${SLEEP_BAIXO}
     ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
-    
+
     IF    ${gridPassouTamPadrao}
 
         SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
-        
+
     END
-    
+
     SikuliLibrary.Click    ${LISTAGEM_GRID}
     Sleep    ${SLEEP_BAIXO}
 
     Pesquisa código da operação com zeros a esquerda
 
-    IF    ${SelecionaProdutoComLinha}
+    #IF    ${SelecionaProdutoComLinha}
+    IF    ${Teste_Comissao_Linha}
 
         IF    ${Codigos_Produtos} is None
-                
+
             Calcula comissao com por produto - apenas 1 produto
 
         ELSE
-            
+
             Set Test Variable    ${POSIÇÃO_VALOR}    ${0}
-            
-            Log To Console    Valores_Parcelas: ${Valores_Parcelas}
+
             IF    ${Valores_Parcelas} is not None
-                
+
                 Calcula comissao por produto em cada parcela personalizada
 
             ELSE
@@ -222,49 +215,77 @@ E seleciono a comissao da venda
 
 E seleciono a comissao do servico
 
-    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
     Sleep    ${SLEEP_BAIXO}
+    ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
+
+    IF    ${gridSemRegistro}
+
+        Press Combination    KEY.ALT    KEY.I
+        Sleep    ${SLEEP_ALTO}
+        Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
+
+    END
+
+    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+
+    Sleep    ${SLEEP_BAIXO}
+    ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
+
+    IF    ${gridPassouTamPadrao}
+
+        SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
+
+    END
 
     SikuliLibrary.Click    ${LISTAGEM_GRID}
     Sleep    ${SLEEP_BAIXO}
 
     Pesquisa código da operação com zeros a esquerda
 
-    Calcula total comissao por servico
+    IF    ${Teste_Comissao_Linha}
+
+        Calcula o total da comissão por linha - Ordem de Serviço
+        
+    ELSE IF    ${Teste_Comissao_Total_Venda}
+        
+        Calcula o total da comissão sobre o valor total da venda - Ordem de Serviço
+
+    END
 
 E seleciono a comissão da venda e devolução
 
     Press Combination    KEY.ALT    KEY.I
     Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
-    
+
+    Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
 
     FOR    ${I}    IN RANGE    2
-        
+
         Sleep    ${SLEEP_BAIXO}
         ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
-    
+
         IF    ${gridPassouTamPadrao}
 
             SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
-        
+
         END
 
         SikuliLibrary.Click    ${LISTAGEM_GRID}
         Sleep    ${SLEEP_BAIXO}
-        
+
         #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
         ${Cod_Venda_String}    Convert To String    ${CODIGO_OPERACAO_MOV}
-        
+
         ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Venda_String}
 
         ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
-        
+
 
         FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
-            
+
             ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
-            
+
         END
         #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
 
@@ -272,30 +293,17 @@ E seleciono a comissão da venda e devolução
         Sleep    ${SLEEP_BAIXO}
 
         FOR    ${K}    IN RANGE    9
-            
+
             Press Special Key    RIGHT
-            
-        END
-
-        Sleep    ${SLEEP_BAIXO}
-        ${gridBranco}    Exists    ${CHECKBOX_COMISSAO_FOCO_GRID}
-        Sleep    ${SLEEP_BAIXO}
-        ${gridAmarelo}    Exists    ${CHECKBOX_CONTA_FOCO_GRID_2}
-
-        IF    ${gridBranco}
-
-            SikuliLibrary.Click    ${CHECKBOX_COMISSAO_FOCO_GRID}
-
-        ELSE IF    ${gridAmarelo}
-            
-            SikuliLibrary.Click    ${CHECKBOX_CONTA_FOCO_GRID_2}
 
         END
+
+        Press Special Key    SPACE
 
         IF    ${SelecionaProdutoComLinha}
-            
+
             IF    ${Codigos_Produtos} is None
-                
+
                 Calcula comissao com por produto - apenas 1 produto
 
             ELSE
@@ -319,7 +327,7 @@ E seleciono a comissão da venda e devolução
     END
 
 E baixo a comissao recém recebida
-    
+
     SikuliLibrary.Click    ${BT_BAIXAR}
     Wait Until Screen Contain    ${TELA_AGENDAMENTO}    ${TEMPO_TELA}
 
@@ -337,7 +345,7 @@ E baixo a comissao recém recebida
         Press Special Key    ESC
 
         Log To Console    Finalizando Teste pois comissão está zerada (correto para o cenário 2)
-        
+
     ELSE
 
         Wait Until Screen Contain    ${AVISO_BAIXA_SUCESSO}    ${TEMPO_TELA}
@@ -352,7 +360,7 @@ E baixo a comissao recém recebida
     END
 
 Quando acesso o caixa aberto
-    
+
     Press Special Key    F12
     Wait Until Screen Contain    ${CAIXA_PRINCIPAL}     ${TEMPO_TELA}
     Wait Until Screen Contain    ${LABEL_STATUS_ABERTO}    ${TEMPO_TELA}
@@ -363,7 +371,7 @@ E vou para a aba de contas a pagar
     Wait Until Screen Contain    ${TELA_CONTAS_A_PAGAR}    ${TEMPO_TELA}
 
 Então faço o pagamento da comissao
-    
+
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
     Sleep    ${SLEEP_BAIXO}
@@ -381,7 +389,7 @@ Então faço o pagamento da comissao
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    SikuliLibrary.Click    ${CHECKBOX_CONTA_FOCO_GRID}
+    #SikuliLibrary.Click    ${CHECKBOX_CONTA_FOCO_GRID}
     Press Special Key    SPACE
     Sleep    ${SLEEP_BAIXO}
 
@@ -394,23 +402,23 @@ Então faço o pagamento da comissao
     Press Combination    KEY.ALT     Key.S
 
     IF    ${Parametro_CaixaControladoPorUsuario}
-        
+
         #No MyCommerce valida se o caixa que está aberto ou por usuario ou por terminal, tem marcado o recebimento ou pagamento diario, se não tiver exibe a tela de confirmação de data
         ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec FROM caixas WHERE Usuario = ( SELECT ua_usuario_mycommerce FROM usuario_acesso WHERE ua_terminal LIKE '${NomeTerminalExecucao}' ORDER BY ua_id DESC LIMIT 1 ) AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
-        
+
         IF    ${Controle_Pag_Rec_Diario[0][0]} == 0
 
-            Valida tela de confirmação data - caixa 
+            Valida tela de confirmação data - caixa
 
         END
 
     ELSE
-        
+
         ${Controle_Pag_Rec_Diario}    Query    SELECT Diario, DiarioRec FROM caixas WHERE Terminal LIKE '${NomeTerminalExecucao}' AND `Status` LIKE 'Aberto' AND Empresa = ( SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1 )
 
         IF    ${Controle_Pag_Rec_Diario[0][0]} == 0
 
-            Valida tela de confirmação data - caixa 
+            Valida tela de confirmação data - caixa
 
         END
 
@@ -425,15 +433,15 @@ Então faço o pagamento da comissao
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C
-    
+
     Sleep    ${SLEEP_ALTO}
     ${telaDeImpressao}    Exists    ${TELA_IMPRESSAO}
 
     IF    ${telaDeImpressao}
-        
+
         Press Special Key    ESC
         Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
-        
+
     END
 
     Valida baixa comissao
@@ -442,24 +450,24 @@ Então visualizo os detalhes da comissao recem paga
 
     Dado que acesso a tela de comissoes
     Quando insiro o vendedor comissionado
-    
+
     Press Combination    KEY.ALT    KEY.C
     Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
 
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
     ${Cod_Com_String}    Convert To String    ${NDoc_Comissao}
-        
+
     ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Com_String}
 
     ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
-        
+
     FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
-            
+
         ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
-            
+
     END
     #Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
-    
+
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${COL_LOTE}
 
@@ -472,12 +480,12 @@ Então visualizo os detalhes da comissao recem paga
     Press Special Key    ESC
 
 E seleciono somente as recebidas
-    
+
     FOR    ${I}    IN RANGE    2
-        
+
         Press Special Key    DOWN
         Sleep    ${SLEEP_BAIXO}
-        
+
     END
 
     Press Special Key    TAB
@@ -486,13 +494,13 @@ E seleciono somente as recebidas
     Informa a data atual na data de recebimento
 
 Calcula total da comissao
-    
-    ${Calculo_Comissao}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissao} / 100)), 2)
-    
+
+    ${Calculo_Comissao}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissaoTotalVenda_Produto} / 100)), 2)
+
     ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Calculo_Comissao}), 2)
 
     Set Test Variable    ${Total_Comissao}
-    
+
     Log To Console    Valor Calculado|Parcial| da comissão: ${Calculo_Comissao}
     Log To Console    Valor final da comissão: ${Total_Comissao}
 
@@ -507,15 +515,15 @@ Calcula comissao por produto
         ${Comisssao_Produto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
 
         ${Total_Comissao}    Evaluate    round((${Comisssao_Produto[0][0]} + ${Total_Comissao}), 4)
-        
+
     END
-    
+
     #Vai definir a % de comissão apenas positiva
     IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
 
         ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
         Set Suite Variable    ${PERCENT_COMISSAO}
-        
+
     END
 
     ${Total_Comissao}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
@@ -528,8 +536,8 @@ Calcula comissao por produto
     Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
     Log To Console    %Comissao final: ${PERCENT_COMISSAO}
 
-Calcula comissao com por produto - apenas 1 produto 
-    
+Calcula comissao com por produto - apenas 1 produto
+
     Sleep    ${SLEEP_BAIXO}
     ${Comisssao_Produto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
 
@@ -539,11 +547,11 @@ Calcula comissao com por produto - apenas 1 produto
 
     Set Test Variable    ${Total_Comissao_Final}
     Set Test Variable    ${Total_Comissao}
-    
+
     Log To Console    Valor final da comissão_Final: ${Total_Comissao_Final}
 
 Valida baixa comissao
-    
+
     Sleep    ${SLEEP_BAIXO}
     ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
     ${Comissao_Paga_BD}    Evaluate    round((${ComissaoPaga[0][1]}), 2)
@@ -556,13 +564,13 @@ Valida baixa comissao
     Log To Console    Validações passaram!
 
 Dado que acesso o menu de vale compras
-    
+
     SikuliLibrary.Click    ${MENU_COMERCIAL}
 
     FOR    ${I}    IN RANGE    9
-        
+
         Press Special Key    DOWN
-        
+
     END
     Sleep    ${SLEEP_BAIXO}
 
@@ -570,15 +578,15 @@ Dado que acesso o menu de vale compras
     Wait Until Screen Contain    ${TELA_VALE_COMPRA}     ${TEMPO_TELA}
 
 E seleciono o vale gerado pela devolução
-    
+
     Input Text    ${EMPTY}    ${ID_VALE_COMPRA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    ENTER
 
 Quando faço a baixa do mesmo
-    
-    Press Combination    KEY.ALT     Key.B 
+
+    Press Combination    KEY.ALT     Key.B
     Wait Until Screen Contain    ${AVISO_BAIXA_VALE_COMPRA}    ${SLEEP_ALTO}
 
     Press Combination    KEY.ALT     Key.S
@@ -587,11 +595,9 @@ Quando faço a baixa do mesmo
     Press Combination    KEY.ALT     Key.C
     Sleep    ${SLEEP_BAIXO}
 
-    ${VALOR_VALE}    Evaluate    (${VALOR_FINAL_VENDA} * -1)
-    Finalização com recebimento de duplicatas(${VALOR_VALE})
+    Finalização com recebimento de duplicatas(${VALOR_FINAL_DEVOLUCAO})
 
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_VALE_COMPRA}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_VALE_COMPRA}    ${TEMPO_TELA}
 
     Press Special Key    ESC
 
@@ -600,19 +606,17 @@ E seleciono as comissaos das vendas
     ${QuantidadeVendas}    Get Length    ${Codigo_Vendas}
 
     FOR    ${I}    IN RANGE    ${QuantidadeVendas}
-        
+
         Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendas[${I}]}
-    
+
         Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Final_Vendas[${I}]}
 
-        Set Test Variable    ${PercentualComissao}    ${DESCONTOS_COMISSOES[${I}][1]}
-        
+        Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${DESCONTOS_COMISSOES[${I}][1]}
+
         E seleciono a comissao da venda
-        
-        Set Test Variable    ${BT_JÁ_SELECIONADO}    ${True}
 
     END
-    
+
 E vou para a aba de servicos
 
     Press Combination    KEY.ALT    KEY.S
@@ -620,10 +624,10 @@ E vou para a aba de servicos
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${ABA_SERVICOS}    ${SLEEP_ALTO}
 
-Calcula total comissao por servico
-    
+Calcula o total da comissão por linha - Ordem de Serviço
+
     ${Comissao_Servico}    Query    SELECT SUM(v.TotalServicos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN servicos as s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${COD_SERVICO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
-    
+
     ${Total_Comissao}    Evaluate    round((${Comissao_Servico[0][0]}),2)
 
     Set Test Variable    ${Total_Comissao}
@@ -655,7 +659,7 @@ Calcula comissao por produto em cada parcela personalizada
         Log To Console    Somatorio_Comissao_Parcela: ${Somatorio_Comissao_Parcela}
 
     END
-    
+
     #Vai definir a % de comissão apenas positiva
     IF    ${Valores_Parcelas[${j}]} > 0
 
@@ -677,3 +681,131 @@ Calcula comissao por produto em cada parcela personalizada
 
     ${j}    Evaluate    ${j} + 1
     Set Test Variable    ${j}
+
+Calcula o total da comissão sobre o valor total da venda - Ordem de Serviço
+
+    IF    ${OS_PossuiProduto}
+
+        ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+        Log To Console    queryComissaoProdutos: ${queryComissaoProdutos[0][0]}
+    
+        Log To Console    Valor_Total_Produtos_OS: ${Valor_Total_Produtos_OS}
+        Log To Console    PercentualComissaoTotalVenda_Produto: ${PercentualComissaoTotalVenda_Produto}
+        ${calcComissaoProdutos}    Evaluate    round((${Valor_Total_Produtos_OS} * (${PercentualComissaoTotalVenda_Produto} / 100)), 2)
+
+        Should Be Equal    ${queryComissaoProdutos[0][0]}    ${calcComissaoProdutos}
+
+        Log To Console    Valor final da comissão (Produto): ${calcComissaoProdutos}
+        
+    END
+
+    IF    ${OS_PossuiServico}
+
+        ${queryComissaoServicos}    Query    SELECT ROUND(SUM(vs.ComissaoTotal), 2) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
+        Log To Console    queryComissaoServicos: ${queryComissaoServicos[0][0]}
+
+        Log To Console    Valor_Total_Servicos_OS: ${Valor_Total_Servicos_OS}
+        Log To Console    PercentualComissaoTotalVenda_Servico: ${PercentualComissaoTotalVenda_Servico}
+        ${calcComissaoServicos}    Evaluate    round((${Valor_Total_Servicos_OS} * (${PercentualComissaoTotalVenda_Servico} / 100)), 2)
+
+        Should Be Equal    ${queryComissaoServicos[0][0]}    ${calcComissaoServicos}
+
+        Log To Console    Valor final da comissão (Serviço): ${calcComissaoServicos}
+        
+    END
+
+Dado que acesso a tela de relatório de comissão
+
+    SikuliLibrary.Click    ${MENU_RELATORIOS}
+    SikuliLibrary.Click    ${SUBMENU_RELATORIOS_COMISSOES}
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${SUBMENU_RELATORIOS_COMISSOES}
+
+    Wait Until Screen Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
+
+E gero o relatório de comissões(${tipo})
+
+    IF    '${tipo}' == 'Agendadas'
+
+        # É obrigatório informar vendedor
+        SikuliLibrary.Click    ${RADIOBT_COMISSOES_AGENDADAS}
+
+        Set Test Variable    ${COMISSOES_AGENDADAS}    ${True}
+        
+    ELSE IF    '${tipo}' == 'Pagas'
+
+        # É obrigatório informar vendedor
+
+        Log To Console    Implementar posteriormente.
+
+        Set Test Variable    ${COMISSOES_PAGAS}    ${True}
+
+    ELSE
+
+        SikuliLibrary.Click    ${RADIOBT_COMISSOES_PENDENTES}
+        
+        Set Test Variable    ${COMISSOES_PENDENTES}    ${True}
+
+    END
+
+    Press Combination    KEY.ALT    KEY.O
+    
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Not Contain    ${LABEL_GERANDO_RELATORIO_AGUARDE}    ${TEMPO_TELA}
+
+    Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${RADIOBT_VISUALIZAR_IMPRESSAO}
+
+    Press Combination    KEY.ALT    KEY.G
+    Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${TEMPO_TELA}
+
+    Press Special Key    ESC
+    Wait Until Screen Not Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${SLEEP_ALTO}
+
+Valida os dados do relatório de comissões
+
+    IF    ${COMISSOES_PENDENTES}
+        
+        Validação de comissões pendentes        
+
+    END
+
+Validação de comissões pendentes
+
+    ${consultaRelatorio}    Query    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = 9097 AND TipoVenda = 'OS' UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = 9097 ORDER BY TipoVenda ASC;
+
+    IF    ${OS_PossuiServico}
+
+        # ${consultaRelatorio}    Query    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = 9097 AND TipoVenda = 'OS' UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = 9097 AND TipoVenda = 'OS' ORDER BY TipoVenda ASC;
+
+        ${totalOS}              Set Variable    ${consultaRelatorio[0][0]}
+        ${totalServicos}        Set Variable    ${consultaRelatorio[0][2]}
+        ${comissaoTotalServ}    Set Variable    ${consultaRelatorio[0][3]}
+        
+    END
+
+    IF    ${OS_PossuiProduto}
+
+        # ${consultaRelatorio}    Query    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = 9097 AND TipoVenda = 'OS' UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = 9097 AND TipoVenda = 'VP' ORDER BY TipoVenda ASC;
+        
+        ${totalVenda}           Set Variable    ${consultaRelatorio[0][0]}
+        ${totalProdutos}        Set Variable    ${consultaRelatorio[0][1]}
+        ${comissaoTotalProd}    Set Variable    ${consultaRelatorio[0][3]}
+
+    END
+
+    IF    '${OS_PossuiServico}' == 'True' and '${OS_PossuiProduto}' == 'True'
+
+        FOR    ${i}    IN RANGE    2
+    
+            Should Be Equal    ${consultaRelatorio[${i}][0]}    ${VALOR_FINAL_OPERAÇÃO}
+            Should Be Equal    ${consultaRelatorio[${i}][1]}    ${Valor_Total_Produtos_OS}
+            Should Be Equal    ${consultaRelatorio[${i}][2]}    ${Valor_Total_Servicos_OS}
+            Should Be Equal    ${consultaRelatorio[${i}][3]}    second
+
+        END
+    
+        # ${consultaRelatorio}    Query    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = 9093 UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = 9093 ORDER BY TipoVenda ASC;
+    
+    END

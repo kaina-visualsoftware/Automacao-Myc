@@ -23,7 +23,8 @@ ${TELA_SELECIONA_TABELA_PRECO}                         tela_TabelasPreco.png
 ${TELA_VENDAS_ANTERIORES}                              tela_ExibeAnteriores.png
 ${TELA_INDICACAO_VENDA}                                tela_QuemIndicou.png
 ${TELA_LIBERAÇÃO_DESCONTO_SENHA}                       tela_liberacaoDesconto.png
-${TELA_VENCIMENTO_FIM_DE_SEMANA}                       tela_VencimentoFimDeSemana.png
+#${TELA_VENCIMENTO_FIM_DE_SEMANA}                       tela_VencimentoFimDeSemana.png
+${TELA_VENCIMENTO_FIM_DE_SEMANA}                       aviso_VencimentoFeriadoSabadoDomingo.png
 ${TELA_IMPRIMIR_ORDEM_ENTREGA}                         tela_ImprimirOrdemEntrega.png
 ${TELA_RECIBO_ENTRADA}                                 tela_ReciboEntrada.png
 ${TELA_CONTRATO_VENDA}                                 tela_ContratoVenda.png
@@ -58,6 +59,8 @@ ${AVISO_LANC_ORÇAMENTO_EM_ABERTO}                      aviso_LancOrçamentoEmAb
 ${AVISO_LANC_OS_EM_ABERTO}                             aviso_LancOSEmAberto.png
 ${AVISO_LANC_VENDA_EM_ABERTO}                          aviso_LancVendaEmAberto.png
 ${AVISO_LANC_PRE_VENDA_EM_ABERTO}                      aviso_LancPreVendaEmAberto.png
+${AVISO_DESC_ESCALA_COMISSAO}                          aviso_DescEscalaComissao.png
+${AVISO_EDITAR_OS_FINALIZADA}                          aviso_EditarOSFinalizadaSupervisor.png
 # ${AVISO_CONEXAO_SERVIDOR_FRANQUIA}                     aviso_ConexaoServidorFranquia.png
 # ${AVISO_COTACAO_MOEDAS_PRODUTOS}                       aviso_CotacaoAtualizacaoProdutos.png
 # ${AVISO_CONTROLE_DE_FERIAS}                            aviso_ControleFerias.png
@@ -151,65 +154,64 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     Verifica se cliente possui objeto vinculado
 
-Verifica parametros que interferem na venda
+Verifica parâmetros que interferem na venda
 
     ${Lista_de_Parametros}    Valida Pametros Config
     ${Config_Empresas}        Valida Config Empresa
 
     #Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
-    ${Parametro_VendaRapida} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Venda_Rapida
-    ${Parametro_IncluiDireto} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IncluiDireto
-    ${Aviso_ProdutoSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Sem_Est
-    ${Parametro_IndicacaoVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IndicacaoVenda
-    ${Parametro_VendeSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Vende_Sem_Estoque
-    ${Parametro_ControlaCredito} =      Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoClientes
-    ${Parametro_Controla_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaEntregaPrevista
-    ${Parametro_Local_Negociacao} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    LocalNegociacao
-    ${Parametro_ExigeSenhaMultiplo} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Senha_supervisor_multiplo
-    ${Parametro_Exibe_Foto_Cliente} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExibeFotoCli
-    ${Parametro_Imprime_OrdemEntrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirOrdemEntrega
-    ${Parametro_ExibeVendasAnteriores} =    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PVexibeAnteriores
-    ${Parametro_Permite_Varias_Tabelas} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PermiteVariasTabelas
-    ${Parametro_Impre_Ordem_de_Entrega} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirOrdemEntrega
-    ${Parametro_Suprime_Objetos_OS_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    SuprimirOS
-    ${Parametro_Desabilita_Servico_Orcamento} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Orc_DesabilitaServico
-    ${Parametro_Seleciona_Funcionario_Comissao_Servico} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    SelecionaFunc_OS
-    ${Parametro_Fatura_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
-    ${Parametro_Imprime_Carne_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirCarneOS
-    ${Parametro_Imprime_OS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirOS
-    ${Parametro_VendeSemEstoqueCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Vende_Sem_Estoque_Condicional
-    ${Parametro_ImprimeCondicional} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimiCondicional
-    ${Parametro_VendaSemEstoqueOrdemDeServico} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    RealizaVendaSemEstoque_OS
-    ${Parametro_DevolucaoAvulsa} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    DevolucaoAvulsa
-    ${Parametro_DevolucaoExigeOBS} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeObsTroca
-    ${Parametro_DevolucaoPermiteAberta} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Dev_PermiteAberta
-    ${Parametro_RealizaPreVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    RealizaVendaSemEstoque_PreVenda
-    ${Parametro_RealizaVendaSemEstoque} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    RealizaVendaSemEstoque_Venda
-    ${Parametro_ExigeSenhaCancelarVenda} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeSenhaCancelarVenda
-    ${Parametro_BloqueiaGeracaoVendaParcial} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PrevendaBloqueioVendaParcial
-    ${Parametro_CaixaControladoPorUsuario} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    CaixaUsuario
-    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} =     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    DescontoFinalIgualmente
-    ${Parametro_ImprimeNFCeDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
-    ${Parametro_ImprimeVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
-    ${Parametro_ImprimeDuplicataVenda} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
-    ${Parametro_BaixaCentralizada} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaCentralizada
-    ${Parametro_BaixaAutomatico} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaAutomatico
-    ${Caixa_Baixas_Automatica} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    CodigoCX
-    ${Parametro_Imprime_Entrada} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpRecEnt_FinalizarVenda
-    ${Parametro_Imprime_Contrato_Venda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirContrato_FinalizarVenda
-    ${Parametro_Imprime_Promissoria} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
-    ${Parametro_Imprime_Boleto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
-    ${Parametro_ValeCompra_Dev_Menor0} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
-    ${Parametro_FaturaVendaDireto} =     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
-    ${Parametro_BloqueiaOrcamentoSemEstoque} =    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    OrcamentoComEstoque_Bloq
-    ${Parametro_BaixaEstoquePreVenda} =    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    BaixaEstoquePreVenda
-    ${Parametro_ImpressaoAposGerarEntrega} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ImpressaoEntrega
-    ${Parametro_UmaEntregaPorVenda} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_UmaEntregaPorVenda
-    ${Parametro_ConsideraDoacoes} =    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ConsideraDoacoes
-    ${Parametro_Venda_Padrao_Entregue} =    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Venda_Padrao_Entregue
-    ${Parametro_TrazerDescricaoAutomaticaEntrega} =    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    TrazerDescricaoAutomaticaEntrega
-    ${Parametro_FaturamentoAoFinalizarOS} =    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
-
+    ${Parametro_VendaRapida}                               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Venda_Rapida
+    ${Parametro_IncluiDireto}                              Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IncluiDireto
+    ${Aviso_ProdutoSemEstoque}                             Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Sem_Est
+    ${Parametro_IndicacaoVenda}                            Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IndicacaoVenda
+    ${Parametro_VendeSemEstoque}                           Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Vende_Sem_Estoque
+    ${Parametro_ControlaCredito}                           Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoClientes
+    ${Parametro_Controla_Entrega}                          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaEntregaPrevista
+    ${Parametro_Local_Negociacao}                          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    LocalNegociacao
+    ${Parametro_ExigeSenhaMultiplo}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Senha_supervisor_multiplo
+    ${Parametro_Exibe_Foto_Cliente}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExibeFotoCli
+    ${Parametro_Imprime_OrdemEntrega}                      Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirOrdemEntrega
+    ${Parametro_ExibeVendasAnteriores}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PVexibeAnteriores
+    ${Parametro_Permite_Varias_Tabelas}                    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PermiteVariasTabelas
+    ${Parametro_Impre_Ordem_de_Entrega}                    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirOrdemEntrega
+    ${Parametro_Suprime_Objetos_OS_Orcamento}              Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    SuprimirOS
+    ${Parametro_Desabilita_Servico_Orcamento}              Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Orc_DesabilitaServico
+    ${Parametro_Seleciona_Funcionario_Comissao_Servico}    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    SelecionaFunc_OS
+    ${Parametro_Fatura_OS}                                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
+    ${Parametro_Imprime_Carne_OS}                          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirCarneOS
+    ${Parametro_Imprime_OS}                                Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirOS
+    ${Parametro_VendeSemEstoqueCondicional}                Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Vende_Sem_Estoque_Condicional
+    ${Parametro_ImprimeCondicional}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimiCondicional
+    ${Parametro_VendaSemEstoqueOrdemDeServico}             Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    RealizaVendaSemEstoque_OS
+    ${Parametro_DevolucaoAvulsa}                           Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    DevolucaoAvulsa
+    ${Parametro_DevolucaoExigeOBS}                         Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeObsTroca
+    ${Parametro_DevolucaoPermiteAberta}                    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Dev_PermiteAberta
+    ${Parametro_RealizaPreVendaSemEstoque}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    RealizaVendaSemEstoque_PreVenda
+    ${Parametro_RealizaVendaSemEstoque}                    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    RealizaVendaSemEstoque_Venda
+    ${Parametro_ExigeSenhaCancelarVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeSenhaCancelarVenda
+    ${Parametro_BloqueiaGeracaoVendaParcial}               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PrevendaBloqueioVendaParcial
+    ${Parametro_CaixaControladoPorUsuario}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    CaixaUsuario
+    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    DescontoFinalIgualmente
+    ${Parametro_ImprimeNFCeDireto}                         Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
+    ${Parametro_ImprimeVendaDireto}                        Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
+    ${Parametro_ImprimeDuplicataVenda}                     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
+    ${Parametro_BaixaCentralizada}                         Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaCentralizada
+    ${Parametro_BaixaAutomatico}                           Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaAutomatico
+    ${Caixa_Baixas_Automatica}                             Run Keyword And Return Status    Should Contain    ${Config_Empresas}    CodigoCX
+    ${Parametro_Imprime_Entrada}                           Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpRecEnt_FinalizarVenda
+    ${Parametro_Imprime_Contrato_Venda}                    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirContrato_FinalizarVenda
+    ${Parametro_Imprime_Promissoria}                       Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
+    ${Parametro_Imprime_Boleto}                            Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
+    ${Parametro_ValeCompra_Dev_Menor0}                     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
+    ${Parametro_FaturaVendaDireto}                         Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
+    ${Parametro_BloqueiaOrcamentoSemEstoque}               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    OrcamentoComEstoque_Bloq
+    ${Parametro_BaixaEstoquePreVenda}                      Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    BaixaEstoquePreVenda
+    ${Parametro_ImpressaoAposGerarEntrega}                 Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ImpressaoEntrega
+    ${Parametro_UmaEntregaPorVenda}                        Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_UmaEntregaPorVenda
+    ${Parametro_ConsideraDoacoes}                          Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Entrega_ConsideraDoacoes
+    ${Parametro_Venda_Padrao_Entregue}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Venda_Padrao_Entregue
+    ${Parametro_TrazerDescricaoAutomaticaEntrega}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    TrazerDescricaoAutomaticaEntrega
+    ${Parametro_FaturamentoAoFinalizarOS}                  Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
 
     IF    ${Parametro_VendaRapida}
 
@@ -489,7 +491,7 @@ Valida tela de liberação de desconto
     END
 
 Valida Parametros/Impressões pós venda
-
+    
     IF    ${Parametro_FaturaVendaDireto}
 
         Valida faturamento nf
@@ -604,7 +606,9 @@ Valida vencimento fim de semana(${VALOR_I})
 
     FOR    ${I}    IN RANGE    ${VALOR_I}
         
-        ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_ALTO}
+        #${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+        ${MSG}    Exists    ${TELA_VENCIMENTO_FIM_DE_SEMANA}
 
         IF    ${MSG}
 
@@ -829,7 +833,7 @@ Valida seleção de coi para faturamento
 
 Valida cliente com vales compra disponíveis
     
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
     ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
 
     IF    ${aviso}
@@ -980,5 +984,46 @@ Valida lançamento de pré-venda em aberto
             Sleep    ${SLEEP_BAIXO}
             
         END
+        
+    END
+
+Valida desconto que não se encaixa em nenhuma escala de comissão
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
+
+    IF    ${aviso}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        
+    END
+
+Valida edição de ordem de serviço finalizada
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_EDITAR_OS_FINALIZADA}
+
+    IF    ${aviso}
+
+        ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 LIMIT 1;
+        ${senhaUsuarioDescriptografada}    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
+
+        Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ENTER 
+        Sleep    ${SLEEP_MEDIO}
+        
+    END
+
+Valida produto já incluso
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_PRODUTO_JA_INCLUSO}
+
+    IF    ${aviso}
+
+        Press Combination    KEY.ALT    KEY.S
         
     END

@@ -1,0 +1,64 @@
+*** Variables ***
+
+&{PARAM}    
+...    VENDA_SEM_ESTOQUE=Vende_Sem_Estoque
+...    VENDA_SEM_ESTOQUE_CONDICIONAL=Vende_Sem_Estoque_Condicional
+...    VENDA_RAPIDA=Venda_Rapida
+...    INDICACAO_VENDA=IndicacaoVenda
+...    INCLUI_DIRETO=IncluiDireto
+...    EXIGE_SENHA_CANCELAR_VENDA=ExigeSenhaCancelarVenda
+...    EXIGE_SENHA_MUDAR_VENDEDOR=ExigeSenhaMudarVendedorVenda
+...    VENDA_PADRAO_ENTREGUE=Venda_Padrao_Entregue
+...    PREVENDA_BLOQUEIA_VENDA_PARCIAL=PrevendaBloqueioVendaParcial
+...    REALIZA_VENDA_SEM_ESTOQUE_VENDA=RealizaVendaSemEstoque_Venda
+...    REALIZA_VENDA_SEM_ESTOQUE_OS=RealizaVendaSemEstoque_OS
+...    REALIZA_VENDA_SEM_ESTOQUE_PREVENDA=RealizaVendaSemEstoque_PreVenda
+...    DESCONTO_FINAL_IGUALMENTE=DescontoFinalIgualmente
+...    AVISO_SEM_ESTOQUE=Aviso_Sem_Est
+...    CONTROLAR_ENTREGA_PREVISTA=ControlaEntregaPrevista
+...    CONTROLAR_CREDITO_CLIENTE=ControlaCreditoClientes
+...    LOCAL_NEGOCIACAO=LocalNegociacao
+...    PV_EXIBE_ANTERIORES=PVexibeAnteriores
+...    NDIAS_CREDITO_ATUAL=NDias_Credito_Atu
+...    TRAZER_DESCRICAO_AUTOMATICA_ENTREGA=TrazerDescricaoAutomaticaEntrega
+...    SELECIONA_FUNCIONARIO_OS=SelecionaFunc_OS
+...    FATURAR_OS=FaturarOS
+...    IMPRIMIR_CARNE_OS=ImprimirCarneOS
+...    IMPRIMIR_OS=ImprimirOS
+...    SUPRIMIR_OBJETOS_OS=SuprimirOS
+...    ORC_DESABILITA_SERVICO=Orc_DesabilitaServico
+...    IMPRIMIR_CONDICIONAL=ImprimiCondicional
+...    DEVOLUCAO_AVULSA=DevolucaoAvulsa
+...    DEVOLUCAO_EXIGE_OBS=ExigeObsTroca
+...    DEVOLUCAO_PERMITE_ABERTA=Dev_PermiteAberta
+...    CAIXA_USUARIO=CaixaUsuario
+...    BLOQUEIA_CAIXA_FECHADO=BloqVenda_CaixaFechado
+...    VENDE_COM_VENDEDOR_DIFERENTE=VendedorDiferente
+...    SENHA_SUPERVISOR_MULTIPLO=Senha_supervisor_multiplo
+...    ORCAMENTO_COM_ESTOQUE_BLOQUEIA=OrcamentoComEstoque_Bloq
+...    BAIXA_ESTOQUE_PREVENDA=BaixaEstoquePreVenda
+...    AVISO_VENDEDOR=AvisoVendedor
+...    AVISO_INFO_FINANCEIRO=Aviso_Info_Financeiro
+...    AVISO_INFO_FINANCEIRO_PREV=Aviso_Info_Financeiro_Prev
+...    BLOQUEIA_CLIENTE_INATIVO=BloqueiaVendaClienteInativo
+...    EXIBE_FOTO_CLIENTE=ExibeFotoCli
+...    PERMITE_VARIAS_TABELAS=PermiteVariasTabelas
+...    OS_COMISSAO_VENDEDOR_EXECUTOR=OS_ComVendedorEexecutor
+
+&{PARAM_EMP}    
+...    VENDA_IMPRIME_CUPOM=Venda_ImprimeCupom
+...    IMPRIMIR_VENDA_FINALIZAR=ImprimirVenda_FinalizarVenda
+...    IMPRIMIR_DUPLICATA_VENDA=ImprimirDup_FinalizarVenda
+...    IMP_REC_ENTRADA=ImpRecEnt_FinalizarVenda
+...    IMPRIMIR_CONTRATO=ImprimirContrato_FinalizarVenda
+...    IMPRIMIR_PROMISSORIA=ImpPromissoria_FinalizarVenda
+...    IMPRIMIR_BOLETO=ImprimirBol_FinalizarVenda
+...    VALE_COMPRA_DEV_MENOR_ZERO=Dev_Ativa_Vale
+...    FATURA_VENDA_DIRETO=FaturaVendaDireto
+...    BAIXA_CENTRALIZADA=BaixaCentralizada
+...    BAIXA_AUTOMATICO=BaixaAutomatico
+...    CODIGO_CAIXA=CodigoCX
+...    ENTREGA_STATUS_CONCLUIDO=Entrega_StatusConcluido
+...    ENTREGA_IMPRESSAO=Entrega_ImpressaoEntrega
+...    UMA_ENTREGA_POR_VENDA=Entrega_UmaEntregaPorVenda
+...    CONSIDERA_DOACOES=Entrega_ConsideraDoacoes

@@ -15,7 +15,7 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                          ./testes_bancoAleatorio/images
+${IMAGENS}                          ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                          ${config.IpServidor}
@@ -42,7 +42,7 @@ ${NomeTerminalExecucao}            ${config.terminal_name}
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que acesso a tela de cadastro avulso de contas a pagar
 

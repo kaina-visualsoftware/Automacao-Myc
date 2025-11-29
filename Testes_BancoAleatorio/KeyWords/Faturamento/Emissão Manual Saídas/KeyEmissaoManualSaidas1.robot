@@ -44,7 +44,7 @@ Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
 
     Verifica formas de recebimento da venda
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
     Key Down    CTRL
     Press Special Key    F9

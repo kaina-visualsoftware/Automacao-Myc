@@ -13,7 +13,7 @@ Resource    ../../utils/validacaoAviso.robot
 ${EXECUTAVEL_MYCOMMERCE}    C://Visual Software//MyCommerce//myCommerce.exe
 
 # Repositório de Imagens
-${IMAGES}                   ./testes_bancoAleatorio/images
+${IMAGENS}                   ./testes_bancoAleatorio/images
 
 # Conexão MySQL
 ${DBHost}                   ${config.IpServidor}
@@ -38,7 +38,7 @@ ${LABEL_CODIGO_EMPRESA}     lb_CodigoEmpresa.png
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que eu abro o MyCommerce
 

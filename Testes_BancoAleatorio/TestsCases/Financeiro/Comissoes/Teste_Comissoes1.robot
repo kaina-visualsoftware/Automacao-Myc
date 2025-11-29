@@ -3,14 +3,17 @@ Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Financeiro/comissoes/KeyComissoes1.robot
 Resource    ../../../utils/montadorDeCenarios.robot
+Resource    ../../../utils/parametros_pre_condicoes.robot
+Resource    ../../../utils/parametros_admin_sistema.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyComissoes1.Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
 Suite Teardown    Stop Remote Server
 
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
+Test Teardown    parametros_pre_condicoes.Restaurar Parametros Alterados
 
 *** Test Cases ***
-Teste 01 - Gerando comissao sobre venda simples - Total Venda
+Teste 01 - Comissão sobre total da venda e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste01
 
     Dado que acesso a tela de comissoes
@@ -23,21 +26,21 @@ Teste 01 - Gerando comissao sobre venda simples - Total Venda
     Então faço o pagamento da comissao
     utils.E saio da tela(CaixaPrincipal)
 
-Teste 02 - Gerando comissão sobre venda e devolução - Linha
+Teste 02 - Comissão por linha de produto sobre venda e devolução completa, incluindo comissão com valor zerado - Linha
     [Tags]    Teste02 
-    [Setup]    montadorDeCenarios.Dado que realizo uma devolução avulsa 
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda e uma devolução completa, com um produto normal
     
     Dado que acesso a tela de comissoes
     Quando insiro o vendedor comissionado
     E seleciono a comissão da venda e devolução
     E baixo a comissao recém recebida
-    # KeyComissoes1.Quando acesso o caixa aberto
-    # KeyComissoes1.E vou para a aba de contas a pagar
-    #Então faço o pagamento da comissao
 
-Teste 03 - Gerando comissão sobre venda e devolução com múltiplos produtos e baixa de vale-compra da devolução - Linha
+Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa de vale-compra da devolução - Linha
     [Tags]    Teste03
-    [Setup]    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    VALE_COMPRA_DEV_MENOR_ZERO    1    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
 
     Dado que acesso o menu de vale compras
     E seleciono o vale gerado pela devolução
@@ -47,9 +50,9 @@ Teste 03 - Gerando comissão sobre venda e devolução com múltiplos produtos e
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
 
-Teste 04 - Gerando comissao sobre somente recebidas - Total Venda
+Teste 04 Comissão sobre total da venda com múltiplos produtos gerada sobre somente recebidas e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste04
-    [Setup]    montadorDeCenarios.Dado que realizo uma venda totalmente recebida(3)
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos totalmente recebida no caixa(3)
 
     Dado que acesso a tela de comissoes
     Quando insiro o vendedor comissionado
@@ -64,7 +67,7 @@ Teste 04 - Gerando comissao sobre somente recebidas - Total Venda
     Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)
 
-Teste 05 - Gerando comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
+Teste 05 - Comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
     [Tags]    Teste05
     [Setup]    montadorDeCenarios.Realizando vendas com o mesmo produto porém com descontos diferentes
     
@@ -77,7 +80,7 @@ Teste 05 - Gerando comissão escalonada sobre mesmos produtos, com desconto dife
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
 
-Teste 06 - Gerando comissao de venda oriunda de pedido - Linha
+Teste 06 - Comissão por linha sobre venda oriunda de uma pré-venda e pagamento da comissão no caixa - Linha
     [Tags]    Teste06
     [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele
 
@@ -91,7 +94,7 @@ Teste 06 - Gerando comissao de venda oriunda de pedido - Linha
     Então faço o pagamento da comissao
     utils.E saio da tela(CaixaPrincipal)
 
-Teste 07 - Gerando comissao de venda oriunda de pedido - Total Venda
+Teste 07 - Comissão sobre total da venda oriunda de uma pré-venda, gerada sobre somente recebidas, e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste07
     [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
     
@@ -108,7 +111,7 @@ Teste 07 - Gerando comissao de venda oriunda de pedido - Total Venda
     Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)
 
-Teste 08 - Gerando comissao de uma venda oriunda de uma condicional - Linha
+Teste 08 - Comissão por linha sobre venda oriunda de uma condicional e pagamento da comissão no caixa - Linha
     [Tags]    Teste08
     [Setup]    montadorDeCenarios.Dado que realizo uma venda total de uma condicional
     
@@ -122,7 +125,7 @@ Teste 08 - Gerando comissao de uma venda oriunda de uma condicional - Linha
     Então faço o pagamento da comissao
     utils.E saio da tela(CaixaPrincipal)
 
-Teste 09 - Gerando comissao de uma venda parcial oriunda de uma condicional - Total Venda
+Teste 09 - Comissão sobre total da venda parcial oriunda de uma condicional e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste09
     [Setup]    montadorDeCenarios.Dado que realizo uma venda parcial de uma condicional
     
@@ -136,7 +139,7 @@ Teste 09 - Gerando comissao de uma venda parcial oriunda de uma condicional - To
     Então faço o pagamento da comissao
     utils.E saio da tela(CaixaPrincipal)
 
-Teste 10 - Gerando comissao de uma venda parcial oriunda de uma condicional totalmente recebida - Total Venda
+Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, gerada sobre somente recebidas, e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste10
     [Setup]    montadorDeCenarios.Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
 
@@ -153,9 +156,9 @@ Teste 10 - Gerando comissao de uma venda parcial oriunda de uma condicional tota
     Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)
 
-Teste 11 - Gerando comissao por servico - Linha
+Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem receber a Ordem de Serviço - Linha
     [Tags]    Teste11
-    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com funcionário comissionado por serviço
+    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
 
     Dado que acesso a tela de comissoes
     Quando insiro o vendedor comissionado
@@ -168,9 +171,9 @@ Teste 11 - Gerando comissao por servico - Linha
     Então faço o pagamento da comissao
     utils.E saio da tela(CaixaPrincipal)
 
-Teste 12 - Gerando comissao por servico totalmente recebido - Linha
+Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa após a baixa da comissão de uma Ordem de Serviço totalmente recebida - Linha
     [Tags]    Teste12
-    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com funcionário comissionado por serviço - Totalmente recebida
+    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço - Totalmente recebida
     
     Dado que acesso a tela de comissoes
     Quando insiro o vendedor comissionado
@@ -185,6 +188,7 @@ Teste 12 - Gerando comissao por servico totalmente recebido - Linha
     utils.E saio da tela(CaixaPrincipal)
 
 Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela por parcela - Linha
+    # Tarefa: 176401 | CT: 1-593
     [Tags]    Teste13
     [Setup]    montadorDeCenarios.Dado que realizo uma venda com mais de um produto e finalizo com múltiplas parcelas personalizadas(3)
 
@@ -208,3 +212,61 @@ Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela
         utils.E saio da tela(Comissoes)
         
     END
+
+Teste 14 - Comissão por linha sobre venda e devolução somente recebidas e pagamento da comissão no caixa - Linha
+    # Tarefa: 172964 | 1-595
+    [Tags]    Teste14
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    VALE_COMPRA_DEV_MENOR_ZERO    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    montadorDeCenarios.Dado que realizo uma venda e uma devolução parcial da venda totalmente recebidos no caixa
+
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissão da venda e devolução 
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
+
+Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e serviço comissionados por vendedor, aplicando a comissão também ao executor do serviço - Total Venda
+    # Tarefa: 176024 | CT: 1-600
+    [Tags]    Teste15
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMISSAO_VENDEDOR_EXECUTOR    1    SELECIONA_FUNCIONARIO_OS    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
+
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E vou para a aba de servicos
+    E seleciono a comissao do servico
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
+
+Teste 16 - Comissão por linha de produto gerada sobre venda recebida e pagamento da comissão no caixa - Linha
+    # CT: 1-362
+    [Tags]    Teste16
+    [Setup]    Run Keyword    montadorDeCenarios.Dado que realizo uma venda com um produto normal totalmente recebida no caixa - A prazo
+
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissao da venda
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
+
+Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebida e pagamento da comissão no caixa - Linha
+    # CT: 1-363
+    [Tags]    Teste17
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
+    ...    Inicializar Pré-Condições    AND
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço totalmente recebida no caixa - A prazo
+
+    Dado que acesso a tela de comissoes
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E vou para a aba de servicos
+    E seleciono a comissao do servico
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)

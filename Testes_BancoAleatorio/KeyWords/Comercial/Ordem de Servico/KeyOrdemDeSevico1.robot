@@ -12,7 +12,7 @@ Resource    ../../../utils/utils.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./testes_bancoAleatorio/images
+${IMAGENS}                               ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
@@ -44,25 +44,34 @@ ${TELA_OPCOES_FATURAMENTO}               tela_OpcoesFaturamento.png
 ${AVISO_NFSE_REJEITADA}                  aviso_NFSeRejeitada.png
 ${AVISO_NFSE_COM_PROBLEMA}               aviso_NFSeComProblema.png
 ${AVISO_NFSE_PROCESSAMENTO}              aviso_NFSeProcessamento.png
+${RETORNO_NFS}                           retornoNFS.png
 
 # Botões
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
-${RETORNO_NFS}                             retornoNFS.png
 
-# Outros
-${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
-${FORMA_RECEBIMENTO_OUTROS}              Outros...
-${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+# Inputs
+${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
+
+# Labels
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png
 ${LABEL_AGUARDE_GERANDO_NFSE}            lb_AguardeGerandoNFSe.png
 ${LABEL_EMITIR_BOLETOS}                  lb_EmitirBoletos.png
 
+# Rows
+${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+
+# Outros
+${FORMA_RECEBIMENTO_OUTROS}              Outros...
+${Quantidade_Produto}                    ${1}
+${OS_PossuiProduto}                      ${False}
+${OS_PossuiServico}                      ${False}
+
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
-Dado que acesso a tela de Ordem de Servico
+Dado que acesso a tela de ordens de serviços
     
     ${FORMA_PADRAO}    Valida Configuracoes OS
     ${FORMA_PRAZO}     Seleciona Forma Prazo
@@ -70,7 +79,7 @@ Dado que acesso a tela de Ordem de Servico
     Set Test Variable    ${FORMA_PADRAO}
     Set Test Variable    ${FORMA_PRAZO} 
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
     Press Special Key    F3
 
@@ -81,7 +90,8 @@ Dado que acesso a tela de Ordem de Servico
 
 Quando pressiono o atalho de adicionar
 
-    Press Combination    KEY.ALT     Key.A
+    Press Combination    KEY.ALT    KEY.A
+    Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
@@ -96,7 +106,8 @@ Quando pressiono o atalho de adicionar
         Valida indicacao Venda
 
     END
-
+    
+    Sleep    ${SLEEP_MEDIO}
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
 
     Set Test Variable    ${COD_ORDEM_SERVICO}    ${Consulta[0][0]}
@@ -107,9 +118,9 @@ E adiciono vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-Quando Insiro um servico
+Quando insiro um serviço
     
-    IF    ${SelecionaProdutoComLinha}
+    IF    ${SelecionaServicoComLinha}
 
         utils.Seleciona servico com linha de comissao
 
@@ -118,7 +129,10 @@ Quando Insiro um servico
         utils.Inserir serviço
 
     END
-E insiro um produto normal
+
+    Set Test Variable    ${OS_PossuiServico}    ${True}
+
+E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     
     IF     ${Parametro_VendaSemEstoqueOrdemDeServico}
         
@@ -129,16 +143,19 @@ E insiro um produto normal
         utils.Inserir Produto normal - Necessita de estoque
 
     END
+    
+    Informa a quantidade do produto(${Quantidade_Produto})
 
     utils.Valida parametros após incluir produto
+
+    Set Test Variable    ${OS_PossuiProduto}    ${True}
     
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M 
-    Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT    KEY.M
 
-    Valida cliente com vales compra disponíveis
+    validacaoAviso.Valida cliente com vales compra disponíveis
 
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
 
@@ -158,7 +175,7 @@ E acesso a aba pagamentos
 
     END
 
-Então finalizo a Ordem de Servico
+Então finalizo a ordem de serviço
 
     Verifica vendedor com senha
 
@@ -232,7 +249,7 @@ Então finalizo a Ordem de Servico
 
     Extrair dados da ordem de serviço gerada
 
-Então visualizado a OS recém criada
+Então visualizo a ordem de serviço
     
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT     Key.V 
@@ -246,10 +263,12 @@ Quando clico em editar
     
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.E
+    Press Combination    KEY.ALT    KEY.E
     Sleep    ${SLEEP_BAIXO}
 
-    validacaoAviso.Valida tela de liberação de desconto
+    validacaoAviso.Valida edição de ordem de serviço finalizada
+
+    Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
 
 E excluo os pagamentos lançados
 
@@ -272,11 +291,14 @@ E excluo os pagamentos lançados
 
     END
 
-Então finalizo a OS - A prazo
+Então finalizo a ordem de serviço - A Prazo
     
     Verifica vendedor com senha
 
     Calcula valor final da OS
+
+    # Essa validação é necessária, pois caso há grids personalizados, não funciona a pesquisa da forma de parcelamento pela sua descrição.
+    utils.Remove os grids personalizados de simulação de parcelas
 
     SikuliLibrary.Click    ${BT_SIMULADOR_FORMAS_PARCELAMENTO}
 
@@ -290,6 +312,7 @@ Então finalizo a OS - A prazo
     Wait Until Screen Contain    ${TELA_SIMULADOR_FORMA_PACELAMENTO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${LABEL_DESCRIÇÃO}
+    Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${FORMA_PRAZO}
 
@@ -339,6 +362,8 @@ Então finalizo a OS - A prazo
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
 
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORDEM_SERVICO}
+
 Então clico em excluir
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
@@ -362,10 +387,79 @@ Então clico em excluir
     Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_ORDEM_SERVICO} AND `Status` LIKE 'x'
 
 Calcula valor final da OS
+    
+    ${somaValorTotalProdutos}    Evaluate    0
 
-    ${ValorTotalProdutos}    Query    SELECT SUM(vp.ValorTotal + vs.ValorTotal) FROM vendasprodutos AS vp INNER JOIN vendasservicos AS vs ON vs.CodigoVenda = vp.CodigoVenda WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+    IF    ${OS_PossuiProduto}
 
-    Set Test Variable    ${VALOR_FINAL_OS}    ${ValorTotalProdutos[0][0]}
+        ${OS_Produtos}     Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vp.Sequencia;
+        
+        ${qtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+
+        ${QUANTIDADE_PRODUTOS}    Set Variable    ${qtdeProdutos[0][0]}
+
+        FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+            ${Produto_ValorUnitario}    Set Variable    ${OS_Produtos[${i}][1]}
+            Log To Console    Produto_ValorUnitario: ${Produto_ValorUnitario}
+
+            ${Produto_ValorTotal}       Set Variable    ${OS_Produtos[${i}][2]}
+            Log To Console    Produto_ValorTotal: ${Produto_ValorTotal}
+            
+            ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${Produto_ValorUnitario}), 2)
+            Log To Console    calcValorTotalProduto: ${calcValorTotalProduto}
+
+            Should Be Equal    ${Produto_ValorTotal}    ${calcValorTotalProduto}
+            
+            ${somaValorTotalProdutos}    Evaluate    (${somaValorTotalProdutos} + ${calcValorTotalProduto})
+            Log To Console    somaValorTotalProdutos: ${somaValorTotalProdutos}
+        
+        END
+    
+    END
+    
+    ${somaValorTotalServicos}    Evaluate    0
+
+    IF    ${OS_PossuiServico}
+
+        ${OS_Servicos}     Query    SELECT vs.CodigoServico, vs.ValorUnitario, vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vs.Sequencia;
+        
+        ${qtdeServicos}    Query    SELECT COUNT(*) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
+
+        FOR    ${i}    IN RANGE    ${qtdeServicos[0][0]}
+            
+            ${Servico_ValorUnitario}    Set Variable    ${OS_Servicos[${i}][1]}
+            Log To Console    Servico_ValorUnitario: ${Servico_ValorUnitario}
+
+            ${Servico_ValorTotal}    Set Variable    ${OS_Servicos[${i}][2]}
+            Log To Console    Servico_ValorTotal: ${Servico_ValorTotal}
+
+            ${calcValorTotalServico}    Evaluate    round((1 * ${Servico_ValorUnitario}), 2)   # Tratar para a automação poder inseir quantidade do serviço e então usar aqui no cálculo. 
+            Log To Console    calcValorTotalServico: ${calcValorTotalServico}
+
+            Should Be Equal    ${Servico_ValorTotal}    ${calcValorTotalServico}
+
+            ${somaValorTotalServicos}    Evaluate    (${somaValorTotalServicos} + ${calcValorTotalServico})
+            Log To Console    somaValorTotalServicos: ${somaValorTotalServicos}
+            
+        END
+
+    END
+
+    ${calcValorTotalOS}    Evaluate    round((${somaValorTotalProdutos} + ${somaValorTotalServicos}), 2)
+    Log To Console    calcValorTotalOS: ${calcValorTotalOS}
+
+    ${ValorTotalOS}    Query    SELECT ROUND(IFNULL((SELECT SUM(vp.ValorTotal) FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo),0) + IFNULL((SELECT SUM(vs.ValorTotal) FROM vendasservicos vs WHERE vs.CodigoVenda = v.Codigo),0), 2) AS TotalGeral FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO};
+    Log To Console    ValorTotalOS: ${ValorTotalOS[0][0]}
+
+    Should Be Equal    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
+
+    Set Test Variable    ${Valor_Total_Servicos_OS}    ${somaValorTotalServicos}
+    Set Test Variable    ${Valor_Total_Produtos_OS}    ${somaValorTotalProdutos}
+
+    Set Test Variable    ${VALOR_FINAL_OS}    ${ValorTotalOS[0][0]}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_OS}
     
 Valida avisos ao finalizar Ordem de serviço
     
@@ -380,12 +474,6 @@ Valida avisos ao finalizar Ordem de serviço
         Valida impressao carne OS 
 
     END
-
-    # IF    ${Parametro_Fatura_OS}
-        
-    #     Valida faturamento os pos finalizar
-
-    # END
 
 Valida faturamento os pos finalizar
     
@@ -597,17 +685,6 @@ Valida faturamento de NFSe
         
         ELSE
 
-            # ${msg_nfse_rejeitada}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_NFSE_REJEITADA}    ${TEMPO_TELA}
-
-            # IF    ${msg_nfse_rejeitada}
-
-            #     Sleep    ${SLEEP_BAIXO}
-            #     Press Special Key    ENTER
-
-            #     Log To Console    Nota fiscal de serviço rejeitada.
-
-            # END
-
             Log To Console    Nota fiscal de serviço rejeitada.
 
         END
@@ -641,3 +718,20 @@ Extrair dados da ordem de serviço gerada
     ${modalidadeCB}    Set Variable    ${consulta[0][0]}
 
     Set Test Variable    ${modalidadeCB_OS}    ${modalidadeCB}
+
+Informa a quantidade do produto(${Quantidade_Produto})
+
+    IF    ${Quantidade_Produto} != 1
+        
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+    
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${Quantidade_Produto}
+
+    END
+
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Produto}
+
+    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}

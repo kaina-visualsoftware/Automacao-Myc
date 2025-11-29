@@ -9,7 +9,7 @@ Resource    ../../utils/validacaoAviso.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                             ./testes_bancoAleatorio/images
+${IMAGENS}                             ./testes_bancoAleatorio/images
 
 # Conexão MySQL
 ${DBHost}                             ${config.IpServidor}
@@ -43,7 +43,7 @@ ${ERRO_RUN_TIME_ERROR}                run-timeerror.png
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Dado que acesso o MyMonitorFaturamento
 
@@ -100,13 +100,15 @@ Valida mensagens de erro
     END
 
 E encerro o myMonitorFaturamento
-
+    
+    Sleep    ${SLEEP_BAIXO}
     ${iconeMyMonitor}    Exists    ${ICONE_MYMONITOR_INATIVO}
 
     IF    ${iconeMyMonitor}
 
         SikuliLibrary.Right Click    ${ICONE_MYMONITOR_INATIVO}
-
+        Sleep    ${SLEEP_BAIXO}
+        
         Press Special Key    DOWN
         Press Special Key    DOWN
 
@@ -115,7 +117,8 @@ E encerro o myMonitorFaturamento
         Wait Until Screen Contain    ${AVISO_ENCERRAR_MYMONITOR}    ${TEMPO_TELA}
 
         Press Combination    KEY.ALT    KEY.S
+        Sleep    ${SLEEP_BAIXO}
 
-        Wait Until Screen Not Contain    ${ICONE_MYMONITOR_INATIVO}    ${TEMPO_TELA}
+        #Wait Until Screen Not Contain    ${ICONE_MYMONITOR_INATIVO}    ${TEMPO_TELA}
         
     END

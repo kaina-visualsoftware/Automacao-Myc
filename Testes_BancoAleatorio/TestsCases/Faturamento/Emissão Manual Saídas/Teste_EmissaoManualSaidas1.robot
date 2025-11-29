@@ -8,7 +8,7 @@ Suite Teardown    Stop Remote Server
 
 *** Test Cases ***
 
-Teste 01 - Lançando uma nota fiscal de saída preenchimento Manual
+Teste 01 – Lançamento de nota fiscal de saída com preenchimento manual
     [Tags]    Teste01
 
     Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual

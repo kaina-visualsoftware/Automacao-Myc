@@ -7,16 +7,20 @@ ipservidor = config.config.IpServidor
 
 class estoque:
 
-    def Valida_Movimentacao_Estoque_Venda(self, idProduto, idMovimentacao):
+    def Valida_Movimentacao_Estoque_Venda(self, idProduto, idMovimentacao, quantidade_baixa):
 
-        connection = mysql.connector.connect(host=ipservidor, user='root', password='vssql', database=dbname, port=porta)
+        connection = mysql.connector.connect(
+        host=ipservidor,
+        user='root',
+        password='vssql',
+        database=dbname,
+        port=porta)
 
-        print("Código do produto: " + str(idProduto) + " Movimentação: " + str(idMovimentacao))
+        print("Código do produto:", idProduto, "Movimentação:", idMovimentacao, "Quantidade:", quantidade_baixa)
 
         cursor = None
         try:
             if connection.is_connected():
-
                 cursor = connection.cursor()
 
                 tabelaProdutosEstoque = []
@@ -33,10 +37,13 @@ class estoque:
 
                 Modalidade = row_produto[0]
 
-                if (Modalidade == "Normal"):
+                if Modalidade == "Normal":
 
                     # produtosestoque
-                    consultaProdutosEstoque = ("SELECT Estoque, Tela, Operacao FROM produtosestoque WHERE CodigoOperacao = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto))
+                    consultaProdutosEstoque = (
+                        "SELECT Estoque, Tela, Operacao FROM produtosestoque "
+                        "WHERE CodigoOperacao = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto)
+                    )
                     cursor.execute(consultaProdutosEstoque)
 
                     row_pe = cursor.fetchone()
@@ -44,10 +51,10 @@ class estoque:
                         print("Linha em produtosestoque não encontrada para a operação/produto.")
                         return False
 
-                    print("-------- " + consultaProdutosEstoque + "--------")
+                    print("-------- " + consultaProdutosEstoque + " --------")
 
-                    estoqueAtual = row_pe[0]
-                    tabelaProdutosEstoque = [(row_pe[0], row_pe[1], row_pe[2])]
+                    estoqueAtual = int(row_pe[0])
+                    tabelaProdutosEstoque = [(int(row_pe[0]), row_pe[1], row_pe[2])]
 
                     # auditoriaestoque (último registro)
                     consultaAuditoriaEstoque = (
@@ -62,7 +69,7 @@ class estoque:
                         print("Auditoria não encontrada para a operação/produto.")
                         return False
 
-                    tabelaAuditoriaEstoque = [(row_aud[0], row_aud[1], row_aud[2])]
+                    tabelaAuditoriaEstoque = [(int(row_aud[0]), row_aud[1], row_aud[2])]
                     print(tabelaAuditoriaEstoque)
                     print(consultaAuditoriaEstoque)
 
@@ -79,19 +86,19 @@ class estoque:
                         print("Auditoria (EstoqueAnterior) não encontrada.")
                         return False
 
-                    estoqueValidacao = row_prev[0] - 1
+                    estoqueValidacao = int(row_prev[0]) - int(quantidade_baixa)
 
-                    if (tabelaProdutosEstoque == tabelaAuditoriaEstoque):
+                    if tabelaProdutosEstoque == tabelaAuditoriaEstoque:
                         print("Auditoria de estoque está de acordo.")
-                        if (estoqueAtual == estoqueValidacao):
+                        if estoqueAtual == estoqueValidacao:
                             print("Estoque baixou corretamente.")
                             return True
                         else:
-                            print("Estoque NÃO baixou corretamente.")
+                            print(f"Estoque NÃO baixou corretamente. Esperado {estoqueValidacao}, obtido {estoqueAtual}.")
                             return False
                     else:
                         print("Auditoria não está de acordo!")
-                        print("Auditoria de estoque = " + str(tabelaAuditoriaEstoque) + " Produtos Estoque = " + str(tabelaProdutosEstoque))
+                        print("Auditoria de estoque =", tabelaAuditoriaEstoque, "Produtos Estoque =", tabelaProdutosEstoque)
                         return False
 
             return False

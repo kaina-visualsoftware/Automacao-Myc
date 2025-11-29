@@ -49,7 +49,7 @@ Dado que eu acesso a tela de doações
 
 Quando eu clico em adicionar
 
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
     
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${BT_ADICIONAR}

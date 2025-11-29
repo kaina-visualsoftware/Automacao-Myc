@@ -8,58 +8,58 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyCondicional1.L
 Suite Teardown    Stop Remote Server
 
 *** Test Cases ***
-Teste 01 - Adicionando nova Condicional
+Teste 01 - Lançamento de condicional
     [Tags]    Teste01
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     E saio da tela(Condicional)
 
-Teste 02 - Adicionando nova Condicional e visualizando
+Teste 02 - Visualização de condicional
     [Tags]    Teste02
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     Então visualizo a condicional
     E saio da tela(Condicional)
 
-Teste 03 - Adicionando nova Condicional e editando
+Teste 03 - Edição de condicional
     [Tags]    Teste03
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     KeyCondicional1.Quando clico em editar
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     E saio da tela(Condicional)
 
-Teste 04 - Adicionando nova Condicional e Excluindo
+Teste 04 - Exclusão de condicional
     [Tags]    Teste04
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     Então excluo a condicional
     E saio da tela(Condicional)
 
-Teste 05 - Gerando venda total de uma condicional
+Teste 05 - Geração de venda total da condicional
     [Tags]    Teste05
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     Quando clico em gerar venda
     keyVendas1.E acesso a aba pagamentos
@@ -67,11 +67,11 @@ Teste 05 - Gerando venda total de uma condicional
     Validação de vendas após a geração do condicional
     utils.E saio da tela(Venda)
 
-Teste 06 - Gerando venda Parcial de uma condicional
+Teste 06 - Geração de venda parcial da condicional
     [Tags]    Teste06
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
     E insiro mais de um produto normal(3)
     Então finalizo a condicional
@@ -81,23 +81,23 @@ Teste 06 - Gerando venda Parcial de uma condicional
     keyVendas1.Então finalizo a venda
     utils.E saio da tela(Venda)
 
-Teste 07 - Cancelando a venda total de uma condicional
+Teste 07 - Cancelamento da geração da venda total da condicional
     [Tags]    Teste07
 
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
-    E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     Então finalizo a condicional
     Quando clico em gerar venda
     Então cancelo a geração da venda
     E saio da tela(Condicional)
 
-Teste 08 - Cancelando venda Parcial de uma condicional
+Teste 08 - Cancelamento da geração da venda parcial da condicional
     [Tags]    Teste08
     
     Dado que acesso a tela de condicionais
-    E adiciono uma nova Condicional
+    E adiciono uma nova condicional
     Quando insiro vendedor e cliente
     E insiro mais de um produto normal(3)
     Então finalizo a condicional

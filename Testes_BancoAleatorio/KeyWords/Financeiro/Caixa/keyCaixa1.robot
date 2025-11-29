@@ -14,7 +14,7 @@ Resource     ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGES}                                ./testes_bancoAleatorio/images
+${IMAGENS}                                ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
@@ -68,14 +68,16 @@ ${CHECK_BOX_CONTAS_PAGA}                checkBox_Marcado_Selecionado.png
 ${INPUT_NUMERO_NFS}                     input_NumeroNFS.png
 ${LABEL_DATA_LANCAMENTO}                lb_CaixaDataLancamento.png
 ${INPUT_DATA_LANCAMENTO_A_RECEBER}      input_DataLancamentoAReceber.png
+${INPUT_DATA_LANCAMENTO_A_PAGAR}        input_DataLancamentoAPagar.png
 ${CHECKBOX_CONTA_A_PAGAR}               checkBox_CaixaContaAPagar.png
 ${LABEL_STATUS_ABERTO}                  lb_StatusAbertoCaixa.png
 ${POSICAO_PARCELA}                      ${None}
 ${Total_Recebido_Venda}                 ${0}
+${LABEL_APENAS_A_RECEBER_HABILITADO}    label_ApenasAReceberHabilitado.png
 
 *** Keywords ***
 Ler imagens iniciais
-    Add Image Path    ${IMAGES}
+    Add Image Path    ${IMAGENS}
 
 Carregar dados de formas
     
@@ -174,8 +176,8 @@ E pesquiso pela conta recém gerada
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
-    #Informa a data de lançamento da conta a receber
-    Sleep    ${SLEEP_MEDIO}
+
+    Informa a data de lançamento da conta a receber
 
     FOR    ${I}    IN RANGE    ${FORMA_PADRAO[4]}
         
@@ -193,11 +195,12 @@ E pesquiso pela conta a pagar gerada
     Sleep    ${SLEEP_BAIXO}
     
     Press Special Key    TAB
-    #Informa a data de lançamento da conta
+    
+    Informa a data de lançamento da conta a pagar
 
-    #Press Special Key    SPACE
-    SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
-    SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
+    Press Special Key    SPACE
+    # SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
+    # SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
 
     Sleep    ${SLEEP_MEDIO}
 
@@ -248,11 +251,13 @@ Então concluo o pagamento da mesma
 
 Quando acesso o caixa aberto
     
-    Verifica parametros que interferem na venda
+    Verifica parâmetros que interferem na venda
 
     Recupera sequencia caixa
 
     Carregar dados de formas
+
+    Remove os grids personalizados do caixa
     
     Sleep    ${SLEEP_ALTO}
     Press Special Key    F12
@@ -265,6 +270,8 @@ E vou para a aba de contas a pagar
     Wait Until Screen Contain    ${TELA_CONTAS_A_PAGAR}    ${SLEEP_ALTO}
 
 E vou para a aba de contas a receber
+
+    Verifica se condicional existe(${Codigo_Cliente}) 
     
     SikuliLibrary.Click    ${ABA_A_RECEBER}
     Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER}    ${SLEEP_ALTO}
@@ -312,8 +319,21 @@ Então faço o recebimento da conta
 
 Quando desmarco a opção somente a receber
     
-    SikuliLibrary.Click    ${LABEL_APENAS_A_RECEBER}
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_BAIXO}
+    ${apenasAReceberHabilitado}    Exists    ${LABEL_APENAS_A_RECEBER_HABILITADO}
+    Log To Console    apenasAReceberHabilitadoFORA: ${apenasAReceberHabilitado}
+    
+    WHILE    ${apenasAReceberHabilitado}
+
+        SikuliLibrary.Click    ${LABEL_APENAS_A_RECEBER}
+        Sleep    ${SLEEP_MEDIO}
+
+        Verifica se condicional existe(${Codigo_Cliente})
+        
+        ${apenasAReceberHabilitado}    Exists    ${LABEL_APENAS_A_RECEBER_HABILITADO}
+        Log To Console    apenasAReceberHabilitadoDENTRO: ${apenasAReceberHabilitado}
+
+    END
 
 Quando desmarco a opção somente a pagar
     
@@ -714,45 +734,56 @@ Então concluo o recebimento
     Sleep    ${SLEEP_MEDIO}
 
 Informa a data de lançamento da conta a receber
-
+    
     Sleep    ${SLEEP_BAIXO}
-    ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
+    ${inputDataLancAReceber}    Exists    ${INPUT_DATA_LANCAMENTO_A_RECEBER}
 
-    # WHILE    '${CampoDataLancamentoAReceber}' == 'False'
-    
-    #     SikuliLibrary.Click    ${BT_SETA_DIREITA_DATAS}
+    IF    ${inputDataLancAReceber}
 
-    #     ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
-    #     Log To Console    CampoDataLancamentoAReceber DENTRO DO WHILE: ${CampoDataLancamentoAReceber}
-
-    #     IF    ${CampoDataLancamentoAReceber}
-                
-    #         Log To Console    Entrou no IF. CampoDataLancamentoAReceber: ${CampoDataLancamentoAReceber}
-    #         Exit For Loop
-            
-    #     END
-        
-    #     ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
-    # END
-
-    IF    '${CampoDataLancamentoAReceber}' == 'False'
-
-        FOR    ${i}    IN RANGE    1
-            
-            Sleep    ${SLEEP_BAIXO}
-            SikuliLibrary.Double Click    ${BT_SETA_DIREITA_DATAS}
-            Wait Until Screen Contain    ${LABEL_DATA_LANCAMENTO}    ${SLEEP_ALTO}
-            
-        END
+        Sleep    ${SLEEP_BAIXO}
         ${CampoDataLancamentoAReceber}    Exists    ${LABEL_DATA_LANCAMENTO}
-    END
-    
-    SikuliLibrary.Click    ${INPUT_DATA_LANCAMENTO_A_RECEBER}
 
-    Type With Modifiers    H
-    Press Special Key    TAB
-    Type With Modifiers    H
-    Press Special Key    TAB
+        IF    '${CampoDataLancamentoAReceber}' == 'False'
+                
+            SikuliLibrary.Click    ${BT_SETA_DIREITA_DATAS}
+            Wait Until Screen Contain    ${LABEL_DATA_LANCAMENTO}    ${SLEEP_MEDIO}
+
+        END
+        
+        SikuliLibrary.Click    ${INPUT_DATA_LANCAMENTO_A_RECEBER}
+
+        Type With Modifiers    H
+        Press Special Key    TAB
+        Type With Modifiers    H
+        Press Special Key    TAB
+
+    END
+
+Informa a data de lançamento da conta a pagar
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${inputDataLancAPagar}    Exists    ${INPUT_DATA_LANCAMENTO_A_PAGAR}
+
+    IF    ${inputDataLancAPagar}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${CampoDataLancamentoAPagar}    Exists    ${LABEL_DATA_LANCAMENTO}
+
+        IF    '${CampoDataLancamentoAPagar}' == 'False'
+                
+            SikuliLibrary.Click    ${BT_SETA_DIREITA_DATAS}
+            Wait Until Screen Contain    ${LABEL_DATA_LANCAMENTO}    ${SLEEP_MEDIO}
+
+        END
+        
+        SikuliLibrary.Click    ${INPUT_DATA_LANCAMENTO_A_PAGAR}
+
+        Type With Modifiers    H
+        Press Special Key    TAB
+        Type With Modifiers    H
+        Press Special Key    TAB
+
+    END
 
 Então faço o recebimento das parcelas da conta
     
@@ -828,3 +859,81 @@ Valida o recebimento da venda com base no somatório das parcelas pagas
 
     Set Test Variable    ${Total_Recebido_Venda}
     Log To Console    Total_Recebido_Venda: ${Total_Recebido_Venda}
+
+E pesquiso pela venda e pela devolução recém geradas
+
+    Informa a data de lançamento da conta a receber
+
+    FOR    ${i}    IN RANGE    2
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    SPACE
+        
+    END
+
+    Press Special Key    TAB
+
+Valida as movimentações no caixa - Venda e Devolução(${Tipo_Mov})
+    
+    ${DATA_ATUAL}    Get Current Date    result_format=%Y-%m-%d
+    Sleep    ${SLEEP_BAIXO}
+
+    ${Consulta_CaixaMovimento}    Query    SELECT CodigoCliente, ValorDocumento, ValorPago, Data, TipoMovimento FROM caixamovimentos WHERE CodigoAbertura = ${Sequencia_Caixa_Abertura} AND NVenda IN (${COD_DEVOLUCAO}, ${COD_VENDA}) ORDER BY NVenda;
+    
+    ${VALOR_FINAL_OPERAÇÃO}    Set Variable    ${VALOR_FINAL_VENDA}
+
+    FOR    ${i}    IN RANGE    2
+        
+        ${Data_Banco}    Convert To String    ${Consulta_CaixaMovimento[${i}][3]}
+
+        ${Valor_Final_Operação_Convertido}    Convert To Number    ${VALOR_FINAL_OPERAÇÃO}
+
+        Should Be Equal    ${Consulta_CaixaMovimento[${i}][0]}    ${Codigo_Cliente}
+        Should Be Equal    ${Consulta_CaixaMovimento[${i}][1]}    ${Valor_Final_Operação_Convertido}
+        Should Be Equal    ${Consulta_CaixaMovimento[${i}][1]}    ${Consulta_CaixaMovimento[${i}][2]}
+        Should Be Equal    ${Data_Banco}    ${DATA_ATUAL}
+        Should Be Equal    ${Consulta_CaixaMovimento[${i}][4]}    ${Tipo_Mov}
+
+        ${VALOR_FINAL_OPERAÇÃO}    Set Variable    ${VALOR_FINAL_DEVOLUCAO}
+
+    END
+
+Então faço o recebimento da venda e da devolução
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT     Key.R
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.C 
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida tela de confirmação de data
+
+    IF    '${Forma_Recebimento}' == 'Outros'
+
+        Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
+    
+    ELSE IF     '${Forma_Recebimento}' == 'Cartão Oper.'
+        
+        Finalização com recebimento de cartão de crédito/débito
+
+    ELSE IF     '${Forma_Recebimento}' == 'Moeda'
+        
+        Log To Console    Tipo moeda não executada novas telas
+
+    ELSE IF     '${Forma_Recebimento}' == 'Bancária'
+        
+        Finalização com o tipo bancaria
+
+    END
+
+    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${TEMPO_TELA}
+
+    Consulta sequencia caixa(${CODIGO_CAIXA})
+
+    Valida as movimentações no caixa - Venda e Devolução(Crédito)
