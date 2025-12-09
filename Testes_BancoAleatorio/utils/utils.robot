@@ -68,7 +68,7 @@ ${CORRIGE_FOCO}                          corrigeFoco.png
 ${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
 ${LABEL_AVISO_CREDITO_LIBERADO2}         lb_CreditoLiberado2.png
 ${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
-${SelecionaProdutoComLinha}              ${False}
+# ${SelecionaProdutoComLinha}              ${False}
 ${SelecionaServicoComLinha}              ${False}
 ${Vendedor_Selecionada_Escalonada}       ${False}
 ${Valores_Parcelas}                      ${None}
@@ -97,9 +97,6 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
         
     ELSE
     
-        Log To Console    VALOR_FINAL_OPERAÇÃO: ${VALOR_FINAL_OPERAÇÃO}
-        
-        #Input Text    ${EMPTY}    ${VALOR_FINAL_VENDA}
         Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
 
     END
@@ -164,7 +161,7 @@ Adicionar Vendedor e Cliente(${TELA})
 
     IF    '${TELA}' != 'NFeSaidasManual'
 
-        IF    ${Vendedor_Selecionada_Escalonada} != $True
+        IF    '${Vendedor_Selecionada_Escalonada}' != 'True'
 
             Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
             Sleep    ${SLEEP_BAIXO}
@@ -307,8 +304,7 @@ Valida teste de comissão
 
     IF    ${Test_Comissao}
 
-        ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos, ComissaoServicos, ComissaoPercentualServicos, ComissaoVendaProdutos FROM clientes WHERE Codigo = ${Codigo_Vendedor}
-        Log To Console    Tipo_Comissao: ${Tipo_Comissao}
+        ${Tipo_Comissao}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos, ComissaoServicos, ComissaoPercentualServicos, ComissaoVendaProdutos, Codigo, RazaoSocial FROM clientes WHERE Codigo = ${Codigo_Vendedor}
 
         IF    ${Teste_Comissao_Escalonada}
 
@@ -330,36 +326,34 @@ Valida teste de comissão
 
         ELSE IF    ${Teste_Comissao_Total_Venda}
 
-            IF    '${Tipo_Comissao[0][0]}' != 'T'
+            IF    ('${Tipo_Comissao[0][0]}' != 'T') or ('${Teste_Comissao_Serviço}' == 'True' and (${Tipo_Comissao[0][2]} == None or '${Tipo_Comissao[0][2]}' != '1'))
 
                 Seleciona vendedor comissionado('T')
-
-            ELSE IF    '${Teste_Comissao_Serviço}' == 'True' and (${Tipo_Comissao[0][2]} == None or '${Tipo_Comissao[0][2]}' != '1')
-
-                Seleciona vendedor comissionado('T')
-
-            END
-
-            IF    '${Tipo_Comissao[0][1]}' != 'None' and '${Tipo_Comissao[0][1]}' > '0.0'
-
-                Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Tipo_Comissao[0][1]}
 
             ELSE
 
-                Seleciona vendedor comissionado('T')
-                
-            END
+                IF    '${Tipo_Comissao[0][1]}' != 'None' and '${Tipo_Comissao[0][1]}' > '0.0'
 
-            IF    ${Teste_Comissao_Serviço}
-
-                IF    '${Tipo_Comissao[0][3]}' != 'None' and '${Tipo_Comissao[0][3]}' > '0.0'
-
-                    Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Tipo_Comissao[0][3]}
+                    Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Tipo_Comissao[0][1]}
 
                 ELSE
 
                     Seleciona vendedor comissionado('T')
-                    
+               
+                END
+
+                IF    ${Teste_Comissao_Serviço}
+
+                    IF    '${Tipo_Comissao[0][3]}' != 'None' and '${Tipo_Comissao[0][3]}' > '0.0'
+
+                        Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Tipo_Comissao[0][3]}
+
+                    ELSE
+
+                        Seleciona vendedor comissionado('T')
+                        
+                    END
+
                 END
 
             END
@@ -368,7 +362,11 @@ Valida teste de comissão
 
         ELSE IF    ${Teste_Comissao_Linha}
 
-            IF    '${Tipo_Comissao[0][0]}' != 'L'
+            IF    '${Tipo_Comissao[0][0]}' != 'L' or '${Tipo_Comissao[0][4]}' != '1'
+
+                Seleciona vendedor comissionado('L')
+
+            ELSE IF    '${Teste_Comissao_Serviço}' == 'True' and (${Tipo_Comissao[0][2]} == None or '${Tipo_Comissao[0][2]}' != '1')
 
                 Seleciona vendedor comissionado('L')
 
@@ -380,7 +378,7 @@ Valida teste de comissão
                     
             END
 
-            Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
+            #Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
 
             Log To Console    Comissão por linha.
         
@@ -404,10 +402,9 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
 
         IF    ${Teste_Comissao_Serviço}
 
-            ${sql}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor, ComissaoPercentualServicos FROM clientes WHERE ComissaoServicos = 1 AND ComissaoPercentualServicos > 0 AND ComissaoVendaProdutos = 1 AND ComissaoPercentualProdutos > 0 AND Tipo IN ('D','V') AND Ativo = -1 AND Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
+            ${consultaVendedor}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor, ComissaoPercentualServicos FROM clientes WHERE ComissaoServicos = 1 AND ComissaoPercentualServicos > 0 AND ComissaoVendaProdutos = 1 AND ComissaoPercentualProdutos > 0 AND Tipo IN ('D','V') AND Ativo = -1 AND Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
 
-            ${vendComissServicoTotalVenda}    Run Keyword And Return Status    Check If Exists In Database    ${sql}
-            Log To Console    vendComissServicoTotalVenda: ${vendComissServicoTotalVenda}
+            ${vendComissServicoTotalVenda}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedor}
 
             IF    not ${vendComissServicoTotalVenda}
                 
@@ -415,8 +412,7 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
                 
             END
 
-            ${codVendedor_Comissionado}    Query    ${sql}
-            Log To Console    codVendedor_Comissionado_IF_TotalVenda: ${codVendedor_Comissionado}
+            ${codVendedor_Comissionado}    Query    ${consultaVendedor}
 
             Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${codVendedor_Comissionado[0][3]}
 
@@ -431,12 +427,21 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
 
         IF    ${Teste_Comissao_Serviço}
 
-            ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoDiferenciadapor LIKE ${Tipo_Selecionar}) AND Ativo = -1 AND `Status` LIKE 'ATIVA' AND ComissaoServicos = 1 ORDER BY RAND() LIMIT 1;
-            Log To Console    codVendedor_Comissionado_IF: ${codVendedor_Comissionado}
+            ${consultaVendedor}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoServicos = 1 AND ComissaoVendaProdutos = 1 ORDER BY RAND() LIMIT 1;
+
+            ${vendComissServico}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedor}
+
+            IF    not ${vendComissServico}
+
+                Fail    Não há cadastro de vendedor comissionado por serviço para o tipo de comissão ${Tipo_Selecionar}.
+                
+            END
+
+            ${codVendedor_Comissionado}    Query    ${consultaVendedor}
 
         ELSE
          
-            ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND (ComissaoDiferenciadapor LIKE ${Tipo_Selecionar}) AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+            ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoVendaProdutos = 1 ORDER BY RAND() LIMIT 1;
             Log To Console    codVendedor_Comissionado_ELSE: ${codVendedor_Comissionado}
 
         END
@@ -451,14 +456,9 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
 
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
 
-        Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\n Tipo de comissão: ${Tipo_Selecionar}
-
-        IF    '${codVendedor_Comissionado[0][2]}' == 'L'
-
-            Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
-
-        END
-
+        # Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\nTipo de comissão: ${Tipo_Selecionar}
+        Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}
+    
     END
 
 Valida vendedor padrao
@@ -499,7 +499,7 @@ Inserir serviço
 
         IF    ${Parametro_IncluiDireto} != ${True}
             
-            Press Combination    KEY.ALT     Key.n
+            Press Combination    KEY.ALT    KEY.n
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -526,7 +526,7 @@ Inserir serviço
         Press Combination    KEY.ALT    KEY.I
         Sleep    ${SLEEP_BAIXO}
 
-        Press Combination    KEY.ALT     KEY.S
+        Press Combination    KEY.ALT    KEY.S
         Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
         Set Test Variable    ${COD_SERVICO}    ${codServico[0][0]} 
@@ -579,7 +579,6 @@ Seleciona servico com linha de comissao
         ELSE
             
             Input Text    ${EMPTY}    ${Codigo_Vendedor}
-            Log To Console    Codigo_Vendedor - COMISSÃO LINHA: ${Codigo_Vendedor}
 
         END
 
@@ -1272,3 +1271,9 @@ Remove os grids personalizados de simulação de parcelas
 Remove os grids personalizados do caixa
 
     Execute Sql String    DELETE FROM usuariogridflex WHERE FormName = 'frmCaixa';
+
+Verifica regime tributário da empresa
+
+    ${regimeTributario}    Query    SELECT e.Codigo, e.RegimeFiscalSimples, e.TipoLucro, e.AliquotaISS FROM empresas e WHERE e.Codigo = (SELECT ua.ua_empresa FROM usuario_acesso AS ua WHERE ua.ua_data = CURDATE() ORDER BY ua.ua_id DESC LIMIT 1);
+
+    RETURN    ${regimeTributario}

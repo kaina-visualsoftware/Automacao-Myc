@@ -50,7 +50,7 @@ Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa d
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
 
-Teste 04 Comissão sobre total da venda com múltiplos produtos gerada sobre somente recebidas e pagamento da comissão no caixa - Total Venda
+Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre somente recebidas e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste04
     [Setup]    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos totalmente recebida no caixa(3)
 
@@ -242,6 +242,8 @@ Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e s
     E seleciono a comissao do servico
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
+    Dado que acesso a tela de relatório de comissão
+    E gero o relatório de comissões(Pendentes)
 
 Teste 16 - Comissão por linha de produto gerada sobre venda recebida e pagamento da comissão no caixa - Linha
     # CT: 1-362

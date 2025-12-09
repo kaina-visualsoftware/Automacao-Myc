@@ -87,6 +87,7 @@ ${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
 ${Quantidade_Produto}                    ${1}
 ${QUANTIDADE_PRODUTOS}                   ${1}
 ${QTDE_BAIXA_PRODUTO}                    ${1}
+#${Venda_PossuiProduto}                   ${False}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -746,7 +747,8 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
 Quando insiro um produto já definido(${Produto})
 
-    IF    ${SelecionaProdutoComLinha}
+    #IF    ${SelecionaProdutoComLinha}
+    IF    ${Teste_Comissao_Linha}
 
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
 
@@ -867,7 +869,8 @@ Consulta NDocumento das parcelas
 
 Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
-    IF    ${SelecionaProdutoComLinha}
+    #IF    ${SelecionaProdutoComLinha}
+    IF    ${Teste_Comissao_Linha}
 
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
 
@@ -888,3 +891,5 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
     Informa a quantidade do produto(${Quantidade_Produto})
 
     utils.Valida parametros após incluir produto
+
+    #Set Test Variable    ${Venda_PossuiProduto}    ${True}

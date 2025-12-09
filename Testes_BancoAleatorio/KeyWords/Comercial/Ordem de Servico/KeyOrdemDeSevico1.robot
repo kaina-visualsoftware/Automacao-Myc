@@ -119,7 +119,7 @@ E adiciono vendedor e cliente
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando insiro um serviço
-    
+
     IF    ${SelecionaServicoComLinha}
 
         utils.Seleciona servico com linha de comissao
@@ -129,6 +129,8 @@ Quando insiro um serviço
         utils.Inserir serviço
 
     END
+
+    Valida o abatimento dos tributos no valor do serviço
 
     Set Test Variable    ${OS_PossuiServico}    ${True}
 
@@ -401,18 +403,14 @@ Calcula valor final da OS
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
             ${Produto_ValorUnitario}    Set Variable    ${OS_Produtos[${i}][1]}
-            Log To Console    Produto_ValorUnitario: ${Produto_ValorUnitario}
 
             ${Produto_ValorTotal}       Set Variable    ${OS_Produtos[${i}][2]}
-            Log To Console    Produto_ValorTotal: ${Produto_ValorTotal}
             
             ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${Produto_ValorUnitario}), 2)
-            Log To Console    calcValorTotalProduto: ${calcValorTotalProduto}
 
             Should Be Equal    ${Produto_ValorTotal}    ${calcValorTotalProduto}
             
             ${somaValorTotalProdutos}    Evaluate    (${somaValorTotalProdutos} + ${calcValorTotalProduto})
-            Log To Console    somaValorTotalProdutos: ${somaValorTotalProdutos}
         
         END
     
@@ -429,28 +427,22 @@ Calcula valor final da OS
         FOR    ${i}    IN RANGE    ${qtdeServicos[0][0]}
             
             ${Servico_ValorUnitario}    Set Variable    ${OS_Servicos[${i}][1]}
-            Log To Console    Servico_ValorUnitario: ${Servico_ValorUnitario}
 
             ${Servico_ValorTotal}    Set Variable    ${OS_Servicos[${i}][2]}
-            Log To Console    Servico_ValorTotal: ${Servico_ValorTotal}
 
             ${calcValorTotalServico}    Evaluate    round((1 * ${Servico_ValorUnitario}), 2)   # Tratar para a automação poder inseir quantidade do serviço e então usar aqui no cálculo. 
-            Log To Console    calcValorTotalServico: ${calcValorTotalServico}
 
             Should Be Equal    ${Servico_ValorTotal}    ${calcValorTotalServico}
 
             ${somaValorTotalServicos}    Evaluate    (${somaValorTotalServicos} + ${calcValorTotalServico})
-            Log To Console    somaValorTotalServicos: ${somaValorTotalServicos}
             
         END
 
     END
 
     ${calcValorTotalOS}    Evaluate    round((${somaValorTotalProdutos} + ${somaValorTotalServicos}), 2)
-    Log To Console    calcValorTotalOS: ${calcValorTotalOS}
 
     ${ValorTotalOS}    Query    SELECT ROUND(IFNULL((SELECT SUM(vp.ValorTotal) FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo),0) + IFNULL((SELECT SUM(vs.ValorTotal) FROM vendasservicos vs WHERE vs.CodigoVenda = v.Codigo),0), 2) AS TotalGeral FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO};
-    Log To Console    ValorTotalOS: ${ValorTotalOS[0][0]}
 
     Should Be Equal    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
 
@@ -735,3 +727,38 @@ Informa a quantidade do produto(${Quantidade_Produto})
     Set Test Variable    ${Quantidade_Produto}
 
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
+
+Valida o abatimento dos tributos no valor do serviço
+
+    ${aliqISSEmpresa}    Evaluate    0
+    ${Total_Tributos_Servico}    Evaluate    0
+
+    IF    ${Parametro_ComissaoVendedorEExecutorServico}
+
+        ${regimeTributarioEmp}    Verifica regime tributário da empresa
+
+        ${aliqISSEmpresa}    Set Variable    ${regimeTributarioEmp[0][3]}
+
+        IF    '${regimeTributarioEmp[0][1]}' == '1'
+
+            ${aliqPisCofinsSimples}    Query    SELECT SUM(COALESCE(sae.AliqPis, 0) + COALESCE(sae.AliqCofins, 0)) FROM servico_aliquota_empresa sae WHERE sae.CodigoServico = ${COD_SERVICO};
+
+            ${Total_Tributos_Servico}    Evaluate   (${aliqISSEmpresa} + ${aliqPisCofinsSimples[0][0]})
+
+        ELSE IF    '${regimeTributarioEmp[0][2]}' == 'LP'
+            
+            ${aliqPisCofinsPresumido}    Query    SELECT SUM(COALESCE(sae.AliqPis_presumido, 0) + COALESCE(sae.AliqCofins_presumido, 0)) FROM servico_aliquota_empresa sae WHERE sae.CodigoServico = ${COD_SERVICO};
+
+            ${Total_Tributos_Servico}    Evaluate    (${aliqISSEmpresa} + ${aliqPisCofinsPresumido[0][0]})
+        
+        ELSE IF    '${regimeTributarioEmp[0][2]}' == 'LP'
+
+            ${aliqPisCofinsReal}    Query    SELECT SUM(COALESCE(sae.AliqPis_real, 0) + COALESCE(sae.AliqCofins_real, 0)) FROM servico_aliquota_empresa sae WHERE sae.CodigoServico = ${COD_SERVICO};
+            
+            ${Total_Tributos_Servico}    Evaluate    (${aliqISSEmpresa} + ${aliqPisCofinsReal[0][0]})
+
+        END
+
+    END
+
+    Set Test Variable    ${Total_Tributos_Servico}

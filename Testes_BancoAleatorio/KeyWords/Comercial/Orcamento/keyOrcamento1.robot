@@ -193,6 +193,7 @@ Então finalizo a exclusão
     
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
 
+    Sleep    ${SLEEP_BAIXO}
     Check If Exists In Database    SELECT * FROM orcamentos WHERE Codigo = ${COD_ORCAMENTO} AND `Status` LIKE 'x'
 
 Informa a quantidade do produto(${Quantidade_Produto})

@@ -212,6 +212,7 @@ Verifica parâmetros que interferem na venda
     ${Parametro_Venda_Padrao_Entregue}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Venda_Padrao_Entregue
     ${Parametro_TrazerDescricaoAutomaticaEntrega}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    TrazerDescricaoAutomaticaEntrega
     ${Parametro_FaturamentoAoFinalizarOS}                  Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
+    ${Parametro_ComissaoVendedorEExecutorServico}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    OS_ComVendedorEexecutor
 
     IF    ${Parametro_VendaRapida}
 
@@ -342,6 +343,8 @@ Verifica parâmetros que interferem na venda
     Set Test Variable    ${Parametro_TrazerDescricaoAutomaticaEntrega}
 
     Set Test Variable    ${Parametro_FaturamentoAoFinalizarOS}
+
+    Set Test Variable    ${Parametro_ComissaoVendedorEExecutorServico}
 
 Valida aviso exige senha para outro vendedor
 

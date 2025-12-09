@@ -211,7 +211,7 @@ Dado que realizo uma venda total de uma condicional
     KeyCondicional1.Dado que acesso a tela de condicionais
     KeyCondicional1.E adiciono uma nova condicional
     KeyCondicional1.Quando insiro vendedor e cliente
-    KeyCondicional1.E insiro um produto normal
+    KeyCondicional1.Quando insiro um produto normal informando a quantidade(1)
     KeyCondicional1.Então finalizo a condicional
     KeyCondicional1.Quando clico em gerar venda
     keyVendas1.E acesso a aba pagamentos

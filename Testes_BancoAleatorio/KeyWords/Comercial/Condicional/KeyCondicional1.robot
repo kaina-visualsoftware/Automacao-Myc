@@ -85,7 +85,8 @@ Quando insiro vendedor e cliente
 
 Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
-    IF    ${SelecionaProdutoComLinha}
+    #IF    ${SelecionaProdutoComLinha}
+    IF    ${Teste_Comissao_Linha}
 
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
 
@@ -332,3 +333,20 @@ Consulta venda gerada a partir da condicional
     Set Test Variable    ${CODIGO_VENDA_GERADA_CONDICIONAL}    ${Consulta[0][0]}
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${CODIGO_VENDA_GERADA_CONDICIONAL}
+
+Informa a quantidade do produto(${Quantidade_Produto})
+
+    IF    ${Quantidade_Produto} != 1
+        
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+    
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${Quantidade_Produto}
+
+    END
+
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Produto}
+
+    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}

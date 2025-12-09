@@ -89,8 +89,9 @@ Quando adiciono vendedor e cliente
 
 E adiciono um produto
 
-    IF    ${SelecionaProdutoComLinha}
-
+    #IF    ${SelecionaProdutoComLinha}
+    IF    ${Teste_Comissao_Linha}
+        
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaPreVendaSemEstoque})
 
     ELSE
