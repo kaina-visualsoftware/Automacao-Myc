@@ -14,20 +14,20 @@ Resource    ../../../utils/utils.robot
 *** Variables ***
 ${IMAGENS}    ./testes_bancoAleatorio/images
 
-#Conexão com banco de dados
+# Conexão com banco de dados
 ${DBHost}                                      ${config.IpServidor}
 ${DBName}                                      ${config.Database}
 ${DBPass}                                      vssql
 ${DBPort}                                      ${config.Porta}
 ${DBUser}                                      root
 
-#Sleep's
+# Sleep's
 ${SLEEP_BAIXO}                                 0.7
 ${SLEEP_MEDIO}                                 1.7
 ${SLEEP_ALTO}                                  3
 ${TEMPO_TELA}                                  20
 
-#Telas
+# Telas
 
 ${TELA_NOTA_FISCAL_PREENCHIMENTO_MANUAL}    tela_NotaFiscalPreenchimentoManual.png
 ${LABEL_CATEGORIA_VENDAS}                   lb_CategoriaVendas.png

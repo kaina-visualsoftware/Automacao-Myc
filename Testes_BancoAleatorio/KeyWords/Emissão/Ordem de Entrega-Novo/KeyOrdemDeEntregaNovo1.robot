@@ -123,9 +123,6 @@ E seleciono o produto
         
     END
 
-    # Press Special Key    ENTER
-    # Sleep    ${SLEEP_BAIXO}
-
 Última entrega gerada
     
     Sleep    ${SLEEP_BAIXO}

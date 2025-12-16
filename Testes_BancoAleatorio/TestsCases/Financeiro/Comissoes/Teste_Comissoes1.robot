@@ -12,13 +12,17 @@ Suite Teardown    Stop Remote Server
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
 Test Teardown    parametros_pre_condicoes.Restaurar Parametros Alterados
 
+*** Variables ***
+@{Teste_18_Quantidades}    1    3
+@{Teste_18_Descontos}      10   15
+
 *** Test Cases ***
 Teste 01 - Comissão sobre total da venda e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste01
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -30,7 +34,7 @@ Teste 02 - Comissão por linha de produto sobre venda e devolução completa, in
     [Tags]    Teste02 
     [Setup]    montadorDeCenarios.Dado que realizo uma venda e uma devolução completa, com um produto normal
     
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono a comissão da venda e devolução
     E baixo a comissao recém recebida
@@ -45,7 +49,7 @@ Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa d
     Dado que acesso o menu de vale compras
     E seleciono o vale gerado pela devolução
     Quando faço a baixa do mesmo
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono a comissão da venda e devolução 
     E baixo a comissao recém recebida
@@ -54,10 +58,10 @@ Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre s
     [Tags]    Teste04
     [Setup]    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos totalmente recebida no caixa(3)
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -71,7 +75,7 @@ Teste 05 - Comissão escalonada sobre mesmos produtos, com desconto diferentes -
     [Tags]    Teste05
     [Setup]    montadorDeCenarios.Realizando vendas com o mesmo produto porém com descontos diferentes
     
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono as comissaos das vendas
     E baixo a comissao recém recebida
@@ -84,9 +88,9 @@ Teste 06 - Comissão por linha sobre venda oriunda de uma pré-venda e pagamento
     [Tags]    Teste06
     [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -98,10 +102,10 @@ Teste 07 - Comissão sobre total da venda oriunda de uma pré-venda, gerada sobr
     [Tags]    Teste07
     [Setup]    montadorDeCenarios.Dado que realizo um pedido e gero uma venda total sobre ele totalmente recebida
     
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -115,9 +119,9 @@ Teste 08 - Comissão por linha sobre venda oriunda de uma condicional e pagament
     [Tags]    Teste08
     [Setup]    montadorDeCenarios.Dado que realizo uma venda total de uma condicional
     
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -129,9 +133,9 @@ Teste 09 - Comissão sobre total da venda parcial oriunda de uma condicional e p
     [Tags]    Teste09
     [Setup]    montadorDeCenarios.Dado que realizo uma venda parcial de uma condicional
     
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -143,10 +147,10 @@ Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, ge
     [Tags]    Teste10
     [Setup]    montadorDeCenarios.Dado que realizo uma venda parcial oriunda de uma condicional que esteja totalmente paga
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -160,7 +164,7 @@ Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem
     [Tags]    Teste11
     [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
     E seleciono a comissao do servico
@@ -175,7 +179,7 @@ Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa ap�
     [Tags]    Teste12
     [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço - Totalmente recebida
     
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E vou para a aba de servicos
@@ -198,10 +202,10 @@ Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela
 
         montadorDeCenarios.Dado que realizo o recebimento de uma venda com múltiplas parcelas personalizadas
         
-        Dado que acesso a tela de comissoes
+        Dado que acesso a tela de comissões
         Quando insiro o vendedor comissionado
         E seleciono somente as recebidas
-        E seleciono a comissao da venda
+        E seleciono a comissão da venda
         E baixo a comissao recém recebida
         utils.E saio da tela(Comissoes)
         KeyComissoes1.Quando acesso o caixa aberto
@@ -221,7 +225,7 @@ Teste 14 - Comissão por linha sobre venda e devolução somente recebidas e pag
     ...    Inicializar Pré-Condições    AND    
     ...    montadorDeCenarios.Dado que realizo uma venda e uma devolução parcial da venda totalmente recebidos no caixa
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E seleciono a comissão da venda e devolução 
@@ -236,7 +240,7 @@ Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e s
     ...    Inicializar Pré-Condições    AND    
     ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
     E seleciono a comissao do servico
@@ -250,10 +254,10 @@ Teste 16 - Comissão por linha de produto gerada sobre venda recebida e pagament
     [Tags]    Teste16
     [Setup]    Run Keyword    montadorDeCenarios.Dado que realizo uma venda com um produto normal totalmente recebida no caixa - A prazo
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissao da venda
+    E seleciono a comissão da venda
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
 
@@ -265,10 +269,28 @@ Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebi
     ...    Inicializar Pré-Condições    AND
     ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço totalmente recebida no caixa - A prazo
 
-    Dado que acesso a tela de comissoes
+    Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E vou para a aba de servicos
     E seleciono a comissao do servico
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
+
+Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produtos com desconto, recebidas no caixa, incluindo a geração do relatório de vendas somente recebidas - Forma Parcelamento
+    # Tarefa: 173680 | CT: 1-599
+    [Tags]    Teste18
+    [Setup]    Run Keyword    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos com desconto totalmente recebida no caixa    ${Teste_18_Quantidades}    ${Teste_18_Descontos}
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissão da venda
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
+    Dado que acesso a tela de relatório de comissão
+    E gero o relatório de comissões(Pendentes)

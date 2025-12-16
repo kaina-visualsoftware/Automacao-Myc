@@ -384,7 +384,6 @@ Então clico em excluir
     Press Special Key    ENTER
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
-    # Sleep    ${SLEEP_MEDIO}
     
     Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_ORDEM_SERVICO} AND `Status` LIKE 'x'
 

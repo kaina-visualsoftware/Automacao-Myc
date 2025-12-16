@@ -99,36 +99,38 @@ class validaParametros:
 
         formaParcelamento = []
 
-        sqlConsulta = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE formarecebimento IS NOT NULL ORDER BY IF(Padrao_Venda = 0, Descricao, 0) LIMIT 1;"
+        sqlConsulta = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel, Comissao_Produtos FROM formaparcelamento WHERE formarecebimento IS NOT NULL ORDER BY IF(Padrao_Venda = 0, Descricao, 0) LIMIT 1;"
 
         cursor.execute(sqlConsulta)
 
         formaPadraoOS = cursor.fetchall()
 
-        formaEntrada = formaPadraoOS[0][5].split(' ')
+        formaEntrada = formaPadraoOS[0][5].split(' ')  # FormaRecebimento
 
-        formaParcelamento.append(formaPadraoOS[0][0])
-        formaParcelamento.append(formaPadraoOS[0][3])
-        formaParcelamento.append(formaPadraoOS[0][4])
-        formaParcelamento.append(formaEntrada[0])
-        formaParcelamento.append(formaPadraoOS[0][2])
+        formaParcelamento.append(formaPadraoOS[0][0])  # Descricao
+        formaParcelamento.append(formaPadraoOS[0][3])  # PDesconto
+        formaParcelamento.append(formaPadraoOS[0][4])  # ValorMinimo
+        formaParcelamento.append(formaEntrada[0])      # FormaRecebimento (primeira palavra)
+        formaParcelamento.append(formaPadraoOS[0][2])  # NPagamentos
+        formaParcelamento.append(formaPadraoOS[0][7])  # Comissao_Produtos
 
         if formaParcelamento[0] not in formasPadrao:
             print(formaParcelamento)
 
-            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:
+            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:   # comEntrada e NPagamentos   
                 formaParcelamento[0] = "À VISTA"
                 print(formaParcelamento)
 
-            elif formaPadraoOS[0][6] == 1:
+            elif formaPadraoOS[0][6] == 1:   # Personalizavel
                 formaParcelamento[0] = "PERSONALIZADA"
                 print(formaParcelamento)
             
-            elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:
+            elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:   # NPagamentos e comEntrada
                 formaParcelamento[0] = "30 DIAS"
                 print(formaParcelamento)
 
         print(formaParcelamento)
+
         return formaParcelamento
 
     def valida_Forma_Parcelamento_Cliente(self, codigo_cliente):
@@ -149,13 +151,13 @@ class validaParametros:
 
         else:
 
-            formaEntrada = formaPadraoOS[0][5].split(' ')
+            formaEntrada = formaPadraoOS[0][5].split(' ')  # FormaRecebimento
 
-            formaParcelamento.append(formaPadraoOS[0][0])
-            formaParcelamento.append(formaPadraoOS[0][3])
-            formaParcelamento.append(formaPadraoOS[0][4])
-            formaParcelamento.append(formaEntrada[0])
-            formaParcelamento.append(formaPadraoOS[0][2])
+            formaParcelamento.append(formaPadraoOS[0][0])  # Descricao
+            formaParcelamento.append(formaPadraoOS[0][3])  # PDesconto
+            formaParcelamento.append(formaPadraoOS[0][4])  # ValorMinimo
+            formaParcelamento.append(formaEntrada[0])      # FormaRecebimento (primeira palavra)
+            formaParcelamento.append(formaPadraoOS[0][2])  # NPagamentos
 
         
             if formaParcelamento[0] not in formasPadrao:
@@ -174,6 +176,7 @@ class validaParametros:
                     print(formaParcelamento)
 
         print(formaParcelamento)
+        
         return formaParcelamento
 
     def valida_Configuracoes_OS(self):
@@ -188,26 +191,26 @@ class validaParametros:
 
         formaPadraoOS = cursor.fetchall()
 
-        formaEntrada = formaPadraoOS[0][5].split(' ')
+        formaEntrada = formaPadraoOS[0][5].split(' ')  # FormaRecebimento
 
-        formaParcelamento.append(formaPadraoOS[0][0])
-        formaParcelamento.append(formaPadraoOS[0][3])
-        formaParcelamento.append(formaPadraoOS[0][4])
-        formaParcelamento.append(formaEntrada[0])
-        formaParcelamento.append(formaPadraoOS[0][2])
+        formaParcelamento.append(formaPadraoOS[0][0])  # Descricao
+        formaParcelamento.append(formaPadraoOS[0][3])  # PDesconto
+        formaParcelamento.append(formaPadraoOS[0][4])  # ValorMinimo
+        formaParcelamento.append(formaEntrada[0])      # FormaRecebimento (primeira palavra)
+        formaParcelamento.append(formaPadraoOS[0][2])  # NPagamentos
 
         if formaParcelamento[0] not in formasPadrao:
             print(formaParcelamento)
 
-            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:
+            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:   # comEntrada e NPagamentos
                 formaParcelamento[0] = "À VISTA"
                 print(formaParcelamento)
 
-            elif formaPadraoOS[0][6] == 1:
+            elif formaPadraoOS[0][6] == 1:   # Personalizavel
                 formaParcelamento[0] = "PERSONALIZADA"
                 print(formaParcelamento)
             
-            elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:
+            elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:   # NPagamentos e comEntrada
                 formaParcelamento[0] = "30 DIAS"
                 print(formaParcelamento)
 
@@ -267,7 +270,7 @@ class validaParametros:
 
         formaParcelamento = []
 
-        consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
+        consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel, Comissao_Produtos FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
 
         cursor.execute(consultaForma)
 
@@ -278,7 +281,7 @@ class validaParametros:
             cursor.execute(sqlInsert)
 
             print("Realizou o Insert da forma 30 DIAS")
-            consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
+            consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel, Comissao_Produtos FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
 
             cursor.execute(consultaForma)
 
@@ -286,18 +289,53 @@ class validaParametros:
 
         formaEntrada = formaParcelamentoFetch[0][5].split(' ')
 
-        formaParcelamento.append(formaParcelamentoFetch[0][0])
-        formaParcelamento.append(formaParcelamentoFetch[0][3])
-        formaParcelamento.append(formaParcelamentoFetch[0][4])
-        formaParcelamento.append(formaEntrada[0])
-        formaParcelamento.append(formaParcelamentoFetch[0][2])
+        formaParcelamento.append(formaParcelamentoFetch[0][0])  # Descricao
+        formaParcelamento.append(formaParcelamentoFetch[0][3])  # PDesconto
+        formaParcelamento.append(formaParcelamentoFetch[0][4])  # ValorMinimo
+        formaParcelamento.append(formaEntrada[0])               # FormaRecebimento (primeira palavra)
+        formaParcelamento.append(formaParcelamentoFetch[0][2])  # NPagamentos
+        formaParcelamento.append(formaParcelamentoFetch[0][7])  # Comissao_Produtos
 
         print(formaParcelamento)
 
         return  formaParcelamento
     
-#validaParametros.valida_Forma_Parcelamento("Venda")
-#validaParametros.valida_Configuracoes_OS()
-#validaParametros.valida_Config_Empresa()
+    def seleciona_forma_prazo_com_comissao(self):
+
+        formaParcelamento = []
+
+        consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel, Comissao_Produtos FROM formaparcelamento WHERE Comissao_Produtos > 0 AND ComEntrada = 0 AND Personalizavel = 0 AND NPagamentos >= 1 AND Cancelado IS NULL;"
+
+        cursor.execute(consultaForma)
+        formaParcelamentoFetch = cursor.fetchall()
+
+        # Caso não exista nenhuma forma com comissão > 0
+        if not formaParcelamentoFetch:
+
+            sqlInsert = "INSERT INTO formaparcelamento (Descricao,ComEntrada,NPagamentos,TaxaJuro,PrazoMedio,Personalizavel,Tipo_Intervalo,Comissao_Produtos,Comissao_Servicos,DataAlteracao,EnviaMymobile,FormaRecebimento,Comissao_Produtos_Ent,Comissao_Servicos_Ent,Padrao_Venda,Padrao_OS,Padrao_Pre,TPCalculo,AtivaIntervalos,Digitavel,TaxaFlex,ListaPreco,PrazoFixado,DataPrazoFixado,PDesconto,Padrao_Orc,DiaExtra,Empresas,ValorMinimo,CodigoPreOcorrencia,DescricaoPreOcorrencia,CodigoGrupo,DescricaoGrupo,CodigoIdentificador,Padrao_Devolucao,ConsiderarOfertas,ParcelamentoPadrao,Cancelado,ValorMaximo,PDescontoMaximo,Considera_DescMax_produto,Padrao_EmissaoManualNF) VALUES ('FORMA_COMISSÃO',0,1,0,30,0,'Dias',1,0,NOW(),1,'DINHEIRO                       1    ',0,0,0,0,0,'TP',0,0,0,0,0,NULL,0,0,999,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL,0,0,0,0);"
+            cursor.execute(sqlInsert)
+
+            print("Realizou o Insert da forma de parcelamento 'FORMA_COMISSÃO' com comissão > 0.")
+
+            cursor.execute(consultaForma)
+            formaParcelamentoFetch = cursor.fetchall()
+
+        formaEntrada = formaParcelamentoFetch[0][5].split(' ')
+
+        formaParcelamento.append(formaParcelamentoFetch[0][0])   # Descricao
+        formaParcelamento.append(formaParcelamentoFetch[0][3])   # PDesconto
+        formaParcelamento.append(formaParcelamentoFetch[0][4])   # ValorMinimo
+        formaParcelamento.append(formaEntrada[0])                # FormaRecebimento simples
+        formaParcelamento.append(formaParcelamentoFetch[0][2])   # NPagamentos
+        formaParcelamento.append(formaParcelamentoFetch[0][7])   # Comissao_Produtos
+
+        print(formaParcelamento)
+
+        return formaParcelamento
+
+    
+# validaParametros.valida_Forma_Parcelamento("Venda")
+# validaParametros.valida_Configuracoes_OS()
+# validaParametros.valida_Config_Empresa()
 # validaParametros.valida_Forma_Parcelamento("Venda")
 # validaParametros.seleciona_forma_prazo()

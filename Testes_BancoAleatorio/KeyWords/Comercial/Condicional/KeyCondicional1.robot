@@ -85,7 +85,6 @@ Quando insiro vendedor e cliente
 
 Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
-    #IF    ${SelecionaProdutoComLinha}
     IF    ${Teste_Comissao_Linha}
 
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})

@@ -11,17 +11,17 @@ Resource    ../../../utils/utils.robot
 Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
-#Imagens
+# Imagens
 ${IMAGENS}    ./testes_bancoAleatorio/images
 
-#Conexão com banco de dados
+# Conexão com banco de dados
 ${DBHost}                                      ${config.IpServidor}
 ${DBName}                                      ${config.Database}
 ${DBPass}                                      vssql
 ${DBPort}                                      ${config.Porta}
 ${DBUser}                                      root
 
-#Sleep's
+# Sleep's
 ${SLEEP_BAIXO}                                 0.7
 ${SLEEP_MEDIO}                                 1.7
 ${SLEEP_ALTO}                                  3
@@ -63,8 +63,6 @@ Quando eu clico em adicionar
     ${Consulta}    Query    SELECT d.Codigo FROM doacoes d ORDER BY d.Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_DOACAO}    ${Consulta[0][0]}
     Sleep    ${SLEEP_BAIXO}
-
-    Log To Console    \nCódigo doação: ${COD_DOACAO}
 
 E adiciono vendedor e cliente
 

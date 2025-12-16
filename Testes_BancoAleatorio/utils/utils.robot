@@ -9,81 +9,83 @@ Library    Collections
 Resource    ./validacaoAviso.robot
 *** Variables ***
 # Sleep's    
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
+${SLEEP_BAIXO}                             0.7
+${SLEEP_MEDIO}                             1.5
+${SLEEP_ALTO}                              3
+${TEMPO_TELA}                              20
 
 # Telas
-${TELA_RECB_DUPLICATAS}                  tela_RecebimentoDuplicatas.png
-${TELA_IMPRESSAO}                        tela_Impressao.png
-${TELA_SOLICITACAO_SENHA_USUARIO}        tela_SolicitaSenha.png
-${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png
-${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
-${TELA_SOLICITACAO_CREDITO}              tela_SolicitaLiberacaoCredito.png
-${TELA_CONTROLE_CRÉDITO}                 tela_ControleDeCredito.png
-${TELA_CONFIRMA_LIBERACAO_CREDITO}       tela_ConfirmaLiberacao.png
-${TELA_DETALHAMENTO_SERVIÇO}             tela_DetalhamentoServico.png
-${TELA_FUNCIONARIO_COMISSIONADO}         modal_FuncionarioComissionadoServico.png
-${TELA_PERSONALIZACAO_PAGAMENTO}         modal_PersonalizacaoPagamento.png
-${TELA_RECEBIMENTO_CARTAO}               tela_RecebimentoCartaoCreditoDebito.png
-${TELA_MOVIMENTACAO_CONTA_CORRENTE}      tela_MovimentacaoContaCorrente.png
-${TELA_CONS_FINAL}                       tela_cons_final.png
-${TELA_TRANSP_FAT_NF}                    tela_TranspFatNotaFiscal.png
-${MODAL_LOCAL_NEGOCIACAO}                tela_LocalNegociacao.png
-${TELA_CONDICIONAIS}                     tela_Condicionais.png
-${TELA_DEVOLUÇÕES}                       tela_Devolucoes.png
-${TELA_ORCAMENTO}                        tela_Orcamento.png
-${TELA_ORDEM_DE_SERVICO}                 tela_OrdemDeServico.png
-${TELA_VENDAS}                           tela_VendasDeBalcao.png
-${TELA_PEDIDOS}                          tela_Pedidos.png
-${TELA_CONTAS_A_PAGAR_AVULSA}            tela_CadastroContasAPagar.png
-${TELA_NOTA_FISCAL_MANUAL}               tela_NotaFiscalPreenchimentoManual.png
-${TELA_COMISSOES}                        tela_Comissoes.png
-${CAIXA_PRINCIPAL}                       tela_CaixaPrinicipal.png
-${TELA_LIBERACAO_DESCONTO_MAXIMO}        tela_liberacaoDesconto.png
+${TELA_RECB_DUPLICATAS}                    tela_RecebimentoDuplicatas.png
+${TELA_IMPRESSAO}                          tela_Impressao.png
+${TELA_SOLICITACAO_SENHA_USUARIO}          tela_SolicitaSenha.png
+${TELA_OBSERVACAO_PRODUTO}                 tela_ObservacaoProduto.png
+${TELA_SELECIONA_TIPO_ENTREGA}             tela_SelecionaEntrega.png
+${TELA_SOLICITACAO_CREDITO}                tela_SolicitaLiberacaoCredito.png
+${TELA_CONTROLE_CRÉDITO}                   tela_ControleDeCredito.png
+${TELA_CONFIRMA_LIBERACAO_CREDITO}         tela_ConfirmaLiberacao.png
+${TELA_DETALHAMENTO_SERVIÇO}               tela_DetalhamentoServico.png
+${TELA_FUNCIONARIO_COMISSIONADO}           modal_FuncionarioComissionadoServico.png
+${TELA_PERSONALIZACAO_PAGAMENTO}           modal_PersonalizacaoPagamento.png
+${TELA_RECEBIMENTO_CARTAO}                 tela_RecebimentoCartaoCreditoDebito.png
+${TELA_MOVIMENTACAO_CONTA_CORRENTE}        tela_MovimentacaoContaCorrente.png
+${TELA_CONS_FINAL}                         tela_cons_final.png
+${TELA_TRANSP_FAT_NF}                      tela_TranspFatNotaFiscal.png
+${MODAL_LOCAL_NEGOCIACAO}                  tela_LocalNegociacao.png
+${TELA_CONDICIONAIS}                       tela_Condicionais.png
+${TELA_DEVOLUÇÕES}                         tela_Devolucoes.png
+${TELA_ORCAMENTO}                          tela_Orcamento.png
+${TELA_ORDEM_DE_SERVICO}                   tela_OrdemDeServico.png
+${TELA_VENDAS}                             tela_VendasDeBalcao.png
+${TELA_PEDIDOS}                            tela_Pedidos.png
+${TELA_CONTAS_A_PAGAR_AVULSA}              tela_CadastroContasAPagar.png
+${TELA_NOTA_FISCAL_MANUAL}                 tela_NotaFiscalPreenchimentoManual.png
+${TELA_COMISSOES}                          tela_Comissoes.png
+${CAIXA_PRINCIPAL}                         tela_CaixaPrinicipal.png
+${TELA_LIBERACAO_DESCONTO_MAXIMO}          tela_liberacaoDesconto.png
 
 # Telas Avisos
-${AVISO_SEM_ESTOQUE}                     aviso_QuantidadeSemEstoque.png
-${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}      aviso_JaIncluiuProdutoNoGrid.png
-${AVISO_USAR_ESSE_VENDEDOR}              aviso_UsarEsseVendedor.png
-${AVISO_EST_INSUFICIENTE_CONTINUAR}      aviso_EstoqueInsuficienteContinuar.png
-${AVISO_PRODUTO_JA_INCLUSO}              aviso_ProdutoJaIncluso.png
+${AVISO_SEM_ESTOQUE}                       aviso_QuantidadeSemEstoque.png
+${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}        aviso_JaIncluiuProdutoNoGrid.png
+${AVISO_USAR_ESSE_VENDEDOR}                aviso_UsarEsseVendedor.png
+${AVISO_EST_INSUFICIENTE_CONTINUAR}        aviso_EstoqueInsuficienteContinuar.png
+${AVISO_PRODUTO_JA_INCLUSO}                aviso_ProdutoJaIncluso.png
 
 # Botões
-${BT_CONFIRMA_CANAL_NEGOCIACAO}          bt_ConfirmarCanal.png
-${BT_SOLICITAR_CRÉDITO}                  bt_SolicitarCredito.png
-${BT_OK_LIBERACAO_CRÉDITO}               bt_OkLiberacaoCredito.png
-${BT_SETA_DIREITA}                       bt_SetaDireita.png
-${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}      bt_IncluirProdutoNFeSaidaManual.png
+${BT_CONFIRMA_CANAL_NEGOCIACAO}            bt_ConfirmarCanal.png
+${BT_SOLICITAR_CRÉDITO}                    bt_SolicitarCredito.png
+${BT_OK_LIBERACAO_CRÉDITO}                 bt_OkLiberacaoCredito.png
+${BT_SETA_DIREITA}                         bt_SetaDireita.png
+${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}        bt_IncluirProdutoNFeSaidaManual.png
+
+# Inputs
+${INPUT_COD_CLIENTE}                       lb_CodCliente.png
+${INPUT_COD_CLIENTE_VENDA}                 lb_CodClienteVenda.png
+${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}      lb_CodClienteOS.png
+${INPUT_COD_CLIENTE_CONDICIONAL}           lb_CodClienteCondicional.png
+${INPUT_CODIGO_CLIENTE_DEVOLUCAO}          lb_CodClienteDevolucao.png
+${INPUT_COD_BENEFICIADO_DOACAO}            lb_CodBeneficiadoDoacao.png
+${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}      input_CodCliente.png
+
+# Labels
+${LABEL_AVISO_CREDITO_LIBERADO}            lb_CreditoLiberado.png
+${LABEL_AVISO_CREDITO_LIBERADO2}           lb_CreditoLiberado2.png
+${LABEL_REF_PRODUTO}                       label_RefProduto.png
 
 # Outros
-${INPUT_COD_CLIENTE}                     lb_CodCliente.png
-${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
-${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}    lb_CodClienteOS.png
-${INPUT_COD_CLIENTE_CONDICIONAL}         lb_CodClienteCondicional.png
-${INPUT_CODIGO_CLIENTE_DEVOLUCAO}        lb_CodClienteDevolucao.png
-${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
-${CORRIGE_FOCO}                          corrigeFoco.png
-${LABEL_AVISO_CREDITO_LIBERADO}          lb_CreditoLiberado.png
-${LABEL_AVISO_CREDITO_LIBERADO2}         lb_CreditoLiberado2.png
-${MODAL_CANCELAR_VENDA}                  modal_SenhaDoSupervisor.png
-# ${SelecionaProdutoComLinha}              ${False}
-${SelecionaServicoComLinha}              ${False}
-${Vendedor_Selecionada_Escalonada}       ${False}
-${Valores_Parcelas}                      ${None}
-${INPUT_COD_BENEFICIADO_DOACAO}          lb_CodBeneficiadoDoacao.png
-${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}    input_CodCliente.png
-${LABEL_REF_PRODUTO}                     label_RefProduto.png
-${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
-${AJUSTE_FOCO_DEVOLUCAO}                 ajusteFocoDevolucao.png
-${QUANTIDADE_PRODUTOS}                   1
-${POSICAO_PARCELA}                       ${None}
-
-${Teste_Comissao_Escalonada}             ${False}
-${Teste_Comissao_Total_Venda}            ${False}
-${Teste_Comissao_Linha}                  ${False}
-${Teste_Comissao_Forma_Parcelamento}     ${False}
+${ROW_PROD_INCLUSO}                        row_ProdIncluso.png
+${CORRIGE_FOCO}                            corrigeFoco.png
+${MODAL_CANCELAR_VENDA}                    modal_SenhaDoSupervisor.png
+${SelecionaServicoComLinha}                ${False}
+${Vendedor_Selecionada_Escalonada}         ${False}
+${Valores_Parcelas}                        ${None}
+${AJUSTE_FOCO}                             bt_SetaUltimaVenda.png
+${AJUSTE_FOCO_DEVOLUCAO}                   ajusteFocoDevolucao.png
+${QUANTIDADE_PRODUTOS}                     1
+${POSICAO_PARCELA}                         ${None}
+${Teste_Comissao_Escalonada}               ${False}
+${Teste_Comissao_Total_Venda}              ${False}
+${Teste_Comissao_Linha}                    ${False}
+${Teste_Comissao_Forma_Parcelamento}       ${False}
 ${PercentualComissaoTotalVenda_Servico}    ${None}
 
 *** Keywords ***
@@ -292,7 +294,7 @@ Valida teste de comissão
     ${Teste_Comissao_Escalonada}            Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
     ${Teste_Comissao_Total_Venda}           Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
     ${Teste_Comissao_Linha}                 Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
-    ${Teste_Comissao_Forma_Parcelamento}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma
+    ${Teste_Comissao_Forma_Parcelamento}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma Parcelamento
     ${Teste_Comissao_Serviço}               Run Keyword And Return Status    Should Contain    ${TEST_NAME}    serviço
 
     Set Test Variable    ${Teste_Comissao_Escalonada}
@@ -358,7 +360,7 @@ Valida teste de comissão
 
             END
 
-            Log To Console    Comissão sobre o total da venda.
+            Log To Console    Comissão sobre total da venda.
 
         ELSE IF    ${Teste_Comissao_Linha}
 
@@ -378,19 +380,30 @@ Valida teste de comissão
                     
             END
 
-            #Set Test Variable    ${SelecionaProdutoComLinha}    ${True}
-
             Log To Console    Comissão por linha.
         
         ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
+            
+            # Necessário para os cenários de comissões por forma de parcelamento.
+            Set Test Variable    ${FORMA_PRAZO}
 
-            IF     '${Tipo_Comissao[0][0]}' != 'F'
+            IF    '${Tipo_Comissao[0][0]}' != 'F' or '${Tipo_Comissao[0][4]}' != '1'
 
                 Seleciona vendedor comissionado('F')
 
             END
+    
+            IF    ${FORMA_PRAZO[5]} == 0
 
-            Log To Console    Comissão do tipo sobre forma de parcelamento - SEM CASOS DE TESTE POR ENQUANTO.
+                ${FORMA_PRAZO}    validaParametros.Seleciona Forma Prazo Com Comissao
+                                
+            END
+
+            Set Test Variable    ${PercentualComissaoFormaParcParcela_Produto}    ${FORMA_PRAZO[5]}
+            Set Test Variable    ${FORMA_PRAZO}
+            Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
+
+            Log To Console    Comissão sobre formas de parcelamento.
 
         END
     
@@ -419,7 +432,6 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
         ELSE
 
             ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE ComissaoVendaProdutos = 1 AND ComissaoPercentualProdutos > 0 AND Tipo IN ('D','V') AND Ativo = -1 AND Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
-            Log To Console    codVendedor_Comissionado_ELSE_TotalVenda: ${codVendedor_Comissionado}
 
         END
 
@@ -442,7 +454,6 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
         ELSE
          
             ${codVendedor_Comissionado}    Query    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoVendaProdutos = 1 ORDER BY RAND() LIMIT 1;
-            Log To Console    codVendedor_Comissionado_ELSE: ${codVendedor_Comissionado}
 
         END
 
@@ -456,7 +467,6 @@ Seleciona vendedor comissionado(${Tipo_Selecionar})
 
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
 
-        # Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}\nTipo de comissão: ${Tipo_Selecionar}
         Log To Console    Código do vendedor comissionado: ${Codigo_Vendedor}
     
     END
@@ -951,7 +961,6 @@ Exclui ordem de entrega(${COD_OPERACAO})
     
     Execute Sql String    DELETE FROM produtos_entregues WHERE IDEntrega = (SELECT ID FROM entregas WHERE CodigoVenda = ${COD_OPERACAO});
     Execute Sql String    DELETE FROM entregas WHERE CodigoVenda = ${COD_OPERACAO};
-    # Log To Console    Apagou a ordem de entrega(Velha) e produtos entregues da operação de Código: ${COD_OPERACAO}
 
 Cancela venda com senha 
     

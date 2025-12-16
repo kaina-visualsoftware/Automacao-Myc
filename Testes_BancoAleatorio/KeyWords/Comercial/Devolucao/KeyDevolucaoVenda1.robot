@@ -275,7 +275,7 @@ Então finalizo a devolução
         Press Combination    KEY.ALT     Key.F 
         Sleep    ${SLEEP_BAIXO}
         
-        #Impressão do vale compra
+        # Impressão do vale compra
         Valida impressao direta de venda(${True})
 
         ${CodigoVale}    Query    SELECT ID FROM valecompra WHERE VendaOrigem = ${COD_DEVOLUCAO}
@@ -396,40 +396,32 @@ Calcula valor final da devolução
     ${somaValorTotalProdutosDevolucao}    Evaluate    0
     
     ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
-    Log To Console    consultaVendasProdutos: ${consultaVendasProdutos}
 
     ${consultaVendasProdutosDevolucao}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO} ORDER BY vp.Sequencia;
-    Log To Console    consultaVendasProdutosDevolucao: ${consultaVendasProdutosDevolucao}
 
     ${consultaQtdeProdutosDevolucao}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
 
     ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutosDevolucao[0][0]}
-    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
 
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
         
         ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
-        Log To Console    ProdutoValorUnitario: ${ProdutoValorUnitario}
 
         ${Produto_ValorTotalDev}    Set Variable    ${consultaVendasProdutosDevolucao[${i}][2]}
-        Log To Console    Produto_ValorTotalDev: ${Produto_ValorTotalDev}
 
         ${calcValorTotalProdutoDevolucao}    Evaluate    round((${Qtde_Devolvida_Produto} * ${ProdutoValorUnitario}), 2)
         ${calcValorTotalProdutoDevolucao}    Evaluate    ${calcValorTotalProdutoDevolucao} * (-1)
-        Log To Console    calcValorTotalProdutoDevolucao: ${calcValorTotalProdutoDevolucao}
 
         Should Be Equal    ${Produto_ValorTotalDev}    ${calcValorTotalProdutoDevolucao}
 
         ${somaValorTotalProdutosDevolucao}    Evaluate    round((${somaValorTotalProdutosDevolucao} + ${calcValorTotalProdutoDevolucao}), 2)
-        Log To Console    somaValorTotalProdutosDevolucao: ${somaValorTotalProdutosDevolucao}
         
     END
 
     Sleep    ${SLEEP_BAIXO}
+
     ${ValorTotalProdutosDevolucao}    Query    SELECT ROUND(SUM(vp.ValorTotal), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
-    Log To Console    ValorTotalProdutosDevolucao: ${ValorTotalProdutosDevolucao}
 
     Should Be Equal    ${ValorTotalProdutosDevolucao[0][0]}    ${somaValorTotalProdutosDevolucao}
 
     Set Test Variable    ${VALOR_FINAL_DEVOLUCAO}    ${ValorTotalProdutosDevolucao[0][0]}
-    Log To Console    VALOR_FINAL_DEVOLUCAO: ${VALOR_FINAL_DEVOLUCAO}

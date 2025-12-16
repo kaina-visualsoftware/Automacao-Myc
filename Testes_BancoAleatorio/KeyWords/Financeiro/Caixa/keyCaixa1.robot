@@ -199,8 +199,6 @@ E pesquiso pela conta a pagar gerada
     Informa a data de lançamento da conta a pagar
 
     Press Special Key    SPACE
-    # SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
-    # SikuliLibrary.Click    ${CHECKBOX_CONTA_A_PAGAR}
 
     Sleep    ${SLEEP_MEDIO}
 
@@ -321,7 +319,6 @@ Quando desmarco a opção somente a receber
     
     Sleep    ${SLEEP_BAIXO}
     ${apenasAReceberHabilitado}    Exists    ${LABEL_APENAS_A_RECEBER_HABILITADO}
-    Log To Console    apenasAReceberHabilitadoFORA: ${apenasAReceberHabilitado}
     
     WHILE    ${apenasAReceberHabilitado}
 
@@ -331,7 +328,6 @@ Quando desmarco a opção somente a receber
         Verifica se condicional existe(${Codigo_Cliente})
         
         ${apenasAReceberHabilitado}    Exists    ${LABEL_APENAS_A_RECEBER_HABILITADO}
-        Log To Console    apenasAReceberHabilitadoDENTRO: ${apenasAReceberHabilitado}
 
     END
 
@@ -339,9 +335,6 @@ Quando desmarco a opção somente a pagar
     
     SikuliLibrary.Click    ${LABEL_APENAS_A_PAGAR}
     Sleep    ${SLEEP_MEDIO}
-
-    #Press Special Key    TAB
-    #Press Special Key    TAB
 
 E dou um duplo clique na conta recém paga
     

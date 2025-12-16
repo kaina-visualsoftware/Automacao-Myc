@@ -89,7 +89,6 @@ Quando adiciono vendedor e cliente
 
 E adiciono um produto
 
-    #IF    ${SelecionaProdutoComLinha}
     IF    ${Teste_Comissao_Linha}
         
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaPreVendaSemEstoque})
@@ -134,6 +133,7 @@ Então finalizo o pedido
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
 
         Valida tela de liberação de desconto
+
     END
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
@@ -296,6 +296,7 @@ Valida baixa de estoque
     END
 
     Sleep    ${SLEEP_MEDIO}
+
     ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}    ${QTDE_BAIXA_PRODUTO}
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}

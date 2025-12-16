@@ -140,8 +140,6 @@ Dado que realizo uma devolução com mais de um produto(${QuantidadeDeProduto})
 Dado que realizo uma venda com múltiplos produtos totalmente recebida no caixa(${QuantidadeDeProduto})
 
     Dado que realizo uma venda com mais de um produto(${QuantidadeDeProduto})
-
-    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
     
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
         
@@ -174,7 +172,6 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
 
     ${DESCONTOS_COMISSOES}    Pesquisa comissões por escalonamento
     
-    Log To Console    DESCONTOS_COMISSOES[0][0]: ${DESCONTOS_COMISSOES[0][0]}
     Realizando venda com desconto ao finalizar(${DESCONTOS_COMISSOES[0][0]})
     
     Sleep    ${SLEEP_BAIXO}
@@ -186,7 +183,6 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     keyVendas1.E adiciono vendedor e cliente
     keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO})
     keyVendas1.E acesso a aba pagamentos
-    Log To Console    DESCONTOS_COMISSOES[1][0]: ${DESCONTOS_COMISSOES[1][0]}
     keyVendas1.Então finalizo a venda - Desconto(${DESCONTOS_COMISSOES[1][0]})
     utils.E saio da tela(Venda)
 
@@ -202,7 +198,6 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     Set Test Variable    ${Valor_Final_Vendas}
 
     ${somatorioVenda}    Evaluate    round(sum(${Valor_Final_Vendas}), 2)
-    Log To Console    somatorioVenda: ${somatorioVenda}
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${somatorioVenda}
 
@@ -313,15 +308,13 @@ Dado que realizo mais de uma venda(${Quantidade_Vendas})
         Sleep    ${SLEEP_MEDIO}
         
         Append To List    ${Codigos_Vendas}         ${CODIGO_OPERACAO_MOV}
-        Append To List    ${Codigos_de_Produtos}    ${COD_PRODUTO}
+        Append To List    ${Codigos_Produtos_Interno}    ${COD_PRODUTO}
 
     END
 
     Set Test Variable    ${Codigos_Vendas}
-    Log To Console    Vendas Geradas: ${Codigos_Vendas}
 
-    Set Test Variable    ${Codigos_de_Produtos}
-    Log To Console    Produtos em vendas geradas: ${Codigos_de_Produtos}
+    Set Test Variable    ${Codigos_Produtos_Interno}
 
 Dado que eu realizo uma doação
 
@@ -441,12 +434,63 @@ Dado que realizo uma ordem de serviço somente com serviço - A prazo
     KeyOrdemDeSevico1.E adiciono vendedor e cliente
     KeyOrdemDeSevico1.Quando insiro um serviço
     KeyOrdemDeSevico1.E acesso a aba pagamentos
-    KeyOrdemDeSevico1.Então finalizo a ordem de serviço
+    # KeyOrdemDeSevico1.Então finalizo a ordem de serviço
+    KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
 
 Dado que realizo uma ordem de serviço somente com serviço totalmente recebida no caixa - A prazo
 
     Dado que realizo uma ordem de serviço somente com serviço - A prazo
+
+    keyCaixa1.Quando acesso o caixa aberto
+    keyCaixa1.E vou para a aba de contas a receber
+    keyCaixa1.E pesquiso pela conta recém gerada
+    keyCaixa1.Então faço o recebimento da conta
+    utils.E saio da tela(CaixaPrincipal)
+
+Dado que realizo uma venda com múltiplos produtos com desconto - A prazo
+    [Arguments]    ${Quantidades}    ${Descontos}
+
+    ${Codigos_Produtos_Interno}    Create List
+    ${List_Quantidades_Produto}    Create List
+
+    keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+
+    ${QuantidadeDeProduto}    Get Length    ${Quantidades}
+
+    FOR    ${i}    IN RANGE    ${QuantidadeDeProduto}
+
+        ${Quantidade_Produto}    Get From List    ${Quantidades}    ${i}
+        ${Desconto_Produto}      Get From List    ${Descontos}      ${i}
+
+        Quando insiro um produto normal informando a quantidade e desconto    ${Quantidade_Produto}    ${Desconto_Produto}
+
+        # Essa validação é necessária porque, ao chamar a keyword "Quando insiro um produto normal informando a quantidade e desconto", a variável "${Codigos_Produtos}" inicia com valor ${None}.
+        IF    ${Codigos_Produtos} is None
+
+            ${Codigos_Produtos}    Create List
+            Set Test Variable    ${Codigos_Produtos}
+
+        END
+        
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
+
+    END
+
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
+
+    Set Test Variable    ${Codigos_Produtos}
+
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda - A Prazo
+    utils.E saio da tela(Venda)
+
+Dado que realizo uma venda com múltiplos produtos com desconto totalmente recebida no caixa
+    [Arguments]    ${Quantidades}    ${Descontos}
+
+    Dado que realizo uma venda com múltiplos produtos com desconto - A prazo    ${Quantidades}    ${Descontos}
 
     keyCaixa1.Quando acesso o caixa aberto
     keyCaixa1.E vou para a aba de contas a receber

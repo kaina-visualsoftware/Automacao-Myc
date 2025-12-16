@@ -23,7 +23,6 @@ ${TELA_SELECIONA_TABELA_PRECO}                         tela_TabelasPreco.png
 ${TELA_VENDAS_ANTERIORES}                              tela_ExibeAnteriores.png
 ${TELA_INDICACAO_VENDA}                                tela_QuemIndicou.png
 ${TELA_LIBERAÇÃO_DESCONTO_SENHA}                       tela_liberacaoDesconto.png
-#${TELA_VENCIMENTO_FIM_DE_SEMANA}                       tela_VencimentoFimDeSemana.png
 ${TELA_VENCIMENTO_FIM_DE_SEMANA}                       aviso_VencimentoFeriadoSabadoDomingo.png
 ${TELA_IMPRIMIR_ORDEM_ENTREGA}                         tela_ImprimirOrdemEntrega.png
 ${TELA_RECIBO_ENTRADA}                                 tela_ReciboEntrada.png
@@ -74,14 +73,18 @@ ${AVISO_EDITAR_OS_FINALIZADA}                          aviso_EditarOSFinalizadaS
 ${BT_NÃO}                                              bt_Nao.png
 ${BT_FECHAR_X}                                         bt_FecharX.png
 
-# Outros
+# Inputs
+${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
+
+# Labels
 ${LABEL_LIBERAÇÃO_SUPERVISOR}                          label_PasseOCartaoDeLiberacao.png
+${LABEL_COI_NFE}                                       lb_CoiNFe.png
+${LABEL_VALES_COMPRA_DISPONIVEIS}                      lb_ValesCompraDisponiveis.png
+
+# Outros
 ${EXPANDIR_COMBOBOX}                                   expandir_combobox.png
 ${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
 ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_consumidor.png
-${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
-${LABEL_COI_NFE}                                       lb_CoiNFe.png
-${LABEL_VALES_COMPRA_DISPONIVEIS}                      lb_ValesCompraDisponiveis.png
 
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
@@ -226,7 +229,7 @@ Verifica parâmetros que interferem na venda
 
     IF    ${Parametro_VendeSemEstoque} == ${False}
 
-        # Log To Console    Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
+        # Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
 
         Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
 
@@ -666,13 +669,9 @@ Verifica se cliente possui objeto vinculado
 
         ${Objeto_Cliente}    Query    SELECT NumeroSerie, Categoria FROM objetos WHERE CodigoCliente = ${Codigo_Cliente}
 
-        Log To Console    ${Objeto_Cliente}
-
         IF    "${Objeto_Cliente}" != "None"
 
             ${Check_List_Objeto}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM checklist WHERE Objeto LIKE '${Objeto_Cliente[0][1]}' AND `Status` LIKE 'g'
-
-            Log To Console    Possui Check List para o objeto? ${Check_List_Objeto}
 
             IF    ${Check_List_Objeto}
 
