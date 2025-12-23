@@ -87,6 +87,7 @@ ${Teste_Comissao_Total_Venda}              ${False}
 ${Teste_Comissao_Linha}                    ${False}
 ${Teste_Comissao_Forma_Parcelamento}       ${False}
 ${PercentualComissaoTotalVenda_Servico}    ${None}
+${OS_Vendedor_E_Tecnico_Diferentes}        ${False}
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
@@ -301,7 +302,6 @@ Valida teste de comissão
     Set Test Variable    ${Teste_Comissao_Total_Venda}
     Set Test Variable    ${Teste_Comissao_Linha}
     Set Test Variable    ${Teste_Comissao_Forma_Parcelamento}
-
     Set Test Variable    ${Teste_Comissao_Serviço}
 
     IF    ${Test_Comissao}
@@ -327,36 +327,44 @@ Valida teste de comissão
             Log To Console    Comissão escalonada${\n}Selecionar vendedor por tipo D
 
         ELSE IF    ${Teste_Comissao_Total_Venda}
+            
+            ${SelecionarVendedor}    Set Variable    ${False}
+            
+            IF    '${Tipo_Comissao[0][0]}' != 'T' or ('${Teste_Comissao_Serviço}' == 'True' and ${Tipo_Comissao[0][2]} != '1')
 
-            IF    ('${Tipo_Comissao[0][0]}' != 'T') or ('${Teste_Comissao_Serviço}' == 'True' and (${Tipo_Comissao[0][2]} == None or '${Tipo_Comissao[0][2]}' != '1'))
-
-                Seleciona vendedor comissionado('T')
+                ${SelecionarVendedor}    Set Variable    ${True}
 
             ELSE
 
-                IF    '${Tipo_Comissao[0][1]}' != 'None' and '${Tipo_Comissao[0][1]}' > '0.0'
+                IF    ${Tipo_Comissao[0][1]} != None and ${Tipo_Comissao[0][1]} > 0
 
                     Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Tipo_Comissao[0][1]}
 
                 ELSE
 
-                    Seleciona vendedor comissionado('T')
-               
-                END
+                    ${SelecionarVendedor}    Set Variable    ${True}
 
+                END
+                
                 IF    ${Teste_Comissao_Serviço}
 
-                    IF    '${Tipo_Comissao[0][3]}' != 'None' and '${Tipo_Comissao[0][3]}' > '0.0'
+                    IF    ${Tipo_Comissao[0][3]} != None and ${Tipo_Comissao[0][3]} > 0
 
                         Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Tipo_Comissao[0][3]}
 
                     ELSE
 
-                        Seleciona vendedor comissionado('T')
-                        
+                        ${SelecionarVendedor}    Set Variable    ${True}
+
                     END
 
                 END
+
+            END
+
+            IF    ${SelecionarVendedor}
+
+                Seleciona vendedor comissionado('T')
 
             END
 
@@ -364,11 +372,19 @@ Valida teste de comissão
 
         ELSE IF    ${Teste_Comissao_Linha}
 
+            ${SelecionarVendedor}    Set Variable    ${False}
+
             IF    '${Tipo_Comissao[0][0]}' != 'L' or '${Tipo_Comissao[0][4]}' != '1'
 
-                Seleciona vendedor comissionado('L')
+                ${SelecionarVendedor}    Set Variable    ${True}
 
             ELSE IF    '${Teste_Comissao_Serviço}' == 'True' and (${Tipo_Comissao[0][2]} == None or '${Tipo_Comissao[0][2]}' != '1')
+
+                ${SelecionarVendedor}    Set Variable    ${True}
+
+            END
+
+            IF    ${SelecionarVendedor}
 
                 Seleciona vendedor comissionado('L')
 
@@ -384,10 +400,18 @@ Valida teste de comissão
         
         ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
             
+            ${SelecionarVendedor}    Set Variable    ${False}
+
             # Necessário para os cenários de comissões por forma de parcelamento.
             Set Test Variable    ${FORMA_PRAZO}
 
             IF    '${Tipo_Comissao[0][0]}' != 'F' or '${Tipo_Comissao[0][4]}' != '1'
+
+                ${SelecionarVendedor}    Set Variable    ${True}
+
+            END
+
+            IF    ${SelecionarVendedor}
 
                 Seleciona vendedor comissionado('F')
 
@@ -489,7 +513,7 @@ Inserir serviço
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
-    ${codServico}    Query    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 AND TabelaComissao IS NULL;
+    ${codServico}    Query    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 AND TabelaComissao IS NULL ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
     
     ${condicao}    Run Keyword And Return Status    Check If Exists In Database    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 ORDER BY RAND() LIMIT 1;
@@ -525,9 +549,9 @@ Inserir serviço
             Input Text    ${EMPTY}    1
             
         ELSE
-            
-            Input Text    ${EMPTY}    ${Codigo_Vendedor}
 
+            Input Text    ${EMPTY}    ${Codigo_Vendedor}
+                
             Press Special Key    TAB
             Sleep    ${SLEEP_BAIXO}
 

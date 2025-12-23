@@ -50,11 +50,20 @@ ${AVISO_CONFIRMAÇÃO_BAIXA}              aviso_confirmacaoBaixaContaPagar.png
 ${AVISO_BAIXA_VALE_COMPRA}              aviso_BaixaValeCompra.png
 ${AVISO_COMISSAO_ZERADA}                aviso_ComissaoZerada.png
 ${AVISO_SEM_DADOS_PARA_EXIBICAO}        aviso_SemDadosParaExibicao.png
+${AVISO_PERIODO_COM_LOTE_PAGAMENTO}     aviso_PeriodoComLotePagamento.png
 
 # Botões
 ${BT_BAIXAR}                            bt_Baixar.png
 ${BT_OK}                                bt_OkComisssao.png
 ${BT_FECHAR}                            bt_fechar.png
+
+# Checkbox
+${CHECK_BOX_SELE_TODOS}                 checkBox_Comissao.png
+${CHECKBOX_CONTASPAGAR}                 checkBox_ContasPagar.png
+${CHECK_BOX_SELE_TODOS_SERVICO}         checkBox_ComissaoServico.png
+${CHECKBOX_COMISSAO_FOCO_GRID}          checkBox_ComissaoFocoGrid.png
+${CHECKBOX_CONTA_FOCO_GRID}             checkBoxContaFocoGrid.png
+${CHECKBOX_CONTA_FOCO_GRID_2}           checkBox_ComissaoFocoGrid2.png
 
 # Inputs
 ${INPUT_NUMERO_DOCUMENTO}               caixa_PesquisaPorNDoc.png
@@ -66,39 +75,40 @@ ${LABEL_STATUS_ABERTO}                  lb_StatusAbertoCaixa.png
 ${LABEL_GERANDO_RELATORIO_AGUARDE}      lb_GerandoRelatorioAguarde.png
 ${LABEL_COD_VENDEDOR_RELATORIO}         lb_CodVendRelatComissoes.png
 
-# Outros
-${LISTAGEM_GRID}                        grid_Comissoes.png
-${CHECK_BOX_SELE_TODOS}                 checkBox_Comissao.png
-${Quantidade_Zeros_Incluidos}
+# Radio Buttons
+${RADIOBT_COMISSOES_AGENDADAS}          radioBT_Agendadas.png
+${RADIOBT_VISUALIZAR_IMPRESSAO}         radioBT_Visualizar_Impressao.png
+${RADIOBT_COMISSOES_PENDENTES}          radioBT_Pendentes.png
+
+# Menus
 ${MENU_FINANCEIRO}                      menu_Financeiro.png
 ${MENU_COMERCIAL}                       menu_Comercial.png
+${MENU_RELATORIOS}                      menu_Relatorios.png
+${SUBMENU_RELATORIOS_COMISSOES}         subMenu_Relatorios_Comissoes.png
 ${SUB_MENU_COMISSOES}                   subMenu_Comissoes.png
+
+# Outros
+${LISTAGEM_GRID}                        grid_Comissoes.png
+${Quantidade_Zeros_Incluidos}
 ${ABA_A_PAGAR}                          aba_contasAPagar.png
 ${GRID_COMISSOES_PAGAR}                 grid_ComissoesPagar.png
-${CHECKBOX_CONTASPAGAR}                 checkBox_ContasPagar.png
 ${Total_Comissao}                       ${0}
 ${Total_Comissao_Final}                 ${0}
 ${COL_LOTE}                             grid_ComissoesLote.png
 ${ABA_SERVICOS}                         aba_servicosSelecionada.png
-${CHECK_BOX_SELE_TODOS_SERVICO}         checkBox_ComissaoServico.png
 ${SETA_ESQUERDA_GRID}                   setaEsqGrid.png
-${CHECKBOX_COMISSAO_FOCO_GRID}          checkBox_ComissaoFocoGrid.png
-${CHECKBOX_CONTA_FOCO_GRID}             checkBoxContaFocoGrid.png
-${CHECKBOX_CONTA_FOCO_GRID_2}           checkBox_ComissaoFocoGrid2.png
 ${GRID_SEM_REGISTROS}    	            grid_ComissoesSemRegistros.png
 ${NomeTerminalExecucao}                 ${config.terminal_name}
 ${GUIA_COMISSOES_PAGAS_AGENDADAS}       guia_ComissoesPagasAgendadas.png
 ${TOOLTIP_ATALHOS_DATA}                 tooltip_AtalhosData.png
 ${j}                                    ${0}
-${MENU_RELATORIOS}                      menu_Relatorios.png
-${SUBMENU_RELATORIOS_COMISSOES}         subMenu_Relatorios_Comissoes.png
-${RADIOBT_COMISSOES_AGENDADAS}          radioBT_Agendadas.png
-${RADIOBT_VISUALIZAR_IMPRESSAO}         radioBT_Visualizar_Impressao.png
-${RADIOBT_COMISSOES_PENDENTES}          radioBT_Pendentes.png
 ${Total_Comissao_Venda}                 ${0}
 ${Total_Comissao_Produtos}              ${0}
 ${Total_Comissao_Servicos}              ${0}
 ${Teste_Cenario_Sem_Dados_Exibicao}     ${False}
+${Comissao_SomenteRecebidas}            ${False}
+${Teste_Comissao_Produto}               ${False}
+${Teste_Comissao_Servico}               ${False}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -156,6 +166,8 @@ Pesquisa código da operação com zeros a esquerda
     Press Special Key    SPACE
 
 E seleciono a comissão da venda
+
+    Set Test Variable    ${Teste_Comissao_Produto}    ${True}
 
     Sleep    ${SLEEP_BAIXO}
     ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
@@ -223,7 +235,9 @@ E seleciono a comissão da venda
 
     END
 
-E seleciono a comissao do servico
+E seleciono a comissão do serviço
+    
+    Set Test Variable    ${Teste_Comissao_Servico}    ${True}
 
     Sleep    ${SLEEP_BAIXO}
     ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
@@ -263,6 +277,8 @@ E seleciono a comissao do servico
     END
 
 E seleciono a comissão da venda e devolução
+
+    Set Test Variable    ${Teste_Comissao_Produto}    ${True}
 
     Press Combination    KEY.ALT    KEY.I
     Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
@@ -362,11 +378,22 @@ E baixo a comissao recém recebida
         Wait Until Screen Contain    ${AVISO_BAIXA_SUCESSO}    ${TEMPO_TELA}
         Press Special Key    ENTER
 
+        IF    ${Comissao_SomenteRecebidas}
+
+            Wait Until Screen Contain    ${AVISO_PERIODO_COM_LOTE_PAGAMENTO}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Special Key    ENTER
+            
+        END
+
         Wait Until Screen Not Contain    ${TELA_AGENDAMENTO}    ${TEMPO_TELA}
 
-        ${id_comissao}    Query    SELECT ID FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
+        ${query_ComissoesPagas}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
 
-        Set Test Variable    ${NDoc_Comissao}    ${id_comissao[0][0]}
+        Should Be Equal As Numbers    ${query_ComissoesPagas[0][1]}    ${Total_Comissao}
+
+        Set Test Variable    ${NDoc_Comissao}    ${query_ComissoesPagas[0][0]}
 
     END
 
@@ -503,6 +530,8 @@ E seleciono somente as recebidas
 
     Informa a data atual na data de recebimento
 
+    Set Test Variable    ${Comissao_SomenteRecebidas}    ${True}
+
 Calcula comissão sobre total da venda - Venda
 
     # ${calcComissaoProduto}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissaoTotalVenda_Produto} / 100)), 2)
@@ -535,7 +564,6 @@ Calcula comissão por linha de produto - múltiplos produtos
         ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao_Venda} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
 
         Set Suite Variable    ${PERCENT_COMISSAO}
-        Log To Console    PERCENT_COMISSAO: ${PERCENT_COMISSAO}
 
     END
 
@@ -544,10 +572,6 @@ Calcula comissão por linha de produto - múltiplos produtos
 
     Set Test Variable    ${Total_Comissao_Venda}
     Set Test Variable    ${Total_Comissao}
-
-    Log To Console    Total_Comissao_Venda: ${Total_Comissao_Venda}
-    Log To Console    Total_Comissao: ${Total_Comissao}
-    Log To Console    % Comissao final: ${PERCENT_COMISSAO}
 
 Calcula comissão por linha de produto - apenas 1 produto
 
@@ -656,14 +680,20 @@ Calcula comissão por linha de serviço - apenas 1 serviço
 Informa a data atual na data de recebimento
 
     Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+    
+    ${dataInicial}    Copia data do campo e converte para o formato ISO 8601
+    Sleep    ${SLEEP_BAIXO}
 
     Type With Modifiers    H
     Press Special Key    TAB
+
     Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
 
     Type With Modifiers    H
+    ${dataFinal}    Copia data do campo e converte para o formato ISO 8601
     Press Special Key    TAB
 
+    Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
 
 Calcula comissão por linha de produto - por parcela personalizada
 
@@ -690,7 +720,6 @@ Calcula comissão por linha de produto - por parcela personalizada
         ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${somaComissaoParcela})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[0][1]})) * decimal.Decimal("100")    modules=decimal
 
         Set Suite Variable    ${PERCENT_COMISSAO}
-        Log To Console    PERCENT_COMISSAO: ${PERCENT_COMISSAO}
 
     END
  
@@ -702,7 +731,10 @@ Calcula comissão por linha de produto - por parcela personalizada
     Set Test Variable    ${Total_Comissao_Venda}    ${calcComissaoTotalParcela}
     Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao_Venda}
 
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Venda}
+    ${Total_Comissao}    Evaluate    decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Venda}))    modules=decimal
+
+    # Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Venda}
+    Set Test Variable    ${Total_Comissao}
 
     ${j}    Evaluate    ${j} + 1
     Set Test Variable    ${j}
@@ -763,9 +795,22 @@ Calcula comissão sobre total da venda - OS
         
     END
 
-    # ${Total_Comissao_OS}    Evaluate    round((${Total_Comissao_Produtos} + ${Total_Comissao_Servicos}), 2)
-    ${Total_Comissao_OS}    Evaluate    (decimal.Decimal(str(${Total_Comissao_Produtos})) + decimal.Decimal(str(${Total_Comissao_Servicos}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    IF    '${Teste_Comissao_Produto}' == 'True' and '${Teste_Comissao_Servico}' == 'True'
 
+        # ${Total_Comissao_OS}    Evaluate    round((${Total_Comissao_Produtos} + ${Total_Comissao_Servicos}), 2)
+        ${Total_Comissao_OS}    Evaluate    (decimal.Decimal(str(${Total_Comissao_Produtos})) + decimal.Decimal(str(${Total_Comissao_Servicos}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    
+    ELSE IF    ${Teste_Comissao_Servico}
+
+        ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${Total_Comissao_Servicos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    
+    ELSE IF    ${Teste_Comissao_Produto}
+
+        ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    END
+
+    Set Test Variable    ${Total_Comissao_OS}
     Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
 
 Dado que acesso a tela de relatório de comissão
@@ -818,6 +863,8 @@ E gero o relatório de comissões(${tipo})
         
         Press Special Key    ENTER
 
+        Log To Console    "Sem Dados Para Exibição" conforme esperado no Teste 18.
+
     ELSE
 
         Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${TEMPO_TELA} 
@@ -856,6 +903,7 @@ Validação de comissões pendentes
 
         Set Test Variable    ${Teste_Cenario_Sem_Dados_Exibicao}    ${True}
         
+
     END
 
     ${qtdeRegistro}    Query    SELECT COUNT(*) FROM (SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV}) AS qtdeRegistro;
@@ -905,3 +953,22 @@ Informa o vendedor
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
 
     Press Special Key    TAB
+
+Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
+    
+    Sleep    ${SLEEP_BAIXO}
+    Execute Sql String    DELETE cpv FROM comissoespagasvendas cpv INNER JOIN comissoespagas cp ON cp.ID = cpv.NComissao WHERE cp.PInicial >= '${dataInicial}' AND cp.PFinal <= '${dataFinal}' AND cp.CodigoVendedor = ${Codigo_Vendedor} AND cp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+    
+    Sleep    ${SLEEP_MEDIO}
+    Execute Sql String    DELETE FROM comissoespagas WHERE PInicial >= '${dataInicial}' AND PFinal <= '${dataFinal}' AND CodigoVendedor = ${Codigo_Vendedor} AND Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+Copia data do campo e converte para o formato ISO 8601
+
+    Key Down            CTRL
+    Press Combination   C
+    Key Up              CTRL
+
+    ${data_copiada}    Get Clipboard Content
+    ${dataInicial}    Evaluate    __import__('datetime').datetime.strptime('${data_copiada}'.strip(), '%d/%m/%Y').strftime('%Y-%m-%d')
+
+    RETURN    ${dataInicial}

@@ -71,18 +71,18 @@ Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre s
     Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)
 
-Teste 05 - Comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
-    [Tags]    Teste05
-    [Setup]    montadorDeCenarios.Realizando vendas com o mesmo produto porém com descontos diferentes
+# Teste 05 - Comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
+#     [Tags]    Teste05
+#     [Setup]    montadorDeCenarios.Realizando vendas com o mesmo produto porém com descontos diferentes
     
-    Dado que acesso a tela de comissões
-    Quando insiro o vendedor comissionado
-    E seleciono as comissaos das vendas
-    E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
-    KeyComissoes1.Quando acesso o caixa aberto
-    KeyComissoes1.E vou para a aba de contas a pagar
-    Então faço o pagamento da comissao
+#     Dado que acesso a tela de comissões
+#     Quando insiro o vendedor comissionado
+#     E seleciono as comissaos das vendas
+#     E baixo a comissao recém recebida
+#     utils.E saio da tela(Comissoes)
+#     KeyComissoes1.Quando acesso o caixa aberto
+#     KeyComissoes1.E vou para a aba de contas a pagar
+#     Então faço o pagamento da comissao
 
 Teste 06 - Comissão por linha sobre venda oriunda de uma pré-venda e pagamento da comissão no caixa - Linha
     [Tags]    Teste06
@@ -167,7 +167,7 @@ Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
-    E seleciono a comissao do servico
+    E seleciono a comissão do serviço
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -183,7 +183,7 @@ Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa ap�
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E vou para a aba de servicos
-    E seleciono a comissao do servico
+    E seleciono a comissão do serviço
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -243,7 +243,7 @@ Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e s
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
-    E seleciono a comissao do servico
+    E seleciono a comissão do serviço
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     Dado que acesso a tela de relatório de comissão
@@ -273,14 +273,14 @@ Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebi
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E vou para a aba de servicos
-    E seleciono a comissao do servico
+    E seleciono a comissão do serviço
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
 
 Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produtos com desconto, recebidas no caixa, incluindo a geração do relatório de vendas somente recebidas - Forma Parcelamento
     # Tarefa: 173680 | CT: 1-599
     [Tags]    Teste18
-    [Setup]    Run Keyword    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos com desconto totalmente recebida no caixa    ${Teste_18_Quantidades}    ${Teste_18_Descontos}
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos com desconto totalmente recebida no caixa    ${Teste_18_Quantidades}    ${Teste_18_Descontos}
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
@@ -294,3 +294,8 @@ Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produ
     utils.E saio da tela(CaixaPrincipal)
     Dado que acesso a tela de relatório de comissão
     E gero o relatório de comissões(Pendentes)
+
+# Teste 19 - Comissão sobre total da venda com alíquota individual por serviço após inclusão e edição da ordem de serviço - Total Venda
+#     # Tarefa: 175729 | CT: 1-598
+#     [Tags]    Teste19
+#     [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo

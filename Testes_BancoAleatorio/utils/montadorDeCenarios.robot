@@ -434,7 +434,6 @@ Dado que realizo uma ordem de serviço somente com serviço - A prazo
     KeyOrdemDeSevico1.E adiciono vendedor e cliente
     KeyOrdemDeSevico1.Quando insiro um serviço
     KeyOrdemDeSevico1.E acesso a aba pagamentos
-    # KeyOrdemDeSevico1.Então finalizo a ordem de serviço
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
 
@@ -447,6 +446,12 @@ Dado que realizo uma ordem de serviço somente com serviço totalmente recebida 
     keyCaixa1.E pesquiso pela conta recém gerada
     keyCaixa1.Então faço o recebimento da conta
     utils.E saio da tela(CaixaPrincipal)
+
+Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo
+
+    Set Test Variable    ${OS_Vendedor_E_Tecnico_Diferentes}    ${True}
+
+    Dado que realizo uma ordem de serviço somente com serviço - A prazo
 
 Dado que realizo uma venda com múltiplos produtos com desconto - A prazo
     [Arguments]    ${Quantidades}    ${Descontos}
