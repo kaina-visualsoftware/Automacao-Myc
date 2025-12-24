@@ -275,6 +275,9 @@ Quando clico em editar
 E excluo os pagamentos lançados
 
     validacaoAviso.Valida cliente com vales compra disponíveis
+
+    # Implementação por conta da tarefa 180120
+        SikuliLibrary.Click    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT     Key.M 
