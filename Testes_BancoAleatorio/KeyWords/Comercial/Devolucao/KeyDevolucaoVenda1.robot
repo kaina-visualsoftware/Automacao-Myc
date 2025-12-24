@@ -31,6 +31,7 @@ ${TEMPO_TELA}                          20
 # Telas
 ${TELA_DEVOLUÇÕES}                     tela_Devolucoes.png
 ${TELA_DEVOLUÇÕES_AVULSA_ADICIONAR}    tela_DevolucaoAvulsaAdicionar.png
+${TELA_DEVOLUÇÕES_ADICIONAR}           tela_DevolucoesAdicionar.png
 
 # Inputs
 ${INPUT_VENDA/OS}                      lb_CodVendaOs.png
@@ -61,7 +62,8 @@ Dado que acesso a tela de devoluções de vendas/OS
 
 Quando adiciono uma nova devolução
 
-    Press Combination    KEY.ALT     Key.A
+    Press Combination    KEY.ALT    KEY.A
+    Wait Until Screen Contain    ${TELA_DEVOLUÇÕES_ADICIONAR}    ${TEMPO_TELA}
 
     IF     ${Parametro_DevolucaoAvulsa}
 

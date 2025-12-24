@@ -308,13 +308,13 @@ Dado que realizo mais de uma venda(${Quantidade_Vendas})
         Sleep    ${SLEEP_MEDIO}
         
         Append To List    ${Codigos_Vendas}         ${CODIGO_OPERACAO_MOV}
-        Append To List    ${Codigos_Produtos_Interno}    ${COD_PRODUTO}
-
+        Append To List    ${Codigos_de_Produtos}    ${COD_PRODUTO}
+        
     END
 
     Set Test Variable    ${Codigos_Vendas}
 
-    Set Test Variable    ${Codigos_Produtos_Interno}
+    Set Test Variable    ${Codigos_de_Produtos}
 
 Dado que eu realizo uma doação
 
@@ -456,7 +456,6 @@ Dado que realizo uma ordem de serviço somente com serviço, com vendedor e téc
 Dado que realizo uma venda com múltiplos produtos com desconto - A prazo
     [Arguments]    ${Quantidades}    ${Descontos}
 
-    ${Codigos_Produtos_Interno}    Create List
     ${List_Quantidades_Produto}    Create List
 
     keyVendas1.Dado que acesso a tela de vendas de balcão

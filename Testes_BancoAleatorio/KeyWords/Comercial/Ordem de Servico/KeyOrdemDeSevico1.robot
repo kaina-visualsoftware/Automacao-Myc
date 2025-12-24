@@ -634,7 +634,7 @@ Então realizo o faturamento da NFSe
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.G
-    Wait Until Screen Contain    ${LABEL_AGUARDE_GERANDO_NFSE}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${LABEL_AGUARDE_GERANDO_NFSE}    ${TEMPO_TELA}
 
     Valida faturamento de NFSe
     
