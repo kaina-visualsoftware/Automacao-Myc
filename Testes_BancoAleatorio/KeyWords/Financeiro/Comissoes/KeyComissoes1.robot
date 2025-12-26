@@ -865,7 +865,7 @@ E gero o relatório de comissões(${tipo})
         
         Press Special Key    ENTER
 
-        Log To Console    "Sem Dados Para Exibição" conforme esperado no Teste 18.
+        Log To Console    \n"Sem Dados Para Exibição" conforme esperado no Teste 18.
 
     ELSE
 

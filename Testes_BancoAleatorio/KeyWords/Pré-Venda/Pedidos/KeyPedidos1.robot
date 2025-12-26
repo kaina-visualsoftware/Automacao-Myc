@@ -40,6 +40,7 @@ ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    tela_exclusaoVenda.png
 # Botões
 ${BT_WORKFLOW}                  bt_Workflow.png
 ${AJUSTE_FOCO}                  bt_SetaUltimaVenda.png
+${BT_ADICIONAR}                 bt_Adicionar.png
 
 # Labels
 ${LABEL_SITUACAO_TODOS}         lb_SituacaoTodosPreVenda.png
@@ -72,8 +73,9 @@ Dado que acesso a tela de pedidos
     Set Test Variable    ${EntradaIgualA_Outros}
 
 E clico em adicionar
-
-    Press Combination    KEY.ALT     Key.A
+    
+    SikuliLibrary.Click    ${BT_ADICIONAR}
+    # Press Combination    KEY.ALT    KEY.A
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 

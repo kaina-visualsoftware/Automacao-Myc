@@ -49,6 +49,7 @@ ${RETORNO_NFS}                           retornoNFS.png
 # Botões
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
+${BT_ADICIONAR}                          bt_Adicionar.png
 
 # Inputs
 ${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
@@ -89,8 +90,9 @@ Dado que acesso a tela de ordens de serviços
     Sleep    ${SLEEP_BAIXO}
 
 Quando pressiono o atalho de adicionar
-
-    Press Combination    KEY.ALT    KEY.A
+    
+    SikuliLibrary.Click    ${BT_ADICIONAR}
+    # Press Combination    KEY.ALT    KEY.A
     Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}

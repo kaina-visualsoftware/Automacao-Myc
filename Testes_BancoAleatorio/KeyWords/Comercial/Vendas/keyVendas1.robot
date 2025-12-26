@@ -68,6 +68,7 @@ ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizad
 ${BT_OK}                                 bt_Ok.png
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
+${BT_ADICIONAR}                          bt_Adicionar.png
 
 # Outros
 ${ALERTA_CLIENTE}                        alertaCliente.png
@@ -116,7 +117,8 @@ Quando pressiono o atalho de adicionar
 
     Verifica parâmetros que interferem na venda
 
-    Press Combination    KEY.ALT    KEY.A
+    SikuliLibrary.Click    ${BT_ADICIONAR}
+    # Press Combination    KEY.ALT    KEY.A
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${Parametro_Local_Negociacao}
