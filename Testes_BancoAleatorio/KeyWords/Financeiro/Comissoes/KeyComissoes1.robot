@@ -438,7 +438,7 @@ Então faço o pagamento da comissao
     Press Combination    KEY.ALT    KEY.C
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
 
     IF    ${Parametro_CaixaControladoPorUsuario}
 
