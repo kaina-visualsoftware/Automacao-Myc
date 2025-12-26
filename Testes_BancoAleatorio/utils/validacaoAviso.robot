@@ -89,7 +89,7 @@ ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_c
 ***Keywords***
 Verifica se condicional existe(${Codigo_Cliente})
     
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${Condicional_existe}    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
 
     IF    ${Condicional_existe}
@@ -399,11 +399,13 @@ Valida condicional aberto
 
     Sleep    ${SLEEP_ALTO}
     ${MSG}    Exists    ${AVISO_CONDICIONAL_ABERTO}
+    Sleep    ${SLEEP_MEDIO}
     ${MSG2}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
 
     IF    ${MSG}
-
-        Press Combination    KEY.ALT     Key.N
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    KEY.N
         Sleep    ${SLEEP_BAIXO}
 
     ELSE IF    ${MSG2}

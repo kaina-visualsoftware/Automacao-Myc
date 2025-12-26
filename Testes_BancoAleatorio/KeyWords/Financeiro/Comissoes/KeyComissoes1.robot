@@ -376,6 +376,8 @@ E baixo a comissao recém recebida
     ELSE
 
         Wait Until Screen Contain    ${AVISO_BAIXA_SUCESSO}    ${TEMPO_TELA}
+        
+        Sleep    ${SLEEP_BAIXO}
         Press Special Key    ENTER
 
         IF    ${Comissao_SomenteRecebidas}
