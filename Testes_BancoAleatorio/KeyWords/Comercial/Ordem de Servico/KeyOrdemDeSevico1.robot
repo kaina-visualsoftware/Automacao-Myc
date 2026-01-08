@@ -5,6 +5,7 @@ Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
 Library    Process
 Library    ../../../libs/verificacoesExtras.py
+Library    XML
 Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/validacaoAviso.robot
@@ -33,12 +34,13 @@ ${TELA_ADICIONAR_ORDEM_DE_SERVICO}       tela_OrdemDeServicoAdicionar.png
 ${TELA_FATURAMENTO_OS}                   modal_OpcoesDeFaturamento.png
 ${TELA_IMPRIME_CARNE_OS}                 tela_ImprimeCarneOS.png
 ${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png
-${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPagOS.png
+${TELA_EXCLUIR_PAGAMENTOS_OS}            aviso_ExcluirPagOS.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
 ${TELA_CHECKLIST}                        tela_CheckList.png
 ${TELA_NFS-E}                            tela_NFSe.png
 ${TELA_OPCOES_FATURAMENTO}               tela_OpcoesFaturamento.png
+${GUIA_SERVICOS_OS}                      guia_ServicosOS.png
 
 # Telas Avisos
 ${AVISO_NFSE_REJEITADA}                  aviso_NFSeRejeitada.png
@@ -50,23 +52,31 @@ ${RETORNO_NFS}                           retornoNFS.png
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${BT_ADICIONAR}                          bt_Adicionar.png
+${BT_EDITAR}                             bt_Editar.png
 
 # Inputs
 ${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
+${INPUT_QUANTIDADE_SERVICO}              input_QuantidadeServico.png
 
 # Labels
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png
 ${LABEL_AGUARDE_GERANDO_NFSE}            lb_AguardeGerandoNFSe.png
 ${LABEL_EMITIR_BOLETOS}                  lb_EmitirBoletos.png
+${LABEL_CRITERIO_CODIGO_OS}              label_CriterioCodigo_OS.png
+${LABEL_CODIGO_GRID}                     lb_Codigo_Grid.png
 
 # Rows
 ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}              Outros...
-${Quantidade_Produto}                    ${1}
 ${OS_PossuiProduto}                      ${False}
 ${OS_PossuiServico}                      ${False}
+${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
+${Quantidade_Produto}                    ${1}
+${Quantidade_Servico}                    ${1}
+${List_Quantidades_Produto}              ${None}
+${List_Quantidades_Servico}              ${None}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -92,7 +102,7 @@ Dado que acesso a tela de ordens de serviços
 Quando pressiono o atalho de adicionar
     
     SikuliLibrary.Click    ${BT_ADICIONAR}
-    # Press Combination    KEY.ALT    KEY.A
+    
     Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
@@ -120,11 +130,17 @@ E adiciono vendedor e cliente
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-Quando insiro um serviço
+E insiro um serviço informando a quantidade(${Quantidade_Servico})
 
-    IF    ${SelecionaServicoComLinha}
+    IF    ${OS_Vendedor_E_Tecnico_Diferentes}
 
-        utils.Seleciona servico com linha de comissao
+        Seleciona técnico executor do serviço
+
+    END
+    
+    IF    ${Teste_Comissao_Linha_Servico}
+
+        utils.Seleciona serviço com linha de comissão
 
     ELSE
 
@@ -132,7 +148,11 @@ Quando insiro um serviço
 
     END
 
-    Valida o abatimento dos tributos no valor do serviço
+    Informa a quantidade do serviço(${Quantidade_Servico})
+
+    utils.Validação após incluir serviço
+
+    utils.Insere funcionários comissionados por serviço
 
     Set Test Variable    ${OS_PossuiServico}    ${True}
 
@@ -186,21 +206,21 @@ Então finalizo a ordem de serviço
     Calcula valor final da OS
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.D
+    Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
     Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
         
-        Valida tela de liberação de desconto 
+        Valida tela de liberação de desconto
 
     END
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
 
     Valida check list
 
@@ -246,7 +266,7 @@ Então finalizo a ordem de serviço
 
     Valida avisos ao finalizar Ordem de serviço
 
-    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORDEM_SERVICO}
@@ -256,7 +276,7 @@ Então finalizo a ordem de serviço
 Então visualizo a ordem de serviço
     
     Sleep    ${SLEEP_MEDIO}
-    Press Combination    KEY.ALT     Key.V 
+    Press Combination    KEY.ALT    KEY.V 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
@@ -267,7 +287,7 @@ Quando clico em editar
     
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT    KEY.E
+    SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}
 
     validacaoAviso.Valida edição de ordem de serviço finalizada
@@ -279,17 +299,17 @@ E excluo os pagamentos lançados
     validacaoAviso.Valida cliente com vales compra disponíveis
 
     # Implementação por conta da tarefa 180120
-        SikuliLibrary.Click    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}
+    SikuliLibrary.Click    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M 
+    Press Combination    KEY.ALT    KEY.M 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
     SikuliLibrary.Click    ${BT_EXCLUIR_PAGAMENTOS}
-    Wait Until Screen Contain    ${TELA_EXCLUIR_PAGAMENTOS}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_EXCLUIR_PAGAMENTOS_OS}    ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
     IF    '${FORMA_PADRAO[0]}' == 'PERSONALIZADA'
@@ -357,7 +377,6 @@ Então finalizo a ordem de serviço - A Prazo
 
     END
 
-
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
     IF    ${VendedorPossuiSenha}
         
@@ -398,17 +417,22 @@ Calcula valor final da OS
 
     IF    ${OS_PossuiProduto}
 
-        ${OS_Produtos}     Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vp.Sequencia;
+        ${consultaOSProdutos}     Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vp.Sequencia;
         
-        ${qtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+        ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
 
-        ${QUANTIDADE_PRODUTOS}    Set Variable    ${qtdeProdutos[0][0]}
+        ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
 
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
-            ${Produto_ValorUnitario}    Set Variable    ${OS_Produtos[${i}][1]}
+            IF    ${List_Quantidades_Produto} is not None
 
-            ${Produto_ValorTotal}       Set Variable    ${OS_Produtos[${i}][2]}
+                ${Quantidade_Produto}    Set Variable    ${List_Quantidades_Produto[${i}]}
+            
+            END
+
+            ${Produto_ValorUnitario}    Set Variable    ${consultaOSProdutos[${i}][1]}
+            ${Produto_ValorTotal}       Set Variable    ${consultaOSProdutos[${i}][2]}
             
             ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${Produto_ValorUnitario}), 2)
 
@@ -424,19 +448,26 @@ Calcula valor final da OS
 
     IF    ${OS_PossuiServico}
 
-        ${OS_Servicos}     Query    SELECT vs.CodigoServico, vs.ValorUnitario, vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vs.Sequencia;
+        ${consultaOSServicos}     Query    SELECT vs.CodigoServico, vs.ValorUnitario, vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL ORDER BY vs.Sequencia;
         
-        ${qtdeServicos}    Query    SELECT COUNT(*) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
+        ${consultaQtdeServicos}    Query    SELECT COUNT(*) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
 
-        FOR    ${i}    IN RANGE    ${qtdeServicos[0][0]}
+        ${QUANTIDADE_SERVICOS}    Set Variable    ${consultaQtdeServicos[0][0]}
+
+        FOR    ${i}    IN RANGE    ${QUANTIDADE_SERVICOS}
             
-            ${Servico_ValorUnitario}    Set Variable    ${OS_Servicos[${i}][1]}
+            ${Servico_ValorUnitario}    Set Variable    ${consultaOSServicos[${i}][1]}
+            ${Servico_ValorTotal}       Set Variable    ${consultaOSServicos[${i}][2]}
 
-            ${Servico_ValorTotal}    Set Variable    ${OS_Servicos[${i}][2]}
-
-            ${calcValorTotalServico}    Evaluate    round((1 * ${Servico_ValorUnitario}), 2)   # Tratar para a automação poder inseir quantidade do serviço e então usar aqui no cálculo. 
+            ${calcValorTotalServico}    Evaluate    (decimal.Decimal(str(${Servico_ValorUnitario})) * decimal.Decimal(str(${Quantidade_Servico}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
             Should Be Equal    ${Servico_ValorTotal}    ${calcValorTotalServico}
+
+            IF    not ${Parametro_NaoDeduzirISSQNComissaoOS}
+        
+                ${calcValorTotalServicoDeducaoTrbutos}    Evaluate    ((decimal.Decimal(str(${Servico_ValorUnitario})) - (decimal.Decimal(str(${Servico_ValorUnitario})) * (decimal.Decimal(str(${Total_Tributos_Servico})) / decimal.Decimal("100")))) * decimal.Decimal("1")).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+            END
 
             ${somaValorTotalServicos}    Evaluate    (${somaValorTotalServicos} + ${calcValorTotalServico})
             
@@ -446,15 +477,23 @@ Calcula valor final da OS
 
     ${calcValorTotalOS}    Evaluate    round((${somaValorTotalProdutos} + ${somaValorTotalServicos}), 2)
 
-    ${ValorTotalOS}    Query    SELECT ROUND(IFNULL((SELECT SUM(vp.ValorTotal) FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo),0) + IFNULL((SELECT SUM(vs.ValorTotal) FROM vendasservicos vs WHERE vs.CodigoVenda = v.Codigo),0), 2) AS TotalGeral FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO};
+    ${ValorTotalOS}    Query    SELECT ROUND(IFNULL((SELECT SUM(vp.ValorTotal) FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo AND vp.Cancelada IS NULL), 0) + IFNULL((SELECT SUM(vs.ValorTotal) FROM vendasservicos vs WHERE vs.CodigoVenda = v.Codigo AND vs.Cancelada IS NULL), 0), 2) AS TotalGeral FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO};
 
     Should Be Equal    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
 
-    Set Test Variable    ${Valor_Total_Servicos_OS}    ${somaValorTotalServicos}
-    Set Test Variable    ${Valor_Total_Produtos_OS}    ${somaValorTotalProdutos}
+    IF    not ${Parametro_NaoDeduzirISSQNComissaoOS}
+
+        Set Test Variable    ${Valor_Total_Servicos}    ${calcValorTotalServicoDeducaoTrbutos}
+
+    ELSE
+
+        Set Test Variable    ${Valor_Total_Servicos}    ${somaValorTotalServicos}
+
+    END
+
+    Set Test Variable    ${Valor_Total_Produtos}    ${somaValorTotalProdutos}
 
     Set Test Variable    ${VALOR_FINAL_OS}    ${ValorTotalOS[0][0]}
-
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_OS}
     
 Valida avisos ao finalizar Ordem de serviço
@@ -732,37 +771,144 @@ Informa a quantidade do produto(${Quantidade_Produto})
 
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
 
-Valida o abatimento dos tributos no valor do serviço
+Seleciona técnico executor do serviço
 
-    ${aliqISSEmpresa}    Evaluate    0
-    ${Total_Tributos_Servico}    Evaluate    0
-
-    IF    ${Parametro_ComissaoVendedorEExecutorServico}
-
-        ${regimeTributarioEmp}    Verifica regime tributário da empresa
-
-        ${aliqISSEmpresa}    Set Variable    ${regimeTributarioEmp[0][3]}
-
-        IF    '${regimeTributarioEmp[0][1]}' == '1'
-
-            ${aliqPisCofinsSimples}    Query    SELECT SUM(COALESCE(sae.AliqPis, 0) + COALESCE(sae.AliqCofins, 0)) FROM servico_aliquota_empresa sae WHERE sae.CodigoServico = ${COD_SERVICO};
-
-            ${Total_Tributos_Servico}    Evaluate   (${aliqISSEmpresa} + ${aliqPisCofinsSimples[0][0]})
-
-        ELSE IF    '${regimeTributarioEmp[0][2]}' == 'LP'
-            
-            ${aliqPisCofinsPresumido}    Query    SELECT SUM(COALESCE(sae.AliqPis_presumido, 0) + COALESCE(sae.AliqCofins_presumido, 0)) FROM servico_aliquota_empresa sae WHERE sae.CodigoServico = ${COD_SERVICO};
-
-            ${Total_Tributos_Servico}    Evaluate    (${aliqISSEmpresa} + ${aliqPisCofinsPresumido[0][0]})
+    IF    ${Teste_Comissao_Escalonada}
         
-        ELSE IF    '${regimeTributarioEmp[0][2]}' == 'LP'
+        Seleciona técnico executor comissionado diferente do vendedor da OS('D')
 
-            ${aliqPisCofinsReal}    Query    SELECT SUM(COALESCE(sae.AliqPis_real, 0) + COALESCE(sae.AliqCofins_real, 0)) FROM servico_aliquota_empresa sae WHERE sae.CodigoServico = ${COD_SERVICO};
-            
-            ${Total_Tributos_Servico}    Evaluate    (${aliqISSEmpresa} + ${aliqPisCofinsReal[0][0]})
+    ELSE IF    ${Teste_Comissao_Total_Venda}
 
-        END
+        Seleciona técnico executor comissionado diferente do vendedor da OS('T')
+
+    ELSE IF    ${Teste_Comissao_Linha}
+
+        Seleciona técnico executor comissionado diferente do vendedor da OS('L')
+
+    ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
+
+        Seleciona técnico executor comissionado diferente do vendedor da OS('F')
 
     END
 
-    Set Test Variable    ${Total_Tributos_Servico}
+E pesquiso pela ordem de serviço gerada
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${criterioCodigo}    Exists    ${LABEL_CRITERIO_CODIGO_OS}
+
+    IF    not ${criterioCodigo}
+        
+        SikuliLibrary.Click    ${LABEL_CODIGO_GRID}
+
+    END
+
+    Press Combination    KEY.ALT    KEY.P
+
+    Input Text    ${EMPTY}    ${COD_ORDEM_SERVICO}
+
+    Press Special Key    ENTER
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${GRID_REGISTRO_ENCONTRADO}    ${SLEEP_ALTO}
+
+Informa a quantidade do serviço(${Quantidade_Servico})
+
+    IF    ${Quantidade_Servico} != 1
+
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_SERVICO}
+
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}   ${Quantidade_Servico}
+        
+    END
+
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Servico}
+
+Quando insiro mais de um serviço(${QuantidadeDeServico})
+
+    ${Codigos_Servicos}    Create List
+
+    FOR    ${i}    IN RANGE    ${QuantidadeDeServico}
+        
+        E insiro um serviço informando a quantidade(${Quantidade_Servico})
+
+        Append To List    ${Codigos_Servicos}    ${COD_SERVICO}
+        
+    END
+
+    Set Test Variable    ${Codigos_Servicos}
+    Set Test Variable    ${QUANTIDADE_SERVICOS}    ${QuantidadeDeServico}
+
+Quando insiro mais de um produto normal(${QuantidadeDeProduto})
+
+    ${Codigos_Produtos}    Create List
+
+    FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
+
+        E insiro um produto normal informando a quantidade(${Quantidade_Produto})
+
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
+
+    END
+
+    Set Test Variable    ${Codigos_Produtos}
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
+
+Quando acesso a guia de serviços na ordem de serviço
+
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Contain    ${GUIA_SERVICOS_OS}    ${TEMPO_TELA}
+
+E edito (${campo}) do serviço lançado
+
+    ${tabs}    Set Variable    0
+    
+    Press Combination    KEY.ALT    KEY.D
+
+    utils.Valida solicitação de senha do usuário supervisor
+
+    ${servico}    Query    SELECT vs.CodigoServico, vs.Quantidade, vs.Desconto, vs.ValorUnitario, vs.ValorTotal, vs.DescExpandida FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO}
+
+    IF    ${servico[0][5]} is not None
+
+        Insere detalhamento no serviço
+        
+    END
+
+    IF    $campo == 'quantidade'
+
+        ${tabs}     Set Variable    0
+        ${valor}    Set Variable    ${servico[0][1]}
+
+    ELSE IF    $campo == 'desconto'
+
+        ${tabs}     Set Variable    1
+        ${valor}    Set Variable    ${servico[0][2]}
+
+    ELSE IF    $campo == 'valor unitario'
+
+        ${tabs}     Set Variable    2
+        ${valor}    Set Variable    ${servico[0][3]}
+
+    ELSE IF    $campo == 'valor total'
+
+        ${tabs}     Set Variable    3
+        ${valor}    Set Variable    ${servico[0][4]}
+
+    END
+
+    FOR    ${i}    IN RANGE    ${tabs}
+        Press Special Key    TAB
+    END
+    
+    ${valorGerado}    Evaluate    random.randint(int(${valor}) + 1, int(${valor}) * 2)    modules=random
+
+    Input Text    ${EMPTY}    ${valorGerado}
+
+    Press Special Key    TAB
+
+    Press Combination    KEY.ALT    KEY.N
+
+    utils.Insere funcionários comissionados por serviço
