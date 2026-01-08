@@ -22,7 +22,7 @@ Teste 01 - Comissão sobre total da venda e pagamento da comissão no caixa - To
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -36,7 +36,7 @@ Teste 02 - Comissão por linha de produto sobre venda e devolução completa, in
     
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissão da venda e devolução
+    E seleciono a comissão de produtos - Devolução
     E baixo a comissao recém recebida
 
 Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa de vale-compra da devolução - Linha
@@ -51,7 +51,7 @@ Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa d
     Quando faço a baixa do mesmo
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissão da venda e devolução 
+    E seleciono a comissão de produtos - Devolução
     E baixo a comissao recém recebida
 
 Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre somente recebidas e pagamento da comissão no caixa - Total Venda
@@ -61,7 +61,7 @@ Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre s
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -90,7 +90,7 @@ Teste 06 - Comissão por linha sobre venda oriunda de uma pré-venda e pagamento
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -105,7 +105,7 @@ Teste 07 - Comissão sobre total da venda oriunda de uma pré-venda, gerada sobr
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -121,7 +121,7 @@ Teste 08 - Comissão por linha sobre venda oriunda de uma condicional e pagament
     
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -135,7 +135,7 @@ Teste 09 - Comissão sobre total da venda parcial oriunda de uma condicional e p
     
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -150,7 +150,7 @@ Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, ge
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -167,7 +167,7 @@ Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
-    E seleciono a comissão do serviço
+    E seleciono a comissão de serviços
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -183,7 +183,7 @@ Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa ap�
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E vou para a aba de servicos
-    E seleciono a comissão do serviço
+    E seleciono a comissão de serviços
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
@@ -205,7 +205,7 @@ Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela
         Dado que acesso a tela de comissões
         Quando insiro o vendedor comissionado
         E seleciono somente as recebidas
-        E seleciono a comissão da venda
+        E seleciono a comissão de produtos
         E baixo a comissao recém recebida
         utils.E saio da tela(Comissoes)
         KeyComissoes1.Quando acesso o caixa aberto
@@ -228,7 +228,7 @@ Teste 14 - Comissão por linha sobre venda e devolução somente recebidas e pag
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissão da venda e devolução 
+    E seleciono a comissão de produtos - Devolução
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
 
@@ -243,8 +243,7 @@ Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e s
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
-    E seleciono a comissão do serviço
-    E baixo a comissao recém recebida
+    E seleciono a comissão de serviços
     utils.E saio da tela(Comissoes)
     Dado que acesso a tela de relatório de comissão
     E gero o relatório de comissões(Pendentes)
@@ -273,7 +272,7 @@ Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebi
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
     E vou para a aba de servicos
-    E seleciono a comissão do serviço
+    E seleciono a comissão de serviços
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
 
@@ -295,7 +294,20 @@ Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produ
     Dado que acesso a tela de relatório de comissão
     E gero o relatório de comissões(Pendentes)
 
-# Teste 19 - Comissão sobre total da venda com alíquota individual por serviço após inclusão e edição da ordem de serviço - Total Venda
-#     # Tarefa: 175729 | CT: 1-598
-#     [Tags]    Teste19
-#     [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo
+Teste 19 - Comissão sobre total da venda com alíquota individual por serviço após inclusão e edição da ordem de serviço - Total Venda
+    # Tarefa: 175729 | CT: 1-598
+    [Tags]    Teste19
+    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo
+
+    Dado que acesso a tela de comissões
+    Quando insiro o técnico executor de serviço comissionado
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    utils.E saio da tela(Comissoes)
+    montadorDeCenarios.Dado que acesso a edição da ordem de serviço e do serviço lançado
+    Dado que acesso a tela de comissões
+    Quando insiro o técnico executor de serviço comissionado
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
