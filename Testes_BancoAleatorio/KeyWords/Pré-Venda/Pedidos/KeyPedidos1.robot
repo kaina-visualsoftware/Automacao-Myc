@@ -48,6 +48,7 @@ ${LABEL_SITUACAO_TODOS}         lb_SituacaoTodosPreVenda.png
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}     Outros...
 ${QTDE_BAIXA_PRODUTO}           ${1}
+${Quantidade_Produto}           ${1}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -328,6 +329,8 @@ Validação de geração de venda
     Set Test Variable    ${COD_VENDA}    ${Codigo_Venda_Gerada[0][0]}
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
+    Calcula valor final da venda
+
 Quando seleciono um produto para a geração da venda
 
     IF    ${Parametro_BloqueiaGeracaoVendaParcial}
@@ -452,3 +455,46 @@ Então cancelo a geração da venda
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
+Calcula valor final da venda
+    
+    ${somaValorTotalProdutos}    Evaluate    0
+
+    ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
+
+    ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA};
+
+    ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
+
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+        ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
+
+        ${ProdutoValorTotal}       Set Variable    ${consultaVendasProdutos[${i}][2]}
+        
+        ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
+
+        Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}
+        
+        ${somaValorTotalProdutos}    Evaluate    round((${somaValorTotalProdutos} + ${calcValorTotalProduto}), 2)
+        
+    END
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${ValorTotalProdutosVenda}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+    
+    Should Be Equal    ${ValorTotalProdutosVenda[0][0]}    ${somaValorTotalProdutos}
+    
+    Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutosVenda[0][0]}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}    ${VALOR_FINAL_VENDA}
+
+    ${DADOS_VENDA}    Create List    ${COD_VENDA}    ${VALOR_FINAL_VENDA}
+
+    ${DADOS_VENDA_DEVOLUÇÃO}    Create List    ${DADOS_VENDA}
+
+    Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosVenda[0][0]}
+
+    Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}

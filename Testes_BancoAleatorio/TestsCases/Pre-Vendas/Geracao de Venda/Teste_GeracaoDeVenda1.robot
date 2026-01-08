@@ -37,6 +37,7 @@ Teste 03 – Exclusão da venda originada de pedido
     E clico em gerar
     Então confirmo a geração da venda
     keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.E pesquiso pela venda gerada
     keyVendas1.Então clico em excluir
     E saio da tela(Venda)
     Então verifico se o pedido retornou como aberto
