@@ -217,6 +217,7 @@ Verifica parâmetros que interferem na venda
     ${Parametro_TrazerDescricaoAutomaticaEntrega}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    TrazerDescricaoAutomaticaEntrega
     ${Parametro_FaturamentoAoFinalizarOS}                  Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
     ${Parametro_ComissaoVendedorEExecutorServico}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    OS_ComVendedorEexecutor
+    ${Parametro_NaoDeduzirISSQNComissaoOS}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    NaoDeduzirISSQNComissao
 
     IF    ${Parametro_VendaRapida}
 
@@ -350,6 +351,8 @@ Verifica parâmetros que interferem na venda
 
     Set Test Variable    ${Parametro_ComissaoVendedorEExecutorServico}
 
+    Set Test Variable    ${Parametro_NaoDeduzirISSQNComissaoOS}
+
 Valida aviso exige senha para outro vendedor
 
     ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}    ${SLEEP_ALTO}
@@ -397,21 +400,30 @@ Valida informações de crédito
 
 Valida condicional aberto
 
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${AVISO_CONDICIONAL_ABERTO}
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG2}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
+    ${Test_Condicional}    Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Condicional
 
-    IF    ${MSG}
+    IF    ${Test_Condicional}
         
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT    KEY.N
+
+        ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CONDICIONAL_ABERTO_COND}    ${SLEEP_ALTO}
+
+        IF    ${aviso}
+
+            Press Special Key    ENTER
+
+        END
+        
+    ELSE
+        
         Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_CONDICIONAL_ABERTO}
 
-    ELSE IF    ${MSG2}
+        IF    ${aviso}
 
-       Press Special Key    ENTER
-       Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    KEY.N
+            
+        END
 
     END
 
