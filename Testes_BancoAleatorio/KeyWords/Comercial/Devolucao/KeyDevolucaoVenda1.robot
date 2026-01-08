@@ -397,6 +397,7 @@ Calcula valor final da devolução
 
     ${somaValorTotalProdutosDevolucao}    Evaluate    0
     
+    Sleep    ${SLEEP_BAIXO}
     ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
 
     ${consultaVendasProdutosDevolucao}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO} ORDER BY vp.Sequencia;
@@ -421,7 +422,6 @@ Calcula valor final da devolução
     END
 
     Sleep    ${SLEEP_BAIXO}
-
     ${ValorTotalProdutosDevolucao}    Query    SELECT ROUND(SUM(vp.ValorTotal), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
 
     Should Be Equal    ${ValorTotalProdutosDevolucao[0][0]}    ${somaValorTotalProdutosDevolucao}
