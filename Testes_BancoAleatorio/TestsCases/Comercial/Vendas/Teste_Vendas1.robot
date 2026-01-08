@@ -27,6 +27,7 @@ Teste 02 - Lançamento e visualização de venda
     Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda
+    E pesquiso pela venda gerada
     Então visualizo a venda
     E saio da tela(Venda)
 
@@ -39,6 +40,7 @@ Teste 03 - Lançamento e edição de venda
     Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
+    E pesquiso pela venda gerada
     Quando clico em editar
     E excluo os pagamentos lançados
     Quando insiro um produto normal informando a quantidade(1)
@@ -55,6 +57,7 @@ Teste 04 - Lançamento e exclusão de venda
     Quando insiro um produto normal informando a quantidade(1)
     E acesso a aba pagamentos
     Então finalizo a venda - A Prazo
+    E pesquiso pela venda gerada
     Então clico em excluir
     E saio da tela(Venda)
 

@@ -63,33 +63,43 @@ ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
 ${AVISO_NCM_INVALIDO}                    aviso_NCMInvalidoNFC.png
 ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizado.png
+${ALERTA_CLIENTE}                        alertaCliente.png
 
 # Botões
 ${BT_OK}                                 bt_Ok.png
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${BT_ADICIONAR}                          bt_Adicionar.png
+${BT_EDITAR}                             bt_Editar.png
 
-# Outros
-${ALERTA_CLIENTE}                        alertaCliente.png
-${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
-${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+# Inputs
 ${INPUT_VALOR_FINAL_VENDA}               inp_ValorDuplicatas.png
-${FORMA_RECEBIMENTO_OUTROS}              Outros...
-${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
-${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
+${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
+
+# Labels
 ${LABEL_DESCRIÇÃO}                       lb_Descricao.png
-${Codigos_Produtos}                      ${None}
-${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${LABEL_DESCONTO_FINAL_VENDA}            lb_DescontoFinalVenda.png
 ${LABEL_FOCO_DESCONTO_FINAL_VENDA}       lb_FocoDescontoFinalVenda.png
 ${LABEL_QUANT_PARCELAS}                  lb_QuatParcelasPagPersonalizada.png
-${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
+${LABEL_CRITERIO_CODIGO_VENDA}           label_CriterioCodigo_Venda.png
+${LABEL_CODIGO_GRID}                     lb_Codigo_Grid.png
+
+# Rows
+${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
+${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+
+# Outros
+${FORMA_RECEBIMENTO_OUTROS}              Outros...
+${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
+${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
+${Codigos_Produtos}                      ${None}
+${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${Quantidade_Produto}                    ${1}
 ${QUANTIDADE_PRODUTOS}                   ${1}
 ${QTDE_BAIXA_PRODUTO}                    ${1}
 ${Desconto_Produto}                      ${None}
 ${List_Quantidades_Produto}              ${None}
+${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -118,7 +128,6 @@ Quando pressiono o atalho de adicionar
     Verifica parâmetros que interferem na venda
 
     SikuliLibrary.Click    ${BT_ADICIONAR}
-    # Press Combination    KEY.ALT    KEY.A
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${Parametro_Local_Negociacao}
@@ -449,7 +458,7 @@ Quando clico em editar
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.E
+    SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${VendedorPossuiSenha}
@@ -541,6 +550,7 @@ Calcula valor final da venda
     
     ${somaValorTotalProdutos}    Evaluate    0
 
+    Sleep    ${SLEEP_BAIXO}
     ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
 
     ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA};
@@ -556,7 +566,6 @@ Calcula valor final da venda
         END
 
         ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
-
         ${ProdutoValorTotal}       Set Variable    ${consultaVendasProdutos[${i}][2]}
         
         ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
@@ -568,17 +577,19 @@ Calcula valor final da venda
     END
     
     Sleep    ${SLEEP_BAIXO}
-    ${ValorTotalProdutos}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+    ${ValorTotalProdutosVenda}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
     
-    Should Be Equal    ${ValorTotalProdutos[0][0]}    ${somaValorTotalProdutos}
+    Should Be Equal    ${ValorTotalProdutosVenda[0][0]}    ${somaValorTotalProdutos}
     
-    Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutos[0][0]}
+    Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutosVenda[0][0]}
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}    ${VALOR_FINAL_VENDA}
 
     ${DADOS_VENDA}    Create List    ${COD_VENDA}    ${VALOR_FINAL_VENDA}
 
     ${DADOS_VENDA_DEVOLUÇÃO}    Create List    ${DADOS_VENDA}
+
+    Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosVenda[0][0]}
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
@@ -942,3 +953,24 @@ Informa a quantidade e desconto do produto
     Press Special Key    TAB
     
     Set Test Variable    ${Quantidade_Produto}
+
+
+E pesquiso pela venda gerada
+
+    Sleep    ${SLEEP_BAIXO}
+    ${criterioCodigo}    Exists    ${LABEL_CRITERIO_CODIGO_VENDA}
+    
+    IF    not ${criterioCodigo}
+
+        SikuliLibrary.Click    ${LABEL_CODIGO_GRID}
+        
+    END
+
+    Press Combination    KEY.ALT    KEY.P
+
+    Input Text    ${EMPTY}    ${COD_VENDA}
+
+    Press Special Key    ENTER
+
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${GRID_REGISTRO_ENCONTRADO}    ${SLEEP_ALTO}
