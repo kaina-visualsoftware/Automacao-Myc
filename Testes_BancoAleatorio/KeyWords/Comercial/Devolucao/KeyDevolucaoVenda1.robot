@@ -426,4 +426,6 @@ Calcula valor final da devolução
 
     Should Be Equal    ${ValorTotalProdutosDevolucao[0][0]}    ${somaValorTotalProdutosDevolucao}
 
+    Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosDevolucao[0][0]}
+
     Set Test Variable    ${VALOR_FINAL_DEVOLUCAO}    ${ValorTotalProdutosDevolucao[0][0]}
