@@ -190,9 +190,6 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     Append To List    ${Codigo_Vendas}         ${COD_VENDA}
     Append To List    ${Valor_Final_Vendas}    ${VALOR_FINAL_VENDA}
 
-    Log To Console    Codigo_Vendas: ${Codigo_Vendas}
-    Log To Console    Valor_Final_Vendas: ${Valor_Final_Vendas}
-
     Set Test Variable    ${DESCONTOS_COMISSOES}
     Set Test Variable    ${Codigo_Vendas}
     Set Test Variable    ${Valor_Final_Vendas}
@@ -252,7 +249,7 @@ Dado que realizo uma ordem de serviço com produto e serviço incluso, considera
     KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
     KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
     KeyOrdemDeSevico1.E adiciono vendedor e cliente
-    KeyOrdemDeSevico1.Quando insiro um serviço
+    KeyOrdemDeSevico1.E insiro um serviço informando a quantidade(1)
     KeyOrdemDeSevico1.E insiro um produto normal informando a quantidade(1)
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
@@ -432,7 +429,7 @@ Dado que realizo uma ordem de serviço somente com serviço - A prazo
     KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
     KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
     KeyOrdemDeSevico1.E adiciono vendedor e cliente
-    KeyOrdemDeSevico1.Quando insiro um serviço
+    KeyOrdemDeSevico1.E insiro um serviço informando a quantidade(1)
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
@@ -501,3 +498,15 @@ Dado que realizo uma venda com múltiplos produtos com desconto totalmente receb
     keyCaixa1.E pesquiso pela conta recém gerada
     keyCaixa1.Então faço o recebimento da conta
     utils.E saio da tela(CaixaPrincipal)
+
+Dado que acesso a edição da ordem de serviço e do serviço lançado
+    
+    KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
+    KeyOrdemDeSevico1.E pesquiso pela ordem de serviço gerada
+    KeyOrdemDeSevico1.Quando clico em editar
+    KeyOrdemDeSevico1.E excluo os pagamentos lançados
+    KeyOrdemDeSevico1.Quando acesso a guia de serviços na ordem de serviço
+    KeyOrdemDeSevico1.E edito (valor unitario) do serviço lançado
+    KeyOrdemDeSevico1.E acesso a aba pagamentos
+    KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
+    utils.E saio da tela(OrdemDeServico)
