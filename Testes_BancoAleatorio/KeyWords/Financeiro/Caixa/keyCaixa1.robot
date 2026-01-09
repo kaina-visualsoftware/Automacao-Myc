@@ -106,7 +106,7 @@ Quando insiro o código do cliente(${GUIA})
     
     Wait Until Screen Not Contain    ${INPUT_RAZAO/NOME_VAZIO}    ${SLEEP_ALTO}
 
-    Verifica se condicional existe(${Codigo_Cliente})
+    Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 
 Quando insiro um novo cliente
     
@@ -269,7 +269,7 @@ E vou para a aba de contas a pagar
 
 E vou para a aba de contas a receber
 
-    Verifica se condicional existe(${Codigo_Cliente}) 
+    Verifica se cliente possui condicional em aberto(${Codigo_Cliente}) 
     
     SikuliLibrary.Click    ${ABA_A_RECEBER}
     Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER}    ${SLEEP_ALTO}
@@ -325,7 +325,7 @@ Quando desmarco a opção somente a receber
         SikuliLibrary.Click    ${LABEL_APENAS_A_RECEBER}
         Sleep    ${SLEEP_MEDIO}
 
-        Verifica se condicional existe(${Codigo_Cliente})
+        Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
         
         ${apenasAReceberHabilitado}    Exists    ${LABEL_APENAS_A_RECEBER_HABILITADO}
 

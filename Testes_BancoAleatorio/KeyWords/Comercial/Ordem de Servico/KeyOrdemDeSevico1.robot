@@ -408,15 +408,19 @@ Então clico em excluir
     Press Special Key    ENTER
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    ${os_excluida}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_ORDEM_SERVICO} AND Status = 'x' AND Cancelada = 1
     
-    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_ORDEM_SERVICO} AND `Status` LIKE 'x'
+    Should Be True    ${os_excluida}    Ordem de Serviço não foi excluída corretamente.
 
 Calcula valor final da OS
     
     ${somaValorTotalProdutos}    Evaluate    0
 
     IF    ${OS_PossuiProduto}
-
+        
+        Sleep    ${SLEEP_BAIXO}
         ${consultaOSProdutos}     Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vp.Sequencia;
         
         ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
@@ -447,7 +451,8 @@ Calcula valor final da OS
     ${somaValorTotalServicos}    Evaluate    0
 
     IF    ${OS_PossuiServico}
-
+        
+        Sleep    ${SLEEP_BAIXO}
         ${consultaOSServicos}     Query    SELECT vs.CodigoServico, vs.ValorUnitario, vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL ORDER BY vs.Sequencia;
         
         ${consultaQtdeServicos}    Query    SELECT COUNT(*) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;

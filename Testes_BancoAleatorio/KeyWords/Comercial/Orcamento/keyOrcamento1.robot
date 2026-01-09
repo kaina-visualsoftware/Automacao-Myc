@@ -175,10 +175,10 @@ Quando clico em editar
 Quando clico em excluir
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.X
+    Press Combination    KEY.ALT    KEY.X
 
     Wait Until Screen Contain    ${AVISO_DESEJA_EXCLUIR}    ${SLEEP_ALTO}
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
 Então finalizo a exclusão
@@ -192,10 +192,12 @@ Então finalizo a exclusão
     Sleep    ${SLEEP_BAIXO}
     
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
-
     Sleep    ${SLEEP_BAIXO}
-    Check If Exists In Database    SELECT * FROM orcamentos WHERE Codigo = ${COD_ORCAMENTO} AND `Status` LIKE 'x'
 
+    ${orcamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM orcamentos o WHERE o.Codigo = ${COD_ORCAMENTO} AND o.`Status` = 'x' AND o.Cancelada = 1 AND o.ExclusaoMotivo IS NOT NULL;
+    
+    Should Be True    ${orcamento_excluido}    Orçamento não foi excluído corretamente.
+    
 Informa a quantidade do produto(${Quantidade_Produto})
 
     IF    ${Quantidade_Produto} != 1

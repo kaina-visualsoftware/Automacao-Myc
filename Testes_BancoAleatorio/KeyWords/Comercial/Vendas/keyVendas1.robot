@@ -60,7 +60,7 @@ ${MODAL_PERSONALIZACAO_PAGAMENTO}        modal_PersonalizacaoPagamento.png
 # Telas Avisos
 ${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
-${AVISO_CONDICIONAL_ABERTO}              aviso_CondicionalAbertoVenda.png
+${AVISO_CONDICIONAL_ABERTO_VISUALIZA}    aviso_CondicionalEmAbertoVisualizar.png
 ${AVISO_NCM_INVALIDO}                    aviso_NCMInvalidoNFC.png
 ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizado.png
 ${ALERTA_CLIENTE}                        alertaCliente.png
@@ -495,7 +495,7 @@ Então clico em excluir
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.X
+    Press Combination    KEY.ALT    KEY.X
     Sleep    ${SLEEP_BAIXO}
 
     Valida solicitação de senha do usuário supervisor
@@ -510,7 +510,9 @@ Então clico em excluir
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND `Status` LIKE 'x'
+    ${venda_excluida}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND Status = 'x' AND Cancelada = 1
+    
+    Should Be True    ${venda_excluida}    Venda não foi excluída corretamente.
 
 Valida ncm invalido ao faturar nota
 

@@ -118,7 +118,7 @@ E adiciono um produto
 
 Quando vou para a aba de pagamentos
 
-    Press Combination    KEY.ALT     Key.m
+    Press Combination    KEY.ALT    KEY.M
     Sleep    ${SLEEP_MEDIO}
 
     Valida cliente com vales compra disponíveis
@@ -196,7 +196,9 @@ Então excluo o pedido
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Check If Exists In Database    SELECT * FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido} AND `Status` LIKE 'x'
+    ${pedido_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM pedidosvenda WHERE Codigo = ${Codigo_Pedido} AND `Status` = 'x' AND Cancelada = 1
+
+    Should Be True    ${pedido_excluido}    Pedido não foi excluído corretamente.
 
 # Essa key foi criada diretamente no cenário de Pedidos, pois a ordem dos elementos é totalmente diferente das demais telas.
 Valida avisos após incluir cliente e vendedor - Pré-Venda
@@ -219,7 +221,7 @@ Valida avisos após incluir cliente e vendedor - Pré-Venda
 
     END
 
-    Verifica se condicional existe(${Codigo_Cliente})
+    Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 
     IF    ${Aviso_ExigeSenhaOutroVendedor_existe}
 

@@ -42,8 +42,8 @@ ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda
 ${AVISO_CLIENTE_OUTRO_VE}                              aviso_clienteOutroVendedor.png
 ${AVISO_ALTERAR_VENDEDOR}                              aviso_DesejaAlterarVendedor.png
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}                    aviso_ExigeSenhaVendedorDiferente.png
-${AVISO_CONDICIONAL_ABERTO}                            aviso_CondicionalAbertoVenda.png
-${AVISO_CONDICIONAL_ABERTO_COND}                       aviso_CondicionalAberto.png
+${AVISO_CONDICIONAL_ABERTO_VISUALIZA}                  aviso_CondicionalEmAbertoVisualizar.png
+${AVISO_CONDICIONAL_ABERTO_COND}                       aviso_CondicionaisEmAberto_Condicional.png
 ${ALERTA_CLIENTE}                                      alertaCliente.png
 ${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}                    aviso_qtde_sem_estoque_orcamento.png
 ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}                    aviso_VencimentoFeriadoSabadoDomingo.png
@@ -60,14 +60,6 @@ ${AVISO_LANC_VENDA_EM_ABERTO}                          aviso_LancVendaEmAberto.p
 ${AVISO_LANC_PRE_VENDA_EM_ABERTO}                      aviso_LancPreVendaEmAberto.png
 ${AVISO_DESC_ESCALA_COMISSAO}                          aviso_DescEscalaComissao.png
 ${AVISO_EDITAR_OS_FINALIZADA}                          aviso_EditarOSFinalizadaSupervisor.png
-# ${AVISO_CONEXAO_SERVIDOR_FRANQUIA}                     aviso_ConexaoServidorFranquia.png
-# ${AVISO_COTACAO_MOEDAS_PRODUTOS}                       aviso_CotacaoAtualizacaoProdutos.png
-# ${AVISO_CONTROLE_DE_FERIAS}                            aviso_ControleFerias.png
-# ${AVISO_POSITIVIDADE_NEGATIVIDADE}                     aviso_PositividadeNegatividade.png
-# ${AVISO_CONTAS}                                        aviso_Contas.png
-# ${AVISO_CHEQUES_A_COMPENSAR}                           aviso_ChequesACompensar.png
-# ${AVISO_CORTES_PDA}                                    aviso_CortesPDA.png
-# ${AVISO_ESTOQUE}                                       aviso_Estoque.png
 
 # Botões
 ${BT_NÃO}                                              bt_Nao.png
@@ -87,15 +79,56 @@ ${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
 ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_consumidor.png
 
 ***Keywords***
-Verifica se condicional existe(${Codigo_Cliente})
+Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
     
-    Sleep    ${SLEEP_MEDIO}
-    ${Condicional_existe}    Run Keyword And Return Status     Check If Exists In Database    SELECT * FROM condicionais WHERE CodigoCliente = ${Codigo_Cliente} AND `Status` IN ('f','e','a');
+    ${aviso_cond_aberto_tela_cond}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
+    ${aviso_cond_outras_telas}        Exists    ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}
+    
+    IF    ${aviso_cond_aberto_tela_cond}
 
-    IF    ${Condicional_existe}
+        ${query}    Set Variable    SELECT c.Codigo FROM condicionais c WHERE c.CodigoCliente = ${codigo_cliente} AND c.Status = 'f'
 
-        Valida condicional aberto
+    ELSE IF    ${aviso_cond_outras_telas}
 
+        ${query}    Set Variable    SELECT c.Codigo FROM condicionais c WHERE c.CodigoCliente = ${codigo_cliente} AND c.Status IN ('f','e')
+
+    END
+    
+    ${cliente_tem_condicional_emAberto}    Run Keyword And Return Status    Check If Exists In Database    ${query}
+    
+    Sleep    ${SLEEP_BAIXO}
+    
+    IF    ${aviso_cond_aberto_tela_cond}
+
+        Processa aviso de condicional em aberto    CONDICIONAL    ${cliente_tem_condicional_emAberto}
+
+    ELSE IF    ${aviso_cond_outras_telas}
+
+        Processa aviso de condicional em aberto    OUTRAS    ${cliente_tem_condicional_emAberto}
+
+    END
+
+    IF    ${aviso_cond_aberto_tela_cond} == False and ${aviso_cond_outras_telas} == False and ${cliente_tem_condicional_emAberto} == True
+
+        Fail    Aviso de condicional em aberto não identificado e cliente possui condicional em aberto.
+
+    END
+
+Processa aviso de condicional em aberto
+    [Arguments]    ${tela}    ${possui_cond_emAberto}
+    
+    IF    not ${possui_cond_emAberto}
+        Fail    Aviso exibido mas sem condicional no BD.
+    END
+    
+    IF    '${tela}' == 'CONDICIONAL'
+
+        Press Special Key    ENTER
+
+    ELSE IF    '${tela}' == 'OUTRAS'
+
+        Press Combination    KEY.ALT    KEY.N
+        
     END
 
 Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
@@ -136,7 +169,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    Verifica se condicional existe(${Codigo_Cliente})
+    Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 
     IF    ${Aviso_infoCredito_existe}
 
@@ -399,30 +432,36 @@ Valida informações de crédito
     END
 
 Valida condicional aberto
-
+    
+    Sleep    ${SLEEP_BAIXO}
     ${Test_Condicional}    Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Condicional
+
+    Sleep    ${SLEEP_BAIXO}
+
+    Log To Console    Codigo_Cliente: ${Codigo_Cliente}
 
     IF    ${Test_Condicional}
         
-        Sleep    ${SLEEP_BAIXO}
-
-        ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CONDICIONAL_ABERTO_COND}    ${SLEEP_ALTO}
+        ${aviso}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
 
         IF    ${aviso}
 
             Press Special Key    ENTER
-
+        
+        ELSE
+            Fail    Erro ao identificar a mensagem.
         END
         
     ELSE
         
-        Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_CONDICIONAL_ABERTO}
+        ${aviso}    Exists    ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}
 
         IF    ${aviso}
 
             Press Combination    KEY.ALT    KEY.N
             
+        ELSE
+            Fail    Erro ao identificar a mensagem.
         END
 
     END

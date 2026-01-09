@@ -109,7 +109,7 @@ E insiro os dados da venda no cabeçalho da devolução(${TELA})
 
         Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-        Verifica se condicional existe(${Codigo_Cliente})
+        Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
     
     ELSE 
 
