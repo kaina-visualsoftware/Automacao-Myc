@@ -266,7 +266,7 @@ Seleciona vendedor
 
 Seleciona cliente 
     
-    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) ORDER BY RAND() LIMIT 1;
+    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) AND Codigo <> 1 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
 
     RETURN    ${codCliente[0][0]}

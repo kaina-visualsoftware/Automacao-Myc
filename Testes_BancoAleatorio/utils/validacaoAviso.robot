@@ -254,7 +254,7 @@ Verifica parâmetros que interferem na venda
 
     IF    ${Parametro_VendaRapida}
 
-        Log To Console    \nO parâmetro "Venda_Rapida" interfere diretamente no processo de venda. Teste sendo finalizado.${\n}Caminho do parâmetro: ADM Sistema → +Config → Geral → Mais → Trazer vendedor e cliente padrão...
+        Log To Console    \n\nO parâmetro "Venda_Rapida" interfere diretamente no processo de venda. Teste sendo finalizado.${\n}Caminho do parâmetro: ADM Sistema → +Config → Geral → Mais → Trazer vendedor e cliente padrão...\n
         Terminate Process
 
     END
