@@ -45,7 +45,7 @@ Dado que eu abro o MyCommerce
     Desativa avisos de inicialização nas permissões de usuário
 
     Press Combination    KEY.WIN    KEY.r
-    Input Text    ${EMPTY}    ${EXECUTAVEL_MYCOMMERCE}
+    Type    ${EMPTY}    ${EXECUTAVEL_MYCOMMERCE}
     Press Special Key    ENTER
 
     Wait Until Screen Contain    ${TELA_LOGIN_SISTEMA}    ${TEMPO_TELA}
@@ -69,10 +69,10 @@ Então realizo o login no MyCommerce
     Key Up      CTRL
 
     Wait Until Screen Contain    ${ICONE_USUARIO_VISUAL}    ${SLEEP_ALTO}
-    Input Text    ${EMPTY}    FELIPE
+    Type    ${EMPTY}    FELIPE
     Press Special Key    ENTER
 
-    Input Text    ${EMPTY}    zwBt4@24
+    Type    ${EMPTY}    zwBt4@24
     Press Special Key    ENTER
 
     Wait Until Screen Not Contain    ${TELA_LOGIN_SISTEMA}    ${TEMPO_TELA}

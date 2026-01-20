@@ -1,15 +1,18 @@
 *** Settings ***
 Library    DatabaseLibrary
 Library    Collections
+
 Resource   ../utils/parametros_admin_sistema.robot
+Resource   ../utils/myCommerce.robot
 
 *** Variables ***
 @{PARAMS_ALTERADOS}
 @{PARAMS_PRE_CONDICOES}
+${REINICIAR_MYCOMMERCE}    ${False}
 
 *** Keywords ***
-
 Inicializar Pré-Condições
+
     Log To Console    \n\n╔══════════ PRÉ-CONDIÇÕES ═════════╗
 
     FOR    ${parametro}    ${valor}    IN    @{PARAMS_PRE_CONDICOES}
@@ -71,6 +74,8 @@ Pré Condições Parâmetros
             Execute Sql String    ${SQL_UPDATE}
 
             Append To List    ${PARAMS_ALTERADOS}    ${NOME_PARAMETRO}
+            
+            Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
 
         END
 
@@ -104,6 +109,8 @@ Pré Condições Parâmetros
 
             Append To List    ${PARAMS_ALTERADOS}    ${NOME_PARAMETRO}
 
+            Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
+
         END
     END
 
@@ -119,7 +126,7 @@ Restaurar Parametro
 
         ${NOME_COLUNA}    Set Variable    ${PARAM["${NOME_PARAMETRO}"]}
 
-        Log To Console    [VALOR ORIGINAL] ${NOME_COLUNA} = ${VALOR_ORIGINAL}
+        Log To Console    \n[VALOR ORIGINAL] ${NOME_COLUNA} = ${VALOR_ORIGINAL}
         Log To Console    [UPDATE] ${NOME_COLUNA} = ${VALOR_ORIGINAL}
 
         ${SQL_UPDATE}    Set Variable    UPDATE config SET ${NOME_COLUNA} = ${VALOR_ORIGINAL};
@@ -132,7 +139,7 @@ Restaurar Parametro
 
         ${NOME_COLUNA}    Set Variable    ${PARAM_EMP["${NOME_PARAMETRO}"]}
 
-        Log To Console    [VALOR ORIGINAL] ${NOME_COLUNA} = ${VALOR_ORIGINAL}
+        Log To Console    \n[VALOR ORIGINAL] ${NOME_COLUNA} = ${VALOR_ORIGINAL}
         Log To Console    [UPDATE] ${NOME_COLUNA} = ${VALOR_ORIGINAL}
 
         ${SQL_UPDATE}    Set Variable    UPDATE configempresa SET ${NOME_COLUNA} = ${VALOR_ORIGINAL} WHERE empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
@@ -149,12 +156,29 @@ Restaurar Parametros Alterados
         RETURN
     END
 
-    Log To Console    \n╔═════ RESTAURAÇÃO PARÂMETROS ═════╗\n
+    Log To Console    \n\n╔═════ RESTAURAÇÃO PARÂMETROS ═════╗
 
     FOR    ${parametro}    IN    @{PARAMS_ALTERADOS}
         Restaurar Parametro    ${parametro}
     END
 
     Set Global Variable    @{PARAMS_ALTERADOS}    @{EMPTY}
+    Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
 
     Log To Console    \n╚══════════════════════════════════╝\n
+
+Reiniciar MyCommerce Se Necessário
+
+    IF    not ${REINICIAR_MYCOMMERCE}
+        RETURN
+    END
+
+    Fechar MyCommerce
+    Abrir MyCommerce
+
+    Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${False}
+
+Teardown Restaurar Parametros Alterados E Reiniciar MyCommerce Se Necessário
+
+    Restaurar Parametros Alterados
+    Reiniciar MyCommerce Se Necessário

@@ -10,11 +10,11 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyComissoes1.Ler
 Suite Teardown    Stop Remote Server
 
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
-Test Teardown    parametros_pre_condicoes.Restaurar Parametros Alterados
+Test Teardown    parametros_pre_condicoes.Teardown Restaurar Parametros Alterados E Reiniciar MyCommerce Se Necessário
 
 *** Variables ***
 @{Teste_18_Quantidades}    1    3
-@{Teste_18_Descontos}      10   15
+@{Teste_18_Descontos}      10    15
 
 *** Test Cases ***
 Teste 01 - Comissão sobre total da venda e pagamento da comissão no caixa - Total Venda
@@ -44,6 +44,7 @@ Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa d
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    VALE_COMPRA_DEV_MENOR_ZERO    1    AND    
     ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND
     ...    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
 
     Dado que acesso o menu de vale compras
@@ -223,6 +224,7 @@ Teste 14 - Comissão por linha sobre venda e devolução somente recebidas e pag
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    VALE_COMPRA_DEV_MENOR_ZERO    0    AND    
     ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
     ...    montadorDeCenarios.Dado que realizo uma venda e uma devolução parcial da venda totalmente recebidos no caixa
 
     Dado que acesso a tela de comissões
@@ -238,6 +240,7 @@ Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e s
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMISSAO_VENDEDOR_EXECUTOR    1    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
     ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
 
     Dado que acesso a tela de comissões
@@ -265,7 +268,8 @@ Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebi
     [Tags]    Teste17
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
-    ...    Inicializar Pré-Condições    AND
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
     ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço totalmente recebida no caixa - A prazo
 
     Dado que acesso a tela de comissões
