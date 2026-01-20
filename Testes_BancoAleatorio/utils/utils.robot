@@ -1379,3 +1379,12 @@ Valida o abatimento dos tributos no valor do serviço
     END
 
     Set Test Variable    ${Total_Tributos_Servico}
+
+Formata código venda em texto para pesquisa
+    [Arguments]    ${codigo}
+
+    ${codigo_int}    Convert To Integer    ${codigo}
+
+    ${codigo_formatado}    Evaluate    "{:,}".format(${codigo_int}).replace(",", ".")
+
+    RETURN    ${codigo_formatado}

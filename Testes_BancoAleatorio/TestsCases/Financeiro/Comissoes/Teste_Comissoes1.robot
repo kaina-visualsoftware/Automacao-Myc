@@ -256,7 +256,7 @@ Teste 16 - Comissão por linha de produto gerada sobre venda recebida e pagament
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
 
@@ -284,7 +284,7 @@ Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produ
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono somente as recebidas
-    E seleciono a comissão da venda
+    E seleciono a comissão de produtos
     E baixo a comissao recém recebida
     utils.E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto

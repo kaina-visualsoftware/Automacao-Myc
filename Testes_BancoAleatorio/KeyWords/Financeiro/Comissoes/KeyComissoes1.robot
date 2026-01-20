@@ -13,104 +13,108 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                              ./testes_bancoAleatorio/images
+${IMAGENS}                                        ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
-${DBHost}                               ${config.IpServidor}
-${DBName}                               ${config.Database}
-${DBPass}                               vssql
-${DBPort}                               ${config.Porta}
-${DBUser}                               root
+${DBHost}                                         ${config.IpServidor}
+${DBName}                                         ${config.Database}
+${DBPass}                                         vssql
+${DBPort}                                         ${config.Porta}
+${DBUser}                                         root
 
 # Sleep's
-${SLEEP_BAIXO}                          0.7
-${SLEEP_MEDIO}                          1.5
-${SLEEP_ALTO}                           3
-${TEMPO_TELA}                           20
+${SLEEP_BAIXO}                                    0.7
+${SLEEP_MEDIO}                                    1.5
+${SLEEP_ALTO}                                     3
+${TEMPO_TELA}                                     20
 
 # Telas
-${TELA_COMISSOES}                       tela_Comissoes.png
-${TELA_AGENDAMENTO}                     tela_Agendamento_Comissao.png
-${TELA_CONTAS_A_PAGAR}                  tela_ContasPagar.png
-${TELA_RECEBIMENTO_PAGAMENTO}           caixa_FinalizacaoRecebimentoPagamento.png
-${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}    tela_RecebimentoDuplicatasCaixa.png
-${TELA_CAIXA_CARREGANDO}                tela_CaixaPrinicipalCarregando.png
-${TELA_VALE_COMPRA}                     tela_ValeCompra.png
-${TELA_BAIXA_VALE_COMPRA}               tela_BaixaValeCompra.png
-${TELA_DETALHES_COMISSAO}               tela_DetalhesComissao.png
-${CAIXA_PRINCIPAL}                      tela_CaixaPrinicipal.png
-${TELA_IMPRESSAO}                       tela_Impressao.png
-${TELA_RELATORIO_COMISSOES}             tela_RelatorioComissoes.png
-${TELA_IMPRESSAO}                       tela_Impressao.png
-${TELA_VISUALIZACAO_IMPRESSAO}          tela_VisualizacaoImpressao.png
+${TELA_COMISSOES}                                 tela_Comissoes.png
+${TELA_AGENDAMENTO}                               tela_Agendamento_Comissao.png
+${TELA_CONTAS_A_PAGAR}                            tela_ContasPagar.png
+${TELA_RECEBIMENTO_PAGAMENTO}                     caixa_FinalizacaoRecebimentoPagamento.png
+${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}              tela_RecebimentoDuplicatasCaixa.png
+${TELA_CAIXA_CARREGANDO}                          tela_CaixaPrinicipalCarregando.png
+${TELA_VALE_COMPRA}                               tela_ValeCompra.png
+${TELA_BAIXA_VALE_COMPRA}                         tela_BaixaValeCompra.png
+${TELA_DETALHES_COMISSAO}                         tela_DetalhesComissao.png
+${CAIXA_PRINCIPAL}                                tela_CaixaPrinicipal.png
+${TELA_IMPRESSAO}                                 tela_Impressao.png
+${TELA_RELATORIO_COMISSOES}                       tela_RelatorioComissoes.png
+${TELA_IMPRESSAO}                                 tela_Impressao.png
+${TELA_VISUALIZACAO_IMPRESSAO}                    tela_VisualizacaoImpressao.png
+${TELA_PESQUISA_TEXTO_IMPRESSAO}                  tela_PesquisaTextoImpressao.png
 
 # Telas Avisos
-${AVISO_BAIXA_SUCESSO}                  aviso_BaixaSucesso.png
-${AVISO_CONFIRMAÇÃO_BAIXA}              aviso_confirmacaoBaixaContaPagar.png
-${AVISO_BAIXA_VALE_COMPRA}              aviso_BaixaValeCompra.png
-${AVISO_COMISSAO_ZERADA}                aviso_ComissaoZerada.png
-${AVISO_SEM_DADOS_PARA_EXIBICAO}        aviso_SemDadosParaExibicao.png
-${AVISO_PERIODO_COM_LOTE_PAGAMENTO}     aviso_PeriodoComLotePagamento.png
+${AVISO_BAIXA_SUCESSO}                            aviso_BaixaSucesso.png
+${AVISO_CONFIRMAÇÃO_BAIXA}                        aviso_confirmacaoBaixaContaPagar.png
+${AVISO_BAIXA_VALE_COMPRA}                        aviso_BaixaValeCompra.png
+${AVISO_COMISSAO_ZERADA}                          aviso_ComissaoZerada.png
+${AVISO_SEM_DADOS_PARA_EXIBICAO}                  aviso_SemDadosParaExibicao.png
+${AVISO_PERIODO_COM_LOTE_PAGAMENTO}               aviso_PeriodoComLotePagamento.png
+${AVISO_PESQUISA_TEXTO_CONCLUIDA}                 aviso_PesquisaTextoConcluida.png
 
 # Botões
-${BT_BAIXAR}                            bt_Baixar.png
-${BT_OK}                                bt_OkComisssao.png
-${BT_FECHAR}                            bt_fechar.png
+${BT_BAIXAR}                                      bt_Baixar.png
+${BT_OK}                                          bt_OkComisssao.png
+${BT_FECHAR}                                      bt_fechar.png
+${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelatorio.png
 
 # Checkbox
-${CHECK_BOX_SELE_TODOS}                 checkBox_Comissao.png
-${CHECKBOX_CONTASPAGAR}                 checkBox_ContasPagar.png
-${CHECK_BOX_SELE_TODOS_SERVICO}         checkBox_ComissaoServico.png
-${CHECKBOX_COMISSAO_FOCO_GRID}          checkBox_ComissaoFocoGrid.png
-${CHECKBOX_CONTA_FOCO_GRID}             checkBoxContaFocoGrid.png
-${CHECKBOX_CONTA_FOCO_GRID_2}           checkBox_ComissaoFocoGrid2.png
+${CHECK_BOX_SELE_TODOS}                           checkBox_Comissao.png
+${CHECKBOX_CONTASPAGAR}                           checkBox_ContasPagar.png
+${CHECK_BOX_SELE_TODOS_SERVICO}                   checkBox_ComissaoServico.png
+${CHECKBOX_COMISSAO_FOCO_GRID}                    checkBox_ComissaoFocoGrid.png
+${CHECKBOX_CONTA_FOCO_GRID}                       checkBoxContaFocoGrid.png
+${CHECKBOX_CONTA_FOCO_GRID_2}                     checkBox_ComissaoFocoGrid2.png
 
 # Inputs
-${INPUT_NUMERO_DOCUMENTO}               caixa_PesquisaPorNDoc.png
+${INPUT_NUMERO_DOCUMENTO}                         caixa_PesquisaPorNDoc.png
 
 # Labels
-${LABEL_DATA_PAGAMENTO_NULA}            lb_DataPagamentoComBranco.png
-${LABEL_CARREGANDO_COMISSOES_GRID}      lb_CarregandoComissoesGrid.png
-${LABEL_STATUS_ABERTO}                  lb_StatusAbertoCaixa.png
-${LABEL_GERANDO_RELATORIO_AGUARDE}      lb_GerandoRelatorioAguarde.png
-${LABEL_COD_VENDEDOR_RELATORIO}         lb_CodVendRelatComissoes.png
+${LABEL_DATA_PAGAMENTO_NULA}                      lb_DataPagamentoComBranco.png
+${LABEL_CARREGANDO_COMISSOES_GRID}                lb_CarregandoComissoesGrid.png
+${LABEL_STATUS_ABERTO}                            lb_StatusAbertoCaixa.png
+${LABEL_GERANDO_RELATORIO_AGUARDE}                lb_GerandoRelatorioAguarde.png
+${LABEL_COD_VENDEDOR_RELATORIO}                   lb_CodVendRelatComissoes.png
 
 # Radio Buttons
-${RADIOBT_COMISSOES_AGENDADAS}          radioBT_Agendadas.png
-${RADIOBT_VISUALIZAR_IMPRESSAO}         radioBT_Visualizar_Impressao.png
-${RADIOBT_COMISSOES_PENDENTES}          radioBT_Pendentes.png
+${RADIOBT_COMISSOES_AGENDADAS}                    radioBT_Agendadas.png
+${RADIOBT_VISUALIZAR_IMPRESSAO}                   radioBT_Visualizar_Impressao.png
+${RADIOBT_COMISSOES_PENDENTES}                    radioBT_Pendentes.png
 
 # Menus
-${MENU_FINANCEIRO}                      menu_Financeiro.png
-${MENU_COMERCIAL}                       menu_Comercial.png
-${MENU_RELATORIOS}                      menu_Relatorios.png
-${SUBMENU_RELATORIOS_COMISSOES}         subMenu_Relatorios_Comissoes.png
-${SUB_MENU_COMISSOES}                   subMenu_Comissoes.png
+${MENU_FINANCEIRO}                                menu_Financeiro.png
+${MENU_COMERCIAL}                                 menu_Comercial.png
+${MENU_RELATORIOS}                                menu_Relatorios.png
+${SUBMENU_RELATORIOS_COMISSOES}                   subMenu_Relatorios_Comissoes.png
+${SUB_MENU_COMISSOES}                             subMenu_Comissoes.png
 
 # Outros
-${LISTAGEM_GRID}                        grid_Comissoes.png
+${LISTAGEM_GRID}                                  grid_Comissoes.png
 ${Quantidade_Zeros_Incluidos}
-${ABA_A_PAGAR}                          aba_contasAPagar.png
-${GRID_COMISSOES_PAGAR}                 grid_ComissoesPagar.png
-${Total_Comissao}                       ${0}
-${Total_Comissao_Final}                 ${0}
-${COL_LOTE}                             grid_ComissoesLote.png
-${ABA_SERVICOS}                         aba_servicosSelecionada.png
-${SETA_ESQUERDA_GRID}                   setaEsqGrid.png
-${GRID_SEM_REGISTROS}    	            grid_ComissoesSemRegistros.png
-${NomeTerminalExecucao}                 ${config.terminal_name}
-${GUIA_COMISSOES_PAGAS_AGENDADAS}       guia_ComissoesPagasAgendadas.png
-${TOOLTIP_ATALHOS_DATA}                 tooltip_AtalhosData.png
-${j}                                    ${0}
-${Total_Comissao_Venda}                 ${0}
-${Total_Comissao_Produtos}              ${0}
-${Total_Comissao_Servicos}              ${0}
-${Teste_Cenario_Sem_Dados_Exibicao}     ${False}
-${Comissao_SomenteRecebidas}            ${False}
-${Teste_Comissao_Produto}               ${False}
-${Teste_Comissao_Servico}               ${False}
-${Teste_Comissão_Parcelada}             ${False}
-${Baixa_Eh_Servico}                     ${False}
+${ABA_A_PAGAR}                                    aba_contasAPagar.png
+${GRID_COMISSOES_PAGAR}                           grid_ComissoesPagar.png
+${Total_Comissao}                                 ${0}
+${Total_Comissao_Final}                           ${0}
+${COL_LOTE}                                       grid_ComissoesLote.png
+${ABA_SERVICOS}                                   aba_servicosSelecionada.png
+${SETA_ESQUERDA_GRID}                             setaEsqGrid.png
+${GRID_SEM_REGISTROS}    	                      grid_ComissoesSemRegistros.png
+${NomeTerminalExecucao}                           ${config.terminal_name}
+${GUIA_COMISSOES_PAGAS_AGENDADAS}                 guia_ComissoesPagasAgendadas.png
+${TOOLTIP_ATALHOS_DATA}                           tooltip_AtalhosData.png
+${j}                                              ${0}
+${Total_Comissao_Venda}                           ${0}
+${Total_Comissao_Produtos}                        ${0}
+${Total_Comissao_Servicos}                        ${0}
+${Teste_Cenario_Sem_Dados_Exibicao}               ${False}
+${Teste_Cenario_Sem_Dados_Exibicao_Outras_Mov}    ${False}
+${Comissao_SomenteRecebidas}                      ${False}
+${Teste_Comissao_Produto}                         ${False}
+${Teste_Comissao_Servico}                         ${False}
+${Teste_Comissão_Parcelada}                       ${False}
+${Baixa_Eh_Servico}                               ${False}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -139,35 +143,60 @@ Quando insiro o vendedor comissionado
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-Pesquisa código da operação com zeros a esquerda
+E seleciono somente as recebidas
 
-    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
-    ${Cod_Venda_String}    Convert To String    ${CODIGO_OPERACAO_MOV}
+    FOR    ${I}    IN RANGE    2
 
-    ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Venda_String}
-
-    ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
-
-
-    FOR    ${I}    IN RANGE    ${Quantidade_de_zeros_esquerda}
-
-        ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
+        Press Special Key    DOWN
+        Sleep    ${SLEEP_BAIXO}
 
     END
-    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
 
-    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
+    Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    FOR    ${I}    IN RANGE    9
+    Informa a data atual na data de recebimento
 
-        Press Special Key    RIGHT
+    Set Test Variable    ${Comissao_SomenteRecebidas}    ${True}
 
-    END
+Informa a data atual na data de recebimento
 
-    Press Special Key    SPACE
+    Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+    
+    ${dataInicial}    Copia data do campo e converte para o formato ISO 8601
+    Sleep    ${SLEEP_BAIXO}
 
-E seleciono a comissão da venda
+    Type With Modifiers    H
+    Press Special Key    TAB
+
+    Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+
+    Type With Modifiers    H
+    ${dataFinal}    Copia data do campo e converte para o formato ISO 8601
+    Press Special Key    TAB
+
+    Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
+
+Copia data do campo e converte para o formato ISO 8601
+
+    Key Down            CTRL
+    Press Combination   C
+    Key Up              CTRL
+
+    ${data_copiada}    Get Clipboard Content
+    ${dataInicial}    Evaluate    __import__('datetime').datetime.strptime('${data_copiada}'.strip(), '%d/%m/%Y').strftime('%Y-%m-%d')
+
+    RETURN    ${dataInicial}
+
+Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
+    
+    Sleep    ${SLEEP_BAIXO}
+    Execute Sql String    DELETE cpv FROM comissoespagasvendas cpv INNER JOIN comissoespagas cp ON cp.ID = cpv.NComissao WHERE cp.PInicial >= '${dataInicial}' AND cp.PFinal <= '${dataFinal}' AND cp.CodigoVendedor = ${Codigo_Vendedor} AND cp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+    
+    Sleep    ${SLEEP_MEDIO}
+    Execute Sql String    DELETE FROM comissoespagas WHERE PInicial >= '${dataInicial}' AND PFinal <= '${dataFinal}' AND CodigoVendedor = ${Codigo_Vendedor} AND Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+E seleciono a comissão de produtos
 
     Set Test Variable    ${Teste_Comissao_Produto}    ${True}
 
@@ -216,7 +245,7 @@ E seleciono a comissão da venda
 
             ELSE
 
-               Calcula comissão por linha de produto - múltiplos produtos
+                Calcula comissão por linha de produto - múltiplos produtos
 
             END
 
@@ -224,7 +253,7 @@ E seleciono a comissão da venda
 
     ELSE IF    ${Teste_Comissao_Total_Venda}
 
-        Calcula comissão sobre total da venda - Venda
+        Calcula comissão sobre total venda - Produtos
 
         ${VALOR_DEVOLUCAO}    Evaluate    (${VALOR_FINAL_OPERAÇÃO} * (-1))
         Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_DEVOLUCAO}
@@ -235,50 +264,122 @@ E seleciono a comissão da venda
 
     ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
 
-        Calcula comissão sobre forma de parcelamento - Venda
+        Calcula comissão sobre forma de parcelamento - Produtos
 
     END
 
-E seleciono a comissão do serviço
+Calcula comissão por linha de produto - apenas 1 produto
+
+    Sleep    ${SLEEP_BAIXO}
+    ${query_comissaoProduto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
+
+    ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    Set Test Variable    ${Total_Comissao_Produtos}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
+
+    Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao_Produtos}
+
+Calcula comissão por linha de produto - por parcela personalizada
+
+    ${somaComissaoParcela}    Evaluate    0
+
+    ${qtdeProdutos}    Get Length    ${Codigos_Produtos}
+
+    FOR    ${I}    IN RANGE    ${qtdeProdutos}
+
+        ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+
+        # ${somaComissaoParcela}    Evaluate    round((${query_comissaoProduto[0][0]} + ${somaComissaoParcela}), 4)
+        ${somaComissaoParcela}    Evaluate    (decimal.Decimal(str(${query_comissaoProduto[0][0]})) + decimal.Decimal(str(${somaComissaoParcela}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    END
+
+    # Vai definir a % de comissão apenas positiva
+    IF    ${Valores_Parcelas[${j}]} > 0
+
+        # ${PERCENT_COMISSAO}    Evaluate    ((${somaComissaoParcela} / ${DADOS_VENDA_DEVOLUÇÃO[0][1]}) * 100)
+        ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${somaComissaoParcela})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[0][1]})) * decimal.Decimal("100")    modules=decimal
+
+        Set Suite Variable    ${PERCENT_COMISSAO}
+
+    END
+ 
+    # ${calcComissaoTotalParcela}    Evaluate    round((${Valores_Parcelas[${j}]} * (${PERCENT_COMISSAO} / 100)), 4)
+    # ${calcComissaoTotalParcela}    Evaluate    round(${calcComissaoTotalParcela}, 2)
+
+    ${calcComissaoTotalParcela}    Evaluate    (decimal.Decimal(str(${Valores_Parcelas[${j}]})) * (decimal.Decimal(str(${PERCENT_COMISSAO})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoTotalParcela}
     
-    Set Test Variable    ${Teste_Comissao_Servico}    ${True}
+    ${Total_Comissao}    Evaluate    decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Produtos}))    modules=decimal
 
-    Sleep    ${SLEEP_BAIXO}
-    ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
+    Set Test Variable    ${Total_Comissao_Produtos}
+    Set Test Variable    ${Total_Comissao}
 
-    IF    ${gridSemRegistro}
+    Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao}
 
-        Press Combination    KEY.ALT    KEY.I
-        Sleep    ${SLEEP_ALTO}
-        Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
+    ${j}    Evaluate    ${j} + 1
+    Set Test Variable    ${j}
+
+Calcula comissão por linha de produto - múltiplos produtos
+
+    ${calcComissaoProduto}    Evaluate    0
+
+    ${qtdeProdutos}    Get Length    ${Codigos_Produtos}
+
+    FOR    ${I}    IN RANGE    ${qtdeProdutos}
+
+        ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+
+        ${Total_Comissao_Produtos}    Evaluate    round((${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos}), 4)
+
+    END
+
+    # Vai definir a % de comissão apenas positiva
+    IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
+
+        ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao_Produtos} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
+
+        Set Suite Variable    ${PERCENT_COMISSAO}
 
     END
 
-    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+    ${Total_Comissao_Produtos}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
+    ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Total_Comissao_Produtos}), 2)
 
-    Sleep    ${SLEEP_BAIXO}
-    ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
+    Set Test Variable    ${Total_Comissao_Produtos}
+    Set Test Variable    ${Total_Comissao}
 
-    IF    ${gridPassouTamPadrao}
+Calcula comissão sobre total venda - Produtos
 
-        SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
+    ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV}
+    ${queryComissaoProdutos[0][0]}    Evaluate    decimal.Decimal(str(${queryComissaoProdutos[0][0]}))    modules=decimal
 
-    END
+    ${calcComissaoProdutos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
-    SikuliLibrary.Click    ${LISTAGEM_GRID}
-    Sleep    ${SLEEP_BAIXO}
+    Should Be Equal As Numbers    ${queryComissaoProdutos[0][0]}    ${calcComissaoProdutos}
 
-    Pesquisa código da operação com zeros a esquerda
+    Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoProdutos}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
 
-    IF    ${Teste_Comissao_Linha}
+    Log To Console    Valor final da comissão (Produto): ${Total_Comissao_Produtos}
 
-        Calcula comissão por linha de serviço - apenas 1 serviço
-        
-    ELSE IF    ${Teste_Comissao_Total_Venda}
-        
-        Calcula comissão sobre total da venda - OS
+Calcula comissão sobre forma de parcelamento - Produtos
 
-    END
+    ${query_comissaoProduto}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA}
+
+    ${calcComissaoProduto}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoFormaParcParcela_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"))    modules=decimal
+
+    ${query_comissaoProduto[0][0]}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]}))    modules=decimal
+
+    Should Be Equal    ${query_comissaoProduto[0][0]}    ${calcComissaoProduto}
+
+    Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoProduto}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
+
+    Log To Console    [VENDA] Valor final da comissão (Forma Parcelamento): ${Total_Comissao_Produtos}
 
 E seleciono a comissão de produtos - Devolução
 
@@ -311,32 +412,6 @@ E seleciono a comissão de produtos - Devolução
         SikuliLibrary.Click    ${LISTAGEM_GRID}
         Sleep    ${SLEEP_BAIXO}
 
-            # # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
-            # ${Cod_Venda_String}    Convert To String    ${CODIGO_OPERACAO_MOV}
-
-            # ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Venda_String}
-
-            # ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
-
-
-            # FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
-
-            #     ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
-
-            # END
-            # # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
-
-            # Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
-            # Sleep    ${SLEEP_BAIXO}
-
-            # FOR    ${K}    IN RANGE    9
-
-            #     Press Special Key    RIGHT
-
-            # END
-
-            # Press Special Key    SPACE
-
         Pesquisa código da operação com zeros a esquerda
 
         IF    ${Teste_Comissao_Linha}
@@ -355,7 +430,6 @@ E seleciono a comissão de produtos - Devolução
 
         ELSE IF    ${Teste_Comissao_Total_Venda}
 
-            # Calcula comissão sobre total da venda - Venda
             Calcula comissão sobre total venda - Produtos
 
             ${VALOR_DEVOLUCAO}    Evaluate    (${VALOR_FINAL_VENDA} * (-1))
@@ -367,6 +441,135 @@ E seleciono a comissão de produtos - Devolução
 
     END
 
+E vou para a aba de servicos
+
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${ABA_SERVICOS}    ${SLEEP_ALTO}
+
+E seleciono a comissão de serviços
+
+    Set Test Variable    ${Baixa_Eh_Servico}    ${True}
+
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+
+    Sleep    ${SLEEP_BAIXO}
+    ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
+
+    IF    ${gridPassouTamPadrao}
+
+        SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
+
+    END
+
+    SikuliLibrary.Click    ${LISTAGEM_GRID}
+    Sleep    ${SLEEP_BAIXO}
+
+    Pesquisa código da operação com zeros a esquerda
+
+    IF    ${Teste_Comissao_Linha}
+
+        Calcula comissão por linha de serviço - apenas 1 serviço
+        
+    ELSE IF    ${Teste_Comissao_Total_Venda}
+
+        IF    ${OS_PossuiProduto}
+            
+            Calcula comissão sobre total venda - Produtos
+
+        END
+
+        Calcula comissão sobre total venda - Serviços
+
+    END
+
+Calcula comissão por linha de serviço - apenas 1 serviço
+
+    ${query_comissaoServico}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${Total_Tributos_Servico} / 100))) * (cl.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${COD_SERVICO} INNER JOIN vendas v ON v.Codigo = ${CODIGO_OPERACAO_MOV};
+
+    # ${Total_Comissao_OS}    Evaluate    round((${query_comissaoServico[0][0]}), 2)
+    ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${query_comissaoServico[0][0]})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    Set Test Variable    ${Total_Comissao_OS}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
+    Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
+
+    Log To Console    [OS] Valor final da comissão (Linha): ${Total_Comissao_Servicos}
+
+Calcula comissão sobre total venda - Serviços
+
+    ${queryComissaoServicos}    Query    SELECT ROUND(SUM(vs.ComissaoTotal), 2) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
+
+    IF    ${Parametro_ComissaoVendedorEExecutorServico}
+        
+        ${consultaValorTotalServico}    Query    SELECT vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
+
+        ${valorTotalServico}    Set Variable    ${consultaValorTotalServico[0][0]}    
+
+        ${calcComissaoServicos}    Evaluate    ((decimal.Decimal(str(${valorTotalServico})) - (decimal.Decimal(str(${valorTotalServico})) * (decimal.Decimal(str(${Total_Tributos_Servico})) / decimal.Decimal("100")))) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Servico})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+        
+        IF    not ${OS_Vendedor_E_Tecnico_Diferentes}
+
+            ${calcComissaoServicos}    Evaluate    (decimal.Decimal(str(${calcComissaoServicos})) * decimal.Decimal("2"))    modules=decimal 
+            
+        END
+
+        IF    ${OS_Vendedor_E_Tecnico_Diferentes}
+
+            ${Codigo_Funcionario}    Set Variable    ${Codigo_Tecnico_Servico}
+
+        ELSE
+
+            ${Codigo_Funcionario}    Set Variable    ${Codigo_Vendedor}
+
+        END
+
+        ${query_ComissaoServico}    Query    SELECT ROUND(SUM(cs.ValorComissao), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${COD_ORDEM_SERVICO} AND cs.CodigoFuncionario = ${Codigo_Funcionario} AND cs.Cancelada IS NULL;
+
+        Should Be Equal As Numbers    ${calcComissaoServicos}    ${query_ComissaoServico[0][0]}
+        
+    ELSE
+
+        ${calcComissaoServicos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Servicos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Servico})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+            
+        Should Be Equal As Numbers    ${queryComissaoServicos[0][0]}    ${calcComissaoServicos}
+
+    END
+
+    Set Test Variable    ${Total_Comissao_Servicos}    ${calcComissaoServicos}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Servicos}
+
+    Log To Console    Valor final da comissão (Serviço): ${Total_Comissao_Servicos}
+
+Pesquisa código da operação com zeros a esquerda
+
+    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
+    ${Cod_Venda_String}    Convert To String    ${CODIGO_OPERACAO_MOV}
+
+    ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Venda_String}
+
+    ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
+
+    FOR    ${I}    IN RANGE    ${Quantidade_de_zeros_esquerda}
+
+        ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
+
+    END
+    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
+
+    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${I}    IN RANGE    9
+
+        Press Special Key    RIGHT
+
+    END
+
+    Press Special Key    SPACE
 
 E baixo a comissao recém recebida
 
@@ -409,6 +612,51 @@ E baixo a comissao recém recebida
         Valida baixa de comissão
 
     END
+
+Valida baixa de comissão
+
+    IF    ${Baixa_Eh_Servico}
+        
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${OS_Vendedor_E_Tecnico_Diferentes}
+
+            ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Tecnico_Servico} ORDER BY ID DESC LIMIT 1;
+
+        ELSE
+
+            ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
+            
+        END
+
+        Should Be Equal As Numbers    ${queryComissoesPagas_Servico[0][1]}    ${Total_Comissao_Servicos}
+
+        Set Test Variable    ${NDoc_Comissao}    ${queryComissoesPagas_Servico[0][0]}
+
+    END
+
+    IF    not ${Baixa_Eh_Servico}
+
+        ${queryComissoesPagas_Produto}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
+
+        IF    ${Teste_Comissão_Parcelada}
+
+            Should Be Equal As Numbers    ${queryComissoesPagas_Produto[0][1]}    ${Total_Comissao}
+
+        ELSE
+
+            Should Be Equal As Numbers    ${queryComissoesPagas_Produto[0][1]}    ${Total_Comissao_Produtos}
+
+        END
+
+        Set Test Variable    ${NDoc_Comissao}    ${queryComissoesPagas_Produto[0][0]}
+
+    END
+
+
+
+
+
 
 Quando acesso o caixa aberto
 
@@ -496,6 +744,20 @@ Então faço o pagamento da comissao
 
     Valida baixa comissao
 
+Valida baixa comissao
+
+    Sleep    ${SLEEP_BAIXO}
+    ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
+    # ${Comissao_Paga_BD}    Evaluate    round((${ComissaoPaga[0][1]}), 2)
+    ${Comissao_Paga_BD}    Evaluate    decimal.Decimal(str(${ComissaoPaga[0][1]})).quantize(decimal.Decimal("0.00"))    modules=decimal
+    
+    Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
+    Should Be Equal    ${Comissao_Paga_BD}    ${Total_Comissao}
+
+    Check If Exists In Database    SELECT Sequencia, nDocumento, CodigoAbertura, ValorDocumento FROM caixamovimentos WHERE nDocumento = ${NDoc_Comissao}
+
+    # Log To Console    \n\n[OK] Validações concluídas com sucesso!
+
 Então visualizo os detalhes da comissao recem paga
 
     Dado que acesso a tela de comissões
@@ -528,91 +790,6 @@ Então visualizo os detalhes da comissao recem paga
     Wait Until Screen Contain    ${TELA_DETALHES_COMISSAO}    ${SLEEP_ALTO}
 
     Press Special Key    ESC
-
-E seleciono somente as recebidas
-
-    FOR    ${I}    IN RANGE    2
-
-        Press Special Key    DOWN
-        Sleep    ${SLEEP_BAIXO}
-
-    END
-
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-
-    Informa a data atual na data de recebimento
-
-    Set Test Variable    ${Comissao_SomenteRecebidas}    ${True}
-
-Calcula comissão sobre total da venda - Venda
-
-    # ${calcComissaoProduto}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissaoTotalVenda_Produto} / 100)), 2)
-    ${calcComissaoProduto}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    Set Test Variable    ${Total_Comissao_Venda}    ${calcComissaoProduto}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Venda}
-
-    Log To Console    [VENDA] Valor final da comissão (Total Venda): ${Total_Comissao_Venda}
-
-Calcula comissão por linha de produto - múltiplos produtos
-
-    ${calcComissaoProduto}    Evaluate    0
-
-    ${qtdeProdutos}    Get Length    ${Codigos_Produtos}
-
-    FOR    ${I}    IN RANGE    ${qtdeProdutos}
-
-        ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
-
-        ${Total_Comissao_Produtos}    Evaluate    round((${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos}), 4)
-
-    END
-
-    # Vai definir a % de comissão apenas positiva
-    IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
-
-        ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao_Produtos} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
-
-        Set Suite Variable    ${PERCENT_COMISSAO}
-
-    END
-
-    ${Total_Comissao_Produtos}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
-    ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Total_Comissao_Produtos}), 2)
-
-    Set Test Variable    ${Total_Comissao_Produtos}
-    Set Test Variable    ${Total_Comissao}
-
-Calcula comissão por linha de produto - apenas 1 produto
-
-    Sleep    ${SLEEP_BAIXO}
-    ${query_comissaoProduto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
-
-    # ${Total_Comissao_Venda}    Evaluate    round((${query_comissaoProduto[0][0]} + ${Total_Comissao_Venda}), 4)
-    # ${Total_Comissao_Venda}    Evaluate    round(${Total_Comissao_Venda}, 2)
-
-    ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-    ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    Set Test Variable    ${Total_Comissao_Produtos}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
-
-    Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao_Produtos}
-
-Valida baixa comissao
-
-    Sleep    ${SLEEP_BAIXO}
-    ${ComissaoPaga}    Query    SELECT Codigo, valor FROM contasapagar WHERE NDocumento = ${NDoc_Comissao} AND Quitado = 1 AND Descricao LIKE '%Comissão%' AND nComissao = ${NDoc_Comissao}
-    # ${Comissao_Paga_BD}    Evaluate    round((${ComissaoPaga[0][1]}), 2)
-    ${Comissao_Paga_BD}    Evaluate    decimal.Decimal(str(${ComissaoPaga[0][1]})).quantize(decimal.Decimal("0.00"))    modules=decimal
-    
-    Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
-    Should Be Equal    ${Comissao_Paga_BD}    ${Total_Comissao}
-
-    Check If Exists In Database    SELECT Sequencia, nDocumento, CodigoAbertura, ValorDocumento FROM caixamovimentos WHERE nDocumento = ${NDoc_Comissao}
-
-    # Log To Console    \n\n[OK] Validações concluídas com sucesso!
 
 Dado que acesso o menu de vale compras
 
@@ -652,174 +829,6 @@ Quando faço a baixa do mesmo
     Wait Until Screen Contain    ${TELA_VALE_COMPRA}    ${TEMPO_TELA}
 
     Press Special Key    ESC
-
-E seleciono as comissaos das vendas
-
-    ${QuantidadeVendas}    Get Length    ${Codigo_Vendas}
-
-    FOR    ${I}    IN RANGE    ${QuantidadeVendas}
-
-        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendas[${I}]}
-
-        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Final_Vendas[${I}]}
-
-        Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${DESCONTOS_COMISSOES[${I}][1]}
-
-        E seleciono a comissão da venda
-
-    END
-
-E vou para a aba de servicos
-
-    Press Combination    KEY.ALT    KEY.S
-    Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${ABA_SERVICOS}    ${SLEEP_ALTO}
-
-Calcula comissão por linha de serviço - apenas 1 serviço
-
-    ${query_comissaoServico}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${Total_Tributos_Servico} / 100))) * (cl.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${COD_SERVICO} INNER JOIN vendas v ON v.Codigo = ${CODIGO_OPERACAO_MOV};
-
-    # ${Total_Comissao_OS}    Evaluate    round((${query_comissaoServico[0][0]}), 2)
-    ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${query_comissaoServico[0][0]})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    Set Test Variable    ${Total_Comissao_OS}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
-    Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
-
-    Log To Console    [OS] Valor final da comissão (Linha): ${Total_Comissao_Servicos}
-
-Informa a data atual na data de recebimento
-
-    Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
-    
-    ${dataInicial}    Copia data do campo e converte para o formato ISO 8601
-    Sleep    ${SLEEP_BAIXO}
-
-    Type With Modifiers    H
-    Press Special Key    TAB
-
-    Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
-
-    Type With Modifiers    H
-    ${dataFinal}    Copia data do campo e converte para o formato ISO 8601
-    Press Special Key    TAB
-
-    Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
-
-Calcula comissão por linha de produto - por parcela personalizada
-
-    ${somaComissaoParcela}    Evaluate    0
-
-    ${qtdeProdutos}    Get Length    ${Codigos_Produtos}
-
-    FOR    ${I}    IN RANGE    ${qtdeProdutos}
-
-        ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
-
-        # ${somaComissaoParcela}    Evaluate    round((${query_comissaoProduto[0][0]} + ${somaComissaoParcela}), 4)
-        ${somaComissaoParcela}    Evaluate    (decimal.Decimal(str(${query_comissaoProduto[0][0]})) + decimal.Decimal(str(${somaComissaoParcela}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    END
-
-    # Vai definir a % de comissão apenas positiva
-    IF    ${Valores_Parcelas[${j}]} > 0
-
-        # ${PERCENT_COMISSAO}    Evaluate    ((${somaComissaoParcela} / ${DADOS_VENDA_DEVOLUÇÃO[0][1]}) * 100)
-        ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${somaComissaoParcela})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[0][1]})) * decimal.Decimal("100")    modules=decimal
-
-        Set Suite Variable    ${PERCENT_COMISSAO}
-
-    END
- 
-    # ${calcComissaoTotalParcela}    Evaluate    round((${Valores_Parcelas[${j}]} * (${PERCENT_COMISSAO} / 100)), 4)
-    # ${calcComissaoTotalParcela}    Evaluate    round(${calcComissaoTotalParcela}, 2)
-
-    ${calcComissaoTotalParcela}    Evaluate    (decimal.Decimal(str(${Valores_Parcelas[${j}]})) * (decimal.Decimal(str(${PERCENT_COMISSAO})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    Set Test Variable    ${Total_Comissao_Venda}    ${calcComissaoTotalParcela}
-    
-    ${Total_Comissao}    Evaluate    decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Venda}))    modules=decimal
-
-    Set Test Variable    ${Total_Comissao_Venda}
-    Set Test Variable    ${Total_Comissao}
-
-    Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao}
-
-    ${j}    Evaluate    ${j} + 1
-    Set Test Variable    ${j}
-
-Calcula comissão sobre total da venda - OS
-
-    IF    ${OS_PossuiProduto}
-
-        ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
-    
-        # ${calcComissaoProdutos}    Evaluate    round((${Valor_Total_Produtos} * (${PercentualComissaoTotalVenda_Produto} / 100)), 2)
-        ${calcComissaoProdutos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-        ${queryComissaoProdutos[0][0]}    Evaluate    decimal.Decimal(str(${queryComissaoProdutos[0][0]}))    modules=decimal
-
-        Should Be Equal As Numbers    ${queryComissaoProdutos[0][0]}    ${calcComissaoProdutos}
-
-        Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoProdutos}
-
-        Log To Console    Valor final da comissão (Produto): ${Total_Comissao_Produtos}
-        
-    END
-
-    IF    ${OS_PossuiServico}
-
-        ${queryComissaoServicos}    Query    SELECT ROUND(SUM(vs.ComissaoTotal), 2) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
-        
-        IF    ${Parametro_ComissaoVendedorEExecutorServico}
-        
-            ${consultaValorTotalServico}    Query    SELECT vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO};
-
-            ${valorTotalServico}    Set Variable    ${consultaValorTotalServico[0][0]}
-
-            # ${calcComissaoServicos}    Evaluate    round(((${valorTotalServico} - (${valorTotalServico} * (${Total_Tributos_Servico} / 100))) * (${PercentualComissaoTotalVenda_Servico} / 100)), 2)
-            ${calcComissaoServicos}    Evaluate    ((decimal.Decimal(str(${valorTotalServico})) - (decimal.Decimal(str(${valorTotalServico})) * (decimal.Decimal(str(${Total_Tributos_Servico})) / decimal.Decimal("100")))) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Servico})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-            ${query_ComissaoServico}    Query    SELECT ROUND(SUM(cs.ValorComissao), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${COD_ORDEM_SERVICO}
-            
-            # ${calcComissaoServicos}    Evaluate    (${calcComissaoServicos} * 2)
-            ${calcComissaoServicos}    Evaluate    (decimal.Decimal(str(${calcComissaoServicos})) * decimal.Decimal("2"))    modules=decimal
-
-            Should Be Equal As Numbers    ${calcComissaoServicos}    ${query_ComissaoServico[0][0]}
-            
-        ELSE
-
-            # ${calcComissaoServicos}    Evaluate    round((${Valor_Total_Servicos} * (${PercentualComissaoTotalVenda_Servico} / 100)), 2)
-            ${calcComissaoServicos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Servicos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Servico})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-            
-            Should Be Equal As Numbers    ${queryComissaoServicos[0][0]}    ${calcComissaoServicos}
-
-        END
-
-        Set Test Variable    ${Total_Comissao_Servicos}    ${calcComissaoServicos}
-
-        Log To Console    Valor final da comissão (Serviço): ${Total_Comissao_Servicos}
-        
-    END
-
-    IF    '${Teste_Comissao_Produto}' == 'True' and '${Teste_Comissao_Servico}' == 'True'
-
-        # ${Total_Comissao_OS}    Evaluate    round((${Total_Comissao_Produtos} + ${Total_Comissao_Servicos}), 2)
-        ${Total_Comissao_OS}    Evaluate    (decimal.Decimal(str(${Total_Comissao_Produtos})) + decimal.Decimal(str(${Total_Comissao_Servicos}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-    
-    ELSE IF    ${Teste_Comissao_Servico}
-
-        ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${Total_Comissao_Servicos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-    
-    ELSE IF    ${Teste_Comissao_Produto}
-
-        ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    END
-
-    Set Test Variable    ${Total_Comissao_OS}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
 
 Dado que acesso a tela de relatório de comissão
 
@@ -868,10 +877,16 @@ E gero o relatório de comissões(${tipo})
     Valida os dados do relatório de comissões
 
     IF    ${Teste_Cenario_Sem_Dados_Exibicao}
-        
+
         Press Special Key    ENTER
 
         Log To Console    \n"Sem Dados Para Exibição" conforme esperado no Teste 18.
+        
+    ELSE IF    ${Teste_Cenario_Sem_Dados_Exibicao_Outras_Mov}
+
+        Verifica se operação gerada não está vinculada a uma comissão pendente
+
+        Log To Console    \nVenda vinculada a uma comissão pendente, conforme esperado no Teste 18.
 
     ELSE
 
@@ -888,6 +903,14 @@ E gero o relatório de comissões(${tipo})
 
     Wait Until Screen Not Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
 
+Informa o vendedor
+
+    SikuliLibrary.Click    ${LABEL_COD_VENDEDOR_RELATORIO}
+
+    Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
+    Press Special Key    TAB
+
 Valida os dados do relatório de comissões
 
     IF    ${COMISSOES_PENDENTES}
@@ -902,16 +925,26 @@ Validação de comissões pendentes
 
     ${haDados}    Run Keyword And Return Status    Check If Exists In Database    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
 
-    # ${consultaRelatorio}    Query    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
     ${consultaRelatorio}    Query    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
 
     IF    not ${haDados}
-
-        Wait Until Screen Contain    ${AVISO_SEM_DADOS_PARA_EXIBICAO}    ${TEMPO_TELA}
-
-        Set Test Variable    ${Teste_Cenario_Sem_Dados_Exibicao}    ${True}
         
+        Sleep    ${SLEEP_BAIXO}
 
+        ${avisoSemDadosExibicao}    Exists    ${AVISO_SEM_DADOS_PARA_EXIBICAO}
+        
+        IF    ${avisoSemDadosExibicao}
+            
+            Set Test Variable    ${Teste_Cenario_Sem_Dados_Exibicao}    ${True}
+
+        ELSE
+
+            ${telaImpressaoRelatorio}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${SLEEP_ALTO}
+
+            Set Test Variable    ${Teste_Cenario_Sem_Dados_Exibicao_Outras_Mov}    ${True}
+            
+        END
+        
     END
 
     ${qtdeRegistro}    Query    SELECT COUNT(*) FROM (SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV}) AS qtdeRegistro;
@@ -938,48 +971,32 @@ Validação de comissões pendentes
         
     END
 
-Calcula comissão sobre forma de parcelamento - Venda
+Verifica se operação gerada não está vinculada a uma comissão pendente
 
-    ${query_comissaoProduto}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA}
+    SikuliLibrary.Click    ${BT_BINOCULO_PESQUISA_RELATORIO}
 
-    # ${calcComissaoProduto}    Evaluate    round((${VALOR_FINAL_OPERAÇÃO} * (${PercentualComissaoFormaParcParcela_Produto} / 100)), 2)
-    ${calcComissaoProduto}    Evaluate    (decimal.Decimal(str(${VALOR_FINAL_OPERAÇÃO})) * (decimal.Decimal(str(${PercentualComissaoFormaParcParcela_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"))    modules=decimal
+    Wait Until Screen Contain    ${TELA_PESQUISA_TEXTO_IMPRESSAO}    ${SLEEP_ALTO}
+        
+    ${codigo_operacao_formatado}    Formata código venda em texto para pesquisa    ${CODIGO_OPERACAO_MOV}
 
-    ${query_comissaoProduto[0][0]}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]}))    modules=decimal
+    Type    ${EMPTY}    ${codigo_operacao_formatado}
+        
+    Press Special Key    ENTER
 
-    Should Be Equal    ${query_comissaoProduto[0][0]}    ${calcComissaoProduto}
-
-    Set Test Variable    ${Total_Comissao_Venda}    ${calcComissaoProduto}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Venda}
-
-    Log To Console    [VENDA] Valor final da comissão (Forma Parcelamento): ${Total_Comissao_Venda}
-
-Informa o vendedor
-
-    SikuliLibrary.Click    ${LABEL_COD_VENDEDOR_RELATORIO}
-
-    Input Text    ${EMPTY}    ${Codigo_Vendedor}
-
-    Press Special Key    TAB
-
-Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
-    
     Sleep    ${SLEEP_BAIXO}
-    Execute Sql String    DELETE cpv FROM comissoespagasvendas cpv INNER JOIN comissoespagas cp ON cp.ID = cpv.NComissao WHERE cp.PInicial >= '${dataInicial}' AND cp.PFinal <= '${dataFinal}' AND cp.CodigoVendedor = ${Codigo_Vendedor} AND cp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
-    
-    Sleep    ${SLEEP_MEDIO}
-    Execute Sql String    DELETE FROM comissoespagas WHERE PInicial >= '${dataInicial}' AND PFinal <= '${dataFinal}' AND CodigoVendedor = ${Codigo_Vendedor} AND Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+    ${avisoNaoEncontrouRegistro}    Exists    ${AVISO_PESQUISA_TEXTO_CONCLUIDA}
 
-Copia data do campo e converte para o formato ISO 8601
+    IF    ${avisoNaoEncontrouRegistro}
 
-    Key Down            CTRL
-    Press Combination   C
-    Key Up              CTRL
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ESC
 
-    ${data_copiada}    Get Clipboard Content
-    ${dataInicial}    Evaluate    __import__('datetime').datetime.strptime('${data_copiada}'.strip(), '%d/%m/%Y').strftime('%Y-%m-%d')
+    ELSE
 
-    RETURN    ${dataInicial}
+        Fail    Comissão da venda consta como pendente no relatório de comissões.
+
+    END
 
 Quando insiro o técnico executor de serviço comissionado
 
@@ -988,215 +1005,18 @@ Quando insiro o técnico executor de serviço comissionado
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-Valida baixa de comissão
+E seleciono as comissaos das vendas
 
-    IF    ${Baixa_Eh_Servico}
-        
-        Sleep    ${SLEEP_BAIXO}
+    ${QuantidadeVendas}    Get Length    ${Codigo_Vendas}
 
-        IF    ${OS_Vendedor_E_Tecnico_Diferentes}
+    FOR    ${I}    IN RANGE    ${QuantidadeVendas}
 
-            ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Tecnico_Servico} ORDER BY ID DESC LIMIT 1;
+        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendas[${I}]}
 
-        ELSE
+        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Final_Vendas[${I}]}
 
-            ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
-            
-        END
+        Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${DESCONTOS_COMISSOES[${I}][1]}
 
-        Should Be Equal As Numbers    ${queryComissoesPagas_Servico[0][1]}    ${Total_Comissao_Servicos}
-
-        Set Test Variable    ${NDoc_Comissao}    ${queryComissoesPagas_Servico[0][0]}
-
-    END
-
-    IF    not ${Baixa_Eh_Servico}
-
-        ${queryComissoesPagas_Produto}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
-
-        IF    ${Teste_Comissão_Parcelada}
-
-            Should Be Equal As Numbers    ${queryComissoesPagas_Produto[0][1]}    ${Total_Comissao}
-
-        ELSE
-
-            Should Be Equal As Numbers    ${queryComissoesPagas_Produto[0][1]}    ${Total_Comissao_Produtos}
-
-        END
-
-        Set Test Variable    ${NDoc_Comissao}    ${queryComissoesPagas_Produto[0][0]}
-
-    END
-
-
-
-
-
-Calcula comissão sobre total venda - Produtos
-
-    ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV}
-    ${queryComissaoProdutos[0][0]}    Evaluate    decimal.Decimal(str(${queryComissaoProdutos[0][0]}))    modules=decimal
-
-    ${calcComissaoProdutos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-    Should Be Equal As Numbers    ${queryComissaoProdutos[0][0]}    ${calcComissaoProdutos}
-
-    Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoProdutos}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
-
-    Log To Console    Valor final da comissão (Produto): ${Total_Comissao_Produtos}
-
-Calcula comissão sobre total venda - Serviços
-
-    ${queryComissaoServicos}    Query    SELECT ROUND(SUM(vs.ComissaoTotal), 2) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
-
-    IF    ${Parametro_ComissaoVendedorEExecutorServico}
-        
-        ${consultaValorTotalServico}    Query    SELECT vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
-
-        ${valorTotalServico}    Set Variable    ${consultaValorTotalServico[0][0]}    
-
-        ${calcComissaoServicos}    Evaluate    ((decimal.Decimal(str(${valorTotalServico})) - (decimal.Decimal(str(${valorTotalServico})) * (decimal.Decimal(str(${Total_Tributos_Servico})) / decimal.Decimal("100")))) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Servico})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-        
-        IF    not ${OS_Vendedor_E_Tecnico_Diferentes}
-
-            ${calcComissaoServicos}    Evaluate    (decimal.Decimal(str(${calcComissaoServicos})) * decimal.Decimal("2"))    modules=decimal 
-            
-        END
-
-        IF    ${OS_Vendedor_E_Tecnico_Diferentes}
-
-            ${Codigo_Funcionario}    Set Variable    ${Codigo_Tecnico_Servico}
-
-        ELSE
-
-            ${Codigo_Funcionario}    Set Variable    ${Codigo_Vendedor}
-
-        END
-
-        ${query_ComissaoServico}    Query    SELECT ROUND(SUM(cs.ValorComissao), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${COD_ORDEM_SERVICO} AND cs.CodigoFuncionario = ${Codigo_Funcionario} AND cs.Cancelada IS NULL;
-
-        Should Be Equal As Numbers    ${calcComissaoServicos}    ${query_ComissaoServico[0][0]}
-        
-    ELSE
-
-        ${calcComissaoServicos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Servicos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Servico})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-            
-        Should Be Equal As Numbers    ${queryComissaoServicos[0][0]}    ${calcComissaoServicos}
-
-    END
-
-    Set Test Variable    ${Total_Comissao_Servicos}    ${calcComissaoServicos}
-    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Servicos}
-
-    Log To Console    Valor final da comissão (Serviço): ${Total_Comissao_Servicos}
-
-E seleciono a comissão de serviços
-
-    Set Test Variable    ${Baixa_Eh_Servico}    ${True}
-
-    Sleep    ${SLEEP_BAIXO}
-
-    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
-
-    Sleep    ${SLEEP_BAIXO}
-    ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
-
-    IF    ${gridPassouTamPadrao}
-
-        SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
-
-    END
-
-    SikuliLibrary.Click    ${LISTAGEM_GRID}
-    Sleep    ${SLEEP_BAIXO}
-
-    Pesquisa código da operação com zeros a esquerda
-
-    IF    ${Teste_Comissao_Linha}
-
-        Calcula comissão por linha de serviço - apenas 1 serviço
-        
-    ELSE IF    ${Teste_Comissao_Total_Venda}
-
-        IF    ${OS_PossuiProduto}
-            
-            Calcula comissão sobre total venda - Produtos
-
-        END
-
-        Calcula comissão sobre total venda - Serviços
-
-    END
-
-E seleciono a comissão de produtos
-
-    Set Test Variable    ${Teste_Comissao_Produto}    ${True}
-
-    Sleep    ${SLEEP_BAIXO}
-    ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
-
-    IF    ${gridSemRegistro}
-
-        Press Combination    KEY.ALT    KEY.I
-        Sleep    ${SLEEP_ALTO}
-        Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
-
-    END
-
-    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
-
-    Sleep    ${SLEEP_BAIXO}
-    ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
-
-    IF    ${gridPassouTamPadrao}
-
-        SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
-
-    END
-
-    SikuliLibrary.Click    ${LISTAGEM_GRID}
-    Sleep    ${SLEEP_BAIXO}
-
-    Pesquisa código da operação com zeros a esquerda
-
-    IF    ${Teste_Comissao_Linha}
-
-        IF    ${Codigos_Produtos} is None
-
-            Calcula comissão por linha de produto - apenas 1 produto
-
-        ELSE
-
-            Set Test Variable    ${POSIÇÃO_VALOR}    ${0}
-
-            IF    ${Valores_Parcelas} is not None
-                
-                Set Test Variable    ${Teste_Comissão_Parcelada}    ${True}
-
-                Calcula comissão por linha de produto - por parcela personalizada
-
-            ELSE
-
-               Calcula comissão por linha de produto - múltiplos produtos
-
-            END
-
-        END
-
-    ELSE IF    ${Teste_Comissao_Total_Venda}
-
-        Calcula comissão sobre total venda - Produtos
-
-        ${VALOR_DEVOLUCAO}    Evaluate    (${VALOR_FINAL_OPERAÇÃO} * (-1))
-        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_DEVOLUCAO}
-    
-    ELSE IF    ${Teste_Comissao_Escalonada}
-
-        Fail    Validar posteriormente comissão escalonada.
-
-    ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
-
-        Calcula comissão sobre forma de parcelamento - Venda
+        E seleciono a comissão de produtos
 
     END

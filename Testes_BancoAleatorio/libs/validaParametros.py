@@ -312,10 +312,10 @@ class validaParametros:
         # Caso não exista nenhuma forma com comissão > 0
         if not formaParcelamentoFetch:
 
-            sqlInsert = "INSERT INTO formaparcelamento (Descricao,ComEntrada,NPagamentos,TaxaJuro,PrazoMedio,Personalizavel,Tipo_Intervalo,Comissao_Produtos,Comissao_Servicos,DataAlteracao,EnviaMymobile,FormaRecebimento,Comissao_Produtos_Ent,Comissao_Servicos_Ent,Padrao_Venda,Padrao_OS,Padrao_Pre,TPCalculo,AtivaIntervalos,Digitavel,TaxaFlex,ListaPreco,PrazoFixado,DataPrazoFixado,PDesconto,Padrao_Orc,DiaExtra,Empresas,ValorMinimo,CodigoPreOcorrencia,DescricaoPreOcorrencia,CodigoGrupo,DescricaoGrupo,CodigoIdentificador,Padrao_Devolucao,ConsiderarOfertas,ParcelamentoPadrao,Cancelado,ValorMaximo,PDescontoMaximo,Considera_DescMax_produto,Padrao_EmissaoManualNF) VALUES ('FORMA_COMISSÃO',0,1,0,30,0,'Dias',1,0,NOW(),1,'DINHEIRO                       1    ',0,0,0,0,0,'TP',0,0,0,0,0,NULL,0,0,999,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL,0,0,0,0);"
+            sqlInsert = "INSERT INTO formaparcelamento (Descricao,ComEntrada,NPagamentos,TaxaJuro,PrazoMedio,Personalizavel,Tipo_Intervalo,Comissao_Produtos,Comissao_Servicos,DataAlteracao,EnviaMymobile,FormaRecebimento,Comissao_Produtos_Ent,Comissao_Servicos_Ent,Padrao_Venda,Padrao_OS,Padrao_Pre,TPCalculo,AtivaIntervalos,Digitavel,TaxaFlex,ListaPreco,PrazoFixado,DataPrazoFixado,PDesconto,Padrao_Orc,DiaExtra,Empresas,ValorMinimo,CodigoPreOcorrencia,DescricaoPreOcorrencia,CodigoGrupo,DescricaoGrupo,CodigoIdentificador,Padrao_Devolucao,ConsiderarOfertas,ParcelamentoPadrao,Cancelado,ValorMaximo,PDescontoMaximo,Considera_DescMax_produto,Padrao_EmissaoManualNF) VALUES ('FORMA_COMISSAO_PRODUTOS',0,1,0,30,0,'Dias',1,0,NOW(),1,'DINHEIRO                       1    ',0,0,0,0,0,'TP',0,0,0,0,0,NULL,0,0,999,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL,0,0,0,0);"
             cursor.execute(sqlInsert)
 
-            print("Realizou o Insert da forma de parcelamento 'FORMA_COMISSÃO' com comissão > 0.")
+            print("Realizou o Insert da forma de parcelamento 'FORMA_COMISSAO_PRODUTOS' com comissão > 0.")
 
             cursor.execute(consultaForma)
             formaParcelamentoFetch = cursor.fetchall()
