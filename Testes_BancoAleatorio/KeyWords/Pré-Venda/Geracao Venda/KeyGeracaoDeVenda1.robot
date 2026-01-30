@@ -57,7 +57,7 @@ Dado que acesso a tela de geração de vendas
 
 Quando seleciono o último pedido feito
     
-    Press Combination    KEY.ALT     Key.L
+    Press Combination    KEY.ALT    KEY.L
     Sleep    ${SLEEP_BAIXO}
 
     Sleep    ${SLEEP_ALTO}
@@ -75,14 +75,14 @@ Quando seleciono o último pedido feito
 
 E clico em gerar
     
-    Press Combination    KEY.ALT     Key.G 
+    Press Combination    KEY.ALT    KEY.G 
     Sleep    ${SLEEP_BAIXO}
 
 Então confirmo a geração da venda
     
     Wait Until Screen Contain    ${AVISO_DESEJA_GERAR_VENDA}    ${SLEEP_ALTO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${EntradaIgualA_Outros}
@@ -108,7 +108,7 @@ Então confirmo a geração dos pedidos
     
     Wait Until Screen Contain    ${AVISO_DESEJA_GERAR_VENDA}    ${SLEEP_ALTO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${EntradaIgualA_Outros}
@@ -192,7 +192,7 @@ Valida baixa de estoque
 
 E clico em visualizar
 
-    Press Combination    KEY.ALT     Key.V
+    Press Combination    KEY.ALT    KEY.V
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
@@ -214,7 +214,7 @@ Quando seleciono os ultimos pedidos feitos
 
     Set Test Variable    ${Quantidade_Pedidos_Feitos}
 
-    Press Combination    KEY.ALT     Key.L
+    Press Combination    KEY.ALT    KEY.L
     Wait Until Screen Not Contain    ${TELA_CARREGANDO_PEDIDOS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 

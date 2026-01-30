@@ -4,6 +4,7 @@ Library    Collections
 
 Resource   ../utils/parametros_admin_sistema.robot
 Resource   ../utils/myCommerce.robot
+Resource   ../utils/validacaoAviso.robot
 
 *** Variables ***
 @{PARAMS_ALTERADOS}
@@ -11,6 +12,10 @@ Resource   ../utils/myCommerce.robot
 ${REINICIAR_MYCOMMERCE}    ${False}
 
 *** Keywords ***
+Conectar ao Banco de Dados
+
+    Connect To Database    pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+
 Inicializar Pré-Condições
 
     Log To Console    \n\n╔══════════ PRÉ-CONDIÇÕES ═════════╗
@@ -182,3 +187,24 @@ Teardown Restaurar Parametros Alterados E Reiniciar MyCommerce Se Necessário
 
     Restaurar Parametros Alterados
     Reiniciar MyCommerce Se Necessário
+
+Preparar Ambiente MyCommerce
+
+    validacaoAviso.Verifica parâmetros que interferem na venda
+
+    utils.Configurar pesquisa de produto por código
+
+    utils.Configurar foco no campo de vendedor na inclusão de vendedor
+
+    utils.Configurar controle de crédito como desativado
+
+    utils.Configurar vínculo de produto devolvido na entrega como desativado
+
+    utils.Configurar consulta automática ao SCPC como desativada
+
+    IF    ${Atualizacao_Ambiente_MyCommerce}
+
+        myCommerce.Fechar MyCommerce
+        myCommerce.Abrir MyCommerce
+        
+    END    

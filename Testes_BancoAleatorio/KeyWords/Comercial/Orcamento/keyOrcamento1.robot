@@ -52,8 +52,6 @@ Dado que acesso a tela de orçamentos
     ${FORMA_PADRAO}    Valida Configuracoes Venda
     ${FORMA_PRAZO}    Seleciona Forma Prazo
 
-    Verifica parâmetros que interferem na venda
-
     Type With Modifiers    O    CTRL
 
     Valida lançamento de orçamento em aberto
@@ -63,21 +61,14 @@ Dado que acesso a tela de orçamentos
 
 Quando pressiono o atalho de adicionar
 
-    Press Combination    KEY.ALT     Key.A
+    Press Combination    KEY.ALT    KEY.A
+
+    Valida indicação de venda(${Parametro_IndicacaoOrcamento})
+
+    Valida local de negociação da venda
+
     Wait Until Screen Contain    ${TELA_ORC_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
-
-    IF    ${Parametro_Local_Negociacao} 
-
-        Valida local da negociação
-
-    END
-
-    IF    ${Parametro_IndicacaoVenda}
-        
-        Valida indicacao Venda
-
-    END
 
     ${Consulta}    Query    SELECT Codigo FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
 
@@ -87,7 +78,7 @@ E adiciono vendedor e cliente
     
     utils.Adicionar Vendedor e Cliente(Orcamento)
 
-    validacaoAviso.Verifica avisos presentes ao incluir cliente(${DBName} ${Codigo_Cliente})
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
@@ -110,7 +101,7 @@ Então gravo o orçamento
     ${FORMA_PACELAMENTO_CLIENTE}    Verifica Forma Parcelamento Cliente    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.M 
+    Press Combination    KEY.ALT    KEY.M 
     Sleep    ${SLEEP_BAIXO}
 
     Valida cliente com vales compra disponíveis
@@ -126,13 +117,13 @@ Então gravo o orçamento
             
         END
 
-        Press Combination    KEY.ALT     Key.G
+        Press Combination    KEY.ALT    KEY.G
 
     END
 
     Wait Until Screen Contain    ${ABA_PAGAMENTOS}    ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.G
+    Press Combination    KEY.ALT    KEY.G
 
     Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
 
@@ -141,13 +132,13 @@ Então gravo o orçamento
 
 Então visualizo o orçamento
     
-    Press Combination    KEY.ALT     KEY.U
+    Press Combination    KEY.ALT    KEY.U
     Sleep    ${SLEEP_MEDIO}
 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.r
+    Press Combination    KEY.ALT    KEY.r
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
 
 Quando clico em editar
@@ -155,22 +146,14 @@ Quando clico em editar
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.E
+    Press Combination    KEY.ALT    KEY.E
     Sleep    ${SLEEP_BAIXO}
 
-    IF    ${Parametro_IndicacaoVenda}
-        
-        Valida indicacao Venda
-
-    END
+    Valida indicação de venda(${Parametro_IndicacaoOrcamento})
 
     Wait Until Screen Contain    ${TELA_ORC_ADICIONAR}    ${TEMPO_TELA}
-    
-    IF    ${Observacao_existe}
-            
-        Valida observaco cliente
 
-    END
+    Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando clico em excluir
 
@@ -185,7 +168,7 @@ Então finalizo a exclusão
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Exclusao de Venda - Teste Automacao
+    Type    ${EMPTY}    Exclusao de Venda - Teste Automacao
 
     Press Special Key    TAB
     Press Special Key    ENTER

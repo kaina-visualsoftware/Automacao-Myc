@@ -149,7 +149,7 @@ Quando seleciono as últimas vendas feitas
     ${Quantidade_Vendas_Feitas}    Get Length    ${Codigos_Vendas}
     Set Test Variable    ${Quantidade_Vendas_Feitas}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
     Wait Until Screen Contain    ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -379,7 +379,7 @@ E excluo a entrega
     Press Combination    KEY.ALT    KEY.X
     Wait Until Screen Contain    ${TELA_EXCLUSAO_ENTREGA}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Exclusao de Entrega - Teste Automacao
+    Type    ${EMPTY}    Exclusao de Entrega - Teste Automacao
 
     FOR    ${I}    IN RANGE    2
             

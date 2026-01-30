@@ -2,8 +2,9 @@
 Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Faturamento/Emissão Manual Saídas/KeyEmissaoManualSaidas1.robot
+Resource    ../../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords    Start Sikuli Process    AND    KeyEmissaoManualSaidas1.Ler imagens iniciais    AND    Connect To Database    pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+Suite Setup    Run Keywords    Start Sikuli Process    AND    KeyEmissaoManualSaidas1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
 
 *** Test Cases ***
@@ -16,4 +17,4 @@ Teste 01 – Lançamento de nota fiscal de saída com preenchimento manual
     Quando informo um produto normal
     E acesso a aba pagamentos
     Então finalizo a nota fiscal de saída manual
-    E saio da tela(nfManual)
+    E saio da tela(NFeSaidasManual)

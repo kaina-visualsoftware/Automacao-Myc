@@ -5,6 +5,7 @@ Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    Process
 Library    Collections
+Library    Telnet
 
 Resource    ./validacaoAviso.robot
 *** Variables ***
@@ -43,6 +44,7 @@ ${TELA_COMISSOES}                          tela_Comissoes.png
 ${CAIXA_PRINCIPAL}                         tela_CaixaPrinicipal.png
 ${TELA_LIBERACAO_DESCONTO_MAXIMO}          tela_liberacaoDesconto.png
 ${MODAL_CANCELAR_VENDA}                    modal_SenhaDoSupervisor.png
+${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}        tela_MotivoPrecoZeradoProduto.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                       aviso_QuantidadeSemEstoque.png
@@ -50,6 +52,8 @@ ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}        aviso_JaIncluiuProdutoNoGrid.png
 ${AVISO_USAR_ESSE_VENDEDOR}                aviso_UsarEsseVendedor.png
 ${AVISO_EST_INSUFICIENTE_CONTINUAR}        aviso_EstoqueInsuficienteContinuar.png
 ${AVISO_PRODUTO_JA_INCLUSO}                aviso_ProdutoJaIncluso.png
+${AVISO_CADASTRE_CANAL_DE_VENDA}           aviso_CadastreCanaisVenda.png
+${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}      aviso_EspecifiqueVlrUnitProduto.png
 
 # Botões
 ${BT_CONFIRMA_CANAL_NEGOCIACAO}            bt_ConfirmarCanal.png
@@ -66,6 +70,7 @@ ${INPUT_COD_CLIENTE_CONDICIONAL}           lb_CodClienteCondicional.png
 ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}          lb_CodClienteDevolucao.png
 ${INPUT_COD_BENEFICIADO_DOACAO}            lb_CodBeneficiadoDoacao.png
 ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}      input_CodCliente.png
+${INPUT_VALOR_UNITARIO_PRODUTO}            input_ValorUnitarioProduto.png
 
 # Labels
 ${LABEL_AVISO_CREDITO_LIBERADO}            lb_CreditoLiberado.png
@@ -91,11 +96,13 @@ ${Teste_Comissao_Linha}                    ${False}
 ${Teste_Comissao_Forma_Parcelamento}       ${False}
 ${PercentualComissaoTotalVenda_Servico}    ${None}
 ${OS_Vendedor_E_Tecnico_Diferentes}        ${False}
+${Atualizacao_Ambiente_MyCommerce}         ${False}
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
 
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
 
     IF    ${Valores_Parcelas} is not None
 
@@ -104,14 +111,14 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
     ELSE
     
         Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
-
+        
     END
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.C
+    Press Combination    KEY.ALT    KEY.C
 
 Finalização com recebimento de cartão de crédito/débito
     
@@ -241,15 +248,13 @@ Adicionar Vendedor e Cliente(${TELA})
 
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
-    
-    Altera para vendedor vinculado ao cliente
 
     # Reaproveitando a tela que está para validar apenas na inserção de produto que precisa de estoque o estoque em Pedidos.
     Set Test Variable    ${TELA}
 
     ${Forma_Padrao_Cliente}    valida_Forma_Parcelamento_Cliente    ${Codigo_Cliente}
 
-    IF    '${Forma_Padrao_Cliente}' != 'False'
+    IF    $Forma_Padrao_Cliente != False
         
         Log To Console    Possui forma padrão no cliente: ${Forma_Padrao_Cliente}
 
@@ -425,7 +430,7 @@ Valida teste de comissão
             IF    ${FORMA_PRAZO[5]} == 0
 
                 ${FORMA_PRAZO}    validaParametros.Seleciona Forma Prazo Com Comissao
-                                
+                
             END
 
             Set Test Variable    ${PercentualComissaoFormaParcParcela_Produto}    ${FORMA_PRAZO[5]}
@@ -515,7 +520,7 @@ Valida vendedor padrao
 
 Inserir serviço
 
-    ${consultaServico}    Set Variable    SELECT codigo, Detalha FROM servicos WHERE STATUS LIKE 'g' AND Ativo = 1 AND Inativo = 0 AND TabelaComissao IS NULL ORDER BY RAND() LIMIT 1;
+    ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IS NULL ORDER BY RAND() LIMIT 1;
 
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.S
@@ -543,7 +548,7 @@ Inserir serviço
 
     ELSE
 
-        Log To Console    Cliente sem serviços ou serviço inativo, OS sem serviço.
+        Fail    Banco de dados sem serviço cadastrado ou serviço inativo.
         
     END
 
@@ -605,12 +610,12 @@ Inserir Produto normal - Necessita de estoque
 
     IF    '${TELA}' == 'Pedido'
         
-        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto LEFT JOIN (SELECT CodigoProduto, Empresa, SUM(Quantidade - QtdeGerada) AS QuantidadePendente FROM pedidosvendaprodutos WHERE Cancelada IS NULL AND Quantidade > QtdeGerada GROUP BY CodigoProduto, Empresa) AS pendente ON p.Codigo = pendente.CodigoProduto AND pe.Empresa = pendente.Empresa WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pe.Estoque > 1 AND pe.Estoque > COALESCE(pendente.QuantidadePendente, 0) ORDER BY RAND() LIMIT 1;
+        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto LEFT JOIN (SELECT CodigoProduto, Empresa, SUM(Quantidade - QtdeGerada) AS QuantidadePendente FROM pedidosvendaprodutos WHERE Cancelada IS NULL AND Quantidade > QtdeGerada GROUP BY CodigoProduto, Empresa) AS pendente ON p.Codigo = pendente.CodigoProduto AND pe.Empresa = pendente.Empresa WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pe.Estoque >= ${Parametro_QuantidadePadraoVenda} AND pe.Estoque > COALESCE(pendente.QuantidadePendente, 0) ORDER BY RAND() LIMIT 1;
 
     ELSE
 
-        ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
-    
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque >= ${Parametro_QuantidadePadraoVenda} WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+
     END
     
     Sleep    ${SLEEP_MEDIO}
@@ -651,7 +656,7 @@ Inserir Produto normal - Permite sem estoque
 
     END
 
-    ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
+    ${codProduto}    Query    SELECT p.Codigo FROM produtos p WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_MEDIO}
 
     Input Text    ${EMPTY}    ${codProduto[0][0]} 
@@ -680,7 +685,7 @@ Inserir produto pré-definido(${Produto})
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-Valida parametros após incluir produto 
+Valida parametros após incluir produto
     
     IF     ${Parametro_Permite_Varias_Tabelas}
 
@@ -715,9 +720,11 @@ Valida parametros após incluir produto
             
         END
 
-        Valida produto já incluso
-
     END
+
+    Valida produto com preço unitário zerado
+
+    Valida produto já incluso
 
     IF    ${Parametro_RealizaVendaSemEstoque}
 
@@ -764,19 +771,40 @@ Valida parametros após incluir produto
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
 
-Valida local da negociação
+Valida local de negociação da venda
 
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${MODAL_LOCAL_NEGOCIACAO} 
-
-    IF    ${MSG}  
+    IF    ${Parametro_Local_Negociacao}
         
-        Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
-        Press Special Key    DOWN
+        ${possuiCanaisVenda}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM canaisvenda LIMIT 1;
 
-        SikuliLibrary.Click    ${BT_CONFIRMA_CANAL_NEGOCIACAO}
+        IF    ${possuiCanaisVenda}
 
+            ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${MODAL_LOCAL_NEGOCIACAO}    ${TEMPO_TELA}
+            Log To Console    tela: ${tela}
+
+            IF    ${tela}
+
+                Press Special Key    TAB
+                Sleep    ${SLEEP_BAIXO}
+                Press Special Key    DOWN
+
+                SikuliLibrary.Click    ${BT_CONFIRMA_CANAL_NEGOCIACAO}
+            
+            END
+
+        ELSE
+            
+            ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CADASTRE_CANAL_DE_VENDA}    ${TEMPO_TELA}
+
+            IF    ${aviso}
+
+                Press Special Key    ENTER
+        
+            END
+
+        END
+ 
     END
 
 Valida impressao direta de venda(${Parametro})
@@ -786,7 +814,9 @@ Valida impressao direta de venda(${Parametro})
         Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
         Sleep    ${SLEEP_MEDIO}
 
-        Press Combination    KEY.ALT     Key.S
+        Press Combination    KEY.ALT    KEY.S
+
+        Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -819,7 +849,7 @@ Verifica observacao do produto
 
         IF    ${MSG}  
             
-            Input Text    ${EMPTY}    Obs Produto Teste
+            Type    ${EMPTY}    Obs Produto Teste
 
             Press Combination    KEY.ALT     Key.O
             Sleep    ${SLEEP_MEDIO}
@@ -923,7 +953,7 @@ Insere detalhamento no serviço
 
     IF    ${MSG}
         
-        Input Text    ${EMPTY}    Detalhamento de Servico - Teste de Automacao
+        Type    ${EMPTY}    Detalhamento de Servico - Teste de Automacao
         Sleep    ${SLEEP_BAIXO}
 
         Press Combination    KEY.ALT    KEY.C 
@@ -948,27 +978,28 @@ Cancela venda com senha
     Press Combination    KEY.ALT     Key.O
     Sleep    ${SLEEP_BAIXO}
 
-Seleciona produto com linha cadastrada(${Paremtro_Operação_Sem_Estoque})
+Seleciona produto com linha cadastrada(${Parametro_Operação_Sem_Estoque})
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.P
+    Press Combination    KEY.ALT    Key.P
     Sleep    ${SLEEP_BAIXO}
 
-    IF     ${Paremtro_Operação_Sem_Estoque}
+    IF     ${Parametro_Operação_Sem_Estoque}
 
-        ${codProduto}    Query    SELECT codigo FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 AND CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos p WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
+
         Sleep    ${SLEEP_MEDIO}
 
     ELSE
         
         IF    '${TELA}' == 'Pedido'
             
-            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON pe.CodigoProduto = p.Codigo WHERE pe.Estoque > 1 AND p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND COALESCE((SELECT SUM(pvp.Quantidade - pvp.QtdeGerada) FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoProduto = p.Codigo AND pvp.Cancelada IS NULL), 0) < pe.Estoque AND p.CodigoComissao IN (SELECT cpl.Codigo FROM comissaoporlinha AS cpl WHERE cpl.Tipo = 'N' AND cpl.Aliquota > 0) ORDER BY RAND() LIMIT 1;
-    
+            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON pe.CodigoProduto = p.Codigo WHERE pe.Estoque > 1 AND p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND COALESCE((SELECT SUM(pvp.Quantidade - pvp.QtdeGerada) FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoProduto = p.Codigo AND pvp.Cancelada IS NULL), 0) < pe.Estoque AND p.CodigoComissao IN (SELECT cpl.Codigo FROM comissaoporlinha AS cpl WHERE cpl.Tipo = 'N' AND cpl.Aliquota > 0) AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
+
         ELSE
 
-            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) ORDER BY RAND() LIMIT 1;
-        
+            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
+
         END
 
     END
@@ -1032,7 +1063,7 @@ Altera para vendedor vinculado ao cliente
 
     IF    ${vendedorPadrao}
 
-        Press Combination    KEY.ALT    KEY.S
+        Press Combination    KEY.ALT    KEY.N
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -1184,7 +1215,7 @@ E saio da tela(${TELA})
         Press Combination    KEY.ALT    KEY.S
         Wait Until Screen Not Contain    ${TELA_CONTAS_A_PAGAR_AVULSA}    ${TEMPO_TELA}
 
-    ELSE IF    '${TELA}' == 'nfManual'
+    ELSE IF    '${TELA}' == 'NFeSaidasManual'
 
         Press Special Key    ESC
         Sleep    ${SLEEP_BAIXO}
@@ -1388,3 +1419,133 @@ Formata código venda em texto para pesquisa
     ${codigo_formatado}    Evaluate    "{:,}".format(${codigo_int}).replace(",", ".")
 
     RETURN    ${codigo_formatado}
+
+Configurar pesquisa de produto por código
+
+    IF    ${Parametro_PesquisaCodigoCodFabricaReferencia}
+        
+        Execute Sql String    UPDATE config SET BuscaReferencia = 0
+
+        Set Global Variable    ${Atualizacao_Ambiente_MyCommerce}    ${True}
+
+        Set Global Variable    ${Parametro_PesquisaCodigoCodFabricaReferencia}    ${False}
+
+    END
+
+Configurar foco no campo de vendedor na inclusão de vendedor
+
+    IF    ${Parametro_FocoCampoCliente}
+
+        Execute Sql String    UPDATE config SET FocoClienteVenda = 0
+
+        Set Global Variable    ${Atualizacao_Ambiente_MyCommerce}    ${True}
+
+        Set Global Variable    ${Parametro_FocoCampoCliente}    ${False}
+        
+    END
+
+Configurar controle de crédito como desativado
+
+    ${Deve_Desativar_Controle_Credito}    Evaluate    any([${Parametro_ControlaCreditoVenda}, ${Parametro_ControlaCreditoOrcamento}, ${Parametro_ControlaCreditoCondicional}, ${Parametro_ControlaCreditoGerarPreVendaOrcamento}, ${Parametro_ControlaCreditoOS}, ${Parametro_ControlaCreditoDevTroca}, ${Parametro_ControlaCreditoPreVenda}, ${Parametro_ControlaCreditoPreSeparacaoPreVenda}, ${Parametro_ControlaCreditoDescontaChequePreEmMaos}, ${Parametro_ControlaCreditoPreVendaAuditoria}])
+
+    IF    ${Deve_Desativar_Controle_Credito}
+
+        Execute Sql String    UPDATE config SET ControlaCreditoClientes = 0, ControlaCreditoORC = 0, ControlaCreditoCond = 0, ControlaCreditoGeraPreOrcamento = 0, ControlaCreditoOS = 0, ControlaCreditoDevTroca = 0, ControlaCreditoPRE = 0, ControlaCredPreSepPreVenda = 0, DescontaChPre_CreditoCliente = 0, AuditoriaControlaCreditoPre = 0;
+
+        Set Global Variable    ${Atualizacao_Ambiente_MyCommerce}    ${True}
+
+        Set Global Variable    ${Parametro_ControlaCreditoVenda}                      ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoOrcamento}                  ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoCondicional}                ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoGerarPreVendaOrcamento}     ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoOS}                         ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoDevTroca}                   ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoPreVenda}                   ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoPreSeparacaoPreVenda}       ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoDescontaChequePreEmMaos}    ${False}
+        Set Global Variable    ${Parametro_ControlaCreditoPreVendaAuditoria}          ${False}
+
+    END
+
+Valida produto com preço unitário zerado
+
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${tela}     Exists    ${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}
+    ${aviso}    Exists    ${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}
+
+    IF    ${tela}
+
+        Press Special Key    ESC
+
+        Wait Until Screen Not Contain    ${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}    ${SLEEP_ALTO}
+
+        Press Combination    KEY.ALT    KEY.TAB
+        Sleep    ${SLEEP_BAIXO}
+
+        Corrigir valor unitário do produto
+        
+    END
+
+    IF    ${aviso}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+        Corrigir valor unitário do produto
+        
+    END
+
+Corrigir valor unitário do produto
+
+    Informa valor unitário do produto
+
+    Valida parametros após incluir produto
+
+Informa valor unitário do produto
+
+    ${valorUnitario}    Query    SELECT p.VendaT1 FROM produtos p WHERE p.Codigo = ${Codigo_Cliente}
+
+    SikuliLibrary.Double Click    ${INPUT_VALOR_UNITARIO_PRODUTO}
+
+    Input Text    ${EMPTY}    ${valorUnitario}
+
+Configurar vínculo de produto devolvido na entrega como desativado
+
+    IF    ${Parametro_VinculaProdutoDevolvidoEntrega}
+
+        Execute Sql String    UPDATE config SET VinculaDevolucaoEntrega = 0
+
+        Set Global Variable    ${Atualizacao_Ambiente_MyCommerce}    ${True}
+
+        Set Global Variable    ${Parametro_VinculaProdutoDevolvidoEntrega}    ${False}
+        
+    END
+
+Configurar consulta automática ao SCPC como desativada
+
+    IF    ${Parametro_ConsultaSCPCVenda}
+
+        Execute Sql String    UPDATE config SET ConsultaSCPCVenda = 0
+
+        Set Global Variable    ${Atualizacao_Ambiente_MyCommerce}    ${True}
+
+        Set Global Variable    ${Parametro_ConsultaSCPCVenda}    ${False}
+        
+    END
+
+Valida impressão direta de pré-venda
+
+    Log To Console    Parametro_ImprimePreVendaDireto: ${Parametro_ImprimePreVendaDireto}
+    
+    IF    ${Parametro_ImprimePreVendaDireto}
+        
+        Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_MEDIO}
+
+        Press Combination    KEY.ALT    KEY.S
+
+        Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
+        Sleep    ${SLEEP_BAIXO}
+
+    END

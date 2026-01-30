@@ -1,5 +1,6 @@
 import mysql.connector
 import leituraConfig as config
+import ctypes
 
 dbname = config.config.Database
 porta = config.config.Porta
@@ -51,3 +52,9 @@ class verificacoesExtras:
             return formaRecebimento[0][0]
 
 # verificacoesExtras.verifica_Forma_Parcelamento_Cliente(312805)
+
+    def get_caps_lock_status(*args):
+
+        status = ctypes.WinDLL("User32.dll").GetKeyState(0x14)
+
+        return True if (status & 1) else False

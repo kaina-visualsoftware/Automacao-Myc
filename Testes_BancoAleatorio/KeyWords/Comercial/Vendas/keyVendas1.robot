@@ -27,7 +27,7 @@ ${DBUser}                                root
 ${SLEEP_BAIXO}                           0.7
 ${SLEEP_MEDIO}                           1.5
 ${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
+${TEMPO_TELA}                            25
 
 # Telas
 ${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png
@@ -58,7 +58,7 @@ ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}        modal_PersonalizacaoPagamento.png
 
 # Telas Avisos
-${AVISO_CLIENTE_OUTRO_VE}                aviso_clienteOutroVendedor.png
+${AVISO_USAR_ESSE_VENDEDOR}              aviso_clienteOutroVendedor.png
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}    aviso_CondicionalEmAbertoVisualizar.png
 ${AVISO_NCM_INVALIDO}                    aviso_NCMInvalidoNFC.png
@@ -94,7 +94,7 @@ ${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
 ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
 ${Codigos_Produtos}                      ${None}
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
-${Quantidade_Produto}                    ${1}
+${Quantidade_Produto}                    0
 ${QUANTIDADE_PRODUTOS}                   ${1}
 ${QTDE_BAIXA_PRODUTO}                    ${1}
 ${Desconto_Produto}                      ${None}
@@ -125,27 +125,19 @@ Dado que acesso a tela de vendas de balcão
 
 Quando pressiono o atalho de adicionar
 
-    Verifica parâmetros que interferem na venda
-
     SikuliLibrary.Click    ${BT_ADICIONAR}
     Sleep    ${SLEEP_BAIXO}
 
-    IF    ${Parametro_Local_Negociacao}
+    Valida indicação de venda(${Parametro_IndicacaoVenda})
 
-        Valida local da negociação
-
-    END
-
-    IF    ${Parametro_IndicacaoVenda}
-
-        Valida indicacao Venda
-
-    END
+    Valida local de negociação da venda
 
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+    
     Sleep    ${SLEEP_ALTO}
 
     Última venda feita/em aberto
+    
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
     # Seta a lista de produtos como None para dar certo em ambos os casos (venda com mais de um produto e com apenas 1 produto)
@@ -165,6 +157,8 @@ E adiciono vendedor e cliente
 
 Quando insiro mais de um produto normal(${QuantidadeDeProduto})
 
+    ${Quantidade_Produto}    Set Variable    ${Parametro_QuantidadePadraoVenda}
+    
     ${Codigos_Produtos}    Create List
 
     FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
@@ -180,7 +174,7 @@ Quando insiro mais de um produto normal(${QuantidadeDeProduto})
 
 Informa a quantidade do produto(${Quantidade_Produto})
 
-    IF    ${Quantidade_Produto} != 1
+    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoVenda}
         
         SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     
@@ -188,8 +182,6 @@ Informa a quantidade do produto(${Quantidade_Produto})
         Input Text    ${EMPTY}    ${Quantidade_Produto}
 
     END
-
-    Press Special Key    TAB
 
     Set Test Variable    ${Quantidade_Produto}
 
@@ -243,7 +235,7 @@ Então finalizo a venda
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
-        IF    ${Parametro_ControlaCredito}
+        IF    ${Parametro_ControlaCreditoVenda}
 
             Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
@@ -281,7 +273,8 @@ Então finalizo a venda
     Valida Parametros/Impressões pós venda
 
     # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
-    SikuliLibrary.Click    ${AJUSTE_FOCO}
+    # SikuliLibrary.Click    ${AJUSTE_FOCO}
+    SikuliLibrary.Click    ${TELA_VENDAS}
     Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
@@ -327,7 +320,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
-        IF    ${Parametro_ControlaCredito}
+        IF    ${Parametro_ControlaCreditoVenda}
 
             Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
@@ -427,7 +420,7 @@ Então finalizo a venda - A Prazo
 
     Press Combination    KEY.ALT     Key.F
 
-    IF    ${Parametro_ControlaCredito}
+    IF    ${Parametro_ControlaCreditoVenda}
 
         Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
@@ -460,20 +453,16 @@ Quando clico em editar
 
     SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}
-
+    
     IF    ${VendedorPossuiSenha}
 
         Valida solicitação de senha do usuário supervisor
 
     END
 
-    Valida solicitação de senha do usuário supervisor
+    # Valida solicitação de senha do usuário supervisor
 
-    IF    ${Parametro_IndicacaoVenda}
-
-        Valida indicacao Venda
-
-    END
+    Valida indicação de venda(${Parametro_IndicacaoVenda})
 
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}     ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -493,6 +482,8 @@ E excluo os pagamentos lançados
 
 Então clico em excluir
 
+    utils.Exclui ordem de entrega(${COD_VENDA})
+
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
     Press Combination    KEY.ALT    KEY.X
@@ -502,12 +493,14 @@ Então clico em excluir
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Exclusao de Venda - Teste Automacao
+    Type    ${EMPTY}    Exclusao de Venda - Teste Automacao
 
     Press Special Key    TAB
     Press Special Key    ENTER
 
-    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Wait Until Screen Not Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
+
+    Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     ${venda_excluida}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND Status = 'x' AND Cancelada = 1
@@ -552,7 +545,7 @@ Calcula valor final da venda
     
     ${somaValorTotalProdutos}    Evaluate    0
 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
 
     ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA};
@@ -817,7 +810,7 @@ Então finalizo a venda personalizada com múltiplas parcelas(${qtdeParcelas})
 
     Press Combination    KEY.ALT     Key.F
 
-    IF    ${Parametro_ControlaCredito}
+    IF    ${Parametro_ControlaCreditoVenda}
 
         Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
@@ -971,8 +964,9 @@ E pesquiso pela venda gerada
     Press Combination    KEY.ALT    KEY.P
 
     Input Text    ${EMPTY}    ${COD_VENDA}
+    Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
 
-    Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${GRID_REGISTRO_ENCONTRADO}    ${SLEEP_ALTO}

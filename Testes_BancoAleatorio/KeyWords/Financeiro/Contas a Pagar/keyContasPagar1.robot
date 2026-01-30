@@ -63,7 +63,7 @@ E insiro um cliente qualquer
 
 Quando clico em adicionar
     
-    Press Combination    KEY.ALT     Key.A    
+    Press Combination    KEY.ALT    KEY.A    
     Wait Until Screen Contain    ${TELA_CADASTRO_CONTAS_A_PAGAR}    ${TEMPO_TELA}
 
 E insiro as informações necessárias(${Valor_Conta})
@@ -91,7 +91,7 @@ E insiro as informações necessárias(${Valor_Conta})
         
     END
 
-    Input Text    ${EMPTY}    Conta a pagar automacao
+    Type    ${EMPTY}    Conta a pagar automacao
 
     FOR    ${I}    IN RANGE    2
         
@@ -123,7 +123,7 @@ E insiro as informações necessárias(${Valor_Conta})
 Então gravo o lançamento de conta a pagar avulsa
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.G
+    Press Combination    KEY.ALT    KEY.G
     Wait Until Screen Not Contain    ${TELA_CADASTRO_CONTAS_A_PAGAR}    ${TEMPO_TELA}
 
 Recuperando numero documento 

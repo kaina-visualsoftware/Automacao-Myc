@@ -37,9 +37,11 @@ ${TELA_IMPRESSAO_ENTREGA}                              tela_ImpressaoEntrega.png
 ${TELA_ENTREGAS}                                       tela_Entregas.png
 ${TELA_ORDEM_DE_ENTREGA}                               tela_OrdemDeEntrega.png
 ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
+${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}               tela_ConsultaSCPC_SemConsultaSalva.png
+${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}               tela_ConsultaSCPC_ComConsultaSalva.png
 
 # Telas Avisos
-${AVISO_CLIENTE_OUTRO_VE}                              aviso_clienteOutroVendedor.png
+${AVISO_USAR_ESSE_VENDEDOR}                            aviso_clienteOutroVendedor.png
 ${AVISO_ALTERAR_VENDEDOR}                              aviso_DesejaAlterarVendedor.png
 ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}                    aviso_ExigeSenhaVendedorDiferente.png
 ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}                  aviso_CondicionalEmAbertoVisualizar.png
@@ -60,6 +62,9 @@ ${AVISO_LANC_VENDA_EM_ABERTO}                          aviso_LancVendaEmAberto.p
 ${AVISO_LANC_PRE_VENDA_EM_ABERTO}                      aviso_LancPreVendaEmAberto.png
 ${AVISO_DESC_ESCALA_COMISSAO}                          aviso_DescEscalaComissao.png
 ${AVISO_EDITAR_OS_FINALIZADA}                          aviso_EditarOSFinalizadaSupervisor.png
+${AVISO_VENDEDOR_SEM_PERCENT_COMISSAO_VALE_COMPRA}     aviso_VendedorSemPercentualComissaoValeCompra.png
+${AVISO_CLIENTE_MENOR_DE_IDADE}                        aviso_ClienteMenorDeIdade.png
+${AVISO_ATUALIZAR_NUMERO_CADASTRO_PRICIPAL}            aviso_AtualizarNumeroCadastroPrincipal.png
 
 # Botões
 ${BT_NÃO}                                              bt_Nao.png
@@ -133,15 +138,9 @@ Processa aviso de condicional em aberto
 
 Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
-    ${Lista_de_avisos}    Valida Pametros Config
-
-    ${Aviso_vendedor_existe}                   Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
-    ${Aviso_infoCredito_existe}                Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
-    ${Aviso_ExigeSenhaOutroVendedor_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
+    ${ExisteAvisoInfoCreditoCliente}    Set Variable    ${False}
 
     ${Observacao_existe}    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente};
-
-    Set Test Variable    ${Aviso_vendedor_existe}
 
     Set Test Variable    ${Observacao_existe}
 
@@ -153,7 +152,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     END
 
-    IF    ${Aviso_ExigeSenhaOutroVendedor_existe}
+    IF    ${Parametro_ExigeSenhaOutroVendedor}
 
         Valida aviso exige senha para outro vendedor
 
@@ -161,17 +160,45 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     IF    '${TELA}' != 'NFeSaidasManual'
 
-        IF    ${Aviso_Vendedor_Existe_Comissao}
+        IF    ${Parametro_AvisarVendedorDiferenteDoCadastro}
 
-            Valida aviso cliente outro vendedor
+            Valida aviso para usar o vendedor vinculado ao cliente
 
         END
 
     END
+    
+    Valida cliente menor de idade
+
+    Valida aviso atualizar número no cadastro principal
 
     Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 
-    IF    ${Aviso_infoCredito_existe}
+    # IF    ${Parametro_ConsultaSCPCVenda}
+
+    #     Valida consulta SCPC
+        
+    # END
+
+    IF    '${TELA}' == 'Orçamento'
+
+        IF    ${Parametro_InfoCreditoClienteOrcamento}
+
+            ${ExisteAvisoInfoCreditoCliente}    Set Variable    ${True}
+            
+        END
+
+    ELSE
+
+        IF    ${Parametro_InfoCreditoClienteVenda}
+
+            ${ExisteAvisoInfoCreditoCliente}    Set Variable    ${True}
+            
+        END
+        
+    END
+
+    IF    ${ExisteAvisoInfoCreditoCliente}
 
         Valida informações de crédito
 
@@ -193,16 +220,16 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Verifica parâmetros que interferem na venda
 
-    ${Lista_de_Parametros}    Valida Pametros Config
+    ${Lista_de_Parametros}    ${TelasQtdePadraoProduto}    ${QuantidadePadraoVenda}    ${DiasInativoSCPC}    Valida Parametros Config
     ${Config_Empresas}        Valida Config Empresa
 
-    #Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
+    # Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
     ${Parametro_VendaRapida}                               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Venda_Rapida
     ${Parametro_IncluiDireto}                              Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IncluiDireto
     ${Aviso_ProdutoSemEstoque}                             Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Sem_Est
     ${Parametro_IndicacaoVenda}                            Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IndicacaoVenda
     ${Parametro_VendeSemEstoque}                           Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Vende_Sem_Estoque
-    ${Parametro_ControlaCredito}                           Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoClientes
+    ${Parametro_ControlaCreditoVenda}                      Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoClientes
     ${Parametro_Controla_Entrega}                          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaEntregaPrevista
     ${Parametro_Local_Negociacao}                          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    LocalNegociacao
     ${Parametro_ExigeSenhaMultiplo}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Senha_supervisor_multiplo
@@ -251,6 +278,29 @@ Verifica parâmetros que interferem na venda
     ${Parametro_FaturamentoAoFinalizarOS}                  Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FaturarOS
     ${Parametro_ComissaoVendedorEExecutorServico}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    OS_ComVendedorEexecutor
     ${Parametro_NaoDeduzirISSQNComissaoOS}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    NaoDeduzirISSQNComissao
+    ${Parametro_PesquisaCodigoCodFabricaReferencia}        Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    BuscaReferencia
+    ${Parametro_ConsultaSCPCVenda}                         Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ConsultaSCPCVenda
+    ${Parametro_FocoCampoCliente}                          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    FocoClienteVenda
+    ${Parametro_IndicacaoPreVenda}                         Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IndicacaoPreVenda
+    ${Parametro_ControlaCreditoOrcamento}                  Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoORC
+    ${Parametro_ControlaCreditoCondicional}                Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoCond
+    ${Parametro_ControlaCreditoGerarPreVendaOrcamento}     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoGeraPreOrcamento
+    ${Parametro_ControlaCreditoOS}                         Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoOS
+    ${Parametro_ControlaCreditoDevTroca}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoDevTroca
+    ${Parametro_ControlaCreditoPreVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCreditoPRE
+    ${Parametro_ControlaCreditoPreSeparacaoPreVenda}       Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ControlaCredPreSepPreVenda
+    ${Parametro_ControlaCreditoDescontaChequePreEmMaos}    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    DescontaChPre_CreditoCliente
+    ${Parametro_ControlaCreditoPreVendaAuditoria}          Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    AuditoriaControlaCreditoPre
+    ${Parametro_VinculaProdutoDevolvidoEntrega}            Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    VinculaDevolucaoEntrega
+    ${Parametro_ObrigaMotivoDevolucao}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ObrigarMotivoDevolucao
+    ${Parametro_AvisarVendedorDiferenteDoCadastro}         Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    AvisoVendedor
+    ${Parametro_IndicacaoOrcamento}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IndicacaoOrcamento
+    ${Parametro_IndicacaoOS}                               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    IndicacaoOS
+    ${Parametro_InfoCreditoClienteVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Info_Financeiro
+    ${Parametro_InfoCreditoClienteOrcamento}               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Info_Financeiro_Orc
+    ${Parametro_InfoCreditoClientePreVenda}                Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Info_Financeiro_Prev
+    ${Parametro_ExigeSenhaOutroVendedor}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeSenhaMudarVendedorVenda
+    ${Parametro_ImprimePreVendaDireto}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirPreVenda_FinalizarPreVenda
 
     IF    ${Parametro_VendaRapida}
 
@@ -266,131 +316,181 @@ Verifica parâmetros que interferem na venda
 
         # Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
 
-        Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
+        Set Global Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
 
-        Set Test Variable    ${Parametro_RealizaVendaSemEstoque}    ${False}
+        Set Global Variable    ${Parametro_RealizaVendaSemEstoque}    ${False}
 
-        Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}    ${False}
+        Set Global Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}    ${False}
 
-        Set Test Variable    ${Parametro_VendeSemEstoque}    ${False}
+        Set Global Variable    ${Parametro_VendeSemEstoque}    ${False}
 
     ELSE
 
-        Set Test Variable    ${Parametro_RealizaPreVendaSemEstoque}
+        Set Global Variable    ${Parametro_RealizaPreVendaSemEstoque}
 
-        Set Test Variable    ${Parametro_RealizaVendaSemEstoque}
+        Set Global Variable    ${Parametro_RealizaVendaSemEstoque}
 
-        Set Test Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
+        Set Global Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
 
-        Set Test Variable    ${Parametro_VendeSemEstoque}
+        Set Global Variable    ${Parametro_VendeSemEstoque}
 
     END
 
-    Set Test Variable    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
+    Set Global Variable    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
 
-    Set Test Variable    ${Parametro_CaixaControladoPorUsuario}
+    Set Global Variable    ${Parametro_CaixaControladoPorUsuario}
 
-    Set Test Variable    ${Parametro_FaturaVendaDireto}
+    Set Global Variable    ${Parametro_FaturaVendaDireto}
 
-    Set Test Variable    ${Parametro_BloqueiaGeracaoVendaParcial}
+    Set Global Variable    ${Parametro_BloqueiaGeracaoVendaParcial}
 
-    Set Test Variable    ${Parametro_ExigeSenhaCancelarVenda}
+    Set Global Variable    ${Parametro_ExigeSenhaCancelarVenda}
 
-    Set Test Variable    ${Parametro_DevolucaoPermiteAberta}
+    Set Global Variable    ${Parametro_DevolucaoPermiteAberta}
 
-    Set Test Variable    ${Parametro_DevolucaoExigeOBS}
+    Set Global Variable    ${Parametro_DevolucaoExigeOBS}
 
-    Set Test Variable    ${Parametro_ValeCompra_Dev_Menor0}
+    Set Global Variable    ${Parametro_ValeCompra_Dev_Menor0}
 
-    Set Test Variable    ${Parametro_DevolucaoAvulsa}
+    Set Global Variable    ${Parametro_DevolucaoAvulsa}
 
-    Set Test Variable    ${Parametro_Fatura_OS}
+    Set Global Variable    ${Parametro_Fatura_OS}
 
-    Set Test Variable    ${Parametro_Imprime_Carne_OS}
+    Set Global Variable    ${Parametro_Imprime_Carne_OS}
 
-    Set Test Variable    ${Parametro_Imprime_OS}
+    Set Global Variable    ${Parametro_Imprime_OS}
 
-    Set Test Variable    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
+    Set Global Variable    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
 
-    Set Test Variable    ${Parametro_Suprime_Objetos_OS_Orcamento}
+    Set Global Variable    ${Parametro_Suprime_Objetos_OS_Orcamento}
 
-    Set Test Variable    ${Parametro_Desabilita_Servico_Orcamento}
+    Set Global Variable    ${Parametro_Desabilita_Servico_Orcamento}
 
-    Set Test Variable    ${Parametro_Imprime_Boleto}
+    Set Global Variable    ${Parametro_Imprime_Boleto}
 
-    Set Test Variable    ${Parametro_Imprime_Promissoria}
+    Set Global Variable    ${Parametro_Imprime_Promissoria}
 
-    Set Test Variable    ${Parametro_Imprime_Contrato_Venda}
+    Set Global Variable    ${Parametro_Imprime_Contrato_Venda}
 
-    Set Test Variable    ${Parametro_Imprime_Entrada}
+    Set Global Variable    ${Parametro_Imprime_Entrada}
 
-    Set Test Variable    ${Parametro_Impre_Ordem_de_Entrega}
+    Set Global Variable    ${Parametro_Impre_Ordem_de_Entrega}
 
-    Set Test Variable    ${Parametro_ControlaCredito}
+    Set Global Variable    ${Parametro_ControlaCreditoVenda}
 
-    Set Test Variable    ${Parametro_IndicacaoVenda}
+    Set Global Variable    ${Parametro_IndicacaoVenda}
 
-    Set Test Variable    ${Parametro_IncluiDireto}
+    Set Global Variable    ${Parametro_IncluiDireto}
 
-    Set Test Variable    ${Aviso_ProdutoSemEstoque}
+    Set Global Variable    ${Aviso_ProdutoSemEstoque}
 
-    Set Test Variable    ${Parametro_ImprimeNFCeDireto}
+    Set Global Variable    ${Parametro_ImprimeNFCeDireto}
 
-    Set Test Variable    ${Parametro_IndicacaoVenda}
+    Set Global Variable    ${Parametro_ImprimeVendaDireto}
 
-    Set Test Variable    ${Parametro_ImprimeVendaDireto}
+    Set Global Variable    ${Parametro_ImprimeDuplicataVenda}
 
-    Set Test Variable    ${Parametro_ImprimeDuplicataVenda}
+    Set Global Variable    ${Parametro_ExibeVendasAnteriores}
 
-    Set Test Variable    ${Parametro_ExibeVendasAnteriores}
+    Set Global Variable    ${Parametro_ExigeSenhaMultiplo}
 
-    Set Test Variable    ${Parametro_ExigeSenhaMultiplo}
+    Set Global Variable    ${Parametro_BaixaCentralizada}
 
-    Set Test Variable    ${Parametro_BaixaCentralizada}
+    Set Global Variable    ${Parametro_BaixaAutomatico}
 
-    Set Test Variable    ${Parametro_BaixaAutomatico}
+    Set Global Variable    ${Caixa_Baixas_Automatica}
 
-    Set Test Variable    ${Caixa_Baixas_Automatica}
+    Set Global Variable    ${Parametro_Exibe_Foto_Cliente}
 
-    Set Test Variable    ${Parametro_Exibe_Foto_Cliente}
+    Set Global Variable    ${Parametro_Controla_Entrega}
 
-    Set Test Variable    ${Parametro_Controla_Entrega}
+    Set Global Variable    ${Parametro_Local_Negociacao}
 
-    Set Test Variable    ${Parametro_Local_Negociacao}
+    Set Global Variable    ${Parametro_Imprime_OrdemEntrega}
 
-    Set Test Variable    ${Parametro_Imprime_OrdemEntrega}
+    Set Global Variable    ${Parametro_Permite_Varias_Tabelas}
 
-    Set Test Variable    ${Parametro_Permite_Varias_Tabelas}
+    Set Global Variable    ${Parametro_VendeSemEstoqueCondicional}
 
-    Set Test Variable    ${Parametro_VendeSemEstoqueCondicional}
+    Set Global Variable    ${Parametro_ImprimeCondicional}
 
-    Set Test Variable    ${Parametro_ImprimeCondicional}
+    Set Global Variable    ${Parametro_BloqueiaOrcamentoSemEstoque}
 
-    Set Test Variable    ${Parametro_BloqueiaOrcamentoSemEstoque}
+    Set Global Variable    ${Parametro_BaixaEstoquePreVenda}
 
-    Set Test Variable    ${Parametro_BaixaEstoquePreVenda}
+    Set Global Variable    ${Parametro_ImpressaoAposGerarEntrega}
 
-    Set Test Variable    ${Parametro_ImpressaoAposGerarEntrega}
+    Set Global Variable    ${Parametro_UmaEntregaPorVenda}
 
-    Set Test Variable    ${Parametro_UmaEntregaPorVenda}
+    Set Global Variable    ${Parametro_ConsideraDoacoes}
 
-    Set Test Variable    ${Parametro_ConsideraDoacoes}
+    Set Global Variable    ${Parametro_Venda_Padrao_Entregue}
 
-    Set Test Variable    ${Parametro_Venda_Padrao_Entregue}
+    Set Global Variable    ${Parametro_TrazerDescricaoAutomaticaEntrega}
 
-    Set Test Variable    ${Parametro_TrazerDescricaoAutomaticaEntrega}
+    Set Global Variable    ${Parametro_FaturamentoAoFinalizarOS}
 
-    Set Test Variable    ${Parametro_FaturamentoAoFinalizarOS}
+    Set Global Variable    ${Parametro_ComissaoVendedorEExecutorServico}
 
-    Set Test Variable    ${Parametro_ComissaoVendedorEExecutorServico}
+    Set Global Variable    ${Parametro_NaoDeduzirISSQNComissaoOS}
 
-    Set Test Variable    ${Parametro_NaoDeduzirISSQNComissaoOS}
+    Set Global Variable    ${Parametro_PesquisaCodigoCodFabricaReferencia}
+
+    Set Global Variable    ${Parametro_ConsultaSCPCVenda}
+
+    Set Global Variable    ${Parametro_FocoCampoCliente}
+
+    Set Global Variable    ${Parametro_IndicacaoPreVenda}
+
+    Set Global Variable    ${Parametro_TelasQtdePadraoProduto}    ${TelasQtdePadraoProduto}
+
+    Set Global Variable    ${Parametro_QuantidadePadraoVenda}    ${QuantidadePadraoVenda}
+
+    Set Global Variable    ${Parametro_DiasInativoSCPC}    ${DiasInativoSCPC}
+
+    Set Global Variable    ${Parametro_ControlaCreditoOrcamento}
+
+    Set Global Variable    ${Parametro_ControlaCreditoCondicional}
+
+    Set Global Variable    ${Parametro_ControlaCreditoGerarPreVendaOrcamento}
+
+    Set Global Variable    ${Parametro_ControlaCreditoOS}
+
+    Set Global Variable    ${Parametro_ControlaCreditoDevTroca}
+
+    Set Global Variable    ${Parametro_ControlaCreditoPreVenda}
+
+    Set Global Variable    ${Parametro_ControlaCreditoPreSeparacaoPreVenda}
+
+    Set Global Variable    ${Parametro_ControlaCreditoDescontaChequePreEmMaos}
+
+    Set Global Variable    ${Parametro_ControlaCreditoPreVendaAuditoria}
+
+    Set Global Variable    ${Parametro_VinculaProdutoDevolvidoEntrega}
+
+    Set Global Variable    ${Parametro_ObrigaMotivoDevolucao}
+
+    Set Global Variable    ${Parametro_AvisarVendedorDiferenteDoCadastro}
+
+    Set Global Variable    ${Parametro_IndicacaoOrcamento}
+
+    Set Global Variable    ${Parametro_IndicacaoOS}
+
+    Set Global Variable    ${Parametro_InfoCreditoClienteVenda}
+
+    Set Global Variable    ${Parametro_InfoCreditoClienteOrcamento}
+
+    Set Global Variable    ${Parametro_InfoCreditoClientePreVenda}
+
+    Set Global Variable    ${Parametro_ExigeSenhaOutroVendedor}
+
+    Set Global Variable    ${Parametro_ImprimePreVendaDireto}
 
 Valida aviso exige senha para outro vendedor
 
-    ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}    ${SLEEP_ALTO}
+    ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}    ${SLEEP_ALTO}
 
-    IF    ${MSG}
+    IF    ${aviso}
 
         Press Special Key    ENTER
         Wait Until Screen Contain    ${TELA_SENHA_SUPERVISOR}    ${SLEEP_ALTO}
@@ -404,30 +504,49 @@ Valida aviso exige senha para outro vendedor
 
     END
 
-Valida aviso cliente outro vendedor
-
+Valida aviso para usar o vendedor vinculado ao cliente
+    
     Sleep    ${SLEEP_BAIXO}
-    ${MSG}     Exists    ${AVISO_CLIENTE_OUTRO_VE}
-    ${MSG2}    Exists    ${AVISO_ALTERAR_VENDEDOR}
+    ${vinculoVendedorCliente}    Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE c.Codigo = ${Codigo_Cliente}
 
-    #Não altera mais para o vendedor padrão por conta dos testes de comissão
+    IF    '${vinculoVendedorCliente[0][0]}' != 'None'
 
-    IF    ${MSG} or ${MSG2}
+        ${VendedorVinculoCliente}    Convert To Integer    ${vinculoVendedorCliente[0][0]}
+        ${VendedorDaOperacao}        Convert To Integer    ${Codigo_Vendedor}
 
-        Press Combination    KEY.ALT     Key.N
-        Sleep    ${SLEEP_MEDIO}
+        IF    ${VendedorVinculoCliente} != ${VendedorDaOperacao}
 
+            Wait Until Screen Contain    ${AVISO_USAR_ESSE_VENDEDOR}    ${TEMPO_TELA}
+            
+            Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    KEY.N
+
+            Wait Until Screen Not Contain    ${AVISO_USAR_ESSE_VENDEDOR}    ${SLEEP_ALTO}
+            
+        END
+        
     END
 
 Valida informações de crédito
 
-    Sleep    ${SLEEP_MEDIO}
-    ${MSG}    Exists    ${TELA_INFO_CRÉDITOS}
+    IF    '${TELA}' != 'NFeSaidasManual'
 
-    IF    ${MSG}
+        Sleep    ${SLEEP_BAIXO}
+        ${query_duplicatasNaoQuitadas}    Run Keyword And Return Status    Check If Exists In Database    SELECT Sequencia, Descricao, DataQuitacao, DataLancamento, CodigoVenda, NDocumento, NPagamento, Vencimento, Valor, ValorPendente, Empresa, TipoCR FROM ContasAReceber WHERE Codigo = ${Codigo_Cliente} AND Quitado = 0 AND ISNULL(Cancelada) AND SEQUENCIA NOT IN(SELECT valecompra.SeqCR FROM valecompra WHERE valecompra.SeqCR = SEQUENCIA);
 
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_MEDIO}
+        IF    ${query_duplicatasNaoQuitadas}
+
+            ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_INFO_CRÉDITOS}    ${TEMPO_TELA}
+
+            IF    ${tela}
+
+                Press Special Key    ESC
+                
+                Wait Until Screen Not Contain    ${TELA_INFO_CRÉDITOS}    ${SLEEP_ALTO}
+
+            END
+            
+        END
 
     END
 
@@ -437,8 +556,6 @@ Valida condicional aberto
     ${Test_Condicional}    Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Condicional
 
     Sleep    ${SLEEP_BAIXO}
-
-    Log To Console    Codigo_Cliente: ${Codigo_Cliente}
 
     IF    ${Test_Condicional}
         
@@ -471,20 +588,19 @@ Valida observaco cliente
     ${consulta}     Query    SELECT Observacao FROM clientes WHERE Codigo = ${Codigo_Cliente}
     ${Observacao}    Set Variable    ${consulta[0][0]}
 
-    IF    '${Observacao}' != 'None'
+    IF    $Observacao
 
         Sleep    ${SLEEP_MEDIO}
         ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${ALERTA_CLIENTE}    ${SLEEP_ALTO}
 
         IF    ${MSG}
 
-            Press Combination    KEY.ALT     Key.O
+            Press Combination    KEY.ALT    KEY.O
             Sleep    ${SLEEP_MEDIO}
 
         END
 
     END
-
 
 Valida vendas anteriores
 
@@ -493,7 +609,7 @@ Valida vendas anteriores
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.F
+        Press Combination    KEY.ALT    KEY.F
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -505,7 +621,7 @@ Valida exibe cliente
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.F
+        Press Combination    KEY.ALT    KEY.F
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -522,16 +638,19 @@ Valida tabela de preco
 
     END
 
-Valida indicacao Venda
+Valida indicação venda
 
-    Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_INDICACAO_VENDA}
+    IF    ${Parametro_IndicacaoVenda}
 
-    IF    ${MSG}
+        ${telaQuemIndicou}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_INDICACAO_VENDA}    ${TEMPO_TELA}
 
-        Press Special Key    ESC
-        Sleep    ${SLEEP_MEDIO}
+        IF    ${telaQuemIndicou}
 
+            Press Special Key    ESC
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+        
     END
 
 Valida tela de liberação de desconto
@@ -609,7 +728,7 @@ Valida impressão de ordem de entrega
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.N
+        Press Combination    KEY.ALT    KEY.N
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -621,7 +740,7 @@ Valida impressão de entrada
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.N
+        Press Combination    KEY.ALT    KEY.N
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -633,7 +752,7 @@ Valida impressão do contrato de venda
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.N
+        Press Combination    KEY.ALT    KEY.N
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -645,7 +764,7 @@ Valida impressão de promissória
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.S
+        Press Combination    KEY.ALT    KEY.S
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -666,13 +785,12 @@ Valida vencimento fim de semana(${VALOR_I})
 
     FOR    ${I}    IN RANGE    ${VALOR_I}
         
-        #${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${TEMPO_TELA}
         Sleep    ${SLEEP_BAIXO}
         ${MSG}    Exists    ${TELA_VENCIMENTO_FIM_DE_SEMANA}
 
         IF    ${MSG}
 
-            Press Combination    KEY.ALT     Key.S
+            Press Combination    KEY.ALT    KEY.S
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -686,7 +804,7 @@ Valida Impressao de duplicatas
 
     IF    ${MSG}
 
-        Press Combination    KEY.ALT     Key.N
+        Press Combination    KEY.ALT    KEY.N
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -698,7 +816,7 @@ Cancelando Faturando a NFC-e
     Wait Until Screen Contain    ${TELA_EMISSAO_NFC}    ${TEMPO_TELA}
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.C
+    Press Combination    KEY.ALT    KEY.C
 
 
 Valida faturamento nf
@@ -707,7 +825,7 @@ Valida faturamento nf
 
     IF    ${FaturaDireto}
 
-        Press Combination    KEY.ALT     Key.C
+        Press Combination    KEY.ALT    KEY.C
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -775,11 +893,11 @@ Valida aviso de quantidade não existente em estoque - Orçamento
 Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
     Sleep    ${SLEEP_BAIXO}
-    ${AVISO}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}    ${SLEEP_ALTO}
+    ${AVISO}    Exists    ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}
 
     IF    ${AVISO}
 
-        Press Combination    KEY.Alt   KEY.s
+        Press Combination    KEY.Alt    KEY.s
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -843,7 +961,7 @@ Valida descricao automatica de ordem de entrega
 
             Press Special Key    TAB
 
-            Input Text    ${EMPTY}    Entrega - Teste Automacao
+            Type    ${EMPTY}    Entrega - Teste Automacao
 
         END
 
@@ -1081,5 +1199,137 @@ Valida produto já incluso
     IF    ${aviso}
 
         Press Combination    KEY.ALT    KEY.S
+        
+    END
+
+Valida consulta SCPC
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${FisicaJuridica}    Query    SELECT c.FisicaJuridica FROM clientes c WHERE c.Codigo = ${Codigo_Cliente}
+
+    IF    '${FisicaJuridica[0][0]}' != 'F'
+        RETURN
+    END
+
+    ${NaoPossuiVendas}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT v.Codigo FROM vendas v WHERE v.CodigoCliente = ${Codigo_Cliente} AND v.Cancelada IS NULL AND v.`Data` >= DATE_SUB(CURDATE(), INTERVAL ${Parametro_DiasInativoSCPC} DAY) LIMIT 1
+
+    IF    not ${NaoPossuiVendas}
+        RETURN
+    END
+
+    ${ExisteRegistroSCPC}    Run Keyword And Return Status    Check If Exists In Database    SELECT cspc.CNPJCPF FROM consultaspc cspc WHERE cspc.CodigoCliente = ${Codigo_Cliente} ORDER BY cspc.ID DESC LIMIT 1
+
+    IF    not ${ExisteRegistroSCPC}
+
+        Wait Until Screen Contain    ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}    ${TEMPO_TELA}
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ESC
+
+        Wait Until Screen Not Contain    ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}    ${SLEEP_ALTO}
+
+    ELSE
+
+        ${ConsultaSCPC}    Query    SELECT cspc.CNPJCPF FROM consultaspc cspc WHERE cspc.CodigoCliente = ${Codigo_Cliente} ORDER BY cspc.ID DESC LIMIT 1
+    
+        IF    '${ConsultaSCPC[0][0]}' == 'None'
+
+            Wait Until Screen Contain    ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}    ${TEMPO_TELA}
+
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    ESC
+
+            Wait Until Screen Not Contain    ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}    ${SLEEP_ALTO}
+
+        ELSE
+
+            Wait Until Screen Contain    ${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}    ${TEMPO_TELA}
+
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    ESC
+
+            Wait Until Screen Not Contain    ${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}    ${SLEEP_ALTO}
+         
+        END
+
+    END
+
+Valida indicação pré-venda
+
+    IF    ${Parametro_IndicacaoPreVenda}
+
+        ${telaQuemIndicou}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_INDICACAO_VENDA}    ${TEMPO_TELA}
+
+        IF    ${telaQuemIndicou}
+
+            Press Special Key    ESC
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+    END
+
+Valida indicação de venda(${parametro})
+
+    IF    ${parametro}
+
+        ${telaQuemIndicou}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_INDICACAO_VENDA}    ${TEMPO_TELA}
+
+        IF    ${telaQuemIndicou}
+            
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    ESC
+
+        END
+        
+    END
+
+Valida vendedor sem percentual de comissão para operações com vale compra
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_VENDEDOR_SEM_PERCENT_COMISSAO_VALE_COMPRA}
+
+    IF    ${aviso}
+
+        Press Special Key    ENTER
+        
+    END
+
+Valida cliente menor de idade
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_CLIENTE_MENOR_DE_IDADE}
+
+    IF    ${aviso}
+
+        Press Combination    KEY.ALT    KEY.S
+
+        Wait Until Screen Not Contain    ${AVISO_CLIENTE_MENOR_DE_IDADE}    ${SLEEP_ALTO}
+        
+    END
+
+Valida aviso de alteração de vendedor na pré-venda
+
+    Sleep    ${SLEEP_BAIXO}
+    ${vinculoVendedorCliente}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM clientes c WHERE c.Codigo = ${Codigo_Cliente} AND (c.CodigoVendedor IS NULL OR ${Codigo_Vendedor} IN (c.CodigoVendedor, c.CodVend2));
+    
+    IF    not ${vinculoVendedorCliente}
+
+        Wait Until Screen Contain    ${AVISO_ALTERAR_VENDEDOR}    ${SLEEP_ALTO}
+
+        Press Combination    KEY.ALT    KEY.N
+
+        Wait Until Screen Not Contain    ${AVISO_ALTERAR_VENDEDOR}    ${SLEEP_ALTO}
+        
+    END
+
+Valida aviso atualizar número no cadastro principal
+
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_ATUALIZAR_NUMERO_CADASTRO_PRICIPAL}
+
+    IF    ${aviso}
+
+        Press Combination    KEY.ALT    KEY.N
         
     END

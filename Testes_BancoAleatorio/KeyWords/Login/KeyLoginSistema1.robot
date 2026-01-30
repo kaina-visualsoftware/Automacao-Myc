@@ -2,6 +2,7 @@
 Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
+Library    ../../libs/verificacoesExtras.py
 
 Variables    ../../libs/leituraConfig.py
 
@@ -72,6 +73,8 @@ Então realizo o login no MyCommerce
     Type    ${EMPTY}    FELIPE
     Press Special Key    ENTER
 
+    Garantir Caps Lock Desligado
+
     Type    ${EMPTY}    zwBt4@24
     Press Special Key    ENTER
 
@@ -83,3 +86,13 @@ Então realizo o login no MyCommerce
     Valida mensagem informativa não lida
 
     Valida envio de xml à contabilidade
+
+Garantir Caps Lock Desligado
+
+    ${caps_status}    Get Caps Lock Status
+    
+    IF    ${caps_status}
+
+        Press Special Key    CAPS_LOCK
+    
+    END

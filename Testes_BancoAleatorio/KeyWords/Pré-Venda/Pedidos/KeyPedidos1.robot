@@ -36,6 +36,7 @@ ${TELA_PEDIDOS}                 tela_Pedidos.png
 ${TELA_PEDIDOS_ADICIONAR}       tela_PedidosAdicionar.png
 ${TELA_PEDIDO_AUDITADO}         tela_PedidoAuditado.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    tela_exclusaoVenda.png
+${TELA_VENDAS}                  tela_VendasDeBalcao.png
 
 # Botões
 ${BT_WORKFLOW}                  bt_Workflow.png
@@ -58,8 +59,6 @@ Dado que acesso a tela de pedidos
 
     ${FORMA_PADRAO_PEDIDO}    Valida Forma Parcelamento    Pedido
 
-    Verifica parâmetros que interferem na venda
-
     Press Special Key    F10
 
     Valida lançamento de pré-venda em aberto
@@ -72,11 +71,15 @@ Dado que acesso a tela de pedidos
     ${EntradaIgualA_Outros}    Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO_PEDIDO}    ${FORMA_RECEBIMENTO_OUTROS}
 
     Set Test Variable    ${EntradaIgualA_Outros}
-
+    
 E clico em adicionar
     
     SikuliLibrary.Click    ${BT_ADICIONAR}
-    # Press Combination    KEY.ALT    KEY.A
+
+    Valida indicação de venda(${Parametro_IndicacaoPreVenda})
+
+    Valida local de negociação da venda
+
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -125,12 +128,12 @@ Quando vou para a aba de pagamentos
 
 E audito o pedido
 
-    Press Combination    KEY.ALT     Key.r
+    Press Combination    KEY.ALT    KEY.r
     Wait Until Screen Contain    ${TELA_PEDIDO_AUDITADO}    ${TEMPO_TELA}
 
 Então finalizo o pedido
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
 
     # Verifica se o valor mínimo da forma de pagamento é maior que o total do pedido.
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
@@ -139,27 +142,26 @@ Então finalizo o pedido
 
     END
 
-    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+    Valida impressão direta de pré-venda
 
-    Press Combination    KEY.ALT     Key.S
-    Sleep    ${SLEEP_MEDIO}
+    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
 Então visualizo o pedido
 
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.V
+    Press Combination    KEY.ALT    KEY.V
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     KEY.C
+    Press Combination    KEY.ALT    KEY.C
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
 Quando finalizo o pedido sem auditar
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
 
     # Verifica se o valor mínimo da forma de pagamento é maior que o total do pedido.
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
@@ -170,12 +172,14 @@ Quando finalizo o pedido sem auditar
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.S
-    Sleep    ${SLEEP_MEDIO}
+    Valida impressão direta de pré-venda
 
 E pressiono o atalho de editar
 
-    Press Combination    KEY.ALT     Key.E
+    Press Combination    KEY.ALT    KEY.E
+
+    Valida indicação de venda(${Parametro_IndicacaoPreVenda})
+
     Wait Until Screen Contain    ${TELA_PEDIDOS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -184,11 +188,11 @@ Então excluo o pedido
     Press Special Key    F10
     Wait Until Screen Contain    ${TELA_PEDIDOS}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.X
+    Press Combination    KEY.ALT    KEY.X
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Input Text    ${EMPTY}    Exclusao de Pedido - Teste Automacao
+    Type    ${EMPTY}    Exclusao de Pedido - Teste Automacao
 
     Press Special Key    TAB
     Press Special Key    ENTER
@@ -203,15 +207,7 @@ Então excluo o pedido
 # Essa key foi criada diretamente no cenário de Pedidos, pois a ordem dos elementos é totalmente diferente das demais telas.
 Valida avisos após incluir cliente e vendedor - Pré-Venda
 
-    ${Lista_de_avisos}    Valida Pametros Config
-
-    ${Aviso_vendedor_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    AvisoVendedor
-    ${Aviso_infoCredito_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    Aviso_Info_Financeiro
-    ${Aviso_ExigeSenhaOutroVendedor_existe}    Run Keyword And Return Status    Should Contain    ${Lista_de_avisos}    ExigeSenhaMudarVendedorVenda
-
     ${Observacao_existe}    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente}  AND OBSERVACAO IS NOT NULL;
-
-    Set Test Variable    ${Aviso_vendedor_existe}
 
     Set Test Variable    ${Observacao_existe}
 
@@ -223,19 +219,21 @@ Valida avisos após incluir cliente e vendedor - Pré-Venda
 
     Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 
-    IF    ${Aviso_ExigeSenhaOutroVendedor_existe}
+    Valida aviso de alteração de vendedor na pré-venda
+
+    # IF    ${Parametro_ConsultaSCPCVenda}
+
+    #     Valida consulta SCPC
+        
+    # END
+
+    IF    ${Parametro_ExigeSenhaOutroVendedor}
 
         Valida aviso exige senha para outro vendedor
 
     END
 
-    IF    ${Aviso_Vendedor_Existe_Comissao}
-
-        Valida aviso cliente outro vendedor
-
-    END
-
-    IF    ${Aviso_infoCredito_existe}
+    IF    ${Parametro_InfoCreditoClientePreVenda}
 
         Valida informações de crédito
 
@@ -243,19 +241,16 @@ Valida avisos após incluir cliente e vendedor - Pré-Venda
 
 Quando clico em gerar venda
 
-    Press Special Key    F10
-    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Combination    KEY.ALT     Key.G
+    Press Combination    KEY.ALT    KEY.G
 
     Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_GERACAO_VENDA}    ${TEMPO_TELA}
 
 Então gero a venda totalmente
-
-    Press Combination    KEY.ALT     Key.T
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.T
 
     IF    ${EntradaIgualA_Outros}
 
@@ -263,14 +258,9 @@ Então gero a venda totalmente
 
             Finalização com recebimento de duplicatas(${TOTAL_PEDIDO})
 
-            Sleep    ${SLEEP_MEDIO}
-
         END
 
     END
-
-    Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
 
     Validação de geração de venda
 
@@ -278,13 +268,21 @@ Então gero a venda totalmente
 
     Valida Parametros/Impressões pós venda
 
-    # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
-    SikuliLibrary.Click    ${AJUSTE_FOCO}
-    Sleep    ${SLEEP_BAIXO}
+    IF    ${Parametro_ImprimeVendaDireto}
+    
+        Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
-    # Sair da tela de Vendas
-    Press Combination    KEY.ALT    KEY.S
+        # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
+        SikuliLibrary.Click    ${AJUSTE_FOCO}
+        Sleep    ${SLEEP_BAIXO}
+
+        # Sair da tela de Vendas
+        Press Combination    KEY.ALT    KEY.S
+        
+    END
+
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
     KeyPedidos1.Valida baixa de estoque
 
@@ -339,14 +337,14 @@ Quando seleciono um produto para a geração da venda
 
         Log To Console    Parâmetro que bloqueia venda parcial está ativado!\nA geração da venda será cancelada!
 
-        Press Combination    KEY.ALT     Key.F
+        Press Combination    KEY.ALT    KEY.F
         Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
         Sleep    ${SLEEP_BAIXO}
 
     ELSE
 
         Sleep    ${SLEEP_BAIXO}
-        Input Text    ${EMPTY}    1
+        Input Text    ${EMPTY}    ${Quantidade_Produto}
         Sleep    ${SLEEP_BAIXO}
 
         Press Special Key    ENTER
@@ -362,11 +360,11 @@ Então gero a venda parcialmente do produto selecionado
     ELSE
 
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.P
+        Press Combination    KEY.ALT    KEY.P
         Wait Until Screen Contain    ${MODAL_FORMAS_DE_PAGAMENTO}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
 
-        Press Combination    KEY.ALT     Key.S
+        Press Combination    KEY.ALT    KEY.S
         Sleep    ${SLEEP_BAIXO}
 
         IF    ${EntradaIgualA_Outros}
@@ -376,8 +374,6 @@ Então gero a venda parcialmente do produto selecionado
                 Calcula total da venda com pedido parcial
 
                 Finalização com recebimento de duplicatas(${Total_Pedido_Parcial})
-
-                Sleep    ${SLEEP_MEDIO}
 
             END
 
@@ -393,8 +389,15 @@ Então gero a venda parcialmente do produto selecionado
     Sleep    ${SLEEP_MEDIO}
 
     Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
+
+    Wait Until Screen Contain    ${TELA_VENDAS}    ${SLEEP_ALTO}
+
+    # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
+    SikuliLibrary.Click    ${AJUSTE_FOCO}
     Sleep    ${SLEEP_BAIXO}
 
+    # Sair da tela de Vendas
     Press Combination    KEY.ALT    KEY.S
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
@@ -440,7 +443,7 @@ E clico em salvar
     ELSE
 
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.P
+        Press Combination    KEY.ALT    KEY.P
         Wait Until Screen Contain    ${MODAL_FORMAS_DE_PAGAMENTO}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
 
@@ -450,7 +453,7 @@ Então cancelo a geração da venda
 
     FOR    ${I}    IN RANGE    2
 
-        Press Combination    KEY.ALT     Key.F
+        Press Combination    KEY.ALT    KEY.F
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -461,6 +464,8 @@ Então cancelo a geração da venda
 Calcula valor final da venda
     
     ${somaValorTotalProdutos}    Evaluate    0
+
+    Sleep    ${SLEEP_BAIXO}
 
     ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
 

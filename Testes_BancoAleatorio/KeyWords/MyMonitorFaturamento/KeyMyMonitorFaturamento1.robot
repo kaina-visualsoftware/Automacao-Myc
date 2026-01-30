@@ -49,7 +49,7 @@ Dado que acesso o MyMonitorFaturamento
 
     Press Combination    KEY.WIN    KEY.R
 
-    Input Text    ${EMPTY}    C://Visual Software//MyCommerce//MyMonitorFaturamento.exe
+    Type    ${EMPTY}    C://Visual Software//MyCommerce//MyMonitorFaturamento.exe
 
     Press Special Key    ENTER
 

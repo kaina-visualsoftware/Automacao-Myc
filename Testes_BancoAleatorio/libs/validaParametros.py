@@ -10,7 +10,7 @@ cursor = connection.cursor()
 
 class validaParametros:
 
-    def Valida_Pametros_Config(self):
+    def Valida_Parametros_Config(self):
 
         avisosMapeados = ("AvisoVendedor, Aviso_Info_Financeiro, Aviso_Info_Financeiro_Prev, BloqueiaVendaClienteInativo, BloqVenda_CaixaFechado, "
                           "ExigeSenhaCancelarVenda, Vende_Sem_Estoque, Venda_Rapida, VendedorDiferente, ExigeSenhaMudarVendedorVenda, IncluiDireto, "
@@ -19,8 +19,15 @@ class validaParametros:
                           "SuprimirOS, Orc_DesabilitaServico, SelecionaFunc_OS, FaturarOS, ImprimirCarneOS, ImprimirOS, Vende_Sem_Estoque_Condicional, "
                           "ImprimiCondicional, RealizaVendaSemEstoque_PreVenda, RealizaVendaSemEstoque_OS, DevolucaoAvulsa, ExigeObsTroca, Dev_PermiteAberta, "
                           "RealizaVendaSemEstoque_Venda, PrevendaBloqueioVendaParcial, CaixaUsuario, DescontoFinalIgualmente, OrcamentoComEstoque_Bloq, "
-                          "BaixaEstoquePreVenda, Venda_Padrao_Entregue, TrazerDescricaoAutomaticaEntrega, FaturarOS, OS_ComVendedorEexecutor, NaoDeduzirISSQNComissao")
+                          "BaixaEstoquePreVenda, Venda_Padrao_Entregue, TrazerDescricaoAutomaticaEntrega, FaturarOS, OS_ComVendedorEexecutor, NaoDeduzirISSQNComissao, "
+                          "BuscaReferencia, ConsultaSCPCVenda, FocoClienteVenda, IndicacaoPreVenda, TelasQtdePadraoProduto, QuantidadePadraoVenda, DiasInativo, "
+                          "ControlaCreditoORC, ControlaCreditoCond, ControlaCreditoGeraPreOrcamento, ControlaCreditoOS, ControlaCreditoDevTroca, ControlaCreditoPRE, "
+                          "ControlaCredPreSepPreVenda, DescontaChPre_CreditoCliente, Aviso_Info_Financeiro_Orc, VinculaDevolucaoEntrega, ObrigarMotivoDevolucao, "
+                          "IndicacaoOrcamento, IndicacaoOS, ImprimirPreVenda_FinalizarPreVenda")
 
+        telasQtdePadraoProduto = None
+        quantidadePadraoVenda = None
+        diasInativo = None
         avisosMarcados = []
         updatesParametros = []
 
@@ -32,17 +39,30 @@ class validaParametros:
 
             for i in range(len(cursor.description)):
 
-                desc = cursor.description[i] 
+                desc = cursor.description[i]
                 nomeColuna = str("{}".format(desc[0]))
 
                 if parametrosMarcados[i] is None:
-                    break
+                    # break
+                    continue
 
                 elif nomeColuna == "NDias_Credito_Atu":
 
                     if parametrosMarcados[i] > 0:
-
                         updatesParametros.append(nomeColuna)
+
+                elif nomeColuna == "TelasQtdePadraoProduto":
+
+                    # avisosMarcados.append(parametrosMarcados[i])
+                    telasQtdePadraoProduto = parametrosMarcados[i]
+
+                elif nomeColuna == "QuantidadePadraoVenda":
+
+                    quantidadePadraoVenda = parametrosMarcados[i]
+
+                elif nomeColuna == "DiasInativo":
+
+                    diasInativo = parametrosMarcados[i] or 0
 
                 elif parametrosMarcados[i] == 1:
 
@@ -54,8 +74,8 @@ class validaParametros:
 
             cursor.execute("UPDATE config SET NDias_Credito_Atu = 0;")
 
-        return avisosMarcados
-    
+        return avisosMarcados, telasQtdePadraoProduto, quantidadePadraoVenda, diasInativo
+
     def valida_Config_Empresa(self):
 
         parametrosMapeados = ("Venda_ImprimeCupom, ImprimirVenda_FinalizarVenda, ImprimirDup_FinalizarVenda, BaixaCentralizada, BaixaAutomatico, CodigoCX, "
@@ -72,7 +92,7 @@ class validaParametros:
 
             for i in range(len(cursor.description)):
 
-                desc = cursor.description[i] 
+                desc = cursor.description[i]
                 nomeColuna = str("{}".format(desc[0]))
 
                 if parametrosMarcados[i] is None:
@@ -117,14 +137,14 @@ class validaParametros:
         if formaParcelamento[0] not in formasPadrao:
             print(formaParcelamento)
 
-            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:   # comEntrada e NPagamentos   
+            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:   # comEntrada e NPagamentos
                 formaParcelamento[0] = "À VISTA"
                 print(formaParcelamento)
 
             elif formaPadraoOS[0][6] == 1:   # Personalizavel
                 formaParcelamento[0] = "PERSONALIZADA"
                 print(formaParcelamento)
-            
+
             elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:   # NPagamentos e comEntrada
                 formaParcelamento[0] = "30 DIAS"
                 print(formaParcelamento)
@@ -159,7 +179,7 @@ class validaParametros:
             formaParcelamento.append(formaEntrada[0])      # FormaRecebimento (primeira palavra)
             formaParcelamento.append(formaPadraoOS[0][2])  # NPagamentos
 
-        
+
             if formaParcelamento[0] not in formasPadrao:
                 print(formaParcelamento)
 
@@ -170,13 +190,13 @@ class validaParametros:
                 elif formaPadraoOS[0][6] == 1:
                     formaParcelamento[0] = "PERSONALIZADA"
                     print(formaParcelamento)
-                
+
                 elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:
                     formaParcelamento[0] = "30 DIAS"
                     print(formaParcelamento)
 
         print(formaParcelamento)
-        
+
         return formaParcelamento
 
     def valida_Configuracoes_OS(self):
@@ -209,58 +229,67 @@ class validaParametros:
             elif formaPadraoOS[0][6] == 1:   # Personalizavel
                 formaParcelamento[0] = "PERSONALIZADA"
                 print(formaParcelamento)
-            
+
             elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:   # NPagamentos e comEntrada
                 formaParcelamento[0] = "30 DIAS"
                 print(formaParcelamento)
 
         return formaParcelamento
 
-    def valida_Forma_Parcelamento(self, tela):
+    def valida_forma_parcelamento(self, tela):
 
         formasPadrao = ("30 DIAS", "À VISTA", "PERSONALIZADA")
-
         formaParcelamento = []
 
-        condicao = ""
+        mapa_padrao = {
+            "OS": "Padrao_OS",
+            "Devolução": "Padrao_Devolucao",
+            "Pedido": "Padrao_Pre"
+        }
 
-        if tela == "Venda":
-            condicao = "Padrao_Venda"
-        elif tela == "OS":
-            condicao = "Padrao_OS"
-        elif tela == "Devolução":
-            condicao = "Padrao_Devolucao"
-        elif tela == "Pedido":
-            condicao = "Padrao_Pre"
+        if tela not in mapa_padrao:
+            raise ValueError(f"Tela inválida: {tela}")
 
-        sqlConsulta =  "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE formarecebimento IS NOT NULL ORDER BY IF("+condicao+" = 0, Descricao, 0) LIMIT 1;"
+        coluna_padrao = mapa_padrao[tela]
+
+        sqlConsulta = f"SELECT Descricao, comEntrada, NPagamentos, PDesconto, COALESCE(ValorMinimo,0) AS ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE formarecebimento IS NOT NULL AND {coluna_padrao} = 1 ORDER BY Descricao LIMIT 1;"
 
         cursor.execute(sqlConsulta)
+        formaPadrao = cursor.fetchall()
 
-        formaPadraoOS = cursor.fetchall()
+        if not formaPadrao:
+            sqlConsulta = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, COALESCE(ValorMinimo,0) AS ValorMinimo, FormaRecebimento, Personalizavel FROM formaparcelamento WHERE formarecebimento IS NOT NULL ORDER BY Descricao LIMIT 1;"
+            
+            cursor.execute(sqlConsulta)
+            formaPadrao = cursor.fetchall()
 
-        formaEntrada = formaPadraoOS[0][5].split(' ')
+        if not formaPadrao:
+            raise Exception("Nenhuma forma de parcelamento encontrada.")
 
-        formaParcelamento.append(formaPadraoOS[0][0])
-        formaParcelamento.append(formaPadraoOS[0][3])
-        formaParcelamento.append(formaPadraoOS[0][4])
-        formaParcelamento.append(formaEntrada[0])
-        formaParcelamento.append(formaPadraoOS[0][2])
+        formaPadrao = formaPadrao[0]
+
+        formaEntrada = formaPadrao[5].split(' ') if formaPadrao[5] else [""]
+
+        formaParcelamento.append(formaPadrao[0])  # Descricao
+        formaParcelamento.append(formaPadrao[3])  # PDesconto
+        formaParcelamento.append(formaPadrao[4])  # ValorMinimo
+        formaParcelamento.append(formaEntrada[0]) # FormaRecebimento
+        formaParcelamento.append(formaPadrao[2])  # NPagamentos
+        formaParcelamento.append(formaPadrao[6])  # Personalizavel
 
         if formaParcelamento[0] not in formasPadrao:
             print(formaParcelamento)
 
-            if formaPadraoOS[0][1] == 1 and formaPadraoOS[0][2] == 0:
+            if formaPadrao[1] == 1 and formaPadrao[2] == 0:
                 formaParcelamento[0] = "À VISTA"
-                print(formaParcelamento)
 
-            elif formaPadraoOS[0][6] == 1:
+            elif formaPadrao[6] == 1:
                 formaParcelamento[0] = "PERSONALIZADA"
-                print(formaParcelamento)
-            
-            elif formaPadraoOS[0][2] > 0 and formaPadraoOS[0][1] == 0:
+
+            elif formaPadrao[2] > 0 and formaPadrao[1] == 0:
                 formaParcelamento[0] = "30 DIAS"
-                print(formaParcelamento)
+
+            print(formaParcelamento)
 
         print(formaParcelamento)
 
@@ -299,7 +328,7 @@ class validaParametros:
         print(formaParcelamento)
 
         return  formaParcelamento
-    
+
     def seleciona_forma_prazo_com_comissao(self):
 
         formaParcelamento = []
@@ -333,7 +362,6 @@ class validaParametros:
 
         return formaParcelamento
 
-    
 # validaParametros.valida_Forma_Parcelamento("Venda")
 # validaParametros.valida_Configuracoes_OS()
 # validaParametros.valida_Config_Empresa()

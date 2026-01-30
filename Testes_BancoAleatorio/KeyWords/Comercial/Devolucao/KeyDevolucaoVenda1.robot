@@ -37,6 +37,9 @@ ${TELA_DEVOLUÇÕES_ADICIONAR}           tela_DevolucoesAdicionar.png
 ${INPUT_VENDA/OS}                      lb_CodVendaOs.png
 ${INPUTBOX_OBS}                        inputBox_Observacoes.png
 
+# Labels
+${LABEL_MOTIVO_DEVOLUCAO}              lb_motivoDevolucao.png
+
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}            Outros...
 ${Qtde_Devolvida_Produto}              ${1}
@@ -49,7 +52,7 @@ Dado que acesso a tela de devoluções de vendas/OS
 
     ${FORMA_PADRAO_DEV}    Valida Forma Parcelamento    Devolução
 
-    Verifica parâmetros que interferem na venda
+    Valida cadastro de motivos de devoluções
 
     Press Special Key    F6
 
@@ -141,7 +144,7 @@ Quando seleciono um produto para a devolução
 
         IF    ${Parametro_IncluiDireto} != ${True}
         
-            Press Combination    KEY.ALT     Key.I
+            Press Combination    KEY.ALT    KEY.I
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -188,7 +191,7 @@ Quando seleciono um produto para devolver parcialmente a quantidade vendida(${Qt
 
         IF    ${Parametro_IncluiDireto} != ${True}
         
-            Press Combination    KEY.ALT     Key.I
+            Press Combination    KEY.ALT    KEY.I
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -212,7 +215,7 @@ Quando seleciono um produto para devolver parcialmente a quantidade vendida(${Qt
 
 E vou para a aba de pagamentos
     
-    Press Combination    KEY.ALT     Key.m
+    Press Combination    KEY.ALT    KEY.m
     Sleep    ${SLEEP_MEDIO}
 
     Valida cliente com vales compra disponíveis
@@ -237,13 +240,33 @@ Então finalizo a devolução
 
         IF    ${Parametro_DevolucaoExigeOBS}
             
-            Input Text    ${EMPTY}    Devolucao de Mercadoria - Automacao
+            Type    ${EMPTY}    Devolucao de Mercadoria - Automacao
 
+        END
+
+        IF    ${Parametro_ObrigaMotivoDevolucao}
+
+            IF    ${Parametro_DevolucaoAvulsa}
+
+                Press Special Key    TAB
+                Press Special Key    DOWN
+            
+            ELSE
+
+                SikuliLibrary.Click    ${LABEL_MOTIVO_DEVOLUCAO}
+                
+                Sleep    ${SLEEP_BAIXO}
+
+                Press Special Key    DOWN
+                Press Special Key    ENTER
+
+            END           
+            
         END
 
         Sleep    ${SLEEP_BAIXO}
         Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.F 
+        Press Combination    KEY.ALT    KEY.F 
         Sleep    ${SLEEP_BAIXO}
 
         IF    '${FORMA_PADRAO_DEV[0]}' == 'À VISTA'
@@ -264,20 +287,41 @@ Então finalizo a devolução
 
             IF    ${Parametro_DevolucaoAvulsa}
 
-                Input Text    ${INPUTBOX_OBS}    Devolucao de Mercadoria - Automacao
+                Type    ${INPUTBOX_OBS}    Devolucao de Mercadoria - Automacao
 
             ELSE
 
-                Input Text    ${EMPTY}    Devolucao de Mercadoria - Automacao
+                Type    ${EMPTY}    Devolucao de Mercadoria - Automacao
 
             END
 
         END
 
-        Press Combination    KEY.ALT     Key.F 
+        IF    ${Parametro_ObrigaMotivoDevolucao}
+
+            IF    ${Parametro_DevolucaoAvulsa}
+
+                Press Special Key    TAB
+                Press Special Key    DOWN
+            
+            ELSE
+
+                SikuliLibrary.Click    ${LABEL_MOTIVO_DEVOLUCAO}
+                
+                Sleep    ${SLEEP_BAIXO}
+
+                Press Special Key    DOWN
+                Press Special Key    ENTER
+
+            END           
+            
+        END
+
+        Press Combination    KEY.ALT    KEY.F 
         Sleep    ${SLEEP_BAIXO}
         
-        # Impressão do vale compra
+        Valida vendedor sem percentual de comissão para operações com vale compra
+
         Valida impressao direta de venda(${True})
 
         ${CodigoVale}    Query    SELECT ID FROM valecompra WHERE VendaOrigem = ${COD_DEVOLUCAO}
@@ -300,11 +344,11 @@ Então visualizo a devolução
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.V 
+    Press Combination    KEY.ALT    KEY.V 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.r
+    Press Combination    KEY.ALT    KEY.r
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}     ${TEMPO_TELA}
 
 Quando finalizo a devolução como aberta
@@ -312,7 +356,7 @@ Quando finalizo a devolução como aberta
     IF    ${Parametro_DevolucaoPermiteAberta}
 
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.G
+        Press Combination    KEY.ALT    KEY.G
 
         # É True porque só não imprime ao finalizar se o botão "Imprimir" estiver bloqueado.
         Valida impressao direta de venda(${True})
@@ -333,7 +377,7 @@ E edito a devolução
 
     IF    ${Parametro_DevolucaoPermiteAberta}
 
-        Press Combination    KEY.ALT     Key.E
+        Press Combination    KEY.ALT    KEY.E
 
         Valida solicitação de senha do usuário supervisor
 
@@ -345,7 +389,7 @@ Quando insiro um produto para a troca
     
     IF    ${Parametro_DevolucaoPermiteAberta}
 
-        Press Combination    KEY.ALT     Key.T
+        Press Combination    KEY.ALT    KEY.T
         Sleep    ${SLEEP_BAIXO}
 
         IF     ${Parametro_RealizaVendaSemEstoque}
@@ -377,14 +421,14 @@ Então excluo a devolução
     Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     
-    Press Combination     KEY.ALT     Key.x 
+    Press Combination    KEY.ALT    KEY.x 
     Sleep    ${SLEEP_BAIXO}
     
     Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Exclusao de Devolucao - Teste Automacao
+    Type    ${EMPTY}    Exclusao de Devolucao - Teste Automacao
 
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
@@ -429,3 +473,18 @@ Calcula valor final da devolução
     Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosDevolucao[0][0]}
 
     Set Test Variable    ${VALOR_FINAL_DEVOLUCAO}    ${ValorTotalProdutosDevolucao[0][0]}
+
+Valida cadastro de motivos de devoluções
+
+    IF    ${Parametro_ObrigaMotivoDevolucao}
+        
+        Sleep    ${SLEEP_BAIXO}
+        ${NaoPossuiMotivosDev}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT * FROM motivosdevolucao LIMIT 1
+
+        IF    ${NaoPossuiMotivosDev}
+
+            Execute Sql String    INSERT INTO `motivosdevolucao` (`Descricao`) VALUES ('MOTIVO - AUTOMACAO');
+             
+        END
+        
+    END

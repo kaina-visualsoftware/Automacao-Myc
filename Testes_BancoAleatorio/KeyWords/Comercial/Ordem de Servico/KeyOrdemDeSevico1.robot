@@ -73,7 +73,7 @@ ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${OS_PossuiProduto}                      ${False}
 ${OS_PossuiServico}                      ${False}
 ${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
-${Quantidade_Produto}                    ${1}
+${Quantidade_Produto}                    0
 ${Quantidade_Servico}                    ${1}
 ${List_Quantidades_Produto}              ${None}
 ${List_Quantidades_Servico}              ${None}
@@ -88,9 +88,7 @@ Dado que acesso a tela de ordens de serviços
     ${FORMA_PRAZO}     Seleciona Forma Prazo
 
     Set Test Variable    ${FORMA_PADRAO}
-    Set Test Variable    ${FORMA_PRAZO} 
-
-    Verifica parâmetros que interferem na venda
+    Set Test Variable    ${FORMA_PRAZO}
 
     Press Special Key    F3
 
@@ -102,23 +100,15 @@ Dado que acesso a tela de ordens de serviços
 Quando pressiono o atalho de adicionar
     
     SikuliLibrary.Click    ${BT_ADICIONAR}
+
+    Valida indicação de venda(${Parametro_IndicacaoOS})
+
+    Valida local de negociação da venda
     
     Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
-    IF    ${Parametro_Local_Negociacao} 
-
-        Valida local da negociação
-
-    END
-
-    IF    ${Parametro_IndicacaoVenda}
-        
-        Valida indicacao Venda
-
-    END
-    
     Sleep    ${SLEEP_MEDIO}
     ${Consulta}    Query    SELECT Codigo FROM vendas ORDER BY Codigo DESC LIMIT 1;
 
@@ -226,7 +216,7 @@ Então finalizo a ordem de serviço
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
-        IF    ${Parametro_ControlaCredito}
+        IF    ${Parametro_ControlaCreditoOS}
 
             Press Special Key    TAB 
             Sleep    ${SLEEP_BAIXO}
@@ -280,7 +270,7 @@ Então visualizo a ordem de serviço
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.r
+    Press Combination    KEY.ALT    KEY.r
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${SLEEP_ALTO}
 
 Quando clico em editar
@@ -291,6 +281,14 @@ Quando clico em editar
     Sleep    ${SLEEP_BAIXO}
 
     validacaoAviso.Valida edição de ordem de serviço finalizada
+
+    IF    ${Parametro_InfoCreditoClienteVenda}
+
+        Valida informações de crédito
+
+    END
+
+    Valida indicação de venda(${Parametro_IndicacaoOS})
 
     Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
 
@@ -343,10 +341,10 @@ Então finalizo a ordem de serviço - A Prazo
 
     Input Text    ${EMPTY}    ${FORMA_PRAZO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.D
+    Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
     IF    ${FORMA_PADRAO[2]} > 0
@@ -360,9 +358,9 @@ Então finalizo a ordem de serviço - A Prazo
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
 
-    IF    ${Parametro_ControlaCredito}
+    IF    ${Parametro_ControlaCreditoVenda}
         
         Press Special Key    TAB 
         Sleep    ${SLEEP_BAIXO}
@@ -386,7 +384,7 @@ Então finalizo a ordem de serviço - A Prazo
 
     Valida avisos ao finalizar Ordem de serviço
 
-    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORDEM_SERVICO}
 
@@ -394,14 +392,14 @@ Então clico em excluir
 
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.X
+    Press Combination    KEY.ALT    KEY.X
     Sleep    ${SLEEP_BAIXO}
     
     Valida solicitação de senha do usuário supervisor
 
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Exclusao de OS - Teste Automacao
+    Type    ${EMPTY}    Exclusao de OS - Teste Automacao
 
     Press Special Key    TAB
 
@@ -522,7 +520,7 @@ Valida faturamento os pos finalizar
     IF    ${MSG}
 
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.F 
+        Press Combination    KEY.ALT    KEY.F 
 
     END
 
@@ -533,7 +531,7 @@ Valida impressao carne OS
     IF    ${MSG}
 
         Sleep    ${SLEEP_BAIXO}
-        Press Combination    KEY.ALT     Key.N
+        Press Combination    KEY.ALT    KEY.N
 
     END
     
@@ -576,7 +574,7 @@ Valida check list
 
                 ELSE
                     
-                    Input Text    ${EMPTY}    Descricao de automacao em check list
+                    Type    ${EMPTY}    Descricao de automacao em check list
                     Sleep    ${SLEEP_BAIXO}
 
                 END
@@ -588,7 +586,7 @@ Valida check list
 
         END
 
-        Press Combination    KEY.ALT     Key.G
+        Press Combination    KEY.ALT    KEY.G
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -847,6 +845,8 @@ Quando insiro mais de um serviço(${QuantidadeDeServico})
     Set Test Variable    ${QUANTIDADE_SERVICOS}    ${QuantidadeDeServico}
 
 Quando insiro mais de um produto normal(${QuantidadeDeProduto})
+
+    ${Quantidade_Produto}    Set Variable    ${Parametro_QuantidadePadraoVenda}
 
     ${Codigos_Produtos}    Create List
 

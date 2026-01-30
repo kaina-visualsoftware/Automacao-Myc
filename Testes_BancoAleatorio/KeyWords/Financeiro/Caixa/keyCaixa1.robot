@@ -204,13 +204,13 @@ E pesquiso pela conta a pagar gerada
 
 Então concluo o pagamento da mesma
     
-    Press Combination    KEY.ALT     Key.g 
+    Press Combination    KEY.ALT    KEY.g 
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
 
-    Press Combination    KEY.ALT     Key.C 
+    Press Combination    KEY.ALT    KEY.C 
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
 
     Valida tela de confirmação de data
 
@@ -223,7 +223,7 @@ Então concluo o pagamento da mesma
         Press Special Key    TAB
         Sleep    ${SLEEP_MEDIO}
 
-        Press Combination    KEY.ALT     Key.C
+        Press Combination    KEY.ALT    KEY.C
     
     ELSE IF     '${Forma_Pagamento}' == 'Cartão Oper.'
         
@@ -248,8 +248,6 @@ Então concluo o pagamento da mesma
     Sleep    ${SLEEP_BAIXO}
 
 Quando acesso o caixa aberto
-    
-    Verifica parâmetros que interferem na venda
 
     Recupera sequencia caixa
 
@@ -278,15 +276,15 @@ E vou para a aba de contas a receber
 Então faço o recebimento da conta
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.R
+    Press Combination    KEY.ALT    KEY.R
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.C 
+    Press Combination    KEY.ALT    KEY.C 
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
     Valida tela de confirmação de data
@@ -356,7 +354,7 @@ Então estorno a conta - A pagar
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.C
+    Press Combination    KEY.ALT    KEY.C
 
     Validação movimentou caixa(Crédito)
 
@@ -370,7 +368,7 @@ Então estorno a conta - A receber
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.C
+    Press Combination    KEY.ALT    KEY.C
 
     Validação movimentou caixa(Débito)
 
@@ -383,7 +381,7 @@ Então estorno a conta - A receber
 E vou para a aba de adiantamentos
     
     Sleep    ${SLEEP_ALTO}
-    Press Combination    KEY.ALT     Key.A
+    Press Combination    KEY.ALT    KEY.A
     Wait Until Screen Contain    ${TELA_ADIANTAMENTOS}     ${TEMPO_TELA}
 
 E insiro as informações do adiantamento(${Valor_Documento})
@@ -471,11 +469,11 @@ Então finalizo o lançamento(${Tipo_Mov})
 
     Consulta sequencia caixa(${CODIGO_CAIXA})
 
-    Press Combination    KEY.ALT     Key.I
+    Press Combination    KEY.ALT    KEY.I
     Wait Until Screen Contain    ${AVISO_REALMENTE_EFETUAR_BAIXA}    ${SLEEP_ALTO}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
 
     Valida tela de confirmação data - caixa
 
@@ -483,12 +481,12 @@ Então finalizo o lançamento(${Tipo_Mov})
     Validação movimentou caixa(${Tipo_Mov})
 
     Sleep    ${SLEEP_MEDIO}
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
 
 E vou para a aba de rec/pag rapido
     
     Sleep    ${SLEEP_ALTO}
-    Press Combination    KEY.ALT     Key.d
+    Press Combination    KEY.ALT    KEY.d
     Wait Until Screen Contain    ${TELA_REC_PAG_RÁPIDO}    ${TEMPO_TELA}
 
 E insiro as informações necessárias - recebimento rápido(${Valor_Documento})
@@ -504,7 +502,7 @@ E insiro as informações necessárias - recebimento rápido(${Valor_Documento})
     Press Special Key    TAB
     Sleep    ${SLEEP_MEDIO}
 
-    Input Text    ${EMPTY}    Teste recebimento rapido
+    Type    ${EMPTY}    Teste recebimento rapido
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    2
@@ -548,7 +546,7 @@ E insiro as informações necessárias - pagamento rápido(${Valor_Documento})
         
     END
 
-    Input Text    ${EMPTY}    Teste pagamento rapido
+    Type    ${EMPTY}    Teste pagamento rapido
     Sleep    ${SLEEP_BAIXO}
 
     FOR    ${I}    IN RANGE    2
@@ -658,11 +656,11 @@ Cria novo NDocumento a partir da sequencia do caixa
 
 Então concluo o pagamento
 
-    Press Combination    KEY.ALT     KEY.I
+    Press Combination    KEY.ALT    KEY.I
     Wait Until Screen Contain    ${AVISO_REALMENTE_EFETUAR_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     KEY.S
+    Press Combination    KEY.ALT    KEY.S
 
     IF    '${Forma_Pagamento}' == 'Outros'
 
@@ -674,7 +672,7 @@ Então concluo o pagamento
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
 
-        Press Combination    KEY.ALT     KEY.C
+        Press Combination    KEY.ALT    KEY.C
     
     ELSE IF     '${Forma_Pagamento}' == 'Cartão Oper.'
         
@@ -697,7 +695,7 @@ Então concluo o pagamento
 
 Então concluo o recebimento
 
-    Press Combination    KEY.ALT     KEY.I
+    Press Combination    KEY.ALT    KEY.I
     Wait Until Screen Contain    ${AVISO_REALMENTE_EFETUAR_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
@@ -781,15 +779,15 @@ Informa a data de lançamento da conta a pagar
 Então faço o recebimento das parcelas da conta
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.R
+    Press Combination    KEY.ALT    Key.R
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.C 
+    Press Combination    KEY.ALT    KEY.C 
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
     Valida tela de confirmação de data
@@ -894,15 +892,15 @@ Valida as movimentações no caixa - Venda e Devolução(${Tipo_Mov})
 Então faço o recebimento da venda e da devolução
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.R
+    Press Combination    KEY.ALT    KEY.R
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.C 
+    Press Combination    KEY.ALT    KEY.C 
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
     Valida tela de confirmação de data

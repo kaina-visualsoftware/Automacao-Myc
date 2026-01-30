@@ -1,7 +1,8 @@
 *** Settings ***
 Resource    ../../KeyWords/MyMonitorFaturamento/KeyMyMonitorFaturamento1.robot
+Resource    ../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyMyMonitorFaturamento1.Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyMyMonitorFaturamento1.Ler imagens iniciais    AND    Conectar ao Banco de Dados
 Suite Teardown    Stop Remote Server
 
 *** Test Cases ***

@@ -49,7 +49,7 @@ Dado que eu acesso a tela de doações
 
 Quando eu clico em adicionar
 
-    Verifica parâmetros que interferem na venda
+    # Verifica parâmetros que interferem na venda
     
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${BT_ADICIONAR}
@@ -91,7 +91,7 @@ E acesso a aba detalhes
 
 Então finalizo a doação
     
-    Input Text    ${EMPTY}    Lancamento de Doacao - Teste Automacao
+    Type    ${EMPTY}    Lancamento de Doacao - Teste Automacao
     Press Special Key    TAB
     Press Combination    KEY.ALT    KEY.F
 

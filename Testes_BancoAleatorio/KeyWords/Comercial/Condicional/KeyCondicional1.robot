@@ -27,7 +27,7 @@ ${DBUser}                               root
 ${SLEEP_BAIXO}                          0.7
 ${SLEEP_MEDIO}                          1.5
 ${SLEEP_ALTO}                           3
-${TEMPO_TELA}                           20
+${TEMPO_TELA}                           25
 
 # Telas
 ${TELA_CONDICIONAIS}                    tela_Condicionais.png
@@ -47,7 +47,7 @@ ${AVISO_DESEJA_EXCLUIR}                 aviso_DesejaExcluir.png
 # Outros
 ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    row_ProdInclusoVendaParcialCond.png
 ${QTDE_BAIXA_PRODUTO}                   ${1}
-${Quantidade_Produto}                   ${1}
+${Quantidade_Produto}                   0
 
 *** Keywords ***
 Ler imagens iniciais
@@ -61,12 +61,10 @@ Dado que acesso a tela de condicionais
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
-    Verifica parâmetros que interferem na venda
-
 E adiciono uma nova condicional
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.A 
+    Press Combination    KEY.ALT    KEY.A
     Wait Until Screen Contain    ${TELA_ADICIONAR_CONDICIONAL}    ${TEMPO_TELA}
 
     ${Consulta}    Query    SELECT Codigo FROM condicionais ORDER BY Codigo DESC LIMIT 1;
@@ -103,11 +101,13 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
     END
 
-    Informa a quantidade do produto(${Quantidade_Produto})
+    KeyCondicional1.Informa a quantidade do produto(${Quantidade_Produto})
 
     utils.Valida parametros após incluir produto
 
 E insiro mais de um produto normal(${QuantidadeDeProduto})
+
+    ${Quantidade_Produto}    Set Variable    ${Parametro_QuantidadePadraoVenda}
 
     ${Codigos_Produtos}    Create List
     
@@ -124,13 +124,13 @@ E insiro mais de um produto normal(${QuantidadeDeProduto})
 
 Então finalizo a condicional
     
-    Press Combination    KEY.ALT     Key.D
+    Press Combination    KEY.ALT    KEY.D
     Wait Until Screen Contain    ${TELA_DETALHES_CONDICIONAL}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Automacao Condicional
+    Type    ${EMPTY}    Automacao Condicional
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
 
     Valida impressao direta de venda(${Parametro_ImprimeCondicional})
 
@@ -140,18 +140,18 @@ Então finalizo a condicional
 
 Então visualizo a condicional
 
-    Press Combination    KEY.ALT     Key.U
+    Press Combination    KEY.ALT    KEY.U
     Wait Until Screen Contain    ${TELA_VISUALIZA_CONDICIONAL}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.r
+    Press Combination    KEY.ALT    KEY.r
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
 Quando clico em editar
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.E
+    Press Combination    KEY.ALT    KEY.E
 
     utils.Valida solicitação de senha do usuário supervisor
 
@@ -169,7 +169,7 @@ Então excluo a condicional
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CONFIRMAÇÃO_EXCLUSÃO}    ${TEMPO_TELA}
 
-    Input Text    ${EMPTY}    Exclusao de Condicional - Teste Automacao
+    Type    ${EMPTY}    Exclusao de Condicional - Teste Automacao
 
     Press Special Key    TAB
     Press Special Key    ENTER
@@ -184,13 +184,17 @@ Então excluo a condicional
 
 Quando clico em gerar venda
     
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.G
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT    KEY.G
 
     Wait Until Screen Contain    ${MODAL_GERAR_VENDA_CONDICIONAL}    ${SLEEP_ALTO}
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
+
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
+    Valida indicação de venda(${Parametro_IndicacaoVenda})
 
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
@@ -199,17 +203,15 @@ Quando clico em gerar venda
 
     KeyVendas1.Verifica formas de recebimento da venda
 
-    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
-
 Quando cliclo em gerar venda parcial
     
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.V
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT    KEY.V
 
     Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${TEMPO_TELA}
 
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.S
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT    KEY.S
 
     Wait Until Screen Contain    ${TELA_GERAÇÃO_VENDA_PARICAL}    ${TEMPO_TELA}
 
@@ -230,16 +232,20 @@ E gero a venda de parte dos produtos(${Quantidade})
     END
 
     Wait Until Screen Contain    ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    ${SLEEP_ALTO}
-
-    Press Combination    KEY.ALT     Key.G
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.G
     Wait Until Screen Contain    ${MODAL_GERAR_VENDA_PARCIAL}    ${TEMPO_TELA}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
+
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
+    Valida indicação de venda(${Parametro_IndicacaoVenda})
+
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
 
     KeyVendas1.Verifica formas de recebimento da venda
-
-    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL};
 
@@ -262,7 +268,7 @@ Então cancelo a geração da venda
     Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
 
     IF    ${Parametro_ExigeSenhaCancelarVenda}
 
@@ -335,7 +341,7 @@ Consulta venda gerada a partir da condicional
 
 Informa a quantidade do produto(${Quantidade_Produto})
 
-    IF    ${Quantidade_Produto} != 1
+    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoVenda}
         
         SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     

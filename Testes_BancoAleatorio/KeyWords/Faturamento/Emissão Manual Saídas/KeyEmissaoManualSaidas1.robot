@@ -15,17 +15,17 @@ Resource    ../../../utils/utils.robot
 ${IMAGENS}    ./testes_bancoAleatorio/images
 
 # Conexão com banco de dados
-${DBHost}                                      ${config.IpServidor}
-${DBName}                                      ${config.Database}
-${DBPass}                                      vssql
-${DBPort}                                      ${config.Porta}
-${DBUser}                                      root
+${DBHost}                                   ${config.IpServidor}
+${DBName}                                   ${config.Database}
+${DBPass}                                   vssql
+${DBPort}                                   ${config.Porta}
+${DBUser}                                   root
 
 # Sleep's
-${SLEEP_BAIXO}                                 0.7
-${SLEEP_MEDIO}                                 1.7
-${SLEEP_ALTO}                                  3
-${TEMPO_TELA}                                  20
+${SLEEP_BAIXO}                              0.7
+${SLEEP_MEDIO}                              1.7
+${SLEEP_ALTO}                               3
+${TEMPO_TELA}                               20
 
 # Telas
 
@@ -44,8 +44,6 @@ Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
 
     Verifica formas de recebimento da venda
 
-    Verifica parâmetros que interferem na venda
-
     Key Down    CTRL
     Press Special Key    F9
     Key Up      CTRL
@@ -53,7 +51,7 @@ Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
     
     Press Special Key    TAB
 
-    ${categoriaVendas} =    Exists    ${LABEL_CATEGORIA_VENDAS}
+    ${categoriaVendas}    Exists    ${LABEL_CATEGORIA_VENDAS}
 
     WHILE    ${categoriaVendas} == False
 
@@ -112,7 +110,7 @@ Verifica formas de recebimento da venda
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M 
+    Press Combination    KEY.ALT    KEY.M 
     Sleep    ${SLEEP_ALTO}
 
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
@@ -136,14 +134,14 @@ E acesso a aba pagamentos
 Então finalizo a nota fiscal de saída manual
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.D
+    Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
     Valida vencimento fim de semana(${FORMA_PADRAO[4]})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.G
+    Press Combination    KEY.ALT    KEY.G
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
         

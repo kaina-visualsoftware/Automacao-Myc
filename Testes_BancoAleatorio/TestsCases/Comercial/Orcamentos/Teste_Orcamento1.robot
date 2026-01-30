@@ -1,10 +1,11 @@
 *** Settings ***
 Documentation    Testes em Banco Aleatório
 
-Resource     ../../../KeyWords/Comercial/Orcamento/keyOrcamento1.robot
+Resource    ../../../KeyWords/Comercial/Orcamento/keyOrcamento1.robot
+Resource    ../../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords     Start Sikuli Process    AND    keyOrcamento1.Ler imagens iniciais    AND    Connect To Database     pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
-Suite Teardown      Stop Remote Server
+Suite Setup    Run Keywords    Start Sikuli Process    AND    keyOrcamento1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Teardown    Stop Remote Server
 
 *** Test Cases ***
 Teste 01 - Lançamento de orçamento

@@ -15,6 +15,4 @@ Abrir MyCommerce
 
 Fechar MyCommerce
 
-    Press Combination    KEY.ALT    KEY.F4
-
-    Wait Until Screen Not Contain    ${TELA_INICIAL_SISTEMA}    ${TEMPO_TELA}
+    Run Process    cmd.exe    /c    taskkill /IM myCommerce.exe /F    shell=True
