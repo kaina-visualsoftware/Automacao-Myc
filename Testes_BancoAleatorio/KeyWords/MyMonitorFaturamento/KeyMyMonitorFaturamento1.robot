@@ -47,6 +47,8 @@ Ler imagens iniciais
 
 Dado que acesso o MyMonitorFaturamento
 
+    Configurar myMonitorFaturamento inativo
+
     Press Combination    KEY.WIN    KEY.R
 
     Type    ${EMPTY}    C://Visual Software//MyCommerce//MyMonitorFaturamento.exe
@@ -121,4 +123,18 @@ E encerro o myMonitorFaturamento
 
         #Wait Until Screen Not Contain    ${ICONE_MYMONITOR_INATIVO}    ${TEMPO_TELA}
         
+    END
+
+Configurar myMonitorFaturamento inativo
+
+    ${monitor_ativo}    Query    SELECT MonitorAtivo FROM faturamento_monitor_config;
+
+    ${qtd_registros}    Get Length    ${monitor_ativo}
+
+    IF    ${qtd_registros} == 0
+        RETURN
+    END
+
+    IF    '${monitor_ativo[0][0]}' == '1'
+        Execute Sql String    UPDATE faturamento_monitor_config SET MonitorAtivo = 0;
     END
