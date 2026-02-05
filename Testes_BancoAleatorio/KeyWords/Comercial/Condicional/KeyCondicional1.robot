@@ -40,6 +40,7 @@ ${TELA_GERAÇÃO_VENDA_PARICAL}           tela_GeracaoVendaParcialCondicional.pn
 ${MODAL_GERAR_VENDA_CONDICIONAL}        modal_GerarVendaCondicional.png
 ${MODAL_GERAR_VENDA_PARCIAL}            modal_GerarVendaParcialCondicional.png
 ${MODAL_CANCELAR_VENDA}                 modal_CancelarVenda.png
+${TELA_VENDAS}                          tela_VendasDeBalcao.png
 
 # Telas Avisos
 ${AVISO_DESEJA_EXCLUIR}                 aviso_DesejaExcluir.png
@@ -149,6 +150,8 @@ Então visualizo a condicional
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
 Quando clico em editar
+
+    Set Test Variable    ${Edicao_Condicional}    ${True}
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.E
@@ -261,7 +264,8 @@ E gero a venda de parte dos produtos(${Quantidade})
     
 Então cancelo a geração da venda
     
-    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${TELA_VENDAS}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    ESC

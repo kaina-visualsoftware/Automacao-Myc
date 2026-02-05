@@ -45,6 +45,7 @@ ${CAIXA_PRINCIPAL}                         tela_CaixaPrinicipal.png
 ${TELA_LIBERACAO_DESCONTO_MAXIMO}          tela_liberacaoDesconto.png
 ${MODAL_CANCELAR_VENDA}                    modal_SenhaDoSupervisor.png
 ${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}        tela_MotivoPrecoZeradoProduto.png
+${TELA_IMPRESSAO_DIRETA}                   tela_ImpressaoDireta.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                       aviso_QuantidadeSemEstoque.png
@@ -140,7 +141,7 @@ Finalização com recebimento de cartão de crédito/débito
         
     END
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
 
     Wait Until Screen Not Contain    ${TELA_RECEBIMENTO_CARTAO}    ${TEMPO_TELA}
 
@@ -150,7 +151,7 @@ Finalização com o tipo bancaria
 
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     Key.G
+    Press Combination    KEY.ALT    KEY.G
 
 Personalização de Pagamentos
     
@@ -165,7 +166,7 @@ Personalização de Pagamentos
         
         END
 
-        Press Combination    KEY.ALT     Key.G
+        Press Combination    KEY.ALT    KEY.G
         Sleep    ${SLEEP_BAIXO}
         
     END
@@ -591,7 +592,7 @@ Inserir Produto normal - Necessita de estoque
     IF    '${TELA}' == 'NFeSaidasManual'
 
         Sleep    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.P
+        Press Combination    KEY.ALT    KEY.P
         Sleep    ${SLEEP_BAIXO}
 
         SikuliLibrary.Click    ${BT_SETA_DIREITA}
@@ -603,7 +604,7 @@ Inserir Produto normal - Necessita de estoque
     ELSE
 
         Sleep    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.P
+        Press Combination    KEY.ALT    KEY.P
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -639,7 +640,7 @@ Inserir Produto normal - Permite sem estoque
     IF    '${TELA}' == 'NFeSaidasManual'
 
         Sleep    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.P
+        Press Combination    KEY.ALT    KEY.P
         Sleep    ${SLEEP_BAIXO}
 
         SikuliLibrary.Click    ${BT_SETA_DIREITA}
@@ -651,7 +652,7 @@ Inserir Produto normal - Permite sem estoque
     ELSE
 
         Sleep    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.P
+        Press Combination    KEY.ALT    KEY.P
         Sleep    ${SLEEP_BAIXO}
 
     END
@@ -676,7 +677,7 @@ Inserir Produto normal - Permite sem estoque
 Inserir produto pré-definido(${Produto})
     
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.P
+    Press Combination    KEY.ALT    KEY.P
     Sleep    ${SLEEP_BAIXO}
 
     Input Text    ${EMPTY}    ${Produto} 
@@ -715,7 +716,7 @@ Valida parametros após incluir produto
 
         ELSE
 
-            Press Combination    KEY.ALT    Key.I
+            Press Combination    KEY.ALT    KEY.I
             Sleep    ${SLEEP_BAIXO}
             
         END
@@ -781,7 +782,6 @@ Valida local de negociação da venda
         IF    ${possuiCanaisVenda}
 
             ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${MODAL_LOCAL_NEGOCIACAO}    ${TEMPO_TELA}
-            Log To Console    tela: ${tela}
 
             IF    ${tela}
 
@@ -851,7 +851,7 @@ Verifica observacao do produto
             
             Type    ${EMPTY}    Obs Produto Teste
 
-            Press Combination    KEY.ALT     Key.O
+            Press Combination    KEY.ALT    KEY.O
             Sleep    ${SLEEP_MEDIO}
 
         END
@@ -868,7 +868,7 @@ Valida controle de entrega
         Input Text    ${EMPTY}    S
         Sleep    ${SLEEP_BAIXO}
 
-        Press Combination    KEY.ALT     Key.G
+        Press Combination    KEY.ALT    KEY.G
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -880,7 +880,7 @@ Aviso produto sem estoque
 
     IF    ${MSG}  
         
-        Press Combination    KEY.ALT     Key.S
+        Press Combination    KEY.ALT    KEY.S
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -919,11 +919,11 @@ Valida Controle de Credito - Liberação(${VALOR_FINAL})
             Wait Until Screen Contain    ${TELA_CONTROLE_CRÉDITO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
 
-            Press Combination    KEY.ALT    Key.L
+            Press Combination    KEY.ALT    KEY.L
             Wait Until Screen Contain    ${TELA_CONFIRMA_LIBERACAO_CREDITO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
 
-            Press Combination    KEY.ALT    Key.o
+            Press Combination    KEY.ALT    KEY.o
             
             #Valida o status = Liberado e a label Crédito liberado, por que na OS não existe o status = Liberado
             ${MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${LABEL_AVISO_CREDITO_LIBERADO}    ${SLEEP_ALTO}
@@ -932,13 +932,13 @@ Valida Controle de Credito - Liberação(${VALOR_FINAL})
             IF    ${MSG} or ${MSG2}
                 
                 Sleep    ${SLEEP_MEDIO}
-                Press Combination    KEY.ALT    Key.o
+                Press Combination    KEY.ALT    KEY.o
                 
                 #Correção temporária até a correção da tarefa: 144920
                 SikuliLibrary.Click    ${BT_OK_LIBERACAO_CRÉDITO}
                 Sleep    ${SLEEP_MEDIO}
 
-                Press Combination    KEY.ALT    Key.F
+                Press Combination    KEY.ALT    KEY.F
                 Sleep    ${SLEEP_BAIXO}
 
             END 
@@ -975,7 +975,7 @@ Cancela venda com senha
     Input Text    ${EMPTY}    1
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.O
+    Press Combination    KEY.ALT    KEY.O
     Sleep    ${SLEEP_BAIXO}
 
 Seleciona produto com linha cadastrada(${Parametro_Operação_Sem_Estoque})
@@ -1067,84 +1067,6 @@ Altera para vendedor vinculado ao cliente
         Sleep    ${SLEEP_BAIXO}
 
     END
-
-Quando informo um produto normal
-
-    ${Codigos_Produtos}    Create List
-    ${numeroDeProdutos}    Evaluate    random.randint(1, 3)
-
-    Set Global Variable    ${valorTotalNota}    0
-
-    FOR    ${I}    IN RANGE    ${numeroDeProdutos}
-        
-        Selecionar produto
-
-        Valida parametros após incluir produto
-
-        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
-
-    END
-
-    Set Test Variable    ${Codigos_Produtos}
-    
-    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${numeroDeProdutos}
-    
-Selecionar produto
-
-    ${campoRefProd}    Exists    ${LABEL_REF_PRODUTO}
-
-    IF    '${TELA}' == 'NFeSaidasManual'
-
-        Sleep    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.P
-        Sleep    ${SLEEP_BAIXO}
-
-        IF    ${campoRefProd}
-            
-            SikuliLibrary.Click    ${BT_SETA_DIREITA}
-            Sleep    ${SLEEP_BAIXO}
-
-        END
-
-        Type With Modifiers    P    SHIFT
-        Sleep    ${SLEEP_BAIXO}
-
-    ELSE
-
-        Sleep    ${SLEEP_MEDIO}
-        Press Combination    KEY.ALT     Key.P
-        Sleep    ${SLEEP_BAIXO}
-
-    END
-
-    ${produto}    Query    SELECT Codigo, VendaT1 FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
-    Sleep    ${SLEEP_MEDIO}
-
-    Input Text    ${EMPTY}    ${produto[0][0]}
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Special Key    TAB
-    Sleep    ${SLEEP_MEDIO}
-
-    Set Test Variable    ${COD_PRODUTO}    ${produto[0][0]}
-    
-    ${qtdeProduto}    Evaluate    random.randint(1, 3)
-
-    Input Text    ${EMPTY}    ${qtdeProduto}
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-
-    ${valorUnitario}    Set Variable    ${produto[0][1]}
-    
-    ${valorTotalProduto}    Evaluate    ${qtdeProduto} * ${valorUnitario}
-
-    ${valorTotalNota}    Evaluate    (${valorTotalProduto} + ${valorTotalNota})
-
-    Set Global Variable    ${valorTotalNota}
-    
-    Set Test Variable    ${VALOR_TOTAL}    ${valorTotalNota}
 
 Valida quantidade de empresas
 
@@ -1534,11 +1456,18 @@ Configurar consulta automática ao SCPC como desativada
         
     END
 
-Valida impressão direta de pré-venda
+Valida impressão pré-venda ao finalizar pré-venda
 
-    Log To Console    Parametro_ImprimePreVendaDireto: ${Parametro_ImprimePreVendaDireto}
+    IF    ${Parametro_ImpressaoDiretaPreVenda}
+
+        Wait Until Screen Contain    ${TELA_IMPRESSAO_DIRETA}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_MEDIO}
+
+        Press Combination    KEY.ALT    KEY.S
+
+        Wait Until Screen Not Contain    ${TELA_IMPRESSAO_DIRETA}    ${SLEEP_ALTO}
     
-    IF    ${Parametro_ImprimePreVendaDireto}
+    ELSE
         
         Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
         Sleep    ${SLEEP_MEDIO}
@@ -1546,6 +1475,5 @@ Valida impressão direta de pré-venda
         Press Combination    KEY.ALT    KEY.S
 
         Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
-        Sleep    ${SLEEP_BAIXO}
 
     END

@@ -82,9 +82,12 @@ ${LABEL_VALES_COMPRA_DISPONIVEIS}                      lb_ValesCompraDisponiveis
 ${EXPANDIR_COMBOBOX}                                   expandir_combobox.png
 ${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
 ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_consumidor.png
+${Edicao_Condicional}                                  ${False}
 
 ***Keywords***
 Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
+
+    Sleep    ${SLEEP_MEDIO}
     
     ${aviso_cond_aberto_tela_cond}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
     ${aviso_cond_outras_telas}        Exists    ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}
@@ -122,6 +125,8 @@ Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 Processa aviso de condicional em aberto
     [Arguments]    ${tela}    ${possui_cond_emAberto}
     
+    Sleep    ${SLEEP_BAIXO}
+
     IF    not ${possui_cond_emAberto}
         Fail    Aviso exibido mas sem condicional no BD.
     END
@@ -140,7 +145,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     ${ExisteAvisoInfoCreditoCliente}    Set Variable    ${False}
 
-    ${Observacao_existe}    Run Keyword And Return Status     Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente};
+    ${Observacao_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT OBSERVACAO FROM clientes WHERE Codigo = ${Codigo_Cliente};
 
     Set Test Variable    ${Observacao_existe}
 
@@ -157,10 +162,15 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
         Valida aviso exige senha para outro vendedor
 
     END
-
+    
     IF    '${TELA}' != 'NFeSaidasManual'
+        
+        # Na edição da condicional, é exibido outra mensagem de alteração de vendedor, a mesma que exibe em pré-vendas.
+        IF    ${Edicao_Condicional}
 
-        IF    ${Parametro_AvisarVendedorDiferenteDoCadastro}
+            Valida aviso de alteração de vendedor na pré-venda
+
+        ELSE IF    ${Parametro_AvisarVendedorDiferenteDoCadastro}
 
             Valida aviso para usar o vendedor vinculado ao cliente
 
@@ -220,7 +230,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Verifica parâmetros que interferem na venda
 
-    ${Lista_de_Parametros}    ${TelasQtdePadraoProduto}    ${QuantidadePadraoVenda}    ${DiasInativoSCPC}    Valida Parametros Config
+    ${Lista_de_Parametros}    ${TelasQtdePadraoProduto}    ${QuantidadePadraoVenda}    ${DiasInativoSCPC}    ${ValorMinimoBoleto}    Valida Parametros Config
     ${Config_Empresas}        Valida Config Empresa
 
     # Adiciona no campo Vendedor o usuário logado e o no campo cliente o CONSUMIDOR (CÓDIGO 1)
@@ -301,6 +311,7 @@ Verifica parâmetros que interferem na venda
     ${Parametro_InfoCreditoClientePreVenda}                Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Info_Financeiro_Prev
     ${Parametro_ExigeSenhaOutroVendedor}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeSenhaMudarVendedorVenda
     ${Parametro_ImprimePreVendaDireto}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirPreVenda_FinalizarPreVenda
+    ${Parametro_ImpressaoDiretaPreVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PrevendaDireto
 
     IF    ${Parametro_VendaRapida}
 
@@ -486,6 +497,10 @@ Verifica parâmetros que interferem na venda
 
     Set Global Variable    ${Parametro_ImprimePreVendaDireto}
 
+    Set Global Variable    ${Parametro_ImpressaoDiretaPreVenda}
+
+    Set Global Variable    ${Parametro_EmitirBoletosAcimaDeValorMinimo}    ${ValorMinimoBoleto}
+
 Valida aviso exige senha para outro vendedor
 
     ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}    ${SLEEP_ALTO}
@@ -669,7 +684,7 @@ Valida tela de liberação de desconto
 
     END
 
-Valida Parametros/Impressões pós venda
+Valida parâmetros/impressões pós venda
     
     IF    ${Parametro_FaturaVendaDireto}
 
@@ -714,7 +729,7 @@ Valida Parametros/Impressões pós venda
         Valida Impressao de duplicatas
 
     END
-
+    
     IF    ${Parametro_Imprime_Promissoria}
 
         Valida impressão de promissória
@@ -781,14 +796,14 @@ Valida impressão de boleto
 
     END
 
-Valida vencimento fim de semana(${VALOR_I})
+Valida vencimento em fins de semana e feriados(${VALOR_I})
 
     FOR    ${I}    IN RANGE    ${VALOR_I}
         
-        Sleep    ${SLEEP_BAIXO}
-        ${MSG}    Exists    ${TELA_VENCIMENTO_FIM_DE_SEMANA}
+        Sleep    ${SLEEP_MEDIO}
+        ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_ALTO}
 
-        IF    ${MSG}
+        IF    ${aviso}
 
             Press Combination    KEY.ALT    KEY.S
             Sleep    ${SLEEP_BAIXO}
@@ -1312,7 +1327,7 @@ Valida aviso de alteração de vendedor na pré-venda
 
     Sleep    ${SLEEP_BAIXO}
     ${vinculoVendedorCliente}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM clientes c WHERE c.Codigo = ${Codigo_Cliente} AND (c.CodigoVendedor IS NULL OR ${Codigo_Vendedor} IN (c.CodigoVendedor, c.CodVend2));
-    
+
     IF    not ${vinculoVendedorCliente}
 
         Wait Until Screen Contain    ${AVISO_ALTERAR_VENDEDOR}    ${SLEEP_ALTO}
@@ -1331,5 +1346,13 @@ Valida aviso atualizar número no cadastro principal
     IF    ${aviso}
 
         Press Combination    KEY.ALT    KEY.N
+        
+    END
+
+Valida parâmetros/impressões pós pré-venda
+    
+    IF    ${Parametro_ImprimePreVendaDireto}
+
+        Valida impressão pré-venda ao finalizar pré-venda
         
     END
