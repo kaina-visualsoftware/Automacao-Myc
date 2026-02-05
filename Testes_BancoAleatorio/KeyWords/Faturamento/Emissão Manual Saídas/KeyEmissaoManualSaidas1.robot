@@ -12,7 +12,8 @@ Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
 
 *** Variables ***
-${IMAGENS}    ./testes_bancoAleatorio/images
+# Repositório de Imagens
+${IMAGENS}                                  ./testes_bancoAleatorio/images
 
 # Conexão com banco de dados
 ${DBHost}                                   ${config.IpServidor}
@@ -28,13 +29,25 @@ ${SLEEP_ALTO}                               3
 ${TEMPO_TELA}                               20
 
 # Telas
-
 ${TELA_NOTA_FISCAL_PREENCHIMENTO_MANUAL}    tela_NotaFiscalPreenchimentoManual.png
-${LABEL_CATEGORIA_VENDAS}                   lb_CategoriaVendas.png
+${GUIA_TOTALIZACAO_TRANSPORTADORA}          guia_TotalizacaoETransportadora.png
+${GUIA_PAGAMENTOS_NFE}                      guia_PagamentosNFe.png
+
+# Telas Avisos
+${AVISO_INFORMAR_QTDE_VOLUME}               aviso_InformarQtdeVolumeNFe.png
+
+# Inputs
 ${INPUT_COD_CLIENTE}                        input_CodCliente.png
 ${INPUT_COD_PRODUTO}                        input_CodProduto.png
+
+# Labels
+${LABEL_CATEGORIA_VENDAS}                   lb_CategoriaVendas.png
+${LABEL_QUANTIDADE_VOLUME_NFE}              lb_QuantidadeVolumeNFe.png
+
+# Outros
 ${ROW_PAGAMENTO_INCLUSO}                    row_PagInclusoNFeSaidasManual.png
 ${FORMA_RECEBIMENTO_OUTROS}                 Outros...
+${Valor_Total_Produtos}                     0
 
 *** Keywords ***
 Ler imagens iniciais
@@ -68,11 +81,83 @@ Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
         
     END
 
-E adiciono vendedor e cliente 
+E adiciono vendedor e cliente
 
     utils.Adicionar Vendedor e Cliente(NFeSaidasManual)
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
+Quando informo um produto normal
+    
+    Set Test Variable    ${valorTotalNota}    0
+
+    @{Produtos_NF}    Create List
+
+    ${numeroDeProdutos}    Evaluate    random.randint(1, 3)
+
+    FOR    ${I}    IN RANGE    ${numeroDeProdutos}
+        
+        ${codigo}    ${quantidade}    ${valorUnitario}    ${valorTotal}    ${aliquotaICMS}    Selecionar produto
+
+        Valida parametros após incluir produto
+
+        &{produto_nf}    Create Dictionary    
+        ...    codigo=${codigo}    
+        ...    quantidade=${quantidade}    
+        ...    valor_unitario=${valorUnitario}    
+        ...    valor_total=${valorTotal}    
+        ...    aliquota_icms=${aliquotaICMS}
+
+        Append To List    ${Produtos_NF}    ${produto_nf}
+
+    END
+
+    Set Test Variable    ${Produtos_NF}
+    
+Selecionar produto
+
+    ${campoRefProd}    Exists    ${LABEL_REF_PRODUTO}
+
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+
+    IF    ${campoRefProd}
+        
+        SikuliLibrary.Click    ${BT_SETA_DIREITA}
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    Type With Modifiers    P    SHIFT
+    Sleep    ${SLEEP_BAIXO}
+
+    ${produto}    Query    SELECT Codigo, VendaT1, AliquotaICMS FROM produtos WHERE ModalidadeControle LIKE 'Normal' AND Cancelado IS NULL AND Ativo = -1 ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_MEDIO}
+
+    ${codigoProduto}    Set Variable    ${produto[0][0]}
+    ${valorUnitario}    Set Variable    ${produto[0][1]}
+    ${aliquotaICMS}     Set Variable    ${produto[0][2]}
+    ${qtdeProduto}      Evaluate    random.randint(1, 3)
+    
+    Input Text    ${EMPTY}    ${codigoProduto}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    ${qtdeProduto}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    ${valorTotalProduto}    Evaluate    ${qtdeProduto} * ${valorUnitario}
+
+    ${Valor_Total_Produtos}    Evaluate    round(${Valor_Total_Produtos} + ${valorTotalProduto}, 2)
+
+    Set Test Variable    ${Valor_Total_Produtos}
+
+    RETURN    ${codigoProduto}    ${qtdeProduto}    ${valorUnitario}    ${valorTotalProduto}    ${aliquotaICMS}
 
 Valida cliente pessoa física
 
@@ -99,7 +184,7 @@ Quando seleciono um produto
 
     utils.Valida parametros após incluir produto
     
-Verifica formas de recebimento da venda 
+Verifica formas de recebimento da venda
     
     ${FORMA_PADRAO}    Valida Configuracoes Venda
     ${FORMA_PRAZO}    Seleciona Forma Prazo
@@ -110,12 +195,13 @@ Verifica formas de recebimento da venda
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.M 
-    Sleep    ${SLEEP_ALTO}
+    Press Combination    KEY.ALT    KEY.M
+
+    Wait Until Screen Contain    ${GUIA_PAGAMENTOS_NFE}    ${TEMPO_TELA}
 
     Set Test Variable    ${DESCONTO_FORMA}    ${FORMA_PADRAO[1]}
 
-    ${EntradaIgualA_Outros} =     Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO}    ${FORMA_RECEBIMENTO_OUTROS}
+    ${EntradaIgualA_Outros}    Run Keyword And Return Status    Should Contain    ${FORMA_PADRAO}    ${FORMA_RECEBIMENTO_OUTROS}
 
     Set Test Variable    ${EntradaIgualA_Outros}
 
@@ -123,11 +209,11 @@ E acesso a aba pagamentos
         
         utils.Personalização de Pagamentos
 
-    END 
+    END
 
     IF     ${DESCONTO_FORMA} > 0
 
-        Valida tela de liberação de desconto 
+        Valida tela de liberação de desconto
 
     END
 
@@ -137,11 +223,15 @@ Então finalizo a nota fiscal de saída manual
     Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
+    Valida vencimento em fins de semana e feriados(${FORMA_PADRAO[4]})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.G
+
+    Valida necessidade de informar volume
+
+    Calcula valor final da NFe Manual de Saída
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
         
@@ -149,7 +239,7 @@ Então finalizo a nota fiscal de saída manual
 
             IF     ${Parametro_BaixaAutomatico}
                 
-                Finalização com recebimento de duplicatas(${VALOR_FINAL_NFE_SAIDA_MANUAL}) 
+                Finalização com recebimento de duplicatas(${VALOR_FINAL_NFE_SAIDA_MANUAL})
 
             END
 
@@ -161,6 +251,51 @@ Então finalizo a nota fiscal de saída manual
     Press Special Key    ENTER
     Wait Until Screen Contain    ${TELA_NOTA_FISCAL_PREENCHIMENTO_MANUAL}    ${TEMPO_TELA}
 
-Calcula valor final da NFe Saídas Manual
+# Calcula valor final da NFe Saídas Manual
 
-    ${ValorTotalProdutos}    Query    SELECT nsp.ValorTotal, nsp.* FROM notassaidas_produtos nsp WHERE nsp.NF = 20006 AND nsp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+#     ${ValorTotalProdutos}    Query    SELECT nsp.ValorTotal, nsp.* FROM notassaidas_produtos nsp WHERE nsp.NF =  AND nsp.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+Valida necessidade de informar volume
+    
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_INFORMAR_QTDE_VOLUME}
+
+    IF    ${aviso}
+
+        Press Special Key    ENTER
+
+        Wait Until Screen Contain    ${GUIA_TOTALIZACAO_TRANSPORTADORA}    ${TEMPO_TELA}
+
+        SikuliLibrary.Click    ${LABEL_QUANTIDADE_VOLUME_NFE}
+
+        Input Text    ${EMPTY}    100
+
+        Press Special Key    TAB
+
+        E acesso a aba pagamentos
+
+        Press Combination    KEY.ALT    KEY.G
+
+    END
+
+Calcula valor final da NFe Manual de Saída
+
+    Calcula valor de ICMS
+
+    ${Valor_Total_NF}    Set Variable    ${Valor_Total_Produtos}
+
+    Set Test Variable    ${VALOR_FINAL_NFE_SAIDA_MANUAL}    ${Valor_Total_NF}
+
+Calcula valor de ICMS
+
+    ${total_icms}    Set Variable    0
+
+    FOR    ${produto}    IN    @{Produtos_NF}
+
+        ${calc_icms}    Evaluate    round(${produto['valor_total']} * (${produto['aliquota_icms']} / 100), 2)
+
+        ${total_icms}    Evaluate    round(${total_icms} + ${calc_icms}, 2)
+
+    END
+
+    Set Test Variable    ${Valor_Total_ICMS}    ${total_icms}
