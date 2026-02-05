@@ -13,7 +13,7 @@ Resource    ../../..//utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}    ./testes_bancoAleatorio/images
+${IMAGENS}                                     ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                                      ${config.IpServidor}

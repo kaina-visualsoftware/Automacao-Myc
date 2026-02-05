@@ -12,37 +12,38 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                     ./testes_bancoAleatorio/images
+${IMAGENS}                          ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
-${DBHost}                      ${config.IpServidor}
-${DBName}                      ${config.Database}
-${DBPass}                      vssql
-${DBPort}                      ${config.Porta}
-${DBUser}                      root
+${DBHost}                           ${config.IpServidor}
+${DBName}                           ${config.Database}
+${DBPass}                           vssql
+${DBPort}                           ${config.Porta}
+${DBUser}                           root
 
 # Sleep's
-${SLEEP_BAIXO}                 0.7
-${SLEEP_MEDIO}                 1.5
-${SLEEP_ALTO}                  3
-${TEMPO_TELA}                  20
+${SLEEP_BAIXO}                      0.7
+${SLEEP_MEDIO}                      1.5
+${SLEEP_ALTO}                       3
+${TEMPO_TELA}                       20
 
 # Telas
-${TELA_GERACAO_VENDAS}         tela_GeracaoVenda.png
-${TELA_CARREGANDO_PEDIDOS}     tela_CarregandoPedidos.png
+${TELA_GERACAO_VENDAS}              tela_GeracaoVenda.png
+${TELA_CARREGANDO_PEDIDOS}          tela_CarregandoPedidos.png
 
 # Telas Avisos
-${AVISO_DESEJA_GERAR_VENDA}    aviso_DesejaGerarVenda.png
+${AVISO_DESEJA_GERAR_VENDA}         aviso_DesejaGerarVenda.png
 
 # Botões
-${BT_SAIR_CTRLG}               bt_SairCTRLG.png
+${BT_SAIR_CTRLG}                    bt_SairCTRLG.png
 
 # Labels
-${LABEL_PEDIDO}                lb_Pedido.png
+${LABEL_PEDIDO}                     lb_Pedido.png
+${LABEL_GERANDO_CONTA_A_RECEBER}    lb_GerandoContasAReceber.png
 
 # Outros
-${GRID_LISTAGEM_PEDIDOS}       grid_PedidosGeracaoVenda.png
-${QTDE_BAIXA_PRODUTO}          ${1}
+${GRID_LISTAGEM_PEDIDOS}            grid_PedidosGeracaoVenda.png
+${QTDE_BAIXA_PRODUTO}               ${1}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -75,7 +76,7 @@ Quando seleciono o último pedido feito
 
 E clico em gerar
     
-    Press Combination    KEY.ALT    KEY.G 
+    Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
 
 Então confirmo a geração da venda
@@ -87,15 +88,18 @@ Então confirmo a geração da venda
 
     IF    ${EntradaIgualA_Outros}
 
-            IF     ${Parametro_BaixaAutomatico}
-                
-                Finalização com recebimento de duplicatas(${TOTAL_PEDIDO}) 
+        IF     ${Parametro_BaixaAutomatico}
+            
+            Finalização com recebimento de duplicatas(${TOTAL_PEDIDO}) 
 
-            END
+        END
 
     END
 
-    Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
+    Wait Until Screen Not Contain    ${LABEL_GERANDO_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida vencimento em fins de semana e feriados(1)
 
     KeyGeracaoDeVenda1.Validação de geração de venda
 
@@ -131,11 +135,13 @@ Então confirmo a geração dos pedidos
     
     Sleep    ${SLEEP_BAIXO}
 
-    FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
+    # FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
                     
-       Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo         
+    #    Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
-    END
+    # END
+    
+    Valida vencimento em fins de semana e feriados(${Quantidade_Pedidos_Feitos})
     
     KeyGeracaoDeVenda1.Validação da geração de venda de mais de um pedido
 

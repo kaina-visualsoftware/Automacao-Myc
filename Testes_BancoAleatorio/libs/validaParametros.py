@@ -23,11 +23,12 @@ class validaParametros:
                           "BuscaReferencia, ConsultaSCPCVenda, FocoClienteVenda, IndicacaoPreVenda, TelasQtdePadraoProduto, QuantidadePadraoVenda, DiasInativo, "
                           "ControlaCreditoORC, ControlaCreditoCond, ControlaCreditoGeraPreOrcamento, ControlaCreditoOS, ControlaCreditoDevTroca, ControlaCreditoPRE, "
                           "ControlaCredPreSepPreVenda, DescontaChPre_CreditoCliente, Aviso_Info_Financeiro_Orc, VinculaDevolucaoEntrega, ObrigarMotivoDevolucao, "
-                          "IndicacaoOrcamento, IndicacaoOS, ImprimirPreVenda_FinalizarPreVenda")
+                          "IndicacaoOrcamento, IndicacaoOS, ImprimirPreVenda_FinalizarPreVenda, PrevendaDireto, ValorMinimoBoleto")
 
         telasQtdePadraoProduto = None
         quantidadePadraoVenda = None
         diasInativo = None
+        valorMinimoBoleto = None
         avisosMarcados = []
         updatesParametros = []
 
@@ -64,6 +65,10 @@ class validaParametros:
 
                     diasInativo = parametrosMarcados[i] or 0
 
+                elif nomeColuna == "ValorMinimoBoleto":
+
+                    valorMinimoBoleto = parametrosMarcados[i]
+
                 elif parametrosMarcados[i] == 1:
 
                     avisosMarcados.append(nomeColuna)
@@ -74,7 +79,7 @@ class validaParametros:
 
             cursor.execute("UPDATE config SET NDias_Credito_Atu = 0;")
 
-        return avisosMarcados, telasQtdePadraoProduto, quantidadePadraoVenda, diasInativo
+        return avisosMarcados, telasQtdePadraoProduto, quantidadePadraoVenda, diasInativo, valorMinimoBoleto
 
     def valida_Config_Empresa(self):
 

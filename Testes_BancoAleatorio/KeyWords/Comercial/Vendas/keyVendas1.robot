@@ -83,6 +83,7 @@ ${LABEL_FOCO_DESCONTO_FINAL_VENDA}       lb_FocoDescontoFinalVenda.png
 ${LABEL_QUANT_PARCELAS}                  lb_QuatParcelasPagPersonalizada.png
 ${LABEL_CRITERIO_CODIGO_VENDA}           label_CriterioCodigo_Venda.png
 ${LABEL_CODIGO_GRID}                     lb_Codigo_Grid.png
+${LABEL_REGISTRO_ENCONTRADO}             lb_RegistroEncontrado.png
 
 # Rows
 ${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
@@ -99,7 +100,6 @@ ${QUANTIDADE_PRODUTOS}                   ${1}
 ${QTDE_BAIXA_PRODUTO}                    ${1}
 ${Desconto_Produto}                      ${None}
 ${List_Quantidades_Produto}              ${None}
-${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -217,10 +217,10 @@ Então finalizo a venda
     Calcula valor final da venda
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.D
+    Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
+    Valida vencimento em fins de semana e feriados(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
 
@@ -231,7 +231,7 @@ Então finalizo a venda
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT    KEY.F
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 
@@ -239,22 +239,14 @@ Então finalizo a venda
 
             Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
-            IF    ${VendedorPossuiSenha}
-
-                Valida solicitação de senha do usuário supervisor
-
-            END
+            Valida solicitação de senha do usuário supervisor
 
         END
 
     END
 
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
-    IF    ${VendedorPossuiSenha}
-
-        Valida solicitação de senha do usuário supervisor
-
-    END
+    Valida solicitação de senha do usuário supervisor
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
 
@@ -270,12 +262,10 @@ Então finalizo a venda
 
     END
 
-    Valida Parametros/Impressões pós venda
+    Valida parâmetros/impressões pós venda
 
     # Para forçar o foco do sistema manter na tela de vendas, em cenários em que há mais de uma tela aberta.
-    # SikuliLibrary.Click    ${AJUSTE_FOCO}
     SikuliLibrary.Click    ${TELA_VENDAS}
-    Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
@@ -303,7 +293,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
+    Valida vencimento em fins de semana e feriados(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
 
@@ -324,22 +314,14 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
             Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
-            IF    ${VendedorPossuiSenha}
-
-                Valida solicitação de senha do usuário supervisor
-
-            END
+            Valida solicitação de senha do usuário supervisor
 
         END
 
     END
 
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
-    IF    ${VendedorPossuiSenha}
-
-        Valida solicitação de senha do usuário supervisor
-
-    END
+    Valida solicitação de senha do usuário supervisor
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
 
@@ -355,7 +337,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
     END
 
-    Valida Parametros/Impressões pós venda
+    Valida parâmetros/impressões pós venda
 
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
@@ -404,42 +386,31 @@ Então finalizo a venda - A Prazo
     Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
-    validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
-    Sleep    ${SLEEP_BAIXO}
-
     IF    ${FORMA_PADRAO[2]} > 0
 
         Valida tela de liberação de desconto
 
     END
 
-    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
+    Valida vencimento em fins de semana e feriados(${FORMA_PADRAO[4]})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.AL    KEY.F
 
     IF    ${Parametro_ControlaCreditoVenda}
 
         Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
-        IF    ${VendedorPossuiSenha}
-
-            Valida solicitação de senha do usuário supervisor
-
-        END
-
-    END
-
-    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
-    IF    ${VendedorPossuiSenha}
-
         Valida solicitação de senha do usuário supervisor
 
     END
 
-    Valida Parametros/Impressões pós venda
+    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
+    Valida solicitação de senha do usuário supervisor
+
+    Valida parâmetros/impressões pós venda
 
     keyVendas1.Valida baixa de estoque
 
@@ -454,13 +425,7 @@ Quando clico em editar
     SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}
     
-    IF    ${VendedorPossuiSenha}
-
-        Valida solicitação de senha do usuário supervisor
-
-    END
-
-    # Valida solicitação de senha do usuário supervisor
+    Valida solicitação de senha do usuário supervisor
 
     Valida indicação de venda(${Parametro_IndicacaoVenda})
 
@@ -470,14 +435,15 @@ Quando clico em editar
 E excluo os pagamentos lançados
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M
+    Press Combination    KEY.ALT    KEY.M
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_ALTO}
 
     SikuliLibrary.Click    ${BT_EXCLUIR_PAGAMENTOS}
     Wait Until Screen Contain    ${TELA_EXCLUIR_PAGAMENTOS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.S
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
 Então clico em excluir
@@ -517,7 +483,7 @@ Valida ncm invalido ao faturar nota
         Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
 
-        Press Combination    KEY.ALT     Key.C
+        Press Combination    KEY.ALT    KEY.C
         Sleep    ${SLEEP_MEDIO}
 
         Log To Console    \n Script cancelou o faturamento por conter produtos com NCM inválido!\n
@@ -534,7 +500,7 @@ Valida erro ao faturar NFC
         SikuliLibrary.Click    ${BT_OK}
         Sleep    ${SLEEP_MEDIO}
 
-        Press Combination    KEY.ALT     Key.C
+        Press Combination    KEY.ALT    KEY.C
         Sleep    ${SLEEP_MEDIO}
 
         Log To Console    \n Script cancelou o faturamento por conter erro!\n
@@ -799,11 +765,13 @@ Então finalizo a venda personalizada com múltiplas parcelas(${qtdeParcelas})
 
     Press Combination    KEY.ALT    KEY.D
 
-    FOR    ${i}    IN RANGE    ${qtdeParcelas}
+    # FOR    ${i}    IN RANGE    ${qtdeParcelas}
         
-        validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
+    #     validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
         
-    END
+    # END
+
+    Valida vencimento em fins de semana e feriados(${qtdeParcelas})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -814,22 +782,14 @@ Então finalizo a venda personalizada com múltiplas parcelas(${qtdeParcelas})
 
         Valida Controle de Credito - Liberação(${VALOR_FINAL_VENDA})
 
-        IF    ${VendedorPossuiSenha}
-
-            Valida solicitação de senha do usuário supervisor
-
-        END
-
-    END
-
-    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
-    IF    ${VendedorPossuiSenha}
-
         Valida solicitação de senha do usuário supervisor
 
     END
 
-    Valida Parametros/Impressões pós venda
+    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
+    Valida solicitação de senha do usuário supervisor
+
+    Valida parâmetros/impressões pós venda
 
     keyVendas1.Valida baixa de estoque
 
@@ -962,11 +922,15 @@ E pesquiso pela venda gerada
     END
 
     Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${codigo_venda}    Convert To String    ${COD_VENDA}
 
-    Input Text    ${EMPTY}    ${COD_VENDA}
+    Type    ${EMPTY}    ${codigo_venda}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    ENTER
-    Sleep    ${SLEEP_MEDIO}
 
-    Wait Until Screen Contain    ${GRID_REGISTRO_ENCONTRADO}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${LABEL_REGISTRO_ENCONTRADO}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${LABEL_REGISTRO_ENCONTRADO}

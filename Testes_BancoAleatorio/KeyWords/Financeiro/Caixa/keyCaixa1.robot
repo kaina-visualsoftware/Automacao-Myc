@@ -14,7 +14,7 @@ Resource     ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                                ./testes_bancoAleatorio/images
+${IMAGENS}                               ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                                ${config.IpServidor}
@@ -699,7 +699,7 @@ Então concluo o recebimento
     Wait Until Screen Contain    ${AVISO_REALMENTE_EFETUAR_BAIXA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT     KEY.S
+    Press Combination    KEY.ALT    KEY.S
 
     IF    '${Forma_Recebimento}' == 'Outros'
 

@@ -15,7 +15,7 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                          ./testes_bancoAleatorio/images
+${IMAGENS}                         ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
 ${DBHost}                          ${config.IpServidor}
@@ -100,7 +100,7 @@ E insiro as informações necessárias(${Valor_Conta})
         
     END
 
-    Valida vencimento fim de semana(1)
+    Valida vencimento em fins de semana e feriados(1)
     
     Input Text    ${EMPTY}    ${Valor_Conta}
     Press Special Key    TAB

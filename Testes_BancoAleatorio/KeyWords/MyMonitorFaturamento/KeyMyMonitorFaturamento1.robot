@@ -9,7 +9,7 @@ Resource    ../../utils/validacaoAviso.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                             ./testes_bancoAleatorio/images
+${IMAGENS}                            ./testes_bancoAleatorio/images
 
 # Conexão MySQL
 ${DBHost}                             ${config.IpServidor}

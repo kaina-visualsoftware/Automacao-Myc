@@ -12,44 +12,45 @@ Resource    ../../../utils/utils.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                      ./testes_bancoAleatorio/images
+${IMAGENS}                          ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
-${DBHost}                       ${config.IpServidor}
-${DBName}                       ${config.Database}
-${DBPass}                       vssql
-${DBPort}                       ${config.Porta}
-${DBUser}                       root
+${DBHost}                           ${config.IpServidor}
+${DBName}                           ${config.Database}
+${DBPass}                           vssql
+${DBPort}                           ${config.Porta}
+${DBUser}                           root
 
 # Sleep's
-${SLEEP_BAIXO}                  0.7
-${SLEEP_MEDIO}                  1.5
-${SLEEP_ALTO}                   3
-${TEMPO_TELA}                   20
+${SLEEP_BAIXO}                      0.7
+${SLEEP_MEDIO}                      1.5
+${SLEEP_ALTO}                       3
+${TEMPO_TELA}                       20
 
 # Telas
-${TELA_GERACAO_VENDA}           tela_GeracaoPedido.png
-${TELA_WORKFLOW}                tela_WorkFlowPedido.png
-${MODAL_FORMAS_DE_PAGAMENTO}    modal_FormasDePagamentoPedidos.png
-${TELA_IMPRESSAO}               tela_Impressao.png
-${TELA_PEDIDOS}                 tela_Pedidos.png
-${TELA_PEDIDOS_ADICIONAR}       tela_PedidosAdicionar.png
-${TELA_PEDIDO_AUDITADO}         tela_PedidoAuditado.png
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}    tela_exclusaoVenda.png
-${TELA_VENDAS}                  tela_VendasDeBalcao.png
+${TELA_GERACAO_VENDA}               tela_GeracaoPedido.png
+${TELA_WORKFLOW}                    tela_WorkFlowPedido.png
+${MODAL_FORMAS_DE_PAGAMENTO}        modal_FormasDePagamentoPedidos.png
+${TELA_IMPRESSAO}                   tela_Impressao.png
+${TELA_PEDIDOS}                     tela_Pedidos.png
+${TELA_PEDIDOS_ADICIONAR}           tela_PedidosAdicionar.png
+${TELA_PEDIDO_AUDITADO}             tela_PedidoAuditado.png
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}        tela_exclusaoVenda.png
+${TELA_VENDAS}                      tela_VendasDeBalcao.png
 
 # Botões
-${BT_WORKFLOW}                  bt_Workflow.png
-${AJUSTE_FOCO}                  bt_SetaUltimaVenda.png
-${BT_ADICIONAR}                 bt_Adicionar.png
+${BT_WORKFLOW}                      bt_Workflow.png
+${AJUSTE_FOCO}                      bt_SetaUltimaVenda.png
+${BT_ADICIONAR}                     bt_Adicionar.png
 
 # Labels
-${LABEL_SITUACAO_TODOS}         lb_SituacaoTodosPreVenda.png
+${LABEL_SITUACAO_TODOS}             lb_SituacaoTodosPreVenda.png
+${LABEL_AGUARDE_GERANDO_A_VENDA}    lb_AguardeGerandoAVenda.png
 
 # Outros
-${FORMA_RECEBIMENTO_OUTROS}     Outros...
-${QTDE_BAIXA_PRODUTO}           ${1}
-${Quantidade_Produto}           ${1}
+${FORMA_RECEBIMENTO_OUTROS}         Outros...
+${QTDE_BAIXA_PRODUTO}               ${1}
+${Quantidade_Produto}               ${1}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -142,7 +143,7 @@ Então finalizo o pedido
 
     END
 
-    Valida impressão direta de pré-venda
+    Valida parâmetros/impressões pós pré-venda
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
@@ -172,7 +173,7 @@ Quando finalizo o pedido sem auditar
 
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
-    Valida impressão direta de pré-venda
+    Valida parâmetros/impressões pós pré-venda
 
 E pressiono o atalho de editar
 
@@ -262,11 +263,13 @@ Então gero a venda totalmente
 
     END
 
+    Wait Until Screen Not Contain    ${LABEL_AGUARDE_GERANDO_A_VENDA}    ${TEMPO_TELA}
+    
+    Valida vencimento em fins de semana e feriados(1)
+
     Validação de geração de venda
 
-    validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
-
-    Valida Parametros/Impressões pós venda
+    Valida parâmetros/impressões pós venda
 
     IF    ${Parametro_ImprimeVendaDireto}
     
@@ -319,6 +322,15 @@ Validação de geração de venda
     Sleep    ${SLEEP_ALTO}
 
     ${Codigo_Venda_Gerada}    Query    SELECT VendaGerada FROM pedidosvenda WHERE codigo = ${Codigo_Pedido};
+
+    IF    '${Codigo_Venda_Gerada}' == '[]' or '${Codigo_Venda_Gerada[0][0]}' == 'None'
+
+        Sleep    ${SLEEP_MEDIO}
+        ${Codigo_Venda_Gerada}    Query    SELECT VendaGerada FROM pedidosvenda WHERE codigo = ${Codigo_Pedido};
+
+    END
+
+    Should Not Be Equal    ${Codigo_Venda_Gerada[0][0]}    None    Venda não foi gerada para o pedido ${Codigo_Pedido}.
 
     ${Produtos_Pedidos}    Query    SELECT CodigoProduto, Descricao, Quantidade, ValorUnitario, ValorTotal FROM pedidosvendaprodutos WHERE codigoPedido = ${Codigo_Pedido};
 
@@ -377,11 +389,11 @@ Então gero a venda parcialmente do produto selecionado
 
             END
 
-        ELSE
-
-            validacaoAviso.Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
-
         END
+
+        Sleep    ${SLEEP_BAIXO}
+        
+        Valida vencimento em fins de semana e feriados(1)
 
     END
 

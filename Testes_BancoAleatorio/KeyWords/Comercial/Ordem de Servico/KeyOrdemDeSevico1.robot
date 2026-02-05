@@ -199,7 +199,7 @@ Então finalizo a ordem de serviço
     Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_BAIXO}
 
-    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
+    Valida vencimento em fins de semana e feriados(${FORMA_PADRAO[4]})
 
     IF    ${FORMA_PADRAO[2]} > 0
         
@@ -223,22 +223,14 @@ Então finalizo a ordem de serviço
             
             Valida Controle de Credito - Liberação(${VALOR_FINAL_OS})
 
-            IF    ${VendedorPossuiSenha}
-        
-                Valida solicitação de senha do usuário supervisor
-
-            END
+            Valida solicitação de senha do usuário supervisor
 
         END
 
     END
 
     # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
-    IF    ${VendedorPossuiSenha}
-        
-        Valida solicitação de senha do usuário supervisor
-
-    END
+    Valida solicitação de senha do usuário supervisor
 
     IF    '${FORMA_PADRAO[0]}' == 'À VISTA'
         
@@ -295,9 +287,6 @@ Quando clico em editar
 E excluo os pagamentos lançados
 
     validacaoAviso.Valida cliente com vales compra disponíveis
-
-    # Implementação por conta da tarefa 180120
-    SikuliLibrary.Click    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.M 
@@ -353,7 +342,7 @@ Então finalizo a ordem de serviço - A Prazo
 
     END
 
-    Valida vencimento fim de semana(${FORMA_PADRAO[4]})
+    Valida vencimento em fins de semana e feriados(${FORMA_PADRAO[4]})
 
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -366,21 +355,13 @@ Então finalizo a ordem de serviço - A Prazo
         Sleep    ${SLEEP_BAIXO}
 
         Valida Controle de Credito - Liberação(${VALOR_FINAL_OS})
-
-        IF    ${VendedorPossuiSenha}
-        
-            Valida solicitação de senha do usuário supervisor
-
-        END
-
-    END
-
-    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.
-    IF    ${VendedorPossuiSenha}
         
         Valida solicitação de senha do usuário supervisor
 
     END
+
+    # Comentado aqui porque pode ser que, quando a forma de pagamento for à vista, ela apareça antes das duplicatas, mas ainda é necessário validar esse comportamento.    
+    Valida solicitação de senha do usuário supervisor
 
     Valida avisos ao finalizar Ordem de serviço
 
