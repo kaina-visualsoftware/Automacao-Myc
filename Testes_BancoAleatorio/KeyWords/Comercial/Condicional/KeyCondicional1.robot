@@ -47,8 +47,6 @@ ${AVISO_DESEJA_EXCLUIR}                 aviso_DesejaExcluir.png
 
 # Outros
 ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    row_ProdInclusoVendaParcialCond.png
-${QTDE_BAIXA_PRODUTO}                   ${1}
-${Quantidade_Produto}                   0
 
 *** Keywords ***
 Ler imagens iniciais
@@ -108,7 +106,7 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
 E insiro mais de um produto normal(${QuantidadeDeProduto})
 
-    ${Quantidade_Produto}    Set Variable    ${Parametro_QuantidadePadraoVenda}
+    ${Quantidade_Produto}    Set Variable    1
 
     ${Codigos_Produtos}    Create List
     
@@ -345,14 +343,10 @@ Consulta venda gerada a partir da condicional
 
 Informa a quantidade do produto(${Quantidade_Produto})
 
-    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoVenda}
-        
-        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+    SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     
-        Sleep    ${SLEEP_BAIXO}
-        Input Text    ${EMPTY}    ${Quantidade_Produto}
-
-    END
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${Quantidade_Produto}
 
     Press Special Key    TAB
 

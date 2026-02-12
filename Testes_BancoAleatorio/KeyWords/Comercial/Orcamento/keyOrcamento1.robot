@@ -125,7 +125,7 @@ Então gravo o orçamento
 
     Press Combination    KEY.ALT    KEY.G
 
-    Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
+    Valida impressao direta de venda(${Parametro_ImprimirVendaAoFinalizarVenda})
 
     Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
@@ -183,7 +183,7 @@ Então finalizo a exclusão
     
 Informa a quantidade do produto(${Quantidade_Produto})
 
-    IF    ${Quantidade_Produto} != 1
+    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoProduto}
         
         SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     

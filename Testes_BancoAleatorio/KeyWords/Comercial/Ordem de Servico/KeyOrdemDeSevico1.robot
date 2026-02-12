@@ -73,7 +73,7 @@ ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${OS_PossuiProduto}                      ${False}
 ${OS_PossuiServico}                      ${False}
 ${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
-${Quantidade_Produto}                    0
+# ${Quantidade_Produto}                    0
 ${Quantidade_Servico}                    ${1}
 ${List_Quantidades_Produto}              ${None}
 ${List_Quantidades_Servico}              ${None}
@@ -740,7 +740,7 @@ Extrair dados da ordem de serviço gerada
 
 Informa a quantidade do produto(${Quantidade_Produto})
 
-    IF    ${Quantidade_Produto} != 1
+    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoProduto}
         
         SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     
@@ -827,7 +827,7 @@ Quando insiro mais de um serviço(${QuantidadeDeServico})
 
 Quando insiro mais de um produto normal(${QuantidadeDeProduto})
 
-    ${Quantidade_Produto}    Set Variable    ${Parametro_QuantidadePadraoVenda}
+    ${Quantidade_Produto}    Considera quantidade padrão de produtos quando utilizado múltiplos produtos    ${Parametro_QtdePadraoOS}
 
     ${Codigos_Produtos}    Create List
 

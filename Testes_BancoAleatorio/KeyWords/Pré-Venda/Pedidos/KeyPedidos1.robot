@@ -12,45 +12,51 @@ Resource    ../../../utils/utils.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                          ./testes_bancoAleatorio/images
+${IMAGENS}                             ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
-${DBHost}                           ${config.IpServidor}
-${DBName}                           ${config.Database}
-${DBPass}                           vssql
-${DBPort}                           ${config.Porta}
-${DBUser}                           root
+${DBHost}                              ${config.IpServidor}
+${DBName}                              ${config.Database}
+${DBPass}                              vssql
+${DBPort}                              ${config.Porta}
+${DBUser}                              root
 
 # Sleep's
-${SLEEP_BAIXO}                      0.7
-${SLEEP_MEDIO}                      1.5
-${SLEEP_ALTO}                       3
-${TEMPO_TELA}                       20
+${SLEEP_BAIXO}                         0.7
+${SLEEP_MEDIO}                         1.5
+${SLEEP_ALTO}                          3
+${TEMPO_TELA}                          20
 
 # Telas
-${TELA_GERACAO_VENDA}               tela_GeracaoPedido.png
-${TELA_WORKFLOW}                    tela_WorkFlowPedido.png
-${MODAL_FORMAS_DE_PAGAMENTO}        modal_FormasDePagamentoPedidos.png
-${TELA_IMPRESSAO}                   tela_Impressao.png
-${TELA_PEDIDOS}                     tela_Pedidos.png
-${TELA_PEDIDOS_ADICIONAR}           tela_PedidosAdicionar.png
-${TELA_PEDIDO_AUDITADO}             tela_PedidoAuditado.png
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}        tela_exclusaoVenda.png
-${TELA_VENDAS}                      tela_VendasDeBalcao.png
+${TELA_GERACAO_VENDA}                  tela_GeracaoPedido.png
+${TELA_WORKFLOW}                       tela_WorkFlowPedido.png
+${MODAL_FORMAS_DE_PAGAMENTO}           modal_FormasDePagamentoPedidos.png
+${TELA_IMPRESSAO}                      tela_Impressao.png
+${TELA_PEDIDOS}                        tela_Pedidos.png
+${TELA_PEDIDOS_ADICIONAR}              tela_PedidosAdicionar.png
+${TELA_PEDIDO_AUDITADO}                tela_PedidoAuditado.png
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}           tela_exclusaoVenda.png
+${TELA_VENDAS}                         tela_VendasDeBalcao.png
 
 # Botões
-${BT_WORKFLOW}                      bt_Workflow.png
-${AJUSTE_FOCO}                      bt_SetaUltimaVenda.png
-${BT_ADICIONAR}                     bt_Adicionar.png
+${BT_WORKFLOW}                         bt_Workflow.png
+${AJUSTE_FOCO}                         bt_SetaUltimaVenda.png
+${BT_ADICIONAR}                        bt_Adicionar.png
+
+# Inputs
+${INPUT_QUANTIDADE_PRODUTO}            input_QuantidadeProduto.png
 
 # Labels
-${LABEL_SITUACAO_TODOS}             lb_SituacaoTodosPreVenda.png
-${LABEL_AGUARDE_GERANDO_A_VENDA}    lb_AguardeGerandoAVenda.png
+${LABEL_SITUACAO_TODOS}                lb_SituacaoTodosPreVenda.png
+${LABEL_AGUARDE_GERANDO_A_VENDA}       lb_AguardeGerandoAVenda.png
+${LABEL_CRITERIO_CODIGO_PEDIDO}        label_CriterioCodigo_PreVenda.png
+${LABEL_CODIGO_GRID}                   lb_Codigo_Grid.png
+${LABEL_REGISTRO_PEDIDO_ENCONTRADO}    lb_RegistroEncontradoPedido.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}         Outros...
-${QTDE_BAIXA_PRODUTO}               ${1}
-${Quantidade_Produto}               ${1}
+# ${QTDE_BAIXA_PRODUTO}               1
+# ${Quantidade_Produto}               1
 
 *** Keywords ***
 Ler imagens iniciais
@@ -94,10 +100,10 @@ Quando adiciono vendedor e cliente
 
     Valida avisos após incluir cliente e vendedor - Pré-Venda
 
-E adiciono um produto
+Quando insiro um produto normal informando a quantidade(${Qtde_Produto})
 
     IF    ${Teste_Comissao_Linha}
-        
+
         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaPreVendaSemEstoque})
 
     ELSE
@@ -114,11 +120,24 @@ E adiciono um produto
 
     END
 
+    Informa a quantidade do produto(${Qtde_Produto})
+
     utils.Valida parametros após incluir produto
 
-    ${QUERY}    Query    SELECT SUM(ValorTotal) FROM pedidosvendaprodutos WHERE CodigoPedido = ${Codigo_Pedido};
+Informa a quantidade do produto(${Qtde_Produto})
 
-    Set Test Variable    ${TOTAL_PEDIDO}    ${QUERY[0][0]}
+    IF    ${Qtde_Produto} != ${Parametro_QuantidadePadraoProduto}
+    
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+    
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${Qtde_Produto}
+
+    END
+
+    Set Test Variable    ${Quantidade_Produto}    ${Qtde_Produto}
+
+    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
 
 Quando vou para a aba de pagamentos
 
@@ -135,6 +154,8 @@ E audito o pedido
 Então finalizo o pedido
 
     Press Combination    KEY.ALT    KEY.F
+
+    Calcula valor final do pedido
 
     # Verifica se o valor mínimo da forma de pagamento é maior que o total do pedido.
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
@@ -163,6 +184,8 @@ Então visualizo o pedido
 Quando finalizo o pedido sem auditar
 
     Press Combination    KEY.ALT    KEY.F
+
+    Calcula valor final do pedido
 
     # Verifica se o valor mínimo da forma de pagamento é maior que o total do pedido.
     IF    ${FORMA_PADRAO_PEDIDO[2]} > ${TOTAL_PEDIDO}
@@ -271,7 +294,7 @@ Então gero a venda totalmente
 
     Valida parâmetros/impressões pós venda
 
-    IF    ${Parametro_ImprimeVendaDireto}
+    IF    ${Parametro_ImprimirVendaAoFinalizarVenda}
     
         Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
@@ -488,9 +511,9 @@ Calcula valor final da venda
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
         ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
-
         ${ProdutoValorTotal}       Set Variable    ${consultaVendasProdutos[${i}][2]}
         
+        Log To Console    Quantidade_Produto calc venda: ${Quantidade_Produto}
         ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
 
         Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}
@@ -517,3 +540,65 @@ Calcula valor final da venda
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+Calcula valor final do pedido
+
+    ${somaValorTotalProdutos}    Evaluate    0
+
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${consultaPedidoProdutos}    Query    SELECT pvp.CodigoProduto, pvp.ValorUnitario, pvp.ValorTotal FROM pedidosvendaprodutos pvp WHERE pvp.CodigoPedido = ${Codigo_Pedido} ORDER BY pvp.Sequencia;
+
+    ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM pedidosvendaprodutos pvp WHERE pvp.CodigoPedido = ${Codigo_Pedido};
+
+    ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
+
+    FOR    ${i}    IN RANGE    0    ${QUANTIDADE_PRODUTOS}
+
+        ${ProdutoValorUnitario}    Set Variable    ${consultaPedidoProdutos[${i}][1]}
+        ${ProdutoValorTotal}       Set Variable    ${consultaPedidoProdutos[${i}][2]}
+        
+        Log To Console    Quantidade_Produto no calc pedido: ${Quantidade_Produto}
+        ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
+
+        Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}
+        
+        ${somaValorTotalProdutos}    Evaluate    round((${somaValorTotalProdutos} + ${calcValorTotalProduto}), 2)
+        
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    ${ValorTotalProdutosPedido}    Query    SELECT ROUND(SUM(pvp.ValorTotal), 2) FROM pedidosvendaprodutos pvp WHERE pvp.CodigoPedido = ${Codigo_Pedido}
+
+    Should Be Equal    ${ValorTotalProdutosPedido[0][0]}    ${somaValorTotalProdutos}
+
+    Set Test Variable    ${TOTAL_PEDIDO}    ${ValorTotalProdutosPedido[0][0]}
+
+    Set Test Variable    ${Valor_Total_Produtos_Pedido}    ${ValorTotalProdutosPedido[0][0]}
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${TOTAL_PEDIDO}
+
+E pesquiso pelo pedido gerado
+
+    Sleep    ${SLEEP_BAIXO}
+    ${criterioCodigo}    Exists    ${LABEL_CRITERIO_CODIGO_PEDIDO}
+
+    IF    not ${criterioCodigo}
+
+        SikuliLibrary.Click    ${LABEL_CODIGO_GRID}
+        
+    END
+
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${cod_pedido}    Convert To String    ${Codigo_Pedido}
+
+    Type    ${EMPTY}    ${cod_pedido}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    ENTER
+
+    Wait Until Screen Contain    ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}

@@ -228,7 +228,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
     Verifica se cliente possui objeto vinculado
 
-Verifica parâmetros que interferem na venda
+Carregar parâmetros do sistema
 
     ${Lista_de_Parametros}    ${TelasQtdePadraoProduto}    ${QuantidadePadraoVenda}    ${DiasInativoSCPC}    ${ValorMinimoBoleto}    Valida Parametros Config
     ${Config_Empresas}        Valida Config Empresa
@@ -267,15 +267,15 @@ Verifica parâmetros que interferem na venda
     ${Parametro_CaixaControladoPorUsuario}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    CaixaUsuario
     ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}    Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    DescontoFinalIgualmente
     ${Parametro_ImprimeNFCeDireto}                         Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Venda_ImprimeCupom
-    ${Parametro_ImprimeVendaDireto}                        Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
-    ${Parametro_ImprimeDuplicataVenda}                     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
+    ${Parametro_ImprimirVendaAoFinalizarVenda}             Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirVenda_FinalizarVenda
+    ${Parametro_ImprimirDuplicatasAoFinalizarVenda}        Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirDup_FinalizarVenda
     ${Parametro_BaixaCentralizada}                         Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaCentralizada
     ${Parametro_BaixaAutomatico}                           Run Keyword And Return Status    Should Contain    ${Config_Empresas}    BaixaAutomatico
     ${Caixa_Baixas_Automatica}                             Run Keyword And Return Status    Should Contain    ${Config_Empresas}    CodigoCX
-    ${Parametro_Imprime_Entrada}                           Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpRecEnt_FinalizarVenda
-    ${Parametro_Imprime_Contrato_Venda}                    Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirContrato_FinalizarVenda
-    ${Parametro_Imprime_Promissoria}                       Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
-    ${Parametro_Imprime_Boleto}                            Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
+    ${Parametro_ImprimirReciboEntradaAoFinalizarVenda}     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpRecEnt_FinalizarVenda
+    ${Parametro_ImprimirContratoAoFinalizarVenda}          Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirContrato_FinalizarVenda
+    ${Parametro_ImprimirPromissoriaAoFinalizarVenda}       Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImpPromissoria_FinalizarVenda
+    ${Parametro_ImprimirBoletoAoFinalizarVenda}            Run Keyword And Return Status    Should Contain    ${Config_Empresas}    ImprimirBol_FinalizarVenda
     ${Parametro_ValeCompra_Dev_Menor0}                     Run Keyword And Return Status    Should Contain    ${Config_Empresas}    Dev_Ativa_Vale
     ${Parametro_FaturaVendaDireto}                         Run Keyword And Return Status    Should Contain    ${Config_Empresas}    FaturaVendaDireto
     ${Parametro_BloqueiaOrcamentoSemEstoque}               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    OrcamentoComEstoque_Bloq
@@ -310,7 +310,7 @@ Verifica parâmetros que interferem na venda
     ${Parametro_InfoCreditoClienteOrcamento}               Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Info_Financeiro_Orc
     ${Parametro_InfoCreditoClientePreVenda}                Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Aviso_Info_Financeiro_Prev
     ${Parametro_ExigeSenhaOutroVendedor}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeSenhaMudarVendedorVenda
-    ${Parametro_ImprimePreVendaDireto}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirPreVenda_FinalizarPreVenda
+    ${Parametro_ImprimirPreVendaAoFinalizarPreVenda}       Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirPreVenda_FinalizarPreVenda
     ${Parametro_ImpressaoDiretaPreVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PrevendaDireto
 
     IF    ${Parametro_VendaRapida}
@@ -377,13 +377,13 @@ Verifica parâmetros que interferem na venda
 
     Set Global Variable    ${Parametro_Desabilita_Servico_Orcamento}
 
-    Set Global Variable    ${Parametro_Imprime_Boleto}
+    Set Global Variable    ${Parametro_ImprimirBoletoAoFinalizarVenda}
 
-    Set Global Variable    ${Parametro_Imprime_Promissoria}
+    Set Global Variable    ${Parametro_ImprimirPromissoriaAoFinalizarVenda}
 
-    Set Global Variable    ${Parametro_Imprime_Contrato_Venda}
+    Set Global Variable    ${Parametro_ImprimirContratoAoFinalizarVenda}
 
-    Set Global Variable    ${Parametro_Imprime_Entrada}
+    Set Global Variable    ${Parametro_ImprimirReciboEntradaAoFinalizarVenda}
 
     Set Global Variable    ${Parametro_Impre_Ordem_de_Entrega}
 
@@ -397,9 +397,9 @@ Verifica parâmetros que interferem na venda
 
     Set Global Variable    ${Parametro_ImprimeNFCeDireto}
 
-    Set Global Variable    ${Parametro_ImprimeVendaDireto}
+    Set Global Variable    ${Parametro_ImprimirVendaAoFinalizarVenda}
 
-    Set Global Variable    ${Parametro_ImprimeDuplicataVenda}
+    Set Global Variable    ${Parametro_ImprimirDuplicatasAoFinalizarVenda}
 
     Set Global Variable    ${Parametro_ExibeVendasAnteriores}
 
@@ -455,7 +455,7 @@ Verifica parâmetros que interferem na venda
 
     Set Global Variable    ${Parametro_TelasQtdePadraoProduto}    ${TelasQtdePadraoProduto}
 
-    Set Global Variable    ${Parametro_QuantidadePadraoVenda}    ${QuantidadePadraoVenda}
+    Set Global Variable    ${Parametro_QuantidadePadraoProduto}    ${QuantidadePadraoVenda}
 
     Set Global Variable    ${Parametro_DiasInativoSCPC}    ${DiasInativoSCPC}
 
@@ -495,7 +495,7 @@ Verifica parâmetros que interferem na venda
 
     Set Global Variable    ${Parametro_ExigeSenhaOutroVendedor}
 
-    Set Global Variable    ${Parametro_ImprimePreVendaDireto}
+    Set Global Variable    ${Parametro_ImprimirPreVendaAoFinalizarPreVenda}
 
     Set Global Variable    ${Parametro_ImpressaoDiretaPreVenda}
 
@@ -692,15 +692,15 @@ Valida parâmetros/impressões pós venda
 
     END
 
-    Valida impressao direta de venda(${Parametro_ImprimeVendaDireto})
+    Valida impressao direta de venda(${Parametro_ImprimirVendaAoFinalizarVenda})
 
-    IF    ${Parametro_Imprime_Boleto}
+    IF    ${Parametro_ImprimirBoletoAoFinalizarVenda}
 
         Valida impressão de boleto
 
     END
 
-    IF    ${Parametro_Imprime_Entrada}
+    IF    ${Parametro_ImprimirReciboEntradaAoFinalizarVenda}
 
         Valida impressão de entrada
 
@@ -712,7 +712,7 @@ Valida parâmetros/impressões pós venda
 
     END
 
-    IF    ${Parametro_Imprime_Contrato_Venda}
+    IF    ${Parametro_ImprimirContratoAoFinalizarVenda}
 
         Valida impressão do contrato de venda
 
@@ -724,13 +724,13 @@ Valida parâmetros/impressões pós venda
 
     END
 
-    IF    ${Parametro_ImprimeDuplicataVenda}
+    IF    ${Parametro_ImprimirDuplicatasAoFinalizarVenda}
 
         Valida Impressao de duplicatas
 
     END
     
-    IF    ${Parametro_Imprime_Promissoria}
+    IF    ${Parametro_ImprimirPromissoriaAoFinalizarVenda}
 
         Valida impressão de promissória
 
@@ -796,9 +796,9 @@ Valida impressão de boleto
 
     END
 
-Valida vencimento em fins de semana e feriados(${VALOR_I})
+Valida vencimento em fins de semana e feriados(${N_Pagamentos})
 
-    FOR    ${I}    IN RANGE    ${VALOR_I}
+    FOR    ${i}    IN RANGE    ${N_Pagamentos}
         
         Sleep    ${SLEEP_MEDIO}
         ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_ALTO}
@@ -1304,6 +1304,8 @@ Valida vendedor sem percentual de comissão para operações com vale compra
     Sleep    ${SLEEP_BAIXO}
     ${aviso}    Exists    ${AVISO_VENDEDOR_SEM_PERCENT_COMISSAO_VALE_COMPRA}
 
+    Log To Console    aviso de comissão antes da tela de impressão: ${aviso}
+
     IF    ${aviso}
 
         Press Special Key    ENTER
@@ -1351,7 +1353,7 @@ Valida aviso atualizar número no cadastro principal
 
 Valida parâmetros/impressões pós pré-venda
     
-    IF    ${Parametro_ImprimePreVendaDireto}
+    IF    ${Parametro_ImprimirPreVendaAoFinalizarPreVenda}
 
         Valida impressão pré-venda ao finalizar pré-venda
         

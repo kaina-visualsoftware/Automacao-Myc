@@ -54,7 +54,6 @@ class validaParametros:
 
                 elif nomeColuna == "TelasQtdePadraoProduto":
 
-                    # avisosMarcados.append(parametrosMarcados[i])
                     telasQtdePadraoProduto = parametrosMarcados[i]
 
                 elif nomeColuna == "QuantidadePadraoVenda":

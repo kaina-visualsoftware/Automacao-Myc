@@ -43,7 +43,7 @@ Teste 03 - Comissão sobre venda e devolução com múltiplos produtos e baixa d
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    VALE_COMPRA_DEV_MENOR_ZERO    1    AND    
     ...    Inicializar Pré-Condições    AND    
-    ...    Reiniciar MyCommerce Se Necessário    AND
+    ...    Reiniciar MyCommerce Se Necessário    AND    
     ...    montadorDeCenarios.Dado que realizo uma devolução com mais de um produto(2)
 
     Dado que acesso o menu de vale compras
@@ -162,7 +162,11 @@ Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, ge
 
 Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem receber a Ordem de Serviço - Linha
     [Tags]    Teste11
-    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
@@ -177,7 +181,11 @@ Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem
 
 Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa após a baixa da comissão de uma Ordem de Serviço totalmente recebida - Linha
     [Tags]    Teste12
-    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço - Totalmente recebida
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço - Totalmente recebida
     
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
@@ -300,7 +308,10 @@ Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produ
 Teste 19 - Comissão sobre total da venda com alíquota individual por serviço após inclusão e edição da ordem de serviço - Total Venda
     # Tarefa: 175729 | CT: 1-598
     [Tags]    Teste19
-    [Setup]    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo
 
     Dado que acesso a tela de comissões
     Quando insiro o técnico executor de serviço comissionado
@@ -313,4 +324,21 @@ Teste 19 - Comissão sobre total da venda com alíquota individual por serviço 
     E vou para a aba de servicos
     E seleciono a comissão de serviços
     E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
+
+Teste 20 - Comissão por linha de venda com múltiplos produtos gerada sobre somente recebidas e pagamento da comissão no caixa - Linha
+    [Tags]    Teste04
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda com múltiplos produtos totalmente recebida no caixa(3)
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono somente as recebidas
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    utils.E saio da tela(Comissoes)
+    KeyComissoes1.Quando acesso o caixa aberto
+    KeyComissoes1.E vou para a aba de contas a pagar
+    Então faço o pagamento da comissao
+    utils.E saio da tela(CaixaPrincipal)
+    Então visualizo os detalhes da comissao recem paga
     utils.E saio da tela(Comissoes)

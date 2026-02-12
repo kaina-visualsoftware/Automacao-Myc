@@ -195,6 +195,8 @@ Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no 
     
     Sleep    ${SLEEP_MEDIO}
     Execute Sql String    DELETE FROM comissoespagas WHERE PInicial >= '${dataInicial}' AND PFinal <= '${dataFinal}' AND CodigoVendedor = ${Codigo_Vendedor} AND Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+    
+    Sleep    ${SLEEP_BAIXO}
 
 E seleciono a comissão de produtos
 
@@ -271,10 +273,18 @@ E seleciono a comissão de produtos
 Calcula comissão por linha de produto - apenas 1 produto
 
     Sleep    ${SLEEP_BAIXO}
-    ${query_comissaoProduto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
+    # ${query_comissaoProduto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
+    ${query_comissaoProduto}    Query    SELECT vp.ValorUnitario * (cl.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo WHERE p.Codigo = ${COD_PRODUTO} AND vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL;
 
-    ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    ${comissaoProduto}    Evaluate    ${query_comissaoProduto[0][0]} * ${Quantidade_Produto}
+
+    # ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${comissaoProduto} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
     ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    ${query_ValorComissaoProduto}    Query    SELECT ROUND(vp.ValorComissao, 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.CodigoProduto = ${COD_PRODUTO} AND vp.Cancelada IS NULL;
+
+    Should Be Equal As Numbers    ${Total_Comissao_Produtos}    ${query_ValorComissaoProduto[0][0]}
 
     Set Test Variable    ${Total_Comissao_Produtos}
     Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
@@ -290,14 +300,18 @@ Calcula comissão por linha de produto - por parcela personalizada
     FOR    ${I}    IN RANGE    ${qtdeProdutos}
 
         ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+        Log To Console    query_comissaoProduto: ${query_comissaoProduto}
 
         # ${somaComissaoParcela}    Evaluate    round((${query_comissaoProduto[0][0]} + ${somaComissaoParcela}), 4)
         ${somaComissaoParcela}    Evaluate    (decimal.Decimal(str(${query_comissaoProduto[0][0]})) + decimal.Decimal(str(${somaComissaoParcela}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
     END
+    Log To Console    somaComissaoParcela: ${somaComissaoParcela}
 
     # Vai definir a % de comissão apenas positiva
     IF    ${Valores_Parcelas[${j}]} > 0
+
+        Log To Console    Valores_Parcelas[${j}]: ${Valores_Parcelas[${j}]}
 
         # ${PERCENT_COMISSAO}    Evaluate    ((${somaComissaoParcela} / ${DADOS_VENDA_DEVOLUÇÃO[0][1]}) * 100)
         ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${somaComissaoParcela})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[0][1]})) * decimal.Decimal("100")    modules=decimal
@@ -305,6 +319,7 @@ Calcula comissão por linha de produto - por parcela personalizada
         Set Suite Variable    ${PERCENT_COMISSAO}
 
     END
+    Log To Console    PERCENT_COMISSAO: ${PERCENT_COMISSAO}
  
     # ${calcComissaoTotalParcela}    Evaluate    round((${Valores_Parcelas[${j}]} * (${PERCENT_COMISSAO} / 100)), 4)
     # ${calcComissaoTotalParcela}    Evaluate    round(${calcComissaoTotalParcela}, 2)
@@ -312,6 +327,7 @@ Calcula comissão por linha de produto - por parcela personalizada
     ${calcComissaoTotalParcela}    Evaluate    (decimal.Decimal(str(${Valores_Parcelas[${j}]})) * (decimal.Decimal(str(${PERCENT_COMISSAO})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
     Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoTotalParcela}
+    Log To Console    Total_Comissao_Produtos: ${Total_Comissao_Produtos}
     
     ${Total_Comissao}    Evaluate    decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Produtos}))    modules=decimal
 
@@ -332,22 +348,37 @@ Calcula comissão por linha de produto - múltiplos produtos
     FOR    ${I}    IN RANGE    ${qtdeProdutos}
 
         ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
+        Log To Console    query_comissaoProduto: ${query_comissaoProduto[0][0]}
 
-        ${Total_Comissao_Produtos}    Evaluate    round((${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos}), 4)
+        # ${comissaoProduto}    Evaluate    ${query_comissaoProduto[0][0]} * ${Quantidade_Produto}
+        ${comissaoProduto}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]})) * decimal.Decimal(str(${Quantidade_Produto}))    modules=decimal
+        Log To Console    comissaoProduto: ${comissaoProduto}
+
+        # ${Total_Comissao_Produtos}    Evaluate    round((${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos}), 4)
+        # ${Total_Comissao_Produtos}    Evaluate    round((${comissaoProduto} + ${Total_Comissao_Produtos}), 4)
+        ${Total_Comissao_Produtos}    Evaluate    (decimal.Decimal(str(${comissaoProduto})) + decimal.Decimal(str(${Total_Comissao_Produtos}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+        Log To Console    Total_Comissao_Produtos: ${Total_Comissao_Produtos}
 
     END
 
     # Vai definir a % de comissão apenas positiva
     IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
 
-        ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao_Produtos} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
+        # ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao_Produtos} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
+        ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]})) * decimal.Decimal("100")    modules=decimal
 
         Set Suite Variable    ${PERCENT_COMISSAO}
 
     END
 
-    ${Total_Comissao_Produtos}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
-    ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Total_Comissao_Produtos}), 2)
+    # ${Total_Comissao_Produtos}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
+    # ${Total_Comissao_Produtos}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 2)
+    ${Total_Comissao_Produtos}    Evaluate    (decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]})) * (decimal.Decimal(str(${PERCENT_COMISSAO})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+    # ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Total_Comissao_Produtos}), 2)
+    ${Total_Comissao}    Evaluate    (decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Produtos}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    Log To Console    Total_Comissao_Produtos: ${Total_Comissao_Produtos}
+    Log To Console    Total_Comissao: ${Total_Comissao}
 
     Set Test Variable    ${Total_Comissao_Produtos}
     Set Test Variable    ${Total_Comissao}

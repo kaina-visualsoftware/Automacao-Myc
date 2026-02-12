@@ -82,6 +82,8 @@ Pré Condições Parâmetros
             
             Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
 
+            Carregar parâmetros do sistema
+
         END
 
     END
@@ -115,6 +117,8 @@ Pré Condições Parâmetros
             Append To List    ${PARAMS_ALTERADOS}    ${NOME_PARAMETRO}
 
             Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
+
+            Carregar parâmetros do sistema
 
         END
     END
@@ -153,6 +157,8 @@ Restaurar Parametro
 
     END
 
+    Carregar parâmetros do sistema
+
 Restaurar Parametros Alterados
 
     ${TEM_ALTERACOES}    Get Length    ${PARAMS_ALTERADOS}
@@ -190,7 +196,9 @@ Teardown Restaurar Parametros Alterados E Reiniciar MyCommerce Se Necessário
 
 Preparar Ambiente MyCommerce
 
-    validacaoAviso.Verifica parâmetros que interferem na venda
+    validacaoAviso.Carregar parâmetros do sistema
+
+    utils.Valida telas que utilizam quantidade padrão de produtos
 
     utils.Configurar pesquisa de produto por código
 
@@ -203,8 +211,10 @@ Preparar Ambiente MyCommerce
     utils.Configurar consulta automática ao SCPC como desativada
 
     IF    ${Atualizacao_Ambiente_MyCommerce}
+        
+        Log To Console    \nAtualizando ambiente...
 
         myCommerce.Fechar MyCommerce
         myCommerce.Abrir MyCommerce
         
-    END    
+    END

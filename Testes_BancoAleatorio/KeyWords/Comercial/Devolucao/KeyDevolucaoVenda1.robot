@@ -39,10 +39,11 @@ ${INPUTBOX_OBS}                        inputBox_Observacoes.png
 
 # Labels
 ${LABEL_MOTIVO_DEVOLUCAO}              lb_motivoDevolucao.png
+${LABEL_SERA_GERADO_VALE_COMPRA}       lb_SeraGeradoValeCompraValorDev.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}            Outros...
-${Qtde_Devolvida_Produto}              ${1}
+# ${Quantidade_Produto_Devolucao}      ${1}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -128,6 +129,9 @@ E insiro os dados da venda no cabeçalho da devolução(${TELA})
 
 Quando seleciono um produto para a devolução
 
+    Set Test Variable    ${Quantidade_Produto_Devolucao}    ${Quantidade_Produto}
+    Log To Console    Quantidade_Produto_Devolucao: ${Quantidade_Produto_Devolucao}
+
     IF     ${Parametro_DevolucaoAvulsa}
 
         Sleep    ${SLEEP_BAIXO}
@@ -155,7 +159,8 @@ Quando seleciono um produto para a devolução
     ELSE
 
         Sleep    ${SLEEP_BAIXO}
-        Input Text    ${EMPTY}    ${QUANTIDADE_PRODUTOS}
+        # Input Text    ${EMPTY}    ${QUANTIDADE_PRODUTOS}
+        Input Text    ${EMPTY}    ${Quantidade_Produto_Devolucao}
         Sleep    ${SLEEP_BAIXO}
 
         Press Special Key    ENTER
@@ -163,9 +168,12 @@ Quando seleciono um produto para a devolução
 
     END 
 
-Quando seleciono os produtos para a devolução(${Quantidade_Devolver})
+Quando seleciono os produtos para a devolução(${Qtde_Produto_A_Devolver})
+
+    Set Test Variable    ${Quantidade_Produto_Devolucao}    ${Quantidade_Produto}
+    Log To Console    Quantidade_Produto_Devolucao: ${Quantidade_Produto_Devolucao}
     
-    FOR    ${I}    IN RANGE    ${Quantidade_Devolver}
+    FOR    ${I}    IN RANGE    ${Qtde_Produto_A_Devolver}
         
         Set Test Variable    ${COD_PRODUTO}    ${Codigos_Produtos[${I}]}
         
@@ -211,7 +219,7 @@ Quando seleciono um produto para devolver parcialmente a quantidade vendida(${Qt
 
     END
 
-    Set Test Variable    ${Qtde_Devolvida_Produto}    ${QtdeADevolver}
+    Set Test Variable    ${Quantidade_Produto_Devolucao}    ${QtdeADevolver}
 
 E vou para a aba de pagamentos
     
@@ -226,7 +234,7 @@ E vou para a aba de pagamentos
 
 Então finalizo a devolução
     
-    IF    ${Parametro_ValeCompra_Dev_Menor0} != $True
+    IF    not ${Parametro_ValeCompra_Dev_Menor0}
 
         IF    ${Parametro_DevolucaoAvulsa}
 
@@ -282,12 +290,14 @@ Então finalizo a devolução
         END
     
     ELSE
+
+        Wait Until Screen Contain    ${LABEL_SERA_GERADO_VALE_COMPRA}    ${TEMPO_TELA}
         
         IF    ${Parametro_DevolucaoExigeOBS}
 
             IF    ${Parametro_DevolucaoAvulsa}
 
-                Type    ${INPUTBOX_OBS}    Devolucao de Mercadoria - Automacao
+                Type    ${INPUTBOX_OBS}    Devolucao Avulsa de Mercadoria - Automacao
 
             ELSE
 
@@ -317,7 +327,7 @@ Então finalizo a devolução
             
         END
 
-        Press Combination    KEY.ALT    KEY.F 
+        Press Combination    KEY.ALT    KEY.F
         Sleep    ${SLEEP_BAIXO}
         
         Valida vendedor sem percentual de comissão para operações com vale compra
@@ -327,6 +337,8 @@ Então finalizo a devolução
         ${CodigoVale}    Query    SELECT ID FROM valecompra WHERE VendaOrigem = ${COD_DEVOLUCAO}
 
         Set Test Variable    ${ID_VALE_COMPRA}    ${CodigoVale[0][0]}
+
+        Log To Console    ID_VALE_COMPRA: ${ID_VALE_COMPRA}
 
     END
 
@@ -439,6 +451,8 @@ Então excluo a devolução
 
 Calcula valor final da devolução
 
+    Log To Console    Entrou aqui nos cálculos
+
     ${somaValorTotalProdutosDevolucao}    Evaluate    0
     
     Sleep    ${SLEEP_BAIXO}
@@ -449,6 +463,7 @@ Calcula valor final da devolução
     ${consultaQtdeProdutosDevolucao}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
 
     ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutosDevolucao[0][0]}
+    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
 
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
         
@@ -456,7 +471,7 @@ Calcula valor final da devolução
 
         ${Produto_ValorTotalDev}    Set Variable    ${consultaVendasProdutosDevolucao[${i}][2]}
 
-        ${calcValorTotalProdutoDevolucao}    Evaluate    round((${Qtde_Devolvida_Produto} * ${ProdutoValorUnitario}), 2)
+        ${calcValorTotalProdutoDevolucao}    Evaluate    round((${Quantidade_Produto_Devolucao} * ${ProdutoValorUnitario}), 2)
         ${calcValorTotalProdutoDevolucao}    Evaluate    ${calcValorTotalProdutoDevolucao} * (-1)
 
         Should Be Equal    ${Produto_ValorTotalDev}    ${calcValorTotalProdutoDevolucao}
@@ -473,6 +488,8 @@ Calcula valor final da devolução
     Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosDevolucao[0][0]}
 
     Set Test Variable    ${VALOR_FINAL_DEVOLUCAO}    ${ValorTotalProdutosDevolucao[0][0]}
+
+    Log To Console    Passou os cálculos.
 
 Valida cadastro de motivos de devoluções
 

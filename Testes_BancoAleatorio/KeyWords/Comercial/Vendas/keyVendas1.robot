@@ -95,9 +95,7 @@ ${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
 ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
 ${Codigos_Produtos}                      ${None}
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
-${Quantidade_Produto}                    0
 ${QUANTIDADE_PRODUTOS}                   ${1}
-${QTDE_BAIXA_PRODUTO}                    ${1}
 ${Desconto_Produto}                      ${None}
 ${List_Quantidades_Produto}              ${None}
 
@@ -157,7 +155,7 @@ E adiciono vendedor e cliente
 
 Quando insiro mais de um produto normal(${QuantidadeDeProduto})
 
-    ${Quantidade_Produto}    Set Variable    ${Parametro_QuantidadePadraoVenda}
+    ${Quantidade_Produto}    Considera quantidade padrão de produtos quando utilizado múltiplos produtos    ${Parametro_QtdePadraoVendas}
     
     ${Codigos_Produtos}    Create List
 
@@ -172,18 +170,18 @@ Quando insiro mais de um produto normal(${QuantidadeDeProduto})
     Set Test Variable    ${Codigos_Produtos}
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
 
-Informa a quantidade do produto(${Quantidade_Produto})
+Informa a quantidade do produto(${Qtde_Produto})
 
-    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoVenda}
-        
+    IF    ${Qtde_Produto} != ${Parametro_QuantidadePadraoProduto}
+
         SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     
         Sleep    ${SLEEP_BAIXO}
-        Input Text    ${EMPTY}    ${Quantidade_Produto}
+        Input Text    ${EMPTY}    ${Qtde_Produto}
 
     END
 
-    Set Test Variable    ${Quantidade_Produto}
+    Set Test Variable    ${Quantidade_Produto}    ${Qtde_Produto}
 
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
 
@@ -397,7 +395,7 @@ Então finalizo a venda - A Prazo
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.AL    KEY.F
+    Press Combination    KEY.ALT    KEY.F
 
     IF    ${Parametro_ControlaCreditoVenda}
 
@@ -420,7 +418,7 @@ Quando clico em editar
 
     utils.Exclui ordem de entrega(${COD_VENDA})
 
-    Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}
@@ -829,7 +827,31 @@ Consulta NDocumento das parcelas
 
     Set Test Variable    ${N_Documento_Parcelas}
 
-Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
+# Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
+
+#     IF    ${Teste_Comissao_Linha}
+
+#         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
+
+#     ELSE
+
+#         IF     ${Parametro_RealizaVendaSemEstoque}
+
+#             utils.Inserir Produto normal - Permite sem estoque
+
+#         ELSE
+
+#             utils.Inserir Produto normal - Necessita de estoque
+
+#         END
+
+#     END
+
+#     Informa a quantidade do produto(${Quantidade_Produto})
+
+#     utils.Valida parametros após incluir produto
+
+Quando insiro um produto normal informando a quantidade(${Qtde_Produto})
 
     IF    ${Teste_Comissao_Linha}
 
@@ -849,7 +871,7 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
     END
 
-    Informa a quantidade do produto(${Quantidade_Produto})
+    Informa a quantidade do produto(${Qtde_Produto})
 
     utils.Valida parametros após incluir produto
 
@@ -893,13 +915,13 @@ Quando insiro um produto normal informando a quantidade e desconto
 Informa a quantidade e desconto do produto
     [Arguments]    ${Quantidade_Produto}    ${Desconto_Produto}
 
-    IF    ${Quantidade_Produto} != 1
+    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoProduto}
 
         SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
         Sleep    ${SLEEP_BAIXO}
 
         Input Text    ${EMPTY}    ${Quantidade_Produto}
-
+        Log To Console    Quantidade_Produto: ${Quantidade_Produto}
     END
 
     Press Special Key    TAB
@@ -934,3 +956,14 @@ E pesquiso pela venda gerada
     Wait Until Screen Contain    ${LABEL_REGISTRO_ENCONTRADO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${LABEL_REGISTRO_ENCONTRADO}
+
+# Considera quantidade padrão de produtos quando utilizado múltiplos produtos(${parametro})
+
+#     # Log To Console    Parametro_QtdePadraoVendas: ${Parametro_QtdePadraoVendas}
+#     Log To Console    parametro: ${parametro}
+
+#     IF    not ${parametro} or (${parametro} and ${Parametro_QuantidadePadraoProduto} == 0)
+#         RETURN    1
+#     ELSE
+#         RETURN    ${Parametro_QuantidadePadraoProduto}
+#     END

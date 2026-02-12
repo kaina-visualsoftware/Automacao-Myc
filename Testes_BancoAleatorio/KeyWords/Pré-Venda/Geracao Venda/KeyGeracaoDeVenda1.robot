@@ -43,7 +43,7 @@ ${LABEL_GERANDO_CONTA_A_RECEBER}    lb_GerandoContasAReceber.png
 
 # Outros
 ${GRID_LISTAGEM_PEDIDOS}            grid_PedidosGeracaoVenda.png
-${QTDE_BAIXA_PRODUTO}               ${1}
+# ${QTDE_BAIXA_PRODUTO}               ${1}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -134,12 +134,6 @@ Então confirmo a geração dos pedidos
     END
     
     Sleep    ${SLEEP_BAIXO}
-
-    # FOR    ${I}    IN RANGE    ${Quantidade_Pedidos_Feitos}
-                    
-    #    Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
-
-    # END
     
     Valida vencimento em fins de semana e feriados(${Quantidade_Pedidos_Feitos})
     

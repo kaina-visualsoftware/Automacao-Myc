@@ -6,6 +6,7 @@ Library    ../libs/validaParametros.py
 Library    Process
 Library    Collections
 Library    Telnet
+Library    String
 
 Resource    ./validacaoAviso.robot
 *** Variables ***
@@ -589,6 +590,8 @@ Seleciona serviço com linha de comissão
 
 Inserir Produto normal - Necessita de estoque
 
+    ${Qtde_Minima_Estoque}    Set Variable    0
+
     IF    '${TELA}' == 'NFeSaidasManual'
 
         Sleep    ${SLEEP_MEDIO}
@@ -609,13 +612,23 @@ Inserir Produto normal - Necessita de estoque
 
     END
 
-    IF    '${TELA}' == 'Pedido'
-        
-        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto LEFT JOIN (SELECT CodigoProduto, Empresa, SUM(Quantidade - QtdeGerada) AS QuantidadePendente FROM pedidosvendaprodutos WHERE Cancelada IS NULL AND Quantidade > QtdeGerada GROUP BY CodigoProduto, Empresa) AS pendente ON p.Codigo = pendente.CodigoProduto AND pe.Empresa = pendente.Empresa WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pe.Estoque >= ${Parametro_QuantidadePadraoVenda} AND pe.Estoque > COALESCE(pendente.QuantidadePendente, 0) ORDER BY RAND() LIMIT 1;
+    IF    ${Parametro_QuantidadePadraoProduto} == 0
+
+        ${Qtde_Minima_Estoque}    Set Variable    1
 
     ELSE
 
-        ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque >= ${Parametro_QuantidadePadraoVenda} WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+        ${Qtde_Minima_Estoque}    Set Variable    ${Parametro_QuantidadePadraoProduto}
+
+    END
+
+    IF    '${TELA}' == 'Pedido'
+        
+        ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto LEFT JOIN (SELECT CodigoProduto, Empresa, SUM(Quantidade - QtdeGerada) AS QuantidadePendente FROM pedidosvendaprodutos WHERE Cancelada IS NULL AND Quantidade > QtdeGerada GROUP BY CodigoProduto, Empresa) AS pendente ON p.Codigo = pendente.CodigoProduto AND pe.Empresa = pendente.Empresa WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pe.Estoque >= ${Qtde_Minima_Estoque} AND pe.Estoque > COALESCE(pendente.QuantidadePendente, 0) ORDER BY RAND() LIMIT 1;
+
+    ELSE
+
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque >= ${Qtde_Minima_Estoque} WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
 
     END
     
@@ -810,7 +823,7 @@ Valida local de negociação da venda
 Valida impressao direta de venda(${Parametro})
     
     IF    ${Parametro}
-        
+
         Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
         Sleep    ${SLEEP_MEDIO}
 
@@ -818,7 +831,7 @@ Valida impressao direta de venda(${Parametro})
 
         Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
-
+            
     END
 
 Valida solicitação de senha do usuário supervisor
@@ -1345,6 +1358,8 @@ Formata código venda em texto para pesquisa
 Configurar pesquisa de produto por código
 
     IF    ${Parametro_PesquisaCodigoCodFabricaReferencia}
+
+        Log To Console    Parametro_PesquisaCodigoCodFabricaReferencia: ${Parametro_PesquisaCodigoCodFabricaReferencia}
         
         Execute Sql String    UPDATE config SET BuscaReferencia = 0
 
@@ -1357,6 +1372,8 @@ Configurar pesquisa de produto por código
 Configurar foco no campo de vendedor na inclusão de vendedor
 
     IF    ${Parametro_FocoCampoCliente}
+
+        Log To Console    Parametro_FocoCampoCliente: ${Parametro_FocoCampoCliente}
 
         Execute Sql String    UPDATE config SET FocoClienteVenda = 0
 
@@ -1371,6 +1388,8 @@ Configurar controle de crédito como desativado
     ${Deve_Desativar_Controle_Credito}    Evaluate    any([${Parametro_ControlaCreditoVenda}, ${Parametro_ControlaCreditoOrcamento}, ${Parametro_ControlaCreditoCondicional}, ${Parametro_ControlaCreditoGerarPreVendaOrcamento}, ${Parametro_ControlaCreditoOS}, ${Parametro_ControlaCreditoDevTroca}, ${Parametro_ControlaCreditoPreVenda}, ${Parametro_ControlaCreditoPreSeparacaoPreVenda}, ${Parametro_ControlaCreditoDescontaChequePreEmMaos}, ${Parametro_ControlaCreditoPreVendaAuditoria}])
 
     IF    ${Deve_Desativar_Controle_Credito}
+
+        Log To Console    Deve_Desativar_Controle_Credito: ${Deve_Desativar_Controle_Credito}
 
         Execute Sql String    UPDATE config SET ControlaCreditoClientes = 0, ControlaCreditoORC = 0, ControlaCreditoCond = 0, ControlaCreditoGeraPreOrcamento = 0, ControlaCreditoOS = 0, ControlaCreditoDevTroca = 0, ControlaCreditoPRE = 0, ControlaCredPreSepPreVenda = 0, DescontaChPre_CreditoCliente = 0, AuditoriaControlaCreditoPre = 0;
 
@@ -1436,6 +1455,8 @@ Configurar vínculo de produto devolvido na entrega como desativado
 
     IF    ${Parametro_VinculaProdutoDevolvidoEntrega}
 
+        Log To Console    Parametro_VinculaProdutoDevolvidoEntrega: ${Parametro_VinculaProdutoDevolvidoEntrega}
+
         Execute Sql String    UPDATE config SET VinculaDevolucaoEntrega = 0
 
         Set Global Variable    ${Atualizacao_Ambiente_MyCommerce}    ${True}
@@ -1447,6 +1468,8 @@ Configurar vínculo de produto devolvido na entrega como desativado
 Configurar consulta automática ao SCPC como desativada
 
     IF    ${Parametro_ConsultaSCPCVenda}
+
+        Log To Console    Parametro_ConsultaSCPCVenda: ${Parametro_ConsultaSCPCVenda}
 
         Execute Sql String    UPDATE config SET ConsultaSCPCVenda = 0
 
@@ -1477,3 +1500,128 @@ Valida impressão pré-venda ao finalizar pré-venda
         Wait Until Screen Not Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
 
     END
+
+Valida telas que utilizam quantidade padrão de produtos
+
+    Log To Console    Quantidade Padrão: ${Parametro_QuantidadePadraoProduto}
+
+    Set Global Variable    ${Parametro_QtdePadraoVendas}                ${False}
+    Set Global Variable    ${Parametro_QtdePadraoOrcamentos}            ${False}
+    Set Global Variable    ${Parametro_QtdePadraoPreVendas}             ${False}
+    Set Global Variable    ${Parametro_QtdePadraoOS}                    ${False}
+    Set Global Variable    ${Parametro_QtdePadraoDevolucao}             ${False}
+    Set Global Variable    ${Parametro_QtdePadraoDoacao}                ${False}
+    Set Global Variable    ${Parametro_QtdePadraoEmissaoManualSaida}    ${False}
+
+    IF    '${Parametro_TelasQtdePadraoProduto}' == 'None'
+        Log To Console    DESABILITADO.
+        RETURN
+    END
+
+    @{telas}    Split String    ${Parametro_TelasQtdePadraoProduto}    ,
+
+    Log To Console    \n
+    IF    '0' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoVendas}    ${True}
+        Log To Console    Vendas
+    END
+
+    IF    '1' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoOrcamentos}    ${True}
+        Log To Console    Orçamentos
+    END
+
+    IF    '2' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoPreVendas}    ${True}
+        Log To Console    Pré-Vendas
+    END
+
+    IF    '3' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoOS}    ${True}
+        Log To Console    Ordens de Serviço
+    END
+
+    IF    '4' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoDevolucao}    ${True}
+        Log To Console    Devoluções
+    END
+
+    IF    '5' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoDoacao}    ${True}
+        Log To Console    Doações
+    END
+    
+    IF    '6' in @{telas}
+        Set Global Variable    ${Parametro_QtdePadraoEmissaoManualSaida}    ${True}
+        Log To Console    Emissão Manual de Saída
+    END
+
+Valida quantidade padrão dos produtos na seleção
+
+    Set Test Variable    ${Quantidade_Padrao_Produto}    0
+
+    IF    '${TELA}' == 'Orcamento'
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoOrcamentos}
+
+    ELSE IF    '${TELA}' == 'Venda'
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoVendas}
+
+    ELSE IF    '${TELA}' == 'OrdemDeServico'
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoOS}
+
+    ELSE IF    '${TELA}' == 'Condicional'
+
+        Log To Console    VERIFICAR DEPOIS.
+
+    ELSE IF    '${TELA}' == 'Devolução'
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoDevolucao}
+
+    ELSE IF    '${TELA}' == 'Pedido'
+
+        Log To Console    Parametro_QtdePadraoPreVendas: ${Parametro_QtdePadraoPreVendas}
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoPreVendas}
+
+    ELSE IF    '${TELA}' == 'Doação'
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoDoacao}
+
+    ELSE IF    '${TELA}' == 'NFeSaidasManual'
+
+        Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoEmissaoManualSaida}
+
+    END
+
+Aplica quantidade padrão se parametrizado
+    [Arguments]    ${Parametro_Ativo}
+
+    IF    ${Parametro_Ativo}
+
+        Set Test Variable    ${Quantidade_Padrao_Produto}    ${Parametro_QuantidadePadraoProduto}
+
+        Log To Console    Quantidade padrão aplicada: ${Quantidade_Padrao_Produto}
+
+    END
+
+Considera quantidade padrão de produtos quando utilizado múltiplos produtos
+    [Arguments]    ${parametro}
+
+    IF    not ${parametro} or (${parametro} and ${Parametro_QuantidadePadraoProduto} == 0)
+        RETURN    1
+    ELSE
+        RETURN    ${Parametro_QuantidadePadraoProduto}
+    END
+
+Converte Para Decimal
+    [Arguments]    ${valor}
+
+    ${decimal}    Evaluate    decimal.Decimal(str(${valor}))    modules=decimal
+
+    Log To Console    \nvalor: ${valor}
+    Log To Console    decimal: ${decimal}
+
+    RETURN    ${decimal}

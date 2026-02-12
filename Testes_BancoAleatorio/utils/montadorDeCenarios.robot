@@ -34,7 +34,8 @@ Dado que realizo uma venda completa, com produto normal - A prazo
     keyVendas1.Dado que acesso a tela de vendas de balcão
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
-    keyVendas1.Quando insiro um produto normal informando a quantidade(1)
+    # keyVendas1.Quando insiro um produto normal informando a quantidade(1)
+    keyVendas1.Quando insiro um produto normal informando a quantidade(2)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - A Prazo
     utils.Exclui ordem de entrega(${COD_VENDA})
@@ -47,7 +48,7 @@ Dado que realizo um pedido, com produto normal
     KeyPedidos1.Dado que acesso a tela de pedidos
     KeyPedidos1.E clico em adicionar
     KeyPedidos1.Quando adiciono vendedor e cliente
-    KeyPedidos1.E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     KeyPedidos1.Quando vou para a aba de pagamentos
     KeyPedidos1.E audito o pedido
     KeyPedidos1.Então finalizo o pedido
@@ -56,6 +57,8 @@ Dado que realizo um pedido, com produto normal
 Dado que realizo um pedido e gero uma venda total sobre ele
 
     Dado que realizo um pedido, com produto normal
+    KeyPedidos1.Dado que acesso a tela de pedidos
+    KeyPedidos1.E pesquiso pelo pedido gerado
     KeyPedidos1.Quando clico em gerar venda
     KeyPedidos1.Então gero a venda totalmente
     utils.E saio da tela(Pedido)

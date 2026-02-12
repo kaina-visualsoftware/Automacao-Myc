@@ -48,8 +48,6 @@ Dado que eu acesso a tela de doações
     Wait Until Screen Contain    ${TELA_DOACOES}    ${TEMPO_TELA}
 
 Quando eu clico em adicionar
-
-    # Verifica parâmetros que interferem na venda
     
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${BT_ADICIONAR}

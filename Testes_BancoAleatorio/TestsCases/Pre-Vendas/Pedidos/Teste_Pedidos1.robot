@@ -4,6 +4,7 @@ Documentation    Testes em Banco Aleatório
 Resource    ../../../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
+Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyPedidos1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
@@ -15,7 +16,7 @@ Teste 01 - Lançamento de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
@@ -27,10 +28,11 @@ Teste 02 - Lançamento e visualização de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E pesquiso pelo pedido gerado
     Então visualizo o pedido
     E saio da tela(Pedido)
 
@@ -40,11 +42,12 @@ Teste 03 - Lançamento e edição de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     Quando finalizo o pedido sem auditar
+    E pesquiso pelo pedido gerado
     E pressiono o atalho de editar
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
@@ -56,10 +59,11 @@ Teste 04 - Lançamento e exclusão de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E pesquiso pelo pedido gerado
     Então excluo o pedido
     E saio da tela(Pedido)
 
@@ -69,10 +73,11 @@ Teste 05 - Geração de venda total de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E pesquiso pelo pedido gerado
     Quando clico em gerar venda
     Então gero a venda totalmente
     E saio da tela(Pedido)
@@ -83,10 +88,11 @@ Teste 06 - Geração de venda parcial de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E pesquiso pelo pedido gerado
     Quando clico em gerar venda
     Quando seleciono um produto para a geração da venda
     Então gero a venda parcialmente do produto selecionado
@@ -98,10 +104,11 @@ Teste 07 – Exclusão de venda gerada a partir de pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E pesquiso pelo pedido gerado
     Quando clico em gerar venda
     Então gero a venda totalmente
     keyVendas1.Dado que acesso a tela de vendas de balcão
@@ -115,10 +122,11 @@ Teste 08 – Cancelamento da geração de venda a partir do pedido
     Dado que acesso a tela de pedidos
     E clico em adicionar
     Quando adiciono vendedor e cliente
-    E adiciono um produto
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
     Então finalizo o pedido
+    E pesquiso pelo pedido gerado
     Quando clico em gerar venda
     Quando seleciono um produto para a geração da venda
     E clico em salvar

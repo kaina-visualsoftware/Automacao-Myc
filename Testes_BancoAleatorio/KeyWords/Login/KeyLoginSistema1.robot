@@ -14,7 +14,7 @@ Resource    ../../utils/validacaoAviso.robot
 ${EXECUTAVEL_MYCOMMERCE}    C://Visual Software//MyCommerce//myCommerce.exe
 
 # Repositório de Imagens
-${IMAGENS}                   ./testes_bancoAleatorio/images
+${IMAGENS}                  ./testes_bancoAleatorio/images
 
 # Conexão MySQL
 ${DBHost}                   ${config.IpServidor}
@@ -77,8 +77,6 @@ Então realizo o login no MyCommerce
 
     Type    ${EMPTY}    zwBt4@24
     Press Special Key    ENTER
-
-    Wait Until Screen Not Contain    ${TELA_LOGIN_SISTEMA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_INICIAL_SISTEMA}    ${TEMPO_TELA}
