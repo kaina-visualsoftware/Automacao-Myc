@@ -849,7 +849,7 @@ Valida o recebimento da venda com base no somatório das parcelas pagas
     ${Total_Recebido_Venda}    Evaluate    ${Total_Recebido_Venda} + ${Valor_Pago_Parcela}
 
     Set Test Variable    ${Total_Recebido_Venda}
-    Log To Console    \nTotal_Recebido_Venda: ${Total_Recebido_Venda}
+    Log To Console    Total_Recebido_Venda: ${Total_Recebido_Venda}
 
 E pesquiso pela venda e pela devolução recém geradas
 

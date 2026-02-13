@@ -1601,10 +1601,3 @@ Considera quantidade padrão de produtos quando utilizado múltiplos produtos
     ELSE
         RETURN    ${Parametro_QuantidadePadraoProduto}
     END
-
-Converte Para Decimal
-    [Arguments]    ${valor}
-
-    ${decimal}    Evaluate    decimal.Decimal(str(${valor}))    modules=decimal
-    
-    RETURN    ${decimal}
