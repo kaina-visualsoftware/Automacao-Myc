@@ -73,7 +73,6 @@ ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${OS_PossuiProduto}                      ${False}
 ${OS_PossuiServico}                      ${False}
 ${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
-# ${Quantidade_Produto}                    0
 ${Quantidade_Servico}                    ${1}
 ${List_Quantidades_Produto}              ${None}
 ${List_Quantidades_Servico}              ${None}
@@ -267,7 +266,7 @@ Então visualizo a ordem de serviço
 
 Quando clico em editar
     
-    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}     ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}

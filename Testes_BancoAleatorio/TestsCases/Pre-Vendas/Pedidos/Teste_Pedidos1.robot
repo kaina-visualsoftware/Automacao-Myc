@@ -115,6 +115,7 @@ Teste 07 – Exclusão de venda gerada a partir de pedido
     keyVendas1.Então clico em excluir
     E saio da tela(Venda)
     Então verifico se o pedido retornou corretamente
+    E saio da tela(Pedido)
 
 Teste 08 – Cancelamento da geração de venda a partir do pedido
     [Tags]    Teste08

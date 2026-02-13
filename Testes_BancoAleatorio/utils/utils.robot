@@ -1503,8 +1503,6 @@ Valida impressão pré-venda ao finalizar pré-venda
 
 Valida telas que utilizam quantidade padrão de produtos
 
-    Log To Console    Quantidade Padrão: ${Parametro_QuantidadePadraoProduto}
-
     Set Global Variable    ${Parametro_QtdePadraoVendas}                ${False}
     Set Global Variable    ${Parametro_QtdePadraoOrcamentos}            ${False}
     Set Global Variable    ${Parametro_QtdePadraoPreVendas}             ${False}
@@ -1520,40 +1518,32 @@ Valida telas que utilizam quantidade padrão de produtos
 
     @{telas}    Split String    ${Parametro_TelasQtdePadraoProduto}    ,
 
-    Log To Console    \n
     IF    '0' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoVendas}    ${True}
-        Log To Console    Vendas
     END
 
     IF    '1' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoOrcamentos}    ${True}
-        Log To Console    Orçamentos
     END
 
     IF    '2' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoPreVendas}    ${True}
-        Log To Console    Pré-Vendas
     END
 
     IF    '3' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoOS}    ${True}
-        Log To Console    Ordens de Serviço
     END
 
     IF    '4' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoDevolucao}    ${True}
-        Log To Console    Devoluções
     END
 
     IF    '5' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoDoacao}    ${True}
-        Log To Console    Doações
     END
     
     IF    '6' in @{telas}
         Set Global Variable    ${Parametro_QtdePadraoEmissaoManualSaida}    ${True}
-        Log To Console    Emissão Manual de Saída
     END
 
 Valida quantidade padrão dos produtos na seleção
@@ -1582,8 +1572,6 @@ Valida quantidade padrão dos produtos na seleção
 
     ELSE IF    '${TELA}' == 'Pedido'
 
-        Log To Console    Parametro_QtdePadraoPreVendas: ${Parametro_QtdePadraoPreVendas}
-
         Aplica quantidade padrão se parametrizado    ${Parametro_QtdePadraoPreVendas}
 
     ELSE IF    '${TELA}' == 'Doação'
@@ -1603,8 +1591,6 @@ Aplica quantidade padrão se parametrizado
 
         Set Test Variable    ${Quantidade_Padrao_Produto}    ${Parametro_QuantidadePadraoProduto}
 
-        Log To Console    Quantidade padrão aplicada: ${Quantidade_Padrao_Produto}
-
     END
 
 Considera quantidade padrão de produtos quando utilizado múltiplos produtos
@@ -1620,8 +1606,5 @@ Converte Para Decimal
     [Arguments]    ${valor}
 
     ${decimal}    Evaluate    decimal.Decimal(str(${valor}))    modules=decimal
-
-    Log To Console    \nvalor: ${valor}
-    Log To Console    decimal: ${decimal}
-
+    
     RETURN    ${decimal}

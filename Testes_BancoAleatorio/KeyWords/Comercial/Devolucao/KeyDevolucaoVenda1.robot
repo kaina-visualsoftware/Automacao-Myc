@@ -43,7 +43,6 @@ ${LABEL_SERA_GERADO_VALE_COMPRA}       lb_SeraGeradoValeCompraValorDev.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}            Outros...
-# ${Quantidade_Produto_Devolucao}      ${1}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -130,7 +129,6 @@ E insiro os dados da venda no cabeçalho da devolução(${TELA})
 Quando seleciono um produto para a devolução
 
     Set Test Variable    ${Quantidade_Produto_Devolucao}    ${Quantidade_Produto}
-    Log To Console    Quantidade_Produto_Devolucao: ${Quantidade_Produto_Devolucao}
 
     IF     ${Parametro_DevolucaoAvulsa}
 
@@ -159,7 +157,6 @@ Quando seleciono um produto para a devolução
     ELSE
 
         Sleep    ${SLEEP_BAIXO}
-        # Input Text    ${EMPTY}    ${QUANTIDADE_PRODUTOS}
         Input Text    ${EMPTY}    ${Quantidade_Produto_Devolucao}
         Sleep    ${SLEEP_BAIXO}
 
@@ -171,7 +168,6 @@ Quando seleciono um produto para a devolução
 Quando seleciono os produtos para a devolução(${Qtde_Produto_A_Devolver})
 
     Set Test Variable    ${Quantidade_Produto_Devolucao}    ${Quantidade_Produto}
-    Log To Console    Quantidade_Produto_Devolucao: ${Quantidade_Produto_Devolucao}
     
     FOR    ${I}    IN RANGE    ${Qtde_Produto_A_Devolver}
         
@@ -451,8 +447,6 @@ Então excluo a devolução
 
 Calcula valor final da devolução
 
-    Log To Console    Entrou aqui nos cálculos
-
     ${somaValorTotalProdutosDevolucao}    Evaluate    0
     
     Sleep    ${SLEEP_BAIXO}
@@ -463,7 +457,6 @@ Calcula valor final da devolução
     ${consultaQtdeProdutosDevolucao}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_DEVOLUCAO};
 
     ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutosDevolucao[0][0]}
-    Log To Console    QUANTIDADE_PRODUTOS: ${QUANTIDADE_PRODUTOS}
 
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
         
@@ -488,8 +481,6 @@ Calcula valor final da devolução
     Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosDevolucao[0][0]}
 
     Set Test Variable    ${VALOR_FINAL_DEVOLUCAO}    ${ValorTotalProdutosDevolucao[0][0]}
-
-    Log To Console    Passou os cálculos.
 
 Valida cadastro de motivos de devoluções
 

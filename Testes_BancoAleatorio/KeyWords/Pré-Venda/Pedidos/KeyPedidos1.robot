@@ -55,8 +55,6 @@ ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}    lb_RegistroEncontradoPedido.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}         Outros...
-# ${QTDE_BAIXA_PRODUTO}               1
-# ${Quantidade_Produto}               1
 
 *** Keywords ***
 Ler imagens iniciais
@@ -513,7 +511,6 @@ Calcula valor final da venda
         ${ProdutoValorUnitario}    Set Variable    ${consultaVendasProdutos[${i}][1]}
         ${ProdutoValorTotal}       Set Variable    ${consultaVendasProdutos[${i}][2]}
         
-        Log To Console    Quantidade_Produto calc venda: ${Quantidade_Produto}
         ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
 
         Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}
@@ -558,7 +555,6 @@ Calcula valor final do pedido
         ${ProdutoValorUnitario}    Set Variable    ${consultaPedidoProdutos[${i}][1]}
         ${ProdutoValorTotal}       Set Variable    ${consultaPedidoProdutos[${i}][2]}
         
-        Log To Console    Quantidade_Produto no calc pedido: ${Quantidade_Produto}
         ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
 
         Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}

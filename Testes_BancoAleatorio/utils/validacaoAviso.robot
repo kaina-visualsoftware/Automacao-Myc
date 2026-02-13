@@ -150,7 +150,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     Set Test Variable    ${Observacao_existe}
 
     Valida cadastro padrão de endereço
-
+    
     IF    ${Observacao_existe}
 
         Valida observaco cliente
@@ -199,7 +199,7 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
         END
 
     ELSE
-
+        
         IF    ${Parametro_InfoCreditoClienteVenda}
 
             ${ExisteAvisoInfoCreditoCliente}    Set Variable    ${True}
@@ -1190,7 +1190,7 @@ Valida desconto que não se encaixa em nenhuma escala de comissão
 
 Valida edição de ordem de serviço finalizada
     
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${aviso}    Exists    ${AVISO_EDITAR_OS_FINALIZADA}
 
     IF    ${aviso}
@@ -1201,7 +1201,7 @@ Valida edição de ordem de serviço finalizada
         Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
         Sleep    ${SLEEP_BAIXO}
 
-        Press Special Key    ENTER 
+        Press Special Key    ENTER
         Sleep    ${SLEEP_MEDIO}
         
     END

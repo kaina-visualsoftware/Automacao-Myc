@@ -34,8 +34,7 @@ Dado que realizo uma venda completa, com produto normal - A prazo
     keyVendas1.Dado que acesso a tela de vendas de balcão
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
-    # keyVendas1.Quando insiro um produto normal informando a quantidade(1)
-    keyVendas1.Quando insiro um produto normal informando a quantidade(2)
+    keyVendas1.Quando insiro um produto normal informando a quantidade(1)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - A Prazo
     utils.Exclui ordem de entrega(${COD_VENDA})

@@ -827,30 +827,6 @@ Consulta NDocumento das parcelas
 
     Set Test Variable    ${N_Documento_Parcelas}
 
-# Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
-
-#     IF    ${Teste_Comissao_Linha}
-
-#         utils.Seleciona produto com linha cadastrada(${Parametro_RealizaVendaSemEstoque})
-
-#     ELSE
-
-#         IF     ${Parametro_RealizaVendaSemEstoque}
-
-#             utils.Inserir Produto normal - Permite sem estoque
-
-#         ELSE
-
-#             utils.Inserir Produto normal - Necessita de estoque
-
-#         END
-
-#     END
-
-#     Informa a quantidade do produto(${Quantidade_Produto})
-
-#     utils.Valida parametros após incluir produto
-
 Quando insiro um produto normal informando a quantidade(${Qtde_Produto})
 
     IF    ${Teste_Comissao_Linha}
