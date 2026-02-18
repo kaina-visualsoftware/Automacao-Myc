@@ -897,7 +897,7 @@ Informa a quantidade e desconto do produto
         Sleep    ${SLEEP_BAIXO}
 
         Input Text    ${EMPTY}    ${Quantidade_Produto}
-        Log To Console    Quantidade_Produto: ${Quantidade_Produto}
+        
     END
 
     Press Special Key    TAB
