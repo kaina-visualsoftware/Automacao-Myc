@@ -4,8 +4,8 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
 Library    ../../../libs/verificacoesExtras.py
-Library    ../../../libs/validaComissoes.py
 Library    ../../../libs/estoque.py
+Library    ../../../libs/validaComissoes.py
 Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/validacaoAviso.robot

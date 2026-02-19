@@ -192,5 +192,3 @@ class validaComissoes:
         total_comissao_os = self.converte_para_decimal(row[0], 2)
         
         return total_comissao_os
-    
-    def soma(a, b):
