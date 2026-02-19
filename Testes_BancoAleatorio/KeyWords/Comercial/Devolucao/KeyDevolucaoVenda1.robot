@@ -334,8 +334,6 @@ Então finalizo a devolução
 
         Set Test Variable    ${ID_VALE_COMPRA}    ${CodigoVale[0][0]}
 
-        Log To Console    ID_VALE_COMPRA: ${ID_VALE_COMPRA}
-
     END
 
     Calcula valor final da devolução

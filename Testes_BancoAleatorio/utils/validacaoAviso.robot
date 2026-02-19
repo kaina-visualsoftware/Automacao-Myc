@@ -1304,8 +1304,6 @@ Valida vendedor sem percentual de comissão para operações com vale compra
     Sleep    ${SLEEP_BAIXO}
     ${aviso}    Exists    ${AVISO_VENDEDOR_SEM_PERCENT_COMISSAO_VALE_COMPRA}
 
-    Log To Console    aviso de comissão antes da tela de impressão: ${aviso}
-
     IF    ${aviso}
 
         Press Special Key    ENTER

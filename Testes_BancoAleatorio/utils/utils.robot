@@ -336,7 +336,7 @@ Valida teste de comissão
 
             # Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
 
-            Log To Console    Comissão escalonada${\n}Selecionar vendedor por tipo D
+            Log To Console    \nComissão escalonada${\n}Selecionar vendedor por tipo D
 
         ELSE IF    ${Teste_Comissao_Total_Venda}
             
@@ -380,7 +380,7 @@ Valida teste de comissão
 
             END
 
-            Log To Console    Comissão sobre total da venda.
+            Log To Console    \nComissão sobre total da venda.
 
         ELSE IF    ${Teste_Comissao_Linha}
 
@@ -408,7 +408,7 @@ Valida teste de comissão
                     
             END
 
-            Log To Console    Comissão por linha.
+            Log To Console    \nComissão por linha.
         
         ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
             
@@ -439,7 +439,7 @@ Valida teste de comissão
             Set Test Variable    ${FORMA_PRAZO}
             Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
 
-            Log To Console    Comissão sobre formas de parcelamento.
+            Log To Console    \nComissão sobre formas de parcelamento.
 
         END
     

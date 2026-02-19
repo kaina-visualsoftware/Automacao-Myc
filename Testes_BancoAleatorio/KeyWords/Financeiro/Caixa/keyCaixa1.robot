@@ -14,66 +14,67 @@ Resource     ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Repositório de Imagens
-${IMAGENS}                               ./testes_bancoAleatorio/images
+${IMAGENS}                                    ./testes_bancoAleatorio/images
 
 # Conexão com o Banco de Dados
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
+${DBHost}                                     ${config.IpServidor}
+${DBName}                                     ${config.Database}
+${DBPass}                                     vssql
+${DBPort}                                     ${config.Porta}
+${DBUser}                                     root
 
 # Sleep's
-${SLEEP_BAIXO}                          0.7
-${SLEEP_MEDIO}                          1.5
-${SLEEP_ALTO}                           3
-${TEMPO_TELA}                           20
-${TEMPO_LIMITE_CARREGAMENTO_GRID}       6
+${SLEEP_BAIXO}                                0.7
+${SLEEP_MEDIO}                                1.5
+${SLEEP_ALTO}                                 3
+${TEMPO_TELA}                                 20
+${TEMPO_LIMITE_CARREGAMENTO_GRID}             6
 
 # Telas
-${CAIXA_PRINCIPAL}                      tela_CaixaPrinicipal.png
-${ABA_A_PAGAR}                          aba_contasAPagar.png
-${ABA_A_RECEBER}                        aba_contasAReceber.png
-${TELA_CONTAS_A_PAGAR}                  tela_ContasPagar.png
-${TELA_RECEBIMENTO_PAGAMENTO}           caixa_FinalizacaoRecebimentoPagamento.png
-${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}    tela_RecebimentoDuplicatasCaixa.png
-${TELA_CAIXA_CARREGANDO}                tela_CaixaPrinicipalCarregando.png
-${TELA_CONTAS_A_RECEBER}                tela_ContasReceber.png
-${TELA_RECEBIMENTO_DUPLICATAS}          tela_RecebimentoDuplicatas.png
-${TELA_REGISTROS_ESTORNOS}              tela_RegistrosDeEstornos.png
-${TELA_ADIANTAMENTOS}                   tela_Adiantamenos_Caixa.png
-${TELA_REC_PAG_RÁPIDO}                  tela_RecPagRápido.png
+${CAIXA_PRINCIPAL}                            tela_CaixaPrinicipal.png
+${ABA_A_PAGAR}                                aba_contasAPagar.png
+${ABA_A_RECEBER}                              aba_contasAReceber.png
+${TELA_CONTAS_A_PAGAR}                        tela_ContasPagar.png
+${TELA_RECEBIMENTO_PAGAMENTO}                 caixa_FinalizacaoRecebimentoPagamento.png
+${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}          tela_RecebimentoDuplicatasCaixa.png
+${TELA_CAIXA_CARREGANDO}                      tela_CaixaPrinicipalCarregando.png
+${TELA_CONTAS_A_RECEBER}                      tela_ContasReceber.png
+${TELA_RECEBIMENTO_DUPLICATAS}                tela_RecebimentoDuplicatas.png
+${TELA_REGISTROS_ESTORNOS}                    tela_RegistrosDeEstornos.png
+${TELA_ADIANTAMENTOS}                         tela_Adiantamenos_Caixa.png
+${TELA_REC_PAG_RÁPIDO}                        tela_RecPagRápido.png
 
 # Telas Avisos
-${AVISO_CONFIRMAÇÃO_BAIXA}              aviso_confirmacaoBaixaContaPagar.png
-${AVISO_REALMENTE_EFETUAR_BAIXA}        aviso_PerguntaQualquer.png
+${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}      aviso_confirmacaoBaixaContaPagar.png
+${AVISO_REALMENTE_EFETUAR_BAIXA}              aviso_PerguntaQualquer.png
+${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    aviso_confirmacaoBaixaContaReceber.png
 
 # Botões
-${BT_ESTORNAR}                          bt_Estornar.png
-${BT_SETA_DIREITA}                      bt_SetaDireita.png
-${BT_SETA_DIREITA_DATAS}                bt_SetaDireitaDatas.png
+${BT_ESTORNAR}                                bt_Estornar.png
+${BT_SETA_DIREITA}                            bt_SetaDireita.png
+${BT_SETA_DIREITA_DATAS}                      bt_SetaDireitaDatas.png
 
 # Outros
-${INPUT_NUMERO_DOCUMENTO}               caixa_PesquisaPorNDoc.png
-${INPUT_RAZAO/NOME_VAZIO}               campo_RazaoSocialNomeVazio.png
-${INPUT_NUMERO_VENDA}                   caixa_PesquisaPorNVendac.png
-${LABEL_NENHUMA_CONTA_RECEBER}          lb_NenhumaContaPendente.png
-${LABEL_APENAS_A_RECEBER}               label_ApenasAReceber.png
-${CHECK_BOX_MARCADO}                    checkBox_Marcado.png
-${CHECK_BOX_CONTA_PAGA}                 checkBox_ContaPaga.png
-${NomeTerminalExecucao}                 ${config.terminal_name}
-${INPUT_NUMERO_DOCUMENTO}               caixa_PesquisaPorNDoc.png
-${LABEL_APENAS_A_PAGAR}                 label_ApenasAPagar.png
-${CHECK_BOX_CONTAS_PAGA}                checkBox_Marcado_Selecionado.png
-${INPUT_NUMERO_NFS}                     input_NumeroNFS.png
-${LABEL_DATA_LANCAMENTO}                lb_CaixaDataLancamento.png
-${INPUT_DATA_LANCAMENTO_A_RECEBER}      input_DataLancamentoAReceber.png
-${INPUT_DATA_LANCAMENTO_A_PAGAR}        input_DataLancamentoAPagar.png
-${CHECKBOX_CONTA_A_PAGAR}               checkBox_CaixaContaAPagar.png
-${LABEL_STATUS_ABERTO}                  lb_StatusAbertoCaixa.png
-${POSICAO_PARCELA}                      ${None}
-${Total_Recebido_Venda}                 ${0}
-${LABEL_APENAS_A_RECEBER_HABILITADO}    label_ApenasAReceberHabilitado.png
+${INPUT_NUMERO_DOCUMENTO}                     caixa_PesquisaPorNDoc.png
+${INPUT_RAZAO/NOME_VAZIO}                     campo_RazaoSocialNomeVazio.png
+${INPUT_NUMERO_VENDA}                         caixa_PesquisaPorNVendac.png
+${LABEL_NENHUMA_CONTA_RECEBER}                lb_NenhumaContaPendente.png
+${LABEL_APENAS_A_RECEBER}                     label_ApenasAReceber.png
+${CHECK_BOX_MARCADO}                          checkBox_Marcado.png
+${CHECK_BOX_CONTA_PAGA}                       checkBox_ContaPaga.png
+${NomeTerminalExecucao}                       ${config.terminal_name}
+${INPUT_NUMERO_DOCUMENTO}                     caixa_PesquisaPorNDoc.png
+${LABEL_APENAS_A_PAGAR}                       label_ApenasAPagar.png
+${CHECK_BOX_CONTAS_PAGA}                      checkBox_Marcado_Selecionado.png
+${INPUT_NUMERO_NFS}                           input_NumeroNFS.png
+${LABEL_DATA_LANCAMENTO}                      lb_CaixaDataLancamento.png
+${INPUT_DATA_LANCAMENTO_A_RECEBER}            input_DataLancamentoAReceber.png
+${INPUT_DATA_LANCAMENTO_A_PAGAR}              input_DataLancamentoAPagar.png
+${CHECKBOX_CONTA_A_PAGAR}                     checkBox_CaixaContaAPagar.png
+${LABEL_STATUS_ABERTO}                        lb_StatusAbertoCaixa.png
+${POSICAO_PARCELA}                            ${None}
+${Total_Recebido_Venda}                       ${0}
+${LABEL_APENAS_A_RECEBER_HABILITADO}          label_ApenasAReceberHabilitado.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -208,7 +209,7 @@ Então concluo o pagamento da mesma
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${SLEEP_ALTO}
 
     Press Combination    KEY.ALT    KEY.S
 
@@ -281,7 +282,7 @@ Então faço o recebimento da conta
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.S
@@ -784,7 +785,7 @@ Então faço o recebimento das parcelas da conta
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.S
@@ -842,14 +843,12 @@ Consulta o valor pago da parcela(${i})
     ${valorPagoParc}    Query    SELECT cr.ValorPago FROM contasareceber cr WHERE cr.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND cr.NDocumento LIKE '%${N_Documento_Parcelas[${i}]}%' AND cr.Quitado = 1 ORDER BY cr.Npagamento LIMIT 1;
 
     Set Test Variable    ${Valor_Pago_Parcela}    ${valorPagoParc[0][0]}
-    Log To Console    Valor_Pago_Parcela: ${Valor_Pago_Parcela}
 
 Valida o recebimento da venda com base no somatório das parcelas pagas
 
     ${Total_Recebido_Venda}    Evaluate    ${Total_Recebido_Venda} + ${Valor_Pago_Parcela}
 
     Set Test Variable    ${Total_Recebido_Venda}
-    Log To Console    Total_Recebido_Venda: ${Total_Recebido_Venda}
 
 E pesquiso pela venda e pela devolução recém geradas
 
@@ -897,7 +896,7 @@ Então faço o recebimento da venda e da devolução
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.S

@@ -48,7 +48,7 @@ ${TELA_PESQUISA_TEXTO_IMPRESSAO}                  tela_PesquisaTextoImpressao.pn
 
 # Telas Avisos
 ${AVISO_BAIXA_SUCESSO}                            aviso_BaixaSucesso.png
-${AVISO_CONFIRMAÇÃO_BAIXA}                        aviso_confirmacaoBaixaContaPagar.png
+${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}          aviso_confirmacaoBaixaContaPagar.png
 ${AVISO_BAIXA_VALE_COMPRA}                        aviso_BaixaValeCompra.png
 ${AVISO_COMISSAO_ZERADA}                          aviso_ComissaoZerada.png
 ${AVISO_SEM_DADOS_PARA_EXIBICAO}                  aviso_SemDadosParaExibicao.png
@@ -230,7 +230,7 @@ E seleciono a comissão de produtos
 
     Pesquisa código da operação com zeros a esquerda
 
-    Sleep    ${SLEEP_MEDIO}
+    Sleep    ${SLEEP_ALTO}
 
     IF    ${Teste_Comissao_Linha}
 
@@ -261,6 +261,7 @@ E seleciono a comissão de produtos
         Calcula comissão sobre total venda - Produtos
 
         ${VALOR_DEVOLUCAO}    Evaluate    (${VALOR_FINAL_OPERAÇÃO} * (-1))
+
         Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_DEVOLUCAO}
     
     ELSE IF    ${Teste_Comissao_Escalonada}
@@ -291,9 +292,7 @@ E seleciono a comissão de produtos
 #     Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao_Produtos}
 
 Calcula comissão por linha de produto - apenas 1 produto
-    
-    Sleep    ${SLEEP_MEDIO}
-    
+
     ${Total_Comissao_Produtos}    Calcula Comissao Linha Produto Unico
     ...    ${COD_PRODUTO}
     ...    ${CODIGO_OPERACAO_MOV}
@@ -352,8 +351,6 @@ Calcula comissão por linha de produto - apenas 1 produto
 
 Calcula comissão por linha de produto - por parcela personalizada
 
-    Sleep    ${SLEEP_MEDIO}
-
     ${Total_Comissao_Produtos}    ${Total_Comissao}    ${PERCENT_COMISSAO}    Calcula Comissao Linha Produto Parcela Personalizada
     ...    ${Codigos_Produtos}
     ...    ${Quantidade_Produto}
@@ -409,8 +406,6 @@ Calcula comissão por linha de produto - por parcela personalizada
 #     Set Test Variable    ${Total_Comissao}
 
 Calcula comissão por linha de produto - múltiplos produtos
-
-    Sleep    ${SLEEP_MEDIO}
 
     ${Total_Comissao_Produtos}    ${Total_Comissao}    ${PERCENT_COMISSAO}    Calcula Comissao Linha Produto Multiplos
     ...    ${Codigos_Produtos}
@@ -543,6 +538,8 @@ E seleciono a comissão de serviços
 
     Pesquisa código da operação com zeros a esquerda
 
+    Sleep    ${SLEEP_ALTO}
+
     IF    ${Teste_Comissao_Linha}
 
         Calcula comissão por linha de serviço - apenas 1 serviço
@@ -573,8 +570,6 @@ E seleciono a comissão de serviços
 #     Log To Console    [OS] Valor final da comissão (Linha): ${Total_Comissao_Servicos}
 
 Calcula comissão por linha de serviço - apenas 1 serviço
-
-    Sleep    ${SLEEP_MEDIO}
 
     ${Total_Comissao_OS}    Calcula Comissao Linha Servico Unico    ${COD_SERVICO}    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
     
@@ -789,7 +784,7 @@ Então faço o pagamento da comissao
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
 
     Press Combination    KEY.ALT    KEY.C
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${TEMPO_TELA}
 
     Press Combination    KEY.ALT    KEY.S
 

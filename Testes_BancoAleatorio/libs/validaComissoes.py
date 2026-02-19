@@ -1,3 +1,4 @@
+import time
 import mysql.connector
 import leituraConfig as config
 from decimal import Decimal, ROUND_HALF_UP
@@ -26,6 +27,8 @@ class validaComissoes:
 
 
     def calcula_comissao_linha_produto_unico(self, codigo_produto, codigo_operacao, quantidade_produto, total_comissao_produto):
+        
+        connection.commit()
 
         cursor.execute(
             """
@@ -43,7 +46,6 @@ class validaComissoes:
         row = cursor.fetchone()
 
         if row is None or row[0] is None:
-            
             raise ValueError(
                 f"Comissão não encontrada para produto {codigo_produto} "
                 f"na venda {codigo_operacao}"
@@ -167,6 +169,8 @@ class validaComissoes:
 
     def calcula_comissao_linha_servico_unico(self, cod_servico, codigo_operacao_mov, total_tributos_servico):
 
+        connection.commit()
+
         cursor.execute(
             """
             SELECT SUM((v.TotalServicos - (v.TotalServicos * (%s / 100))) * (cl.Aliquota / 100))
@@ -180,8 +184,13 @@ class validaComissoes:
         row = cursor.fetchone()
         
         if not row or row[0] is None:
-            return Decimal("0.00")
+            raise ValueError(
+                f"Comissão não encontrada para serviço {cod_servico} "
+                f"na venda {codigo_operacao_mov}"
+            )
         
         total_comissao_os = self.converte_para_decimal(row[0], 2)
         
         return total_comissao_os
+    
+    def soma(a, b):
