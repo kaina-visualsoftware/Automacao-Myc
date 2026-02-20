@@ -204,7 +204,7 @@ Quando clico em gerar venda
 
     KeyVendas1.Verifica formas de recebimento da venda
 
-Quando cliclo em gerar venda parcial
+Quando clico em gerar venda parcial
     
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT    KEY.V
@@ -290,11 +290,11 @@ Validação de vendas canceladas vindas do condicional
 
 Validação de vendas após a geração do condicional
     
-    Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
+    Check If Exists In Database    SELECT * FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND v.`Status` = 'f';
 
     Check If Not Exists In Database    SELECT * FROM condicionaisprodutos AS cp WHERE cp.CodigoCondicional = ${COD_CONDICIONAL} AND QtdeGerada = 0;
 
-    ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND `Status` LIKE 'f';
+    ${Codigo_Venda_Gerada_Cond}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND v.`Status` = 'f';
 
     Should Be Equal    ${CODIGO_VENDA_GERADA_CONDICIONAL}    ${Codigo_Venda_Gerada_Cond[0][0]}
 

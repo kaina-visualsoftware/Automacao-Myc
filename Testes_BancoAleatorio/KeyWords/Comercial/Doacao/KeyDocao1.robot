@@ -12,20 +12,20 @@ Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Imagens
-${IMAGENS}    ./testes_bancoAleatorio/images
+${IMAGENS}              ./testes_bancoAleatorio/images
 
 # Conexão com banco de dados
-${DBHost}                                      ${config.IpServidor}
-${DBName}                                      ${config.Database}
-${DBPass}                                      vssql
-${DBPort}                                      ${config.Porta}
-${DBUser}                                      root
+${DBHost}               ${config.IpServidor}
+${DBName}               ${config.Database}
+${DBPass}               vssql
+${DBPort}               ${config.Porta}
+${DBUser}               root
 
 # Sleep's
-${SLEEP_BAIXO}                                 0.7
-${SLEEP_MEDIO}                                 1.7
-${SLEEP_ALTO}                                  3
-${TEMPO_TELA}                                  20
+${SLEEP_BAIXO}          0.7
+${SLEEP_MEDIO}          1.7
+${SLEEP_ALTO}           3
+${TEMPO_TELA}           20
 
 ${MENU_COMERCIAL}       menu_Comercial.png
 ${SUBMENU_DOACOES}      subMenu_Doacoes.png

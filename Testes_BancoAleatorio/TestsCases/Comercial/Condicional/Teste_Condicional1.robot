@@ -76,7 +76,7 @@ Teste 06 - Geração de venda parcial da condicional
     Quando insiro vendedor e cliente
     E insiro mais de um produto normal(3)
     Então finalizo a condicional
-    Quando cliclo em gerar venda parcial
+    Quando clico em gerar venda parcial
     E gero a venda de parte dos produtos(2)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda
@@ -102,7 +102,7 @@ Teste 08 - Cancelamento da geração da venda parcial da condicional
     Quando insiro vendedor e cliente
     E insiro mais de um produto normal(3)
     Então finalizo a condicional
-    Quando cliclo em gerar venda parcial
+    Quando clico em gerar venda parcial
     E gero a venda de parte dos produtos(2)
     Então cancelo a geração da venda
     E saio da tela(Condicional)

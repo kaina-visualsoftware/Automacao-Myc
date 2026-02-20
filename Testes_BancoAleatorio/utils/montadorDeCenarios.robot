@@ -220,7 +220,7 @@ Dado que realizo uma venda parcial de uma condicional
     KeyCondicional1.Quando insiro vendedor e cliente
     KeyCondicional1.E insiro mais de um produto normal(3)
     KeyCondicional1.Então finalizo a condicional
-    KeyCondicional1.Quando cliclo em gerar venda parcial
+    KeyCondicional1.Quando clico em gerar venda parcial
     KeyCondicional1.E gero a venda de parte dos produtos(2)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda

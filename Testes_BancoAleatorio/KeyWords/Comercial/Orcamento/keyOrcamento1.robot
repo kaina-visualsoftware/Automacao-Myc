@@ -9,6 +9,7 @@ Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
 # Repositório de Imagens
@@ -33,12 +34,18 @@ ${TELA_ORC_ADICIONAR}                tela_OrcamentoAdicionar.png
 ${TELA_VISUALIZA_VENDA}              tela_VisualizaVenda.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}         tela_exclusaoVenda.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}    modal_PersonalizacaoPagamento.png
+${MODAL_GERAR_VENDA_ORCAMENTO}       modal_GerarVendaOrcamento.png
 
 # Telas Avisos
 ${AVISO_DESEJA_EXCLUIR}              aviso_DesejaExcluir.png
 
 # Inputs
 ${INPUT_QUANTIDADE_PRODUTO}          input_QuantidadeProduto.png
+
+# Labels
+${LABEL_CRITERIO_CODIGO_ORC}         label_CriterioCodigo_Orcamento.png
+${LABEL_CODIGO_GRID}                 lb_Codigo_Grid.png
+${LABEL_REGISTRO_ENCONTRADO_ORC}     lb_RegistroEncontradoOrcamento.png
 
 # Outros
 ${ABA_PAGAMENTOS}                    aba_Pagamentos.png
@@ -79,6 +86,23 @@ E adiciono vendedor e cliente
     utils.Adicionar Vendedor e Cliente(Orcamento)
 
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
+Quando insiro mais de um produto normal(${QuantidadeDeProduto})
+
+    ${Quantidade_Produto}    Considera quantidade padrão de produtos quando utilizado múltiplos produtos    ${Parametro_QtdePadraoOrcamentos}
+    
+    ${Codigos_Produtos}    Create List
+
+    FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
+
+        Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
+
+        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
+
+    END
+
+    Set Test Variable    ${Codigos_Produtos}
+    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
 
 Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
@@ -197,3 +221,71 @@ Informa a quantidade do produto(${Quantidade_Produto})
     Set Test Variable    ${Quantidade_Produto}
 
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
+
+E pesquiso pelo orçamento gerado
+
+    Sleep    ${SLEEP_BAIXO}
+    
+    Press Combination    KEY.ALT    KEY.C
+    Sleep    ${SLEEP_BAIXO}
+
+    ${criterioCodigo}    Exists    ${LABEL_CRITERIO_CODIGO_ORC}
+
+    IF    not ${criterioCodigo}
+
+        SikuliLibrary.Click    ${LABEL_CODIGO_GRID}
+        
+    END
+
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${codigo_orcamento}    Convert To String    ${COD_ORCAMENTO}
+
+    Type    ${EMPTY}    ${codigo_orcamento}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    ENTER
+
+    Wait Until Screen Contain    ${LABEL_REGISTRO_ENCONTRADO_ORC}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${LABEL_REGISTRO_ENCONTRADO_ORC}
+
+Quando clico em gerar venda
+
+    Press Combination    KEY.ALT    KEY.G
+
+    Wait Until Screen Contain    ${MODAL_GERAR_VENDA_ORCAMENTO}    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.S
+
+    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+
+    Valida indicação de venda(${Parametro_IndicacaoOrcamento})
+
+    Valida parâmetros/impressões pós venda
+
+    Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
+
+    Consulta venda gerada a partir do orçamento
+
+    keyVendas1.Valida baixa de estoque
+
+Validação da venda gerada a partir do orçamento
+
+    ${Codigo_Venda_Gerada_Orc}    Query    SELECT Codigo FROM vendas AS v WHERE v.CodOrcamento = ${COD_ORCAMENTO} AND v.`Status` = 'f';
+
+    Should Be Equal    ${CODIGO_VENDA_GERADA_ORCAMENTO}    ${Codigo_Venda_Gerada_Orc[0][0]}
+
+    Set Test Variable    ${Codigo_Venda_Gerada}    ${Codigo_Venda_Gerada_Orc[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Venda_Gerada}
+
+Consulta venda gerada a partir do orçamento
+
+    ${Consulta}    Query    SELECT v.Codigo FROM vendas v WHERE v.CodOrcamento = ${COD_ORCAMENTO} AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+    Set Test Variable    ${CODIGO_VENDA_GERADA_ORCAMENTO}    ${Consulta[0][0]}
+
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${CODIGO_VENDA_GERADA_ORCAMENTO}
