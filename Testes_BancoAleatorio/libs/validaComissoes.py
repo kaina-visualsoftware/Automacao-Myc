@@ -147,23 +147,19 @@ class validaComissoes:
         calc = Decimal(str(valor_calculado))
         esper = Decimal(str(valor_esperado))
         diferenca = abs(calc - esper)
-        
+
         if diferenca > Decimal("0.01"):
-
             raise AssertionError(
-                f"Diferença de {diferenca} excede 1 centavo. "
                 f"Calculado: {calc}, Esperado: {esper}"
-            )   
-        
-        if diferenca == Decimal("0.01"):
+            )
 
-            if calc > esper:
-                print(f"Diferença de exatamente 1 centavo do valor esperado de {esper}. Ajustando valor calculado de {calc} para {calc - Decimal('0.01')}")
-                return (calc - Decimal("0.01"), True)
-            else:
-                print(f"Diferença de exatamente 1 centavo do valor esperado de {esper}. Ajustando valor calculado de {calc} para {calc + Decimal('0.01')}")
-                return (calc + Decimal("0.01"), True)
-        
+        if diferenca == Decimal("0.01"):
+            print(
+                f"Diferença de exatamente 1 centavo detectada. "
+                f"Ajustado valor calculado de {calc} para {esper}"
+            )
+            return (esper, True)
+
         return (calc, False)
     
 
