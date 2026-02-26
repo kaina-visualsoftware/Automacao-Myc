@@ -47,6 +47,8 @@ ${TELA_LIBERACAO_DESCONTO_MAXIMO}          tela_liberacaoDesconto.png
 ${MODAL_CANCELAR_VENDA}                    modal_SenhaDoSupervisor.png
 ${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}        tela_MotivoPrecoZeradoProduto.png
 ${TELA_IMPRESSAO_DIRETA}                   tela_ImpressaoDireta.png
+${MODAL_PERSONALIZACAO_PAGAMENTO}          modal_PersonalizacaoPagamento.png
+${TELA_RELATORIO_COMISSOES}                tela_RelatorioComissoes.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                       aviso_QuantidadeSemEstoque.png
@@ -307,12 +309,14 @@ Valida teste de comissão
     ${Teste_Comissao_Linha}                 Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha
     ${Teste_Comissao_Forma_Parcelamento}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma Parcelamento
     ${Teste_Comissao_Servico}               Run Keyword And Return Status    Should Contain    ${TEST_NAME}    serviço
+    ${Teste_Comissao_Devolucao}             Run Keyword And Return Status    Should Contain    ${TEST_NAME}    devolução
 
     Set Test Variable    ${Teste_Comissao_Escalonada}
     Set Test Variable    ${Teste_Comissao_Total_Venda}
     Set Test Variable    ${Teste_Comissao_Linha}
     Set Test Variable    ${Teste_Comissao_Forma_Parcelamento}
     Set Test Variable    ${Teste_Comissao_Servico}
+    Set Test Variable    ${Teste_Comissao_Devolucao}
 
     IF    ${Test_Comissao}
 
@@ -1172,6 +1176,15 @@ E saio da tela(${TELA})
         Press Combination    KEY.ALT    KEY.S
         Wait Until Screen Not Contain    ${CAIXA_PRINCIPAL}    ${TEMPO_TELA}
 
+    ELSE IF    '${TELA}' == 'RelatorioComissao'
+        
+        SikuliLibrary.Click    ${TELA_RELATORIO_COMISSOES}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ESC
+        
+        Wait Until Screen Not Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
+
     END
 
 Valida teste que utiliza o desconto máximo do produto
@@ -1600,4 +1613,16 @@ Considera quantidade padrão de produtos quando utilizado múltiplos produtos
         RETURN    1
     ELSE
         RETURN    ${Parametro_QuantidadePadraoProduto}
+    END
+
+Fechar tela de personalização de forma de parcelamento
+
+    ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${MODAL_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}
+
+    IF    ${tela}
+
+        Press Combination    KEY.ALT    KEY.C
+        
+        Wait Until Screen Not Contain    ${MODAL_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}
+
     END

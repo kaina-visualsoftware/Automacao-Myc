@@ -183,7 +183,7 @@ Realizando vendas com o mesmo produto porém com descontos diferentes
     keyVendas1.Dado que acesso a tela de vendas de balcão
     keyVendas1.Quando pressiono o atalho de adicionar
     keyVendas1.E adiciono vendedor e cliente
-    keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO})
+    keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO}) informando a quantidade do produto(1)
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda - Desconto(${DESCONTOS_COMISSOES[1][0]})
     utils.E saio da tela(Venda)
@@ -338,6 +338,17 @@ Dado que realizo uma venda com mais de um produto e finalizo com múltiplas parc
 Dado que realizo uma venda com mais de um produto e com múltiplas parcelas personalizadas - Totalmente recebida
 
     Dado que realizo uma venda com mais de um produto e finalizo com múltiplas parcelas personalizadas(3)
+
+Dado que realizo uma venda com apenas um produto e finalizo com múltiplas parcelas personalizadas
+
+    keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto normal informando a quantidade(1)
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda personalizada com múltiplas parcelas(2)
+    utils.E saio da tela(Venda)
+    utils.Exclui ordem de entrega(${COD_VENDA})
 
 Dado que realizo o recebimento de uma venda com múltiplas parcelas personalizadas
 
@@ -512,3 +523,16 @@ Dado que acesso a edição da ordem de serviço e do serviço lançado
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
+
+Dado que realizo a edição da venda e exclusão e inserção do produto lançado
+    
+    keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.E pesquiso pela venda gerada
+    keyVendas1.Quando clico em editar
+    keyVendas1.E excluo os pagamentos lançados
+    keyVendas1.Quando acesso a guia de produtos na venda
+    keyVendas1.E excluo o produto lançado
+    keyVendas1.Quando insiro um produto já definido(${COD_PRODUTO}) informando a quantidade do produto(1)
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda personalizada com múltiplas parcelas(2)
+    utils.E saio da tela(Venda)

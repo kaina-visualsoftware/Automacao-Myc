@@ -23,11 +23,11 @@ Teste 01 - Comissão sobre total da venda e pagamento da comissão no caixa - To
     Quando insiro o vendedor comissionado
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
 
 Teste 02 - Comissão por linha de produto sobre venda e devolução completa, incluindo comissão com valor zerado - Linha
     [Tags]    Teste02 
@@ -63,13 +63,13 @@ Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre s
     E seleciono somente as recebidas
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 # Teste 05 - Comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
 #     [Tags]    Teste05
@@ -92,11 +92,11 @@ Teste 06 - Comissão por linha sobre venda oriunda de uma pré-venda e pagamento
     Quando insiro o vendedor comissionado
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
 
 Teste 07 - Comissão sobre total da venda oriunda de uma pré-venda, gerada sobre somente recebidas, e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste07
@@ -107,13 +107,13 @@ Teste 07 - Comissão sobre total da venda oriunda de uma pré-venda, gerada sobr
     E seleciono somente as recebidas
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 Teste 08 - Comissão por linha sobre venda oriunda de uma condicional e pagamento da comissão no caixa - Linha
     [Tags]    Teste08
@@ -123,11 +123,11 @@ Teste 08 - Comissão por linha sobre venda oriunda de uma condicional e pagament
     Quando insiro o vendedor comissionado
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
 
 Teste 09 - Comissão sobre total da venda parcial oriunda de uma condicional e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste09
@@ -137,11 +137,11 @@ Teste 09 - Comissão sobre total da venda parcial oriunda de uma condicional e p
     Quando insiro o vendedor comissionado
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
 
 Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, gerada sobre somente recebidas, e pagamento da comissão no caixa - Total Venda
     [Tags]    Teste10
@@ -152,13 +152,13 @@ Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, ge
     E seleciono somente as recebidas
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem receber a Ordem de Serviço - Linha
     [Tags]    Teste11
@@ -173,11 +173,11 @@ Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem
     E vou para a aba de servicos
     E seleciono a comissão de serviços
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
 
 Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa após a baixa da comissão de uma Ordem de Serviço totalmente recebida - Linha
     [Tags]    Teste12
@@ -193,11 +193,11 @@ Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa ap�
     E vou para a aba de servicos
     E seleciono a comissão de serviços
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
 
 Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela por parcela - Linha
     # Tarefa: 176401 | CT: 1-593
@@ -215,13 +215,13 @@ Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela
         E seleciono somente as recebidas
         E seleciono a comissão de produtos
         E baixo a comissao recém recebida
-        utils.E saio da tela(Comissoes)
+        E saio da tela(Comissoes)
         KeyComissoes1.Quando acesso o caixa aberto
         KeyComissoes1.E vou para a aba de contas a pagar
         Então faço o pagamento da comissao
-        utils.E saio da tela(CaixaPrincipal)
+        E saio da tela(CaixaPrincipal)
         Então visualizo os detalhes da comissao recem paga
-        utils.E saio da tela(Comissoes)
+        E saio da tela(Comissoes)
         
     END
 
@@ -239,7 +239,7 @@ Teste 14 - Comissão por linha sobre venda e devolução somente recebidas e pag
     E seleciono somente as recebidas
     E seleciono a comissão de produtos - Devolução
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e serviço comissionados por vendedor, aplicando a comissão também ao executor do serviço - Total Venda
     # Tarefa: 176024 | CT: 1-600
@@ -254,9 +254,15 @@ Teste 15 - Comissão sobre o total da venda em Ordem de Serviço com produto e s
     Quando insiro o vendedor comissionado
     E vou para a aba de servicos
     E seleciono a comissão de serviços
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     Dado que acesso a tela de relatório de comissão
-    E gero o relatório de comissões(Pendentes)
+    E valido os filtros de produtos e serviços    ${True}    ${True}
+    E informo o vendedor comissionado
+    E seleciono o tipo da comissão(Pendentes)
+    E seleciono para gerar sobre(Vendas)
+    Set Test Variable    ${Relatorio_Deve_Conter_Dados}    ${True}
+    E gero o relatório de comissões
+    E saio da tela(RelatorioComissao)
 
 Teste 16 - Comissão por linha de produto gerada sobre venda recebida e pagamento da comissão no caixa - Linha
     # CT: 1-362
@@ -268,7 +274,7 @@ Teste 16 - Comissão por linha de produto gerada sobre venda recebida e pagament
     E seleciono somente as recebidas
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebida e pagamento da comissão no caixa - Linha
     # CT: 1-363
@@ -285,7 +291,7 @@ Teste 17 - Comissão por linha de serviço gerada sobre ordem de serviço recebi
     E vou para a aba de servicos
     E seleciono a comissão de serviços
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produtos com desconto, recebidas no caixa, incluindo a geração do relatório de vendas somente recebidas - Forma Parcelamento
     # Tarefa: 173680 | CT: 1-599
@@ -297,13 +303,19 @@ Teste 18 - Comissão sobre formas de parcelamento em vendas com múltiplos produ
     E seleciono somente as recebidas
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
     Dado que acesso a tela de relatório de comissão
-    E gero o relatório de comissões(Pendentes)
+    E valido os filtros de produtos e serviços    ${True}    ${False}
+    E informo o vendedor comissionado
+    E seleciono o tipo da comissão(Pendentes)
+    E seleciono para gerar sobre(Somente Recebidas)
+    Set Test Variable    ${Relatorio_Deve_Conter_Dados}    ${False}
+    E gero o relatório de comissões
+    E saio da tela(RelatorioComissao)
 
 Teste 19 - Comissão sobre total da venda com alíquota individual por serviço após inclusão e edição da ordem de serviço - Total Venda
     # Tarefa: 175729 | CT: 1-598
@@ -317,14 +329,14 @@ Teste 19 - Comissão sobre total da venda com alíquota individual por serviço 
     Quando insiro o técnico executor de serviço comissionado
     E vou para a aba de servicos
     E seleciono a comissão de serviços
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     montadorDeCenarios.Dado que acesso a edição da ordem de serviço e do serviço lançado
     Dado que acesso a tela de comissões
     Quando insiro o técnico executor de serviço comissionado
     E vou para a aba de servicos
     E seleciono a comissão de serviços
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
 
 Teste 20 - Comissão por linha de venda com múltiplos produtos gerada sobre somente recebidas e pagamento da comissão no caixa - Linha
     [Tags]    Teste04
@@ -335,10 +347,41 @@ Teste 20 - Comissão por linha de venda com múltiplos produtos gerada sobre som
     E seleciono somente as recebidas
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
     KeyComissoes1.Quando acesso o caixa aberto
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
-    utils.E saio da tela(CaixaPrincipal)
+    E saio da tela(CaixaPrincipal)
     Então visualizo os detalhes da comissao recem paga
-    utils.E saio da tela(Comissoes)
+    E saio da tela(Comissoes)
+
+Teste 21 - Comissão sobre total da venda com exclusão e reinserção de produto na edição, e validação no relatório de comissões pendentes - Total Venda
+    # Tarefa: 175947 | CT: 1-588
+    [Tags]    Teste21
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda com apenas um produto e finalizo com múltiplas parcelas personalizadas
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    Set Test Variable    ${comissao_anterior}    ${Total_Comissao}
+    E saio da tela(Comissoes)
+    Dado que acesso a tela de relatório de comissão
+    E informo o vendedor comissionado
+    E seleciono o tipo da comissão(Pendentes)
+    E seleciono para gerar sobre(Vendas)
+    E valido os filtros de produtos e serviços    ${True}    ${False}
+    E gero o relatório de comissões
+    E saio da tela(RelatorioComissao)
+    montadorDeCenarios.Dado que realizo a edição da venda e exclusão e inserção do produto lançado
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E comparo a comissão antes e após a edição da venda
+    E saio da tela(Comissoes)
+    Dado que acesso a tela de relatório de comissão
+    E informo o vendedor comissionado
+    E seleciono o tipo da comissão(Pendentes)
+    E seleciono para gerar sobre(Vendas)
+    E valido os filtros de produtos e serviços    ${True}    ${False}
+    E gero o relatório de comissões
+    E saio da tela(RelatorioComissao)

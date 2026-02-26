@@ -65,9 +65,16 @@ ${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelato
 ${CHECK_BOX_SELE_TODOS}                           checkBox_Comissao.png
 ${CHECKBOX_CONTASPAGAR}                           checkBox_ContasPagar.png
 ${CHECK_BOX_SELE_TODOS_SERVICO}                   checkBox_ComissaoServico.png
+${CHECKBOX_PRODUTOS_HABILITADO}                   check_Produtos_Habilitado.png
+${CHECKBOX_PRODUTOS_DESABILITADO}                 check_Produtos.png
+${CHECKBOX_SERVICOS_HABILITADO}                   check_Servicos_Habilitado.png
+${CHECKBOX_SERVICOS_DESABILITADO}                 check_Servicos.png
 ${CHECKBOX_COMISSAO_FOCO_GRID}                    checkBox_ComissaoFocoGrid.png
 ${CHECKBOX_CONTA_FOCO_GRID}                       checkBoxContaFocoGrid.png
 ${CHECKBOX_CONTA_FOCO_GRID_2}                     checkBox_ComissaoFocoGrid2.png
+
+# ComboBox
+${COMBOBOX_GERAR_SOBRE_VENDAS}                    combo_gerar_sobre_vendas.png
 
 # Inputs
 ${INPUT_NUMERO_DOCUMENTO}                         caixa_PesquisaPorNDoc.png
@@ -116,6 +123,14 @@ ${Teste_Comissao_Produto}                         ${False}
 ${Teste_Comissao_Servico}                         ${False}
 ${Teste_Comissão_Parcelada}                       ${False}
 ${Baixa_Eh_Servico}                               ${False}
+${comissao_anterior}                              ${0}
+
+${COMISSOES_AGENDADAS}                            ${False}
+${COMISSOES_PAGAS}                                ${False}
+${COMISSOES_PENDENTES}                            ${False}
+${ESPERAVA_MENSAGEM_SEM_DADOS}
+${Relatorio_Deve_Conter_Dados}                    ${True}
+${Dado_Localizado_Na_Pesquisa_Relatorio}          dadoFoiLocalizadoPesquisaRelatorio.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -260,9 +275,13 @@ E seleciono a comissão de produtos
 
         Calcula comissão sobre total venda - Produtos
 
-        ${VALOR_DEVOLUCAO}    Evaluate    (${VALOR_FINAL_OPERAÇÃO} * (-1))
+        IF    ${Teste_Comissao_Devolucao}
+            
+            ${VALOR_DEVOLUCAO}    Evaluate    (${VALOR_FINAL_OPERAÇÃO} * (-1))
 
-        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_DEVOLUCAO}
+            Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_DEVOLUCAO}
+
+        END
     
     ELSE IF    ${Teste_Comissao_Escalonada}
 
@@ -419,7 +438,7 @@ Calcula comissão por linha de produto - múltiplos produtos
 
 Calcula comissão sobre total venda - Produtos
 
-    ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV}
+    ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL
     ${queryComissaoProdutos[0][0]}    Evaluate    decimal.Decimal(str(${queryComissaoProdutos[0][0]}))    modules=decimal
 
     ${calcComissaoProdutos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
@@ -437,7 +456,7 @@ Calcula comissão sobre total venda - Produtos
 
 Calcula comissão sobre forma de parcelamento - Produtos
 
-    ${query_comissaoProduto}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA}
+    ${query_comissaoProduto}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.Cancelada IS NULL
 
     ${calcComissaoProduto}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoFormaParcParcela_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"))    modules=decimal
 
@@ -863,8 +882,6 @@ Valida baixa comissao
 
     Check If Exists In Database    SELECT Sequencia, nDocumento, CodigoAbertura, ValorDocumento FROM caixamovimentos WHERE nDocumento = ${NDoc_Comissao}
 
-    # Log To Console    \n\n[OK] Validações concluídas com sucesso!
-
 Então visualizo os detalhes da comissao recem paga
 
     Dado que acesso a tela de comissões
@@ -946,70 +963,6 @@ Dado que acesso a tela de relatório de comissão
 
     Wait Until Screen Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
 
-E gero o relatório de comissões(${tipo})
-
-    Informa o vendedor
-
-    IF    '${tipo}' == 'Agendadas'
-
-        SikuliLibrary.Click    ${RADIOBT_COMISSOES_AGENDADAS}
-
-        Set Test Variable    ${COMISSOES_AGENDADAS}    ${True}
-        
-    ELSE IF    '${tipo}' == 'Pagas'
-
-        Log To Console    Implementar posteriormente.
-
-        Set Test Variable    ${COMISSOES_PAGAS}    ${True}
-
-    ELSE IF    '${tipo}' == 'Pendentes'
-
-        SikuliLibrary.Click    ${RADIOBT_COMISSOES_PENDENTES}
-        
-        Set Test Variable    ${COMISSOES_PENDENTES}    ${True}
-
-    END
-
-    Press Combination    KEY.ALT    KEY.O
-    
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Not Contain    ${LABEL_GERANDO_RELATORIO_AGUARDE}    ${TEMPO_TELA}
-
-    Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
-
-    SikuliLibrary.Click    ${RADIOBT_VISUALIZAR_IMPRESSAO}
-
-    Press Combination    KEY.ALT    KEY.G
-
-    Valida os dados do relatório de comissões
-
-    IF    ${Teste_Cenario_Sem_Dados_Exibicao}
-
-        Press Special Key    ENTER
-
-        Log To Console    \n"Sem Dados Para Exibição" conforme esperado no Teste 18.
-        
-    ELSE IF    ${Teste_Cenario_Sem_Dados_Exibicao_Outras_Mov}
-
-        Verifica se operação gerada não está vinculada a uma comissão pendente
-
-        Log To Console    \nVenda vinculada a uma comissão pendente, conforme esperado no Teste 18.
-
-    ELSE
-
-        Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${TEMPO_TELA} 
-        
-        Press Special Key    ESC
-        Wait Until Screen Not Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${SLEEP_ALTO}
-
-    END
-
-    Wait Until Screen Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
-
-    Press Special Key    ESC
-
-    Wait Until Screen Not Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
-
 Informa o vendedor
 
     SikuliLibrary.Click    ${LABEL_COD_VENDEDOR_RELATORIO}
@@ -1020,9 +973,41 @@ Informa o vendedor
 
 Valida os dados do relatório de comissões
 
-    IF    ${COMISSOES_PENDENTES}
+    IF    ${COMISSOES_AGENDADAS}
+
+        Log To Console    Comissões agendadas ainda não foram validadas.
         
-        Validação de comissões pendentes        
+    ELSE IF    ${COMISSOES_PAGAS}
+
+        Log To Console    Comissões pagas ainda não foram validadas.  
+
+    ELSE IF    ${COMISSOES_PENDENTES}
+        
+        Validação de comissões pendentes
+
+    END
+
+    IF    ${Relatorio_Deve_Conter_Dados} == ${False}
+
+       Validação de dados que não devem constar no relatório
+    
+    ELSE
+
+        Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    KEY.G
+
+        Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${TEMPO_TELA}
+        
+        Verifica se a operação gerada está vinculada a uma comissão pendente
+
+    END
+    
+    # De início, cmparação com o banco disponível somente para comissões pendentes.
+    IF    ${COMISSOES_PENDENTES} and ${Relatorio_Deve_Conter_Dados}
+
+        Compara Valores Relatorio e Banco Pendentes
 
     END
 
@@ -1030,33 +1015,85 @@ Validação de comissões pendentes
     
     Sleep    ${SLEEP_MEDIO}
 
-    ${haDados}    Run Keyword And Return Status    Check If Exists In Database    SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+    IF    '${COMISSOES_GERAR_SOBRE}' == 'Somente Recebidas'
+        
+        ${queryConsulta}    Set Variable    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda, verificaVlrParcelasPagasMes_Func(VlrParcelasPagasMES, CodigoVenda, CodigoVendedor) AS TotalRecFunc FROM Temp_rel_comissao WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+        
+        ${haDadosBanco}    Run Keyword And Return Status    Check If Exists In Database    SELECT *, verificaVlrParcelasPagasMes_Func(VlrParcelasPagasMES, CodigoVenda, CodigoVendedor) AS TotalRecFunc FROM Temp_rel_comissao WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV};
 
-    ${consultaRelatorio}    Query    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+    ELSE IF    '${COMISSOES_GERAR_SOBRE}' == 'Vendas Faturadas'
 
-    IF    not ${haDados}
+        ${queryConsulta}    Set Variable    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM temp_rel_comissao WHERE NOT NumeroNF is null AND CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+        
+        ${haDadosBanco}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM temp_rel_comissao WHERE NOT NumeroNF is null AND CodigoVenda = ${CODIGO_OPERACAO_MOV};
+
+    ELSE
+
+        IF    ${Filtro_Produtos} and ${Filtro_Servicos}
+
+            ${queryConsulta}    Set Variable    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+
+        ELSE IF    ${Filtro_Produtos}
+         
+            ${queryConsulta}    Set Variable    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+
+        ELSE IF    ${Filtro_Servicos}
+
+            ${queryConsulta}    Set Variable    SELECT CAST(TotalPedido AS DECIMAL(15,2)) AS TotalPedido, CAST(ValorTotal AS DECIMAL(15,2)) AS ValorTotal, CAST(TotalServicos AS DECIMAL(15,2)) AS TotalServicos, CAST(ComissaoTotal AS DECIMAL(15,2)) AS ComissaoTotal, CAST(ComissaoTotalServico AS DECIMAL(15,2)) AS ComissaoTotalServico, CAST(TotalServFunc AS DECIMAL(15,2)) AS TotalServFunc, CAST(CalculoComissaoFunc AS DECIMAL(15,4)) AS CalculoComissaoFunc, CAST(vlrTotalProdutos AS DECIMAL(15,2)) AS vlrTotalProdutos, TipoVenda FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} ORDER BY TipoVenda ASC;
+
+        END
+
+    END
+    
+    Set Test Variable    ${queryConsulta}
+    
+Validação de dados que não devem constar no relatório
+
+    IF    '${COMISSOES_GERAR_SOBRE}' == 'Somente Recebidas'
         
         Sleep    ${SLEEP_BAIXO}
-
-        ${avisoSemDadosExibicao}    Exists    ${AVISO_SEM_DADOS_PARA_EXIBICAO}
+        ${consulta}    Query    SELECT EXISTS (SELECT 1 FROM vendas v INNER JOIN caixamovimentos cm ON v.Codigo = cm.NVenda WHERE v.CodigoVendedor = ${Codigo_Vendedor} AND v.`Data` = CURDATE() AND v.Codigo NOT IN (${CODIGO_OPERACAO_MOV}) AND cm.ValorPago IS NOT NULL) AS tem_venda_paga;
         
-        IF    ${avisoSemDadosExibicao}
-            
-            Set Test Variable    ${Teste_Cenario_Sem_Dados_Exibicao}    ${True}
+        ${vendedor_tem_venda_recebida_hoje}    Set Variable    ${consulta[0][0]}
+
+        IF    '${vendedor_tem_venda_recebida_hoje}' == '0'
+
+            Wait Until Screen Contain    ${AVISO_SEM_DADOS_PARA_EXIBICAO}    ${SLEEP_ALTO}
+
+            Press Special Key    ENTER
 
         ELSE
 
-            ${telaImpressaoRelatorio}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${SLEEP_ALTO}
-
-            Set Test Variable    ${Teste_Cenario_Sem_Dados_Exibicao_Outras_Mov}    ${True}
-            
-        END
+            Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${SLEEP_ALTO}
         
+            Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    KEY.G
+
+            Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${TEMPO_TELA}
+
+            Verifica se a operação gerada está vinculada a uma comissão pendente
+        
+        END
+    
+    ELSE
+
+        Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    KEY.G
+
+        Wait Until Screen Contain    ${TELA_VISUALIZACAO_IMPRESSAO}    ${TEMPO_TELA}
+
+        Verifica se a operação gerada está vinculada a uma comissão pendente
+
     END
 
-    ${qtdeRegistro}    Query    SELECT COUNT(*) FROM (SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Vendas WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV} UNION ALL SELECT TotalPedido, ValorTotal, TotalServicos, ComissaoTotal, ComissaoTotalServico, TotalServFunc, CalculoComissaoFunc, TipoVenda, vlrTotalProdutos FROM Temp_rel_comissao_VsfCom_Servicos WHERE CodigoVenda = ${CODIGO_OPERACAO_MOV}) AS qtdeRegistro;
+Compara Valores Relatorio e Banco Pendentes
+    
+    ${consultaRelatorio}    Query    ${queryConsulta}
+    ${qtdeRegistro}         Get Length    ${consultaRelatorio}
 
-    FOR    ${i}    IN RANGE    ${qtdeRegistro[0][0]}
+    FOR    ${i}    IN RANGE    ${qtdeRegistro}
         
         ${VALOR_FINAL_OPERAÇÃO}    Evaluate    decimal.Decimal(str(${VALOR_FINAL_OPERAÇÃO}))    modules=decimal
 
@@ -1078,7 +1115,7 @@ Validação de comissões pendentes
         
     END
 
-Verifica se operação gerada não está vinculada a uma comissão pendente
+Verifica se a operação gerada está vinculada a uma comissão pendente
 
     SikuliLibrary.Click    ${BT_BINOCULO_PESQUISA_RELATORIO}
 
@@ -1091,19 +1128,47 @@ Verifica se operação gerada não está vinculada a uma comissão pendente
     Press Special Key    ENTER
 
     Sleep    ${SLEEP_BAIXO}
-    ${avisoNaoEncontrouRegistro}    Exists    ${AVISO_PESQUISA_TEXTO_CONCLUIDA}
 
-    IF    ${avisoNaoEncontrouRegistro}
+    ${dado_encontrado}    Exists    ${Dado_Localizado_Na_Pesquisa_Relatorio}
 
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    ESC
+    IF    ${Relatorio_Deve_Conter_Dados} == $False
+        
+        IF    ${dado_encontrado} == $False
+            
+            Log To Console    Nenhum registro encontrado, conforme o esperado.
+            
+            # Nesse cenário, a mensagem 'Pesquisa do relatório concluída' significa que o valor pesquisado não foi encontrado no relatório.
+            Wait Until Screen Contain    ${AVISO_PESQUISA_TEXTO_CONCLUIDA}    ${SLEEP_ALTO}
+
+            Press Special Key    ENTER
+
+        ELSE
+
+            Fail    Registro encontrado no relatório de comissões, contrariando o comportamento esperado.\nComissão da venda consta como pendente no relatório de comissões.
+        
+        END
 
     ELSE
 
-        Fail    Comissão da venda consta como pendente no relatório de comissões.
+        IF    ${dado_encontrado}
+            
+            Log To Console    Registro encontrado no relatório de comissões, conforme o esperado.
+        
+        ELSE
+            
+            # Nesse cenário, a mensagem 'Pesquisa do relatório concluída' significa que o valor pesquisado não foi encontrado no relatório.
+            Wait Until Screen Contain    ${AVISO_PESQUISA_TEXTO_CONCLUIDA}    ${SLEEP_ALTO}
+
+            Fail    Nenhum registro encontrado, contrariando o comportamento esperado.
+        
+        END
 
     END
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ESC
+
+    Wait Until Screen Contain    ${TELA_RELATORIO_COMISSOES}    ${SLEEP_ALTO}
 
 Quando insiro o técnico executor de serviço comissionado
 
@@ -1158,3 +1223,109 @@ Calcula comissão por linha de produto - múltiplos produtos - Devolução
     Set Test Variable    ${Total_Comissao_Produtos}
     Set Test Variable    ${Total_Comissao}
     Set Suite Variable    ${PERCENT_COMISSAO}
+
+E comparo a comissão antes e após a edição da venda
+
+    Should Be Equal As Numbers    ${comissao_anterior}    ${Total_Comissao}
+
+    Log To Console    A comissão anterior de ${comissao_anterior} é igual a nova comissão de ${Total_Comissao}
+
+E informo o vendedor comissionado
+
+    SikuliLibrary.Click    ${LABEL_COD_VENDEDOR_RELATORIO}
+
+    Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
+    Press Special Key    TAB
+
+E seleciono o tipo da comissão(${tipo_comissao})
+
+    IF    '${tipo_comissao}' == 'Agendadas'
+
+        SikuliLibrary.Click    ${RADIOBT_COMISSOES_AGENDADAS}
+
+        Set Test Variable    ${COMISSOES_AGENDADAS}    ${True}
+        
+    ELSE IF    '${tipo_comissao}' == 'Pagas'
+
+        Log To Console    Implementar posteriormente.
+
+        Set Test Variable    ${COMISSOES_PAGAS}    ${True}
+
+    ELSE IF    '${tipo_comissao}' == 'Pendentes'
+
+        SikuliLibrary.Click    ${RADIOBT_COMISSOES_PENDENTES}
+        
+        Set Test Variable    ${COMISSOES_PENDENTES}    ${True}
+
+    END
+
+E seleciono para gerar sobre(${tipo_geracao})
+
+    Set Test Variable    ${COMISSOES_GERAR_SOBRE}    ${tipo_geracao}
+
+    IF    '${tipo_geracao}' != 'Vendas'
+
+        SikuliLibrary.Double Click    ${COMBOBOX_GERAR_SOBRE_VENDAS}
+
+        IF    '${tipo_geracao}' == 'Vendas Faturadas'
+
+            Press Special Key    DOWN
+
+        ELSE IF    '${tipo_geracao}' == 'Somente Recebidas'
+
+            Press Special Key    DOWN
+            Press Special Key    DOWN
+
+        END
+
+    END
+ 
+E valido os filtros de produtos e serviços
+    [Arguments]    ${marcar_produtos}    ${marcar_servicos}
+
+    # Validação Checkbox Produtos
+    ${is_produtos_habilitado}    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_PRODUTOS_HABILITADO}    ${SLEEP_MEDIO}
+
+    IF    ${marcar_produtos}
+        
+        IF    not ${is_produtos_habilitado}
+            SikuliLibrary.Click    ${CHECKBOX_PRODUTOS_DESABILITADO}
+        END
+
+    ELSE
+        
+        IF    ${is_produtos_habilitado}
+            SikuliLibrary.Click    ${CHECKBOX_PRODUTOS_HABILITADO}
+        END
+
+    END
+    
+    # Validação Checkbox Serviços
+    ${is_servicos_habilitado}    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_SERVICOS_HABILITADO}    ${SLEEP_MEDIO}
+    
+    IF    ${marcar_servicos}
+        
+        IF    not ${is_servicos_habilitado}
+            SikuliLibrary.Click    ${CHECKBOX_SERVICOS_DESABILITADO}
+        END
+
+    ELSE
+        
+        IF    ${is_servicos_habilitado}
+            SikuliLibrary.Click    ${CHECKBOX_SERVICOS_HABILITADO}
+        END
+
+    END
+
+    Set Test Variable    ${Filtro_Produtos}    ${marcar_produtos}
+    Set Test Variable    ${Filtro_Servicos}    ${marcar_servicos}
+
+E gero o relatório de comissões
+
+    Press Combination    KEY.ALT    KEY.O
+    
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Not Contain    ${LABEL_GERANDO_RELATORIO_AGUARDE}    ${TEMPO_TELA}
+
+    Valida os dados do relatório de comissões

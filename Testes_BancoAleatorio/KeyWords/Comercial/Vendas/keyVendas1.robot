@@ -56,6 +56,7 @@ ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
 ${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}        modal_PersonalizacaoPagamento.png
+${GUIA_PRODUTOS_VENDA}                   guia_ProdutosVenda.png
 
 # Telas Avisos
 ${AVISO_USAR_ESSE_VENDEDOR}              aviso_clienteOutroVendedor.png
@@ -64,6 +65,7 @@ ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}    aviso_CondicionalEmAbertoVisualizar.png
 ${AVISO_NCM_INVALIDO}                    aviso_NCMInvalidoNFC.png
 ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizado.png
 ${ALERTA_CLIENTE}                        alertaCliente.png
+${AVISO_DESEJA_EXCLUIR_PRODUTO_VENDA}    aviso_DesejaExcluirProdutoVenda.png
 
 # Botões
 ${BT_OK}                                 bt_Ok.png
@@ -191,6 +193,8 @@ E acesso a aba pagamentos
     Press Combination    KEY.ALT    Key.M
 
     Valida cliente com vales compra disponíveis
+
+    utils.Fechar tela de personalização de forma de parcelamento
 
     Sleep    ${SLEEP_ALTO}
 
@@ -444,6 +448,8 @@ E excluo os pagamentos lançados
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
 
+    utils.Fechar tela de personalização de forma de parcelamento
+
 Então clico em excluir
 
     utils.Exclui ordem de entrega(${COD_VENDA})
@@ -510,9 +516,9 @@ Calcula valor final da venda
     ${somaValorTotalProdutos}    Evaluate    0
 
     Sleep    ${SLEEP_MEDIO}
-    ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} ORDER BY vp.Sequencia;
+    ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.Cancelada IS NULL ORDER BY vp.Sequencia;
 
-    ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA};
+    ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.Cancelada IS NULL;
 
     ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
 
@@ -536,7 +542,7 @@ Calcula valor final da venda
     END
     
     Sleep    ${SLEEP_BAIXO}
-    ${ValorTotalProdutosVenda}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA}
+    ${ValorTotalProdutosVenda}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Cancelada IS NULL
     
     Should Be Equal    ${ValorTotalProdutosVenda[0][0]}    ${somaValorTotalProdutos}
     
@@ -713,7 +719,7 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
     END
 
-Quando insiro um produto já definido(${Produto})
+Quando insiro um produto já definido(${Produto}) informando a quantidade do produto(${Qtde_Produto})
 
     IF    ${Teste_Comissao_Linha}
 
@@ -724,6 +730,8 @@ Quando insiro um produto já definido(${Produto})
         utils.Inserir produto pré-definido(${Produto})
 
     END
+
+    Informa a quantidade do produto(${Qtde_Produto})
 
     utils.Valida parametros após incluir produto
 
@@ -943,3 +951,21 @@ E pesquiso pela venda gerada
 #     ELSE
 #         RETURN    ${Parametro_QuantidadePadraoProduto}
 #     END
+
+Quando acesso a guia de produtos na venda
+
+    Press Combination    KEY.ALT    KEY.P
+    Wait Until Screen Contain    ${GUIA_PRODUTOS_VENDA}    ${TEMPO_TELA}
+
+E excluo o produto lançado
+
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.O
+    
+    Wait Until Screen Contain    ${AVISO_DESEJA_EXCLUIR_PRODUTO_VENDA}    ${SLEEP_ALTO}
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.S
+
+    Sleep    ${SLEEP_MEDIO}
