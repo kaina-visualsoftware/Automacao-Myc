@@ -516,6 +516,7 @@ Calcula valor final da venda
     ${somaValorTotalProdutos}    Evaluate    0
 
     Sleep    ${SLEEP_MEDIO}
+
     ${consultaVendasProdutos}    Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.Cancelada IS NULL ORDER BY vp.Sequencia;
 
     ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.Cancelada IS NULL;
@@ -524,7 +525,7 @@ Calcula valor final da venda
 
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
-        IF    ${List_Quantidades_Produto} is not None
+        IF    $List_Quantidades_Produto is not None
 
             ${Quantidade_Produto}    Set Variable    ${List_Quantidades_Produto[${i}]}
             
@@ -587,7 +588,7 @@ Calcula valor final da venda com desconto(${PERCENT_DESCONTO})
 
 Calcula desconto final por produto(${PERCENT_DESCONTO})
 
-    IF    ${Codigos_Produtos} is None
+    IF    $Codigos_Produtos is None
 
         ${Produto}    Query    SELECT p.VendaT1 ,p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
 
@@ -651,13 +652,13 @@ Valida baixa de estoque
 
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
         
-        IF    ${Codigos_Produtos} is not None
+        IF    $Codigos_Produtos is not None
 
             ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
             
         END
 
-        IF    ${List_Quantidades_Produto} is not None
+        IF    $List_Quantidades_Produto is not None
 
             ${QTDE_BAIXA_PRODUTO}    Set Variable    ${List_Quantidades_Produto[${i}]}
 
@@ -687,7 +688,7 @@ Verifica desconto ultrapassou o cadastro dos itens(${PERCENT_DESCONTO})
 
     IF    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos} == False
 
-        IF    ${Codigos_Produtos} is None
+        IF    $Codigos_Produtos is None
 
             ${Produto}    Query    SELECT p.VendaT1, p.DescontoMaximo FROM vendasprodutos AS vp INNER JOIN produtos AS p ON p.Codigo = vp.CodigoProduto WHERE vp.CodigoVenda = ${COD_VENDA} AND vp.CodigoProduto = ${COD_PRODUTO}
 
@@ -862,7 +863,7 @@ Quando insiro um produto normal informando a quantidade(${Qtde_Produto})
 Quando insiro um produto normal informando a quantidade e desconto
     [Arguments]    ${Quantidade_Produto}    ${Desconto_Produto}
 
-    IF    ${List_Quantidades_Produto} is None
+    IF    $List_Quantidades_Produto is None
 
         ${List_Quantidades_Produto}    Create List
 

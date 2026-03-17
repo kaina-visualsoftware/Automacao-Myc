@@ -962,7 +962,7 @@ Valida considerar lançamento de ordem de entrega de doações
 
     IF    '${Parametro_ConsideraDoacoes}' == 'False'
 
-        Fail   \nNão habilitado para considerar lançamentos de doações.\nParâmetro: Considerar Lançamentos de Doações: ${Parametro_ConsideraDoacoes}
+        Fail   Não habilitado para considerar lançamentos de doações.\nParâmetro: Considerar Lançamentos de Doações: ${Parametro_ConsideraDoacoes}
 
     END
 

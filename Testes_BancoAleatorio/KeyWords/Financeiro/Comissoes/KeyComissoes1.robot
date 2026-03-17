@@ -2,6 +2,7 @@
 Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
+Library    Collections
 Library    ../../../libs/validaParametros.py
 Library    ../../../libs/verificacoesExtras.py
 Library    ../../../libs/estoque.py
@@ -60,6 +61,7 @@ ${BT_BAIXAR}                                      bt_Baixar.png
 ${BT_OK}                                          bt_OkComisssao.png
 ${BT_FECHAR}                                      bt_fechar.png
 ${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelatorio.png
+${BT_OK_AVISO_LOTE_DE_PAGAMENTO}                  bt_OKAvisoLoteDePagamento.png
 
 # Checkbox
 ${CHECK_BOX_SELE_TODOS}                           checkBox_Comissao.png
@@ -123,8 +125,11 @@ ${Teste_Comissao_Produto}                         ${False}
 ${Teste_Comissao_Servico}                         ${False}
 ${Teste_Comissão_Parcelada}                       ${False}
 ${Baixa_Eh_Servico}                               ${False}
+${Comissao_Zerada_Por_Devolucao}                  ${False}
+${Cenario_Sem_Comissao_Servico}                   ${False}
+${Cenario_Sem_Comissao_Produto}                   ${False}
+${Codigo_Vendedor_Comissao_Tela}                  ${EMPTY}
 ${comissao_anterior}                              ${0}
-
 ${COMISSOES_AGENDADAS}                            ${False}
 ${COMISSOES_PAGAS}                                ${False}
 ${COMISSOES_PENDENTES}                            ${False}
@@ -194,6 +199,8 @@ Informa a data atual na data de recebimento
     Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no período de recebimento filtrado(${dataInicial}, ${dataFinal})
 
 Copia data do campo e converte para o formato ISO 8601
+    
+    Sleep    ${SLEEP_BAIXO}
 
     Key Down            CTRL
     Press Combination   C
@@ -217,6 +224,18 @@ Deleta os lotes de pagamento das comissões de vendas/OS recebidas, baixadas no 
 E seleciono a comissão de produtos
 
     Set Test Variable    ${Teste_Comissao_Produto}    ${True}
+
+    # Se o cenário é "sem comissão de produto" (ex: alíquota = 0), a operação NÃO aparece no grid.
+    # Nesse caso, pula a pesquisa no grid e valida apenas via banco.
+    IF    ${Cenario_Sem_Comissao_Produto}
+    
+        Log To Console    [Cenario_Sem_Comissao_Produto] Operação não gera comissão → pulando pesquisa no grid.
+
+        Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+
+        RETURN
+
+    END
 
     Sleep    ${SLEEP_BAIXO}
     ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
@@ -249,7 +268,22 @@ E seleciono a comissão de produtos
 
     IF    ${Teste_Comissao_Linha}
 
-        IF    ${Codigos_Produtos} is None
+        # Para cenários de produto com validação de linha DIF/MISTA, usa a keyword de validação detalhada
+        ${eh_cenario_produto_linha}    Evaluate    '${Cenario_Comissao_Linha}'.startswith('PROD__')
+
+        IF    ${eh_cenario_produto_linha}
+
+            IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor' or '${Tipo_Comissao_Linha}' == 'Mista'
+
+                Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+
+            ELSE
+
+                Fail    Cenário de produto '${Cenario_Comissao_Linha}' com tipo '${Tipo_Comissao_Linha}' não reconhecido.
+
+            END
+
+        ELSE IF    $Codigos_Produtos is None
 
             Calcula comissão por linha de produto - apenas 1 produto
 
@@ -257,7 +291,7 @@ E seleciono a comissão de produtos
 
             Set Test Variable    ${POSIÇÃO_VALOR}    ${0}
 
-            IF    ${Valores_Parcelas} is not None
+            IF    $Valores_Parcelas is not None
                 
                 Set Test Variable    ${Teste_Comissão_Parcelada}    ${True}
 
@@ -293,28 +327,12 @@ E seleciono a comissão de produtos
 
     END
 
-# Calcula comissão por linha de produto - apenas 1 produto
-
-#     Sleep    ${SLEEP_BAIXO}
-#     # ${query_comissaoProduto}    Query    SELECT SUM(v.ValorFinalPagamentos * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${COD_PRODUTO} INNER JOIN vendas AS v ON v.Codigo = ${CODIGO_OPERACAO_MOV}
-#     ${query_comissaoProduto}    Query    SELECT vp.ValorUnitario * (cl.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo WHERE p.Codigo = ${COD_PRODUTO} AND vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL;
-
-#     ${comissaoProduto}    Evaluate    ${query_comissaoProduto[0][0]} * ${Quantidade_Produto}
-
-#     # ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-#     ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${comissaoProduto} + ${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-#     ${Total_Comissao_Produtos}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-#     Set Test Variable    ${Total_Comissao_Produtos}
-#     Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
-
-#     Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao_Produtos}
-
 Calcula comissão por linha de produto - apenas 1 produto
 
+    ${valor_comissao_unitario}    Consulta valor comissão produto único    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
     ${Total_Comissao_Produtos}    Calcula Comissao Linha Produto Unico
-    ...    ${COD_PRODUTO}
-    ...    ${CODIGO_OPERACAO_MOV}
+    ...    ${valor_comissao_unitario}
     ...    ${Quantidade_Produto}
     ...    ${Total_Comissao_Produtos}
 
@@ -323,55 +341,12 @@ Calcula comissão por linha de produto - apenas 1 produto
 
     Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao_Produtos}
 
-# Calcula comissão por linha de produto - por parcela personalizada
-
-#     ${somaComissaoParcela}    Evaluate    0
-
-#     ${qtdeProdutos}    Get Length    ${Codigos_Produtos}
-
-#     FOR    ${I}    IN RANGE    ${qtdeProdutos}
-
-#         ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
-
-#         ${comissaoProduto}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]})) * decimal.Decimal(str(${Quantidade_Produto}))    modules=decimal
-
-#         # ${somaComissaoParcela}    Evaluate    round((${query_comissaoProduto[0][0]} + ${somaComissaoParcela}), 4)
-#         # ${somaComissaoParcela}    Evaluate    (decimal.Decimal(str(${query_comissaoProduto[0][0]})) + decimal.Decimal(str(${somaComissaoParcela}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-#         ${somaComissaoParcela}    Evaluate    (decimal.Decimal(str(${comissaoProduto})) + decimal.Decimal(str(${somaComissaoParcela}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-#     END
-
-#     # Vai definir a % de comissão apenas positiva
-#     IF    ${Valores_Parcelas[${j}]} > 0
-
-#         # ${PERCENT_COMISSAO}    Evaluate    ((${somaComissaoParcela} / ${DADOS_VENDA_DEVOLUÇÃO[0][1]}) * 100)
-#         ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${somaComissaoParcela})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[0][1]})) * decimal.Decimal("100")    modules=decimal
-
-#         Set Suite Variable    ${PERCENT_COMISSAO}
-
-#     END
- 
-#     # ${calcComissaoTotalParcela}    Evaluate    round((${Valores_Parcelas[${j}]} * (${PERCENT_COMISSAO} / 100)), 4)
-#     # ${calcComissaoTotalParcela}    Evaluate    round(${calcComissaoTotalParcela}, 2)
-
-#     ${calcComissaoTotalParcela}    Evaluate    (decimal.Decimal(str(${Valores_Parcelas[${j}]})) * (decimal.Decimal(str(${PERCENT_COMISSAO})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-#     Set Test Variable    ${Total_Comissao_Produtos}    ${calcComissaoTotalParcela}
-    
-#     ${Total_Comissao}    Evaluate    decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Produtos}))    modules=decimal
-
-#     Set Test Variable    ${Total_Comissao_Produtos}
-#     Set Test Variable    ${Total_Comissao}
-
-#     Log To Console    [VENDA] Valor final da comissão (Linha): ${Total_Comissao}
-
-#     ${j}    Evaluate    ${j} + 1
-#     Set Test Variable    ${j}
-
 Calcula comissão por linha de produto - por parcela personalizada
 
+    ${valores_comissao}    Consulta valores comissão por produto    ${Codigos_Produtos}
+
     ${Total_Comissao_Produtos}    ${Total_Comissao}    ${PERCENT_COMISSAO}    Calcula Comissao Linha Produto Parcela Personalizada
-    ...    ${Codigos_Produtos}
+    ...    ${valores_comissao}
     ...    ${Quantidade_Produto}
     ...    ${DADOS_VENDA_DEVOLUÇÃO}
     ...    ${Valores_Parcelas}
@@ -387,47 +362,12 @@ Calcula comissão por linha de produto - por parcela personalizada
     ${j}    Evaluate    ${j} + 1
     Set Test Variable    ${j}
 
-# Calcula comissão por linha de produto - múltiplos produtos
-
-#     ${calcComissaoProduto}    Evaluate    0
-
-#     ${qtdeProdutos}    Get Length    ${Codigos_Produtos}
-
-#     FOR    ${I}    IN RANGE    ${qtdeProdutos}
-
-#         ${query_comissaoProduto}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo AND p.Codigo = ${Codigos_Produtos[${I}]}
-
-#         # ${comissaoProduto}    Evaluate    ${query_comissaoProduto[0][0]} * ${Quantidade_Produto}
-#         ${comissaoProduto}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]})) * decimal.Decimal(str(${Quantidade_Produto}))    modules=decimal
-
-#         # ${Total_Comissao_Produtos}    Evaluate    round((${query_comissaoProduto[0][0]} + ${Total_Comissao_Produtos}), 4)
-#         # ${Total_Comissao_Produtos}    Evaluate    round((${comissaoProduto} + ${Total_Comissao_Produtos}), 4)
-#         ${Total_Comissao_Produtos}    Evaluate    (decimal.Decimal(str(${comissaoProduto})) + decimal.Decimal(str(${Total_Comissao_Produtos}))).quantize(decimal.Decimal("0.0000"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-#     END
-
-#     # Vai definir a % de comissão apenas positiva
-#     IF    ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} > 0
-
-#         # ${PERCENT_COMISSAO}    Evaluate    ((${Total_Comissao_Produtos} / ${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]}) * 100)
-#         ${PERCENT_COMISSAO}    Evaluate    decimal.Decimal(str(${Total_Comissao_Produtos})) / decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]})) * decimal.Decimal("100")    modules=decimal
-
-#         Set Suite Variable    ${PERCENT_COMISSAO}
-
-#     END
-
-#     # ${Total_Comissao_Produtos}    Evaluate    round((${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]} * (${PERCENT_COMISSAO} / 100)), 4)
-#     ${Total_Comissao_Produtos}    Evaluate    (decimal.Decimal(str(${DADOS_VENDA_DEVOLUÇÃO[${POSIÇÃO_VALOR}][1]})) * (decimal.Decimal(str(${PERCENT_COMISSAO})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-#     # ${Total_Comissao}    Evaluate    round((${Total_Comissao} + ${Total_Comissao_Produtos}), 2)
-#     ${Total_Comissao}    Evaluate    (decimal.Decimal(str(${Total_Comissao})) + decimal.Decimal(str(${Total_Comissao_Produtos}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-#     Set Test Variable    ${Total_Comissao_Produtos}
-#     Set Test Variable    ${Total_Comissao}
-
 Calcula comissão por linha de produto - múltiplos produtos
 
+    ${valores_comissao}    Consulta valores comissão por produto    ${Codigos_Produtos}
+
     ${Total_Comissao_Produtos}    ${Total_Comissao}    ${PERCENT_COMISSAO}    Calcula Comissao Linha Produto Multiplos
-    ...    ${Codigos_Produtos}
+    ...    ${valores_comissao}
     ...    ${Quantidade_Produto}
     ...    ${DADOS_VENDA_DEVOLUÇÃO}
     ...    ${POSIÇÃO_VALOR}
@@ -439,12 +379,12 @@ Calcula comissão por linha de produto - múltiplos produtos
 Calcula comissão sobre total venda - Produtos
 
     ${queryComissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL
+    
     ${queryComissaoProdutos[0][0]}    Evaluate    decimal.Decimal(str(${queryComissaoProdutos[0][0]}))    modules=decimal
 
     ${calcComissaoProdutos}    Evaluate    (decimal.Decimal(str(${Valor_Total_Produtos})) * (decimal.Decimal(str(${PercentualComissaoTotalVenda_Produto})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
     
-    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação.
-    # Se houver diferença, retorna o valor esperado (BD/ERP).
+    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
     ${calcComissaoProdutos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcComissaoProdutos}    ${queryComissaoProdutos[0][0]}
 
     Should Be Equal As Numbers    ${queryComissaoProdutos[0][0]}    ${calcComissaoProdutos}
@@ -462,8 +402,7 @@ Calcula comissão sobre forma de parcelamento - Produtos
 
     ${query_comissaoProduto[0][0]}    Evaluate    decimal.Decimal(str(${query_comissaoProduto[0][0]}))    modules=decimal
 
-    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação.
-    # Se houver diferença, retorna o valor esperado (BD/ERP).
+    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
     ${calcComissaoProduto}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcComissaoProduto}    ${query_comissaoProduto[0][0]}
 
     Should Be Equal As Numbers    ${query_comissaoProduto[0][0]}    ${calcComissaoProduto}
@@ -510,7 +449,7 @@ E seleciono a comissão de produtos - Devolução
 
         IF    ${Teste_Comissao_Linha}
 
-            IF    ${Codigos_Produtos} is None
+            IF    $Codigos_Produtos is None
 
                 Calcula comissão por linha de produto - apenas 1 produto - Devolução
 
@@ -546,6 +485,17 @@ E vou para a aba de servicos
 E seleciono a comissão de serviços
 
     Set Test Variable    ${Baixa_Eh_Servico}    ${True}
+
+    # Se o cenário é "sem comissão de serviço", a OS NÃO aparece no grid. Nesse caso, pula a pesquisa no grid e valida apenas a ausência de registro via banco.
+    IF    ${Cenario_Sem_Comissao_Servico}
+    
+        Log To Console    [Cenario_Sem_Comissao_Servico] OS não gera comissão → pulando pesquisa no grid.
+
+        Valida Comissão Linha Serviço    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+
+        RETURN
+
+    END
 
     Sleep    ${SLEEP_BAIXO}
 
@@ -583,28 +533,670 @@ E seleciono a comissão de serviços
 
     END
 
-# Calcula comissão por linha de serviço - apenas 1 serviço
-
-#     ${query_comissaoServico}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${Total_Tributos_Servico} / 100))) * (cl.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${COD_SERVICO} INNER JOIN vendas v ON v.Codigo = ${CODIGO_OPERACAO_MOV};
-
-#     # ${Total_Comissao_OS}    Evaluate    round((${query_comissaoServico[0][0]}), 2)
-#     ${Total_Comissao_OS}    Evaluate    decimal.Decimal(str(${query_comissaoServico[0][0]})).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
-
-#     Set Test Variable    ${Total_Comissao_OS}
-#     Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
-#     Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
-
-#     Log To Console    [OS] Valor final da comissão (Linha): ${Total_Comissao_Servicos}
-
 Calcula comissão por linha de serviço - apenas 1 serviço
 
-    ${Total_Comissao_OS}    Calcula Comissao Linha Servico Unico    ${COD_SERVICO}    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
-    
+    IF    '${Tipo_Comissao_Linha}' == 'Simples'
+
+        ${valor_comissao_servico}    Consulta valor comissão serviço único    ${COD_SERVICO}    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
+
+        ${Total_Comissao_OS}    Calcula Comissao Linha Servico Unico    ${valor_comissao_servico}
+
+        Set Test Variable    ${Total_Comissao_OS}
+        Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
+        Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
+
+        Log To Console    [OS] Valor final da comissão (Linha Simples): ${Total_Comissao_Servicos}
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor' or '${Tipo_Comissao_Linha}' == 'Mista'
+
+        # Se o cenário é de PRODUTO (PROD__*), o serviço usa cálculo genérico por tipo de linha (sem cenário específico de serviço).
+        ${eh_cenario_produto}    Evaluate    '${Cenario_Comissao_Linha}'.startswith('PROD__')
+
+        IF    ${eh_cenario_produto}
+
+            ${valor_comissao_servico}    Consulta valor comissão serviço único    ${COD_SERVICO}    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
+
+            ${Total_Comissao_OS}    Calcula Comissao Linha Servico Unico    ${valor_comissao_servico}
+
+            Set Test Variable    ${Total_Comissao_OS}
+            Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
+
+            Log To Console    [OS] Valor final da comissão de serviço (cenário PROD__* — cálculo genérico ${Tipo_Comissao_Linha}): ${Total_Comissao_Servicos}
+
+        ELSE
+
+            Valida Comissão Linha Serviço    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+
+        END
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+        Fail    Comissão por linha de serviço para Tabela de Preço ainda não implementada.
+
+    END
+
+Verifica Comissão Serviço Gerada
+    [Arguments]    ${codigo_os}    ${codigo_funcionario}    ${deve_gerar}=${True}
+
+    ${query_count}    Query    SELECT COUNT(*) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.Cancelada IS NULL;
+
+    ${existe}    Verifica Comissao Servico Existe    ${query_count}
+
+    IF    ${deve_gerar} and not ${existe}
+
+        Fail    Comissão de serviço deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas NÃO foi encontrado registro em comissoesservico.
+
+    ELSE IF    not ${deve_gerar} and ${existe}
+
+        Fail    Comissão de serviço NÃO deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas FOI encontrado registro em comissoesservico.
+
+    END
+
+    IF    ${deve_gerar}
+
+        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Registro encontrado para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+
+    ELSE
+
+        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Nenhum registro (esperado) para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+
+    END
+
+Busca Valor Comissão Serviço Gerada
+    [Arguments]    ${codigo_os}    ${codigo_funcionario}
+
+    ${query_valor}    Query    SELECT ROUND(COALESCE(SUM(cs.ValorComissao), 0), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.Cancelada IS NULL;
+
+    ${valor}    Busca Comissao Servico Gerada    ${query_valor}
+
+    RETURN    ${valor}
+
+Verifica Comissão Serviço Gerada Por Papel
+    [Arguments]    ${codigo_os}    ${codigo_funcionario}    ${papel}    ${deve_gerar}=${True}
+
+    IF    '${papel}' == 'vendedor'
+
+        ${query_count}    Query    SELECT COUNT(*) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.ComissaoVendedor = 1 AND cs.Cancelada IS NULL;
+
+    ELSE IF    '${papel}' == 'executor'
+
+        ${query_count}    Query    SELECT COUNT(*) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.ComissaoVendedor IS NULL AND cs.Cancelada IS NULL;
+
+    ELSE
+
+        Fail    Papel inválido: '${papel}'. Use 'vendedor' ou 'executor'.
+
+    END
+
+    ${existe}    Verifica Comissao Servico Existe    ${query_count}
+
+    IF    ${deve_gerar} and not ${existe}
+
+        Fail    Comissão de serviço (${papel}) deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas NÃO foi encontrado registro na tabela 'comissoesservico'.
+
+    ELSE IF    not ${deve_gerar} and ${existe}
+
+        Fail    Comissão de serviço (${papel}) NÃO deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas FOI encontrado registro na tabela 'comissoesservico'.
+
+    END
+
+    IF    ${deve_gerar}
+
+        Log To Console    [Verifica Comissão Serviço Gerada Por Papel] ✓ Registro (${papel}) encontrado para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+
+    ELSE
+
+        Log To Console    [Verifica Comissão Serviço Gerada Por Papel] ✓ Nenhum registro (${papel}) (esperado) para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+
+    END
+
+Busca Valor Comissão Serviço Gerada Por Papel
+    [Arguments]    ${codigo_os}    ${codigo_funcionario}    ${papel}
+
+    IF    '${papel}' == 'vendedor'
+
+        ${query_valor}    Query    SELECT ROUND(COALESCE(SUM(cs.ValorComissao), 0), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.ComissaoVendedor = 1 AND cs.Cancelada IS NULL;
+
+    ELSE IF    '${papel}' == 'executor'
+
+        ${query_valor}    Query    SELECT ROUND(COALESCE(SUM(cs.ValorComissao), 0), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.ComissaoVendedor IS NULL AND cs.Cancelada IS NULL;
+
+    ELSE
+
+        Fail    Papel inválido: '${papel}'. Use 'vendedor' ou 'executor'.
+
+    END
+
+    ${valor}    Busca Comissao Servico Gerada    ${query_valor}
+
+    RETURN    ${valor}
+
+Valida Comissão Linha Serviço
+    [Arguments]    ${tipo_linha}    ${cenario}
+
+    Log To Console    \n[Valida Comissão Linha Serviço] Tipo: ${tipo_linha} | Cenário: ${cenario}
+
+    ${valor_base}    Consulta valor base serviço    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
+
+    IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ] Vendedor ${Codigo_Vendedor} não possui registro na tabela 'comissaoporlinha_vendedor' para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota}    Set Variable    ${aliquotas}[0]
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota}
+
+        Log To Console    [PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ] Aliquota: ${aliquota} | Comissão: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${valor_bd}    Busca Valor Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}
+
+        Should Be Equal As Numbers    ${valor_bd}    0    msg=[PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ] Comissão deveria ser 0, mas encontrou ${valor_bd}.
+
+        ${Total_Comissao_OS}    Set Variable    ${0}
+
+        Log To Console    [PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ] cpv.Aliquota = 0 → Comissão: 0 (registro com valor 0)
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    deve_gerar=${True}
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${False}
+
+        ${aliquotas_executor}    Consulta alíquotas serviço por vendedor    ${Codigo_Tecnico_Servico}    ${COD_SERVICO}
+
+        IF    $aliquotas_executor is None
+            Fail    [PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ] Executor ${Codigo_Tecnico_Servico} não possui registro na tabela 'comissaoporlinha_vendedor' para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota_executor}    Set Variable    ${aliquotas_executor}[0]
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota_executor}
+
+        Log To Console    [PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ] Executor ${Codigo_Tecnico_Servico} cpv.Aliquota: ${aliquota_executor} | Comissão executor: ${Total_Comissao_OS} | Vendedor OS: SEM registro na tabela 'comissaoporlinha_vendedor'
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}
+
+        Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ] Comissão do executor (${Codigo_Tecnico_Servico}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${False}
+
+        ${Total_Comissao_OS}    Set Variable    ${0}
+
+        Log To Console    [PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ] Executor cpv.Aliquota = 0 → NINGUÉM recebe | Executor: registro com valor 0 | Vendedor OS: SEM registro na tabela 'comissaoporlinha_vendedor'
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC'
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC] Vendedor ${Codigo_Vendedor} não possui registro em cpv para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota}    Set Variable    ${aliquotas}[0]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC] Comissão do executor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota}
+
+        Log To Console    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC] Aliquota: ${aliquota} | AliquotaExec: 0 | Comissão vendedor: ${Total_Comissao_OS} | Executor: valor 0
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC'
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC] Vendedor ${Codigo_Vendedor} não possui registro em cpv para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota_execucao}    Set Variable    ${aliquotas}[1]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Should Be Equal As Numbers    ${valor_vendedor_bd}    0    msg=[PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC] Comissão do vendedor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_vendedor_bd}.
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota_execucao}
+
+        Log To Console    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC] Aliquota: 0 | AliquotaExec: ${aliquota_execucao} | Vendedor: valor 0 | Comissão executor: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ'
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ] Vendedor ${Codigo_Vendedor} não possui registro em cpv para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota}             Set Variable    ${aliquotas}[0]
+        ${aliquota_execucao}    Set Variable    ${aliquotas}[1]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Aliquota Somada    ${valor_base}    ${aliquota}    ${aliquota_execucao}
+
+        Log To Console    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ] Aliquota: ${aliquota} | AliquotaExec: ${aliquota_execucao} | Comissão total: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_ALIQ' or '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_SEM_ALIQ'
+
+        ${aliquotas_executor}    Consulta alíquotas serviço por vendedor    ${Codigo_Tecnico_Servico}    ${COD_SERVICO}
+
+        IF    $aliquotas_executor is None
+            Fail    [${cenario}] Executor ${Codigo_Tecnico_Servico} não possui registro em cpv para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota_execucao}    Set Variable    ${aliquotas_executor}[1]
+
+        ${aliquotas_vendedor}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas_vendedor is not None
+            ${aliquota_vendedor_os}    Set Variable    ${aliquotas_vendedor}[0]
+        ELSE
+            ${aliquota_vendedor_os}    Set Variable    0
+        END
+
+        ${resultado}    Calcula Comissao Servico Vendedores Diferentes    ${valor_base}    ${aliquota_execucao}    ${aliquota_vendedor_os}
+
+        ${comissao_executor}       Set Variable    ${resultado}[comissao_executor]
+        ${comissao_vendedor_os}    Set Variable    ${resultado}[comissao_vendedor_os]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    executor    deve_gerar=${True}
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        IF    ${comissao_executor} == 0
+
+            ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    executor
+
+            Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[${cenario}] Comissão do executor (${Codigo_Tecnico_Servico}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+            Log To Console    [${cenario}] Executor ${Codigo_Tecnico_Servico}: AliquotaExec = 0 → registro com valor 0.
+
+        ELSE
+
+            ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    executor
+            
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${comissao_executor}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${comissao_executor}    ${valor_executor_bd}
+
+            Should Be Equal As Numbers    ${valor_executor_bd}    ${comissao_executor}    msg=[${cenario}] Comissão do executor (${Codigo_Tecnico_Servico}) diverge.
+
+            Log To Console    [${cenario}] Executor ${Codigo_Tecnico_Servico}: AliquotaExec ${aliquota_execucao} → comissão: ${comissao_executor}
+
+        END
+
+        IF    ${comissao_vendedor_os} == 0
+
+            ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+            Should Be Equal As Numbers    ${valor_vendedor_bd}    0    msg=[${cenario}] Comissão do vendedor OS (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_vendedor_bd}.
+
+            Log To Console    [${cenario}] Vendedor OS ${Codigo_Vendedor}: Aliquota = 0 → registro com valor 0.
+
+        ELSE
+
+            ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${comissao_vendedor_os}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${comissao_vendedor_os}    ${valor_vendedor_bd}
+
+            Should Be Equal As Numbers    ${valor_vendedor_bd}    ${comissao_vendedor_os}    msg=[${cenario}] Comissão do vendedor OS (${Codigo_Vendedor}) diverge.
+
+            Log To Console    [${cenario}] Vendedor OS ${Codigo_Vendedor}: Aliquota ${aliquota_vendedor_os} → comissão: ${comissao_vendedor_os}
+
+        END
+
+        IF    ${comissao_executor} > 0
+
+            ${Total_Comissao_OS}    Set Variable    ${comissao_executor}
+
+            Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Tecnico_Servico}
+
+            Log To Console    [${cenario}] Comissão do executor para baixa: ${Total_Comissao_OS}
+
+        ELSE IF    ${comissao_vendedor_os} > 0
+
+            ${Total_Comissao_OS}    Set Variable    ${comissao_vendedor_os}
+
+            Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Vendedor}
+
+            Log To Console    [${cenario}] Comissão do vendedor OS para baixa: ${Total_Comissao_OS}
+
+        ELSE
+
+            ${Total_Comissao_OS}    Set Variable    0
+
+            Log To Console    [${cenario}] Nenhuma comissão para baixa (ambos zero).
+
+        END
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ] Vendedor ${Codigo_Vendedor} deveria ter registro em cpv para serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota}    Set Variable    ${aliquotas}[0]
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota}
+
+        Log To Console    [PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ] cpv.Aliquota DIFERENCIADA: ${aliquota} | Comissão: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${valor_bd}    Busca Valor Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}
+
+        Should Be Equal As Numbers    ${valor_bd}    0    msg=[PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO] Comissão do vendedor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_bd}.
+
+        ${Total_Comissao_OS}    Set Variable    ${0}
+
+        Log To Console    [PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO] Mesmo vend, param desab | cpv.Aliquota = 0 → registro com valor 0, NÃO aparece no grid
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV'
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${aliquota_geral}    Consulta alíquota geral serviço    ${COD_SERVICO}
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota_geral}
+
+        Log To Console    [PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV] SEM cpv → Aliquota Geral: ${aliquota_geral} | Comissão: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV'
+
+        ${aliquotas_executor}    Consulta alíquotas serviço por vendedor    ${Codigo_Tecnico_Servico}    ${COD_SERVICO}
+
+        IF    $aliquotas_executor is None
+            Fail    [${cenario}] Executor ${Codigo_Tecnico_Servico} não possui registro em cpv para o serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota_executor}    Set Variable    ${aliquotas_executor}[0]
+
+        IF    ${aliquota_executor} > 0
+            
+            Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    deve_gerar=${True}
+
+            Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${False}
+
+            ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota_executor}
+
+            Log To Console    [${cenario}] Executor cpv.Aliquota: ${aliquota_executor} | Comissão executor: ${Total_Comissao_OS} | Vendedor OS: SEM registro em comissoesservico
+
+        ELSE
+            
+            Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    deve_gerar=${True}
+
+            ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}
+
+            Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[${cenario}] Comissão do executor (${Codigo_Tecnico_Servico}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+            Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${False}
+
+            ${Total_Comissao_OS}    Set Variable    ${0}
+
+            Log To Console    [${cenario}] Executor cpv.Aliquota = 0 → NINGUÉM recebe | Executor: registro com valor 0 | Vendedor OS: SEM registro em comissoesservico
+
+        END
+
+    ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+        ${aliquota_geral}    Consulta alíquota geral serviço    ${COD_SERVICO}
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    deve_gerar=${True}
+
+        Verifica Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${False}
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota_geral}
+
+        Log To Console    [${cenario}] Vend ≠, param desab | Executor SEM cpv → Aliquota Geral: ${aliquota_geral} | Comissão executor: ${Total_Comissao_OS} | Vendedor OS: SEM registro em comissoesservico
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO'
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO] Vendedor ${Codigo_Vendedor} não possui registro em cpv para serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota}    Set Variable    ${aliquotas}[0]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO] Comissão do executor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota}
+
+        Log To Console    [PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO] cpv.Aliquota: ${aliquota} | cpv.AliquotaExec: 0 | Comissão vendedor: ${Total_Comissao_OS} | Executor: valor 0
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC'
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC] Vendedor ${Codigo_Vendedor} não possui registro em cpv para serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota_execucao}    Set Variable    ${aliquotas}[1]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Should Be Equal As Numbers    ${valor_vendedor_bd}    0    msg=[PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC] Comissão do vendedor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_vendedor_bd}.
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Com Aliquota    ${valor_base}    ${aliquota_execucao}
+
+        Log To Console    [PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC] cpv.Aliquota: 0 | cpv.AliquotaExec: ${aliquota_execucao} | Vendedor: valor 0 | Comissão executor: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ'
+
+        ${aliquotas}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    $aliquotas is None
+            Fail    [PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ] Vendedor ${Codigo_Vendedor} não possui registro em cpv para serviço ${COD_SERVICO}.
+        END
+
+        ${aliquota}             Set Variable    ${aliquotas}[0]
+        ${aliquota_execucao}    Set Variable    ${aliquotas}[1]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Aliquota Somada    ${valor_base}    ${aliquota}    ${aliquota_execucao}
+
+        Log To Console    [PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ] Mesmo vend, param hab | cpv.Aliquota: ${aliquota} | cpv.AliquotaExec: ${aliquota_execucao} | Comissão total: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV'
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        ${aliquota_geral}    Consulta alíquota geral serviço    ${COD_SERVICO}
+
+        ${Total_Comissao_OS}    Calcula Comissao Servico Aliquota Somada    ${valor_base}    ${aliquota_geral}    ${aliquota_geral}
+
+        Log To Console    [PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV] Mesmo vend, param hab, SEM cpv | 2 × AliquotaGeral: ${aliquota_geral} | Comissão total: ${Total_Comissao_OS}
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+        ${aliquotas_executor}    Consulta alíquotas serviço por vendedor    ${Codigo_Tecnico_Servico}    ${COD_SERVICO}
+
+        IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+            
+            ${aliquota_geral}    Consulta alíquota geral serviço    ${COD_SERVICO}
+
+            ${aliquota_execucao}    Set Variable    ${aliquota_geral}
+
+        ELSE
+
+            IF    $aliquotas_executor is None
+                Fail    [${cenario}] Executor ${Codigo_Tecnico_Servico} não possui registro em cpv para o serviço ${COD_SERVICO}.
+            END
+
+            ${aliquota_execucao}    Set Variable    ${aliquotas_executor}[1]
+
+        END
+
+        ${aliquotas_vendedor}    Consulta alíquotas serviço por vendedor    ${Codigo_Vendedor}    ${COD_SERVICO}
+
+        IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${aliquota_geral_vend}    Consulta alíquota geral serviço    ${COD_SERVICO}
+
+            ${aliquota_vendedor_os}    Set Variable    ${aliquota_geral_vend}
+
+        ELSE IF    $aliquotas_vendedor is not None
+
+            ${aliquota_vendedor_os}    Set Variable    ${aliquotas_vendedor}[0]
+            
+        ELSE
+
+            ${aliquota_vendedor_os}    Set Variable    0
+
+        END
+
+        ${resultado}    Calcula Comissao Servico Vendedores Diferentes    ${valor_base}    ${aliquota_execucao}    ${aliquota_vendedor_os}
+
+        ${comissao_executor}       Set Variable    ${resultado}[comissao_executor]
+        ${comissao_vendedor_os}    Set Variable    ${resultado}[comissao_vendedor_os]
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    executor    deve_gerar=${True}
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        IF    ${comissao_executor} == 0
+
+            ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    executor
+
+            Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[${cenario}] Comissão do executor (${Codigo_Tecnico_Servico}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+            Log To Console    [${cenario}] Executor ${Codigo_Tecnico_Servico}: AliquotaExec = 0 → registro com valor 0.
+
+        ELSE
+
+            ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}    executor
+
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${comissao_executor}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${comissao_executor}    ${valor_executor_bd}
+
+            Should Be Equal As Numbers    ${valor_executor_bd}    ${comissao_executor}    msg=[${cenario}] Comissão do executor (${Codigo_Tecnico_Servico}) diverge.
+
+            Log To Console    [${cenario}] Executor ${Codigo_Tecnico_Servico}: AliquotaExec ${aliquota_execucao} → comissão: ${comissao_executor}
+
+        END
+
+        IF    ${comissao_vendedor_os} == 0
+
+            ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+            Should Be Equal As Numbers    ${valor_vendedor_bd}    0    msg=[${cenario}] Comissão do vendedor OS (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_vendedor_bd}.
+
+            Log To Console    [${cenario}] Vendedor OS ${Codigo_Vendedor}: Aliquota = 0 → registro com valor 0.
+
+        ELSE
+
+            ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+            
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${comissao_vendedor_os}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${comissao_vendedor_os}    ${valor_vendedor_bd}
+
+            Should Be Equal As Numbers    ${valor_vendedor_bd}    ${comissao_vendedor_os}    msg=[${cenario}] Comissão do vendedor OS (${Codigo_Vendedor}) diverge.
+
+            Log To Console    [${cenario}] Vendedor OS ${Codigo_Vendedor}: Aliquota ${aliquota_vendedor_os} → comissão: ${comissao_vendedor_os}
+
+        END
+
+        IF    ${comissao_executor} > 0
+
+            ${Total_Comissao_OS}    Set Variable    ${comissao_executor}
+
+            Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Tecnico_Servico}
+
+            Log To Console    [${cenario}] Comissão do executor para baixa: ${Total_Comissao_OS}
+
+        ELSE IF    ${comissao_vendedor_os} > 0
+
+            ${Total_Comissao_OS}    Set Variable    ${comissao_vendedor_os}
+
+            Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Vendedor}
+
+            Log To Console    [${cenario}] Comissão do vendedor OS para baixa: ${Total_Comissao_OS}
+            
+        ELSE
+
+            ${Total_Comissao_OS}    Set Variable    0
+
+            Log To Console    [${cenario}] Nenhuma comissão para baixa (ambos zero).
+
+        END
+
+    ELSE
+
+        Fail    Cenário '${cenario}' não reconhecido para tipo '${tipo_linha}'.
+
+    END
+
     Set Test Variable    ${Total_Comissao_OS}
     Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
     Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
-
-    Log To Console    [OS] Valor final da comissão (Linha): ${Total_Comissao_Servicos}
 
 Calcula comissão sobre total venda - Serviços
 
@@ -671,7 +1263,6 @@ Pesquisa código da operação com zeros a esquerda
         ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
 
     END
-    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
 
     Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${CODIGO_OPERACAO_MOV}
     Sleep    ${SLEEP_BAIXO}
@@ -686,13 +1277,29 @@ Pesquisa código da operação com zeros a esquerda
 
 E baixo a comissao recém recebida
 
+    IF    ${Cenario_Sem_Comissao_Servico} and ${Baixa_Eh_Servico}
+
+        Log To Console    [Cenario_Sem_Comissao_Servico] Sem comissão de serviço para baixar → pulando baixa.
+        RETURN
+
+    END
+
+    IF    ${Cenario_Sem_Comissao_Produto} and not ${Baixa_Eh_Servico}
+
+        Log To Console    [Cenario_Sem_Comissao_Produto] Sem comissão de produto para baixar → pulando baixa.
+        RETURN
+
+    END
+
     SikuliLibrary.Click    ${BT_BAIXAR}
     Wait Until Screen Contain    ${TELA_AGENDAMENTO}    ${TEMPO_TELA}
 
+    Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${BT_OK}
 
-    IF    ${Total_Comissao} == 0
-        
+    # IF    ${Total_Comissao} == 0 and ${Comissao_Zerada_Por_Devolucao}
+    IF    ${Comissao_Zerada_Por_Devolucao}
+
         Wait Until Screen Contain    ${AVISO_COMISSAO_ZERADA}    ${TEMPO_TELA}
         Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
@@ -716,7 +1323,8 @@ E baixo a comissao recém recebida
             Wait Until Screen Contain    ${AVISO_PERIODO_COM_LOTE_PAGAMENTO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
 
-            Press Special Key    ENTER
+            # Press Special Key    ENTER
+            SikuliLibrary.Click    ${BT_OK_AVISO_LOTE_DE_PAGAMENTO}
             
         END
 
@@ -732,7 +1340,11 @@ Valida baixa de comissão
         
         Sleep    ${SLEEP_BAIXO}
 
-        IF    ${OS_Vendedor_E_Tecnico_Diferentes}
+        IF    '${Codigo_Vendedor_Comissao_Tela}' != '${EMPTY}'
+
+            ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor_Comissao_Tela} ORDER BY ID DESC LIMIT 1;
+
+        ELSE IF    ${OS_Vendedor_E_Tecnico_Diferentes}
 
             ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Tecnico_Servico} ORDER BY ID DESC LIMIT 1;
 
@@ -741,7 +1353,8 @@ Valida baixa de comissão
             ${queryComissoesPagas_Servico}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
             
         END
-
+        
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
         ${Total_Comissao_Servicos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Servicos}    ${queryComissoesPagas_Servico[0][1]}
 
         IF    ${houve_ajuste}
@@ -759,7 +1372,8 @@ Valida baixa de comissão
         ${queryComissoesPagas_Produto}    Query    SELECT ID, Total FROM comissoespagas WHERE CodigoVendedor = ${Codigo_Vendedor} ORDER BY ID DESC LIMIT 1;
 
         IF    ${Teste_Comissão_Parcelada}
-
+            
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
             ${Total_Comissao}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao}    ${queryComissoesPagas_Produto[0][1]}
 
             IF    ${houve_ajuste}
@@ -769,7 +1383,8 @@ Valida baixa de comissão
             Should Be Equal As Numbers    ${queryComissoesPagas_Produto[0][1]}    ${Total_Comissao}
 
         ELSE
-
+            
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
             ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${queryComissoesPagas_Produto[0][1]}
 
             IF    ${houve_ajuste}
@@ -878,6 +1493,14 @@ Valida baixa comissao
     ${Comissao_Paga_BD}    Evaluate    decimal.Decimal(str(${ComissaoPaga[0][1]})).quantize(decimal.Decimal("0.00"))    modules=decimal
     
     Should Be Equal    ${ComissaoPaga[0][0]}    ${Codigo_Vendedor}
+
+    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+    ${Total_Comissao}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao}    ${Comissao_Paga_BD}
+
+    IF    ${houve_ajuste}
+        Set Test Variable    ${Total_Comissao}
+    END
+
     Should Be Equal    ${Comissao_Paga_BD}    ${Total_Comissao}
 
     Check If Exists In Database    SELECT Sequencia, nDocumento, CodigoAbertura, ValorDocumento FROM caixamovimentos WHERE nDocumento = ${NDoc_Comissao}
@@ -886,11 +1509,48 @@ Então visualizo os detalhes da comissao recem paga
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
+    
+    IF    ${Comissao_SomenteRecebidas}
 
-    Press Combination    KEY.ALT    KEY.C
-    Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+        FOR    ${i}    IN RANGE    2
 
-    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+        Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+    
+        ${dataInicial}    Copia data do campo e converte para o formato ISO 8601
+        Sleep    ${SLEEP_BAIXO}
+
+        Type With Modifiers    H
+        Press Special Key    TAB
+
+        Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+
+        Type With Modifiers    H
+        ${dataFinal}    Copia data do campo e converte para o formato ISO 8601
+
+        Press Combination    KEY.ALT    KEY.C
+        Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
+
+        IF    ${gridSemRegistro}
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_ALTO}
+            Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
+
+        END
+
+    END
+
     ${Cod_Com_String}    Convert To String    ${NDoc_Comissao}
 
     ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Com_String}
@@ -902,7 +1562,6 @@ Então visualizo os detalhes da comissao recem paga
         ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
 
     END
-    # Verifica a quantidade de zeros a esquerda para a pesquisa de codigo de venda
 
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${COL_LOTE}
@@ -1004,7 +1663,7 @@ Valida os dados do relatório de comissões
 
     END
     
-    # De início, cmparação com o banco disponível somente para comissões pendentes.
+    # De início, comparação com o banco disponível somente para comissões pendentes.
     IF    ${COMISSOES_PENDENTES} and ${Relatorio_Deve_Conter_Dados}
 
         Compara Valores Relatorio e Banco Pendentes
@@ -1097,18 +1756,35 @@ Compara Valores Relatorio e Banco Pendentes
         
         ${VALOR_FINAL_OPERAÇÃO}    Evaluate    decimal.Decimal(str(${VALOR_FINAL_OPERAÇÃO}))    modules=decimal
 
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${VALOR_FINAL_OPERAÇÃO}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${VALOR_FINAL_OPERAÇÃO}    ${consultaRelatorio[${i}][0]}
+
         Should Be Equal As Numbers    ${consultaRelatorio[${i}][0]}    ${VALOR_FINAL_OPERAÇÃO}
 
         IF    '${consultaRelatorio[${i}][8]}' == 'OS'
-        
+
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${Valor_Total_Servicos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Valor_Total_Servicos}    ${consultaRelatorio[${i}][2]}
+
             Should Be Equal As Numbers    ${consultaRelatorio[${i}][2]}    ${Valor_Total_Servicos}
+
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${Total_Comissao_Servicos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Servicos}    ${consultaRelatorio[${i}][4]}
+
             Should Be Equal As Numbers    ${consultaRelatorio[${i}][4]}    ${Total_Comissao_Servicos}
             
         END
 
         IF    '${consultaRelatorio[${i}][8]}' == 'VP'
 
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${Valor_Total_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Valor_Total_Produtos}    ${consultaRelatorio[${i}][1]}
+
             Should Be Equal As Numbers    ${consultaRelatorio[${i}][1]}    ${Valor_Total_Produtos}
+
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${consultaRelatorio[${i}][3]}
+
             Should Be Equal As Numbers    ${consultaRelatorio[${i}][3]}    ${Total_Comissao_Produtos}
 
         END
@@ -1135,7 +1811,7 @@ Verifica se a operação gerada está vinculada a uma comissão pendente
         
         IF    ${dado_encontrado} == $False
             
-            Log To Console    Nenhum registro encontrado, conforme o esperado.
+            Log To Console    \nNenhum registro encontrado, conforme o esperado.
             
             # Nesse cenário, a mensagem 'Pesquisa do relatório concluída' significa que o valor pesquisado não foi encontrado no relatório.
             Wait Until Screen Contain    ${AVISO_PESQUISA_TEXTO_CONCLUIDA}    ${SLEEP_ALTO}
@@ -1152,7 +1828,7 @@ Verifica se a operação gerada está vinculada a uma comissão pendente
 
         IF    ${dado_encontrado}
             
-            Log To Console    Registro encontrado no relatório de comissões, conforme o esperado.
+            Log To Console    \nRegistro encontrado no relatório de comissões, conforme o esperado.
         
         ELSE
             
@@ -1197,9 +1873,10 @@ Calcula comissão por linha de produto - apenas 1 produto - Devolução
 
     Sleep    ${SLEEP_MEDIO}
 
+    ${valor_comissao_unitario}    Consulta valor comissão produto único    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
     ${Total_Comissao_Produtos}    Calcula Comissao Linha Produto Unico
-    ...    ${COD_PRODUTO}
-    ...    ${CODIGO_OPERACAO_MOV}
+    ...    ${valor_comissao_unitario}
     ...    ${Quantidade_Produto_Venda/Dev}
     ...    ${Total_Comissao_Produtos}
 
@@ -1214,8 +1891,10 @@ Calcula comissão por linha de produto - múltiplos produtos - Devolução
 
     Sleep    ${SLEEP_MEDIO}
 
+    ${valores_comissao}    Consulta valores comissão por produto    ${Codigos_Produtos}
+
     ${Total_Comissao_Produtos}    ${Total_Comissao}    ${PERCENT_COMISSAO}    Calcula Comissao Linha Produto Multiplos
-    ...    ${Codigos_Produtos}
+    ...    ${valores_comissao}
     ...    ${Quantidade_Produto_Devolucao}
     ...    ${DADOS_VENDA_DEVOLUÇÃO}
     ...    ${POSIÇÃO_VALOR}
@@ -1226,9 +1905,14 @@ Calcula comissão por linha de produto - múltiplos produtos - Devolução
 
 E comparo a comissão antes e após a edição da venda
 
-    Should Be Equal As Numbers    ${comissao_anterior}    ${Total_Comissao}
+    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+    ${Total_Comissao}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao}    ${comissao_anterior}
 
-    Log To Console    A comissão anterior de ${comissao_anterior} é igual a nova comissão de ${Total_Comissao}
+    IF    ${houve_ajuste}
+        Set Test Variable    ${Total_Comissao}
+    END
+
+    Should Be Equal As Numbers    ${comissao_anterior}    ${Total_Comissao}
 
 E informo o vendedor comissionado
 
@@ -1320,6 +2004,381 @@ E valido os filtros de produtos e serviços
 
     Set Test Variable    ${Filtro_Produtos}    ${marcar_produtos}
     Set Test Variable    ${Filtro_Servicos}    ${marcar_servicos}
+
+Consulta valor comissão produto único
+    [Arguments]    ${codigo_produto}    ${codigo_operacao}
+
+    IF    '${Tipo_Comissao_Linha}' == 'Simples'
+
+        ${resultado}    Query    SELECT vp.ValorUnitario * (cl.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo WHERE p.Codigo = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+        ${resultado}    Query    SELECT vp.ValorUnitario * (cpv.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo INNER JOIN comissaoporlinha_vendedor cpv ON cpv.IDLinhaComissao = cl.Codigo AND cpv.CodigoVendedor = ${Codigo_Vendedor} WHERE p.Codigo = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Mista'
+
+        ${vendedor_tem_aliquota}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND p.Codigo = ${codigo_produto} AND cl.Tipo = 'D' AND cl.Mista = 1;
+
+        IF    ${vendedor_tem_aliquota}
+
+            ${resultado}    Query    SELECT vp.ValorUnitario * (cpv.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo INNER JOIN comissaoporlinha_vendedor cpv ON cpv.IDLinhaComissao = cl.Codigo AND cpv.CodigoVendedor = ${Codigo_Vendedor} WHERE p.Codigo = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
+
+        ELSE
+
+            ${resultado}    Query    SELECT vp.ValorUnitario * (cl.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo WHERE p.Codigo = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
+
+        END
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+        Fail    Consulta de comissão para Tabela de Preço ainda não implementada.
+
+    END
+
+    IF    $resultado == []
+        Fail    Comissão não encontrada para produto ${codigo_produto} na operação ${codigo_operacao} (tipo: ${Tipo_Comissao_Linha}).
+    END
+
+    ${valor_comissao_unitario}    Set Variable    ${resultado[0][0]}
+
+    RETURN    ${valor_comissao_unitario}
+
+Consulta valores comissão por produto
+    [Arguments]    ${codigos_produtos}
+
+    @{valores_comissao}    Create List
+
+    FOR    ${cod_produto}    IN    @{codigos_produtos}
+
+        IF    '${Tipo_Comissao_Linha}' == 'Simples'
+
+            ${resultado}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo WHERE p.Codigo = ${cod_produto};
+
+        ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+            ${resultado}    Query    SELECT SUM(p.vendaT1 * (cpv.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo INNER JOIN comissaoporlinha_vendedor cpv ON cpv.IDLinhaComissao = cl.Codigo AND cpv.CodigoVendedor = ${Codigo_Vendedor} WHERE p.Codigo = ${cod_produto};
+
+        ELSE IF    '${Tipo_Comissao_Linha}' == 'Mista'
+
+            ${vendedor_tem_aliquota}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND p.Codigo = ${cod_produto} AND cl.Tipo = 'D' AND cl.Mista = 1;
+
+            IF    ${vendedor_tem_aliquota}
+
+                ${resultado}    Query    SELECT SUM(p.vendaT1 * (cpv.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo INNER JOIN comissaoporlinha_vendedor cpv ON cpv.IDLinhaComissao = cl.Codigo AND cpv.CodigoVendedor = ${Codigo_Vendedor} WHERE p.Codigo = ${cod_produto};
+
+            ELSE
+
+                ${resultado}    Query    SELECT SUM(p.vendaT1 * (cl.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo WHERE p.Codigo = ${cod_produto};
+
+            END
+
+        ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+            Fail    Consulta de comissão para Tabela de Preço ainda não implementada.
+
+        END
+
+        IF    $resultado != [] and $resultado[0][0] is not None
+
+            Append To List    ${valores_comissao}    ${resultado[0][0]}
+
+        ELSE
+
+            Append To List    ${valores_comissao}    ${None}
+
+        END
+
+    END
+
+    Log To Console    [Consulta comissão múltiplos produtos] Tipo: ${Tipo_Comissao_Linha} | Valores: ${valores_comissao}
+
+    RETURN    ${valores_comissao}
+
+Consulta valor comissão serviço único
+    [Arguments]    ${cod_servico}    ${codigo_operacao}    ${total_tributos_servico}
+
+    IF    '${Tipo_Comissao_Linha}' == 'Simples'
+
+        ${resultado}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) * (cl.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${cod_servico} INNER JOIN vendas v ON v.Codigo = ${codigo_operacao};
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+        ${resultado}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) * (cpv.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${cod_servico} INNER JOIN vendas v ON v.Codigo = ${codigo_operacao} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.IDLinhaComissao = cl.Codigo AND cpv.CodigoVendedor = ${Codigo_Vendedor};
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Mista'
+
+        ${vendedor_tem_aliquota}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND s.Codigo = ${cod_servico} AND cl.Tipo = 'D' AND cl.Mista = 1;
+
+        IF    ${vendedor_tem_aliquota}
+
+            ${resultado}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) * (cpv.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${cod_servico} INNER JOIN vendas v ON v.Codigo = ${codigo_operacao} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.IDLinhaComissao = cl.Codigo AND cpv.CodigoVendedor = ${Codigo_Vendedor};
+
+        ELSE
+
+            ${resultado}    Query    SELECT SUM((v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) * (cl.Aliquota / 100)) FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = ${cod_servico} INNER JOIN vendas v ON v.Codigo = ${codigo_operacao};
+
+        END
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+        Fail    Consulta de comissão para Tabela de Preço ainda não implementada.
+
+    END
+
+    IF    $resultado == [] or $resultado[0][0] is None
+        Fail    Comissão não encontrada para serviço ${cod_servico} na operação ${codigo_operacao} (tipo: ${Tipo_Comissao_Linha}).
+    END
+
+    ${valor_comissao_servico}    Set Variable    ${resultado[0][0]}
+
+    Log To Console    [Consulta comissão serviço único] Serviço: ${cod_servico} | Operação: ${codigo_operacao} | Tipo: ${Tipo_Comissao_Linha} | Valor comissão: ${valor_comissao_servico}
+
+    RETURN    ${valor_comissao_servico}
+
+Consulta valor base serviço
+    [Arguments]    ${codigo_operacao}    ${total_tributos_servico}
+
+    ${resultado}    Query    SELECT (v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) AS ValorBase FROM vendas v WHERE v.Codigo = ${codigo_operacao};
+
+    IF    $resultado == []
+        Fail    Valor base do serviço não encontrado para a operação ${codigo_operacao}.
+    END
+
+    ${valor_base}    Set Variable    ${resultado[0][0]}
+
+    Log To Console    [Consulta valor base serviço] Operação: ${codigo_operacao} | Tributos: ${total_tributos_servico}% | Valor base: ${valor_base}
+
+    RETURN    ${valor_base}
+
+Consulta alíquotas serviço por vendedor
+    [Arguments]    ${codigo_vendedor_consulta}    ${cod_servico}
+
+    ${resultado}    Query    SELECT cpv.Aliquota, cpv.AliquotaExecucao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${codigo_vendedor_consulta} AND s.Codigo = ${cod_servico};
+
+    IF    $resultado == []
+
+        Log To Console    [Consulta alíquotas serviço] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o serviço ${cod_servico}.
+        RETURN    ${None}
+        
+    END
+
+    ${aliquota}             Set Variable    ${resultado[0][0]}
+    ${aliquota_execucao}    Set Variable    ${resultado[0][1]}
+
+    Log To Console    [Consulta alíquotas serviço] Vendedor: ${codigo_vendedor_consulta} | Serviço: ${cod_servico} | Aliquota: ${aliquota} | AliquotaExecucao: ${aliquota_execucao}
+
+    RETURN    ${aliquota}    ${aliquota_execucao}
+
+Consulta alíquota geral serviço
+    [Arguments]    ${cod_servico}
+
+    ${resultado}    Query    SELECT cl.Aliquota FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE s.Codigo = ${cod_servico};
+
+    IF    $resultado == []
+        Fail    Alíquota geral da comissaoporlinha não encontrada para o serviço ${cod_servico}.
+    END
+
+    ${aliquota_geral}    Set Variable    ${resultado[0][0]}
+
+    Log To Console    [Consulta alíquota geral serviço] Serviço: ${cod_servico} | Aliquota geral: ${aliquota_geral}
+
+    RETURN    ${aliquota_geral}
+
+# ============================================================================================
+# Keywords de Validação de Comissão por Linha — PRODUTO (Diferenciada Por Vendedor + Mista)
+# ============================================================================================
+
+Consulta alíquotas produto por vendedor
+    [Arguments]    ${codigo_vendedor_consulta}    ${codigo_produto}
+
+    ${resultado}    Query    SELECT cpv.Aliquota FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${codigo_vendedor_consulta} AND p.Codigo = ${codigo_produto};
+
+    IF    $resultado == []
+
+        Log To Console    [Consulta alíquotas produto] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o produto ${codigo_produto}.
+        RETURN    ${None}
+        
+    END
+
+    ${aliquota}    Set Variable    ${resultado[0][0]}
+
+    Log To Console    [Consulta alíquotas produto] Vendedor: ${codigo_vendedor_consulta} | Produto: ${codigo_produto} | Aliquota: ${aliquota}
+
+    RETURN    ${aliquota}
+
+Consulta alíquota geral produto
+    [Arguments]    ${codigo_produto}
+
+    ${resultado}    Query    SELECT cl.Aliquota FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE p.Codigo = ${codigo_produto};
+
+    IF    $resultado == []
+        Fail    Alíquota geral da comissaoporlinha não encontrada para o produto ${codigo_produto}.
+    END
+
+    ${aliquota_geral}    Set Variable    ${resultado[0][0]}
+
+    Log To Console    [Consulta alíquota geral produto] Produto: ${codigo_produto} | Aliquota geral: ${aliquota_geral}
+
+    RETURN    ${aliquota_geral}
+
+Consulta valor base produto
+    [Arguments]    ${codigo_produto}    ${codigo_operacao}
+
+    ${resultado}    Query    SELECT vp.ValorUnitario FROM vendasprodutos vp WHERE vp.CodigoProduto = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
+
+    IF    $resultado == []
+        Fail    Valor base do produto ${codigo_produto} não encontrado para a operação ${codigo_operacao}.
+    END
+
+    ${valor_base}    Set Variable    ${resultado[0][0]}
+
+    Log To Console    [Consulta valor base produto] Produto: ${codigo_produto} | Operação: ${codigo_operacao} | Valor base (unitário): ${valor_base}
+
+    RETURN    ${valor_base}
+
+Verifica Comissão Produto Gerada
+    [Arguments]    ${codigo_operacao}    ${codigo_vendedor_verifica}    ${deve_gerar}=${True}
+
+    ${query_count}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL AND vp.ValorComissao IS NOT NULL AND vp.ValorComissao > 0;
+
+    ${contagem}    Set Variable    ${query_count[0][0]}
+    ${existe}    Evaluate    int(${contagem}) > 0
+
+    IF    ${deve_gerar} and not ${existe}
+
+        Fail    Comissão de produto deveria ter sido gerada para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}, mas NÃO foi encontrado registro com ValorComissao > 0 em vendasprodutos.
+
+    ELSE IF    not ${deve_gerar} and ${existe}
+
+        Fail    Comissão de produto NÃO deveria ter sido gerada para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}, mas FOI encontrado registro com ValorComissao > 0 em vendasprodutos.
+
+    END
+
+    IF    ${deve_gerar}
+
+        Log To Console    [Verifica Comissão Produto Gerada] ✓ ValorComissao > 0 encontrado para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
+
+    ELSE
+
+        Log To Console    [Verifica Comissão Produto Gerada] ✓ Nenhum ValorComissao > 0 (esperado) para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
+
+    END
+
+Busca Valor Comissão Produto Gerada
+    [Arguments]    ${codigo_operacao}    ${codigo_produto}
+
+    ${query_valor}    Query    SELECT ROUND(COALESCE(SUM(vp.ValorComissao), 0), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${codigo_operacao} AND vp.CodigoProduto = ${codigo_produto} AND vp.Cancelada IS NULL;
+
+    ${valor}    Evaluate    decimal.Decimal(str(${query_valor[0][0]})).quantize(decimal.Decimal("0.00"))    modules=decimal
+
+    Log To Console    [Busca Valor Comissão Produto Gerada] Operação: ${codigo_operacao} | Produto: ${codigo_produto} | Valor: ${valor}
+
+    RETURN    ${valor}
+
+Calcula Comissao Produto Com Aliquota
+    [Arguments]    ${valor_base}    ${aliquota}
+
+    ${comissao}    Evaluate    (decimal.Decimal(str(${valor_base})) * (decimal.Decimal(str(${aliquota})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
+
+    Log To Console    [Calcula Comissao Produto] Base: ${valor_base} | Aliquota: ${aliquota}% | Comissão: ${comissao}
+
+    RETURN    ${comissao}
+
+Valida Comissão Linha Produto
+    [Arguments]    ${tipo_linha}    ${cenario}
+
+    Log To Console    \n[Valida Comissão Linha Produto] Tipo: ${tipo_linha} | Cenário: ${cenario}
+
+    ${valor_base}    Consulta valor base produto    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
+
+    IF    '${cenario}' == 'PROD__DIF_POR_VEND__COM_ALIQ'
+
+        Verifica Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${aliquota}    Consulta alíquotas produto por vendedor    ${Codigo_Vendedor}    ${COD_PRODUTO}
+
+        IF    $aliquota is None
+            Fail    [PROD__DIF_POR_VEND__COM_ALIQ] Vendedor ${Codigo_Vendedor} não possui registro na tabela 'comissaoporlinha_vendedor' para o produto ${COD_PRODUTO}.
+        END
+
+        ${Total_Comissao_Produtos}    Calcula Comissao Produto Com Aliquota    ${valor_base}    ${aliquota}
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+        
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${valor_bd}
+
+        Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_Produtos}    msg=[PROD__DIF_POR_VEND__COM_ALIQ] Comissão do produto diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_Produtos}
+
+        Log To Console    [PROD__DIF_POR_VEND__COM_ALIQ] Aliquota: ${aliquota} | Comissão: ${Total_Comissao_Produtos}
+
+    ELSE IF    '${cenario}' == 'PROD__DIF_POR_VEND__SEM_ALIQ'
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+
+        Should Be Equal As Numbers    ${valor_bd}    0    msg=[PROD__DIF_POR_VEND__SEM_ALIQ] Comissão deveria ser 0, mas encontrou ${valor_bd}.
+
+        ${Total_Comissao_Produtos}    Set Variable    ${0}
+
+        Log To Console    [PROD__DIF_POR_VEND__SEM_ALIQ] cpv.Aliquota = 0 → Comissão: 0 (registro com valor 0)
+
+    ELSE IF    '${cenario}' == 'PROD__MISTA__COM_ALIQ'
+
+        Verifica Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${aliquota}    Consulta alíquotas produto por vendedor    ${Codigo_Vendedor}    ${COD_PRODUTO}
+
+        IF    $aliquota is None
+            Fail    [PROD__MISTA__COM_ALIQ] Vendedor ${Codigo_Vendedor} deveria ter registro em cpv para produto ${COD_PRODUTO}.
+        END
+
+        ${Total_Comissao_Produtos}    Calcula Comissao Produto Com Aliquota    ${valor_base}    ${aliquota}
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+        
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${valor_bd}
+
+        Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_Produtos}    msg=[PROD__MISTA__COM_ALIQ] Comissão do produto diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_Produtos}
+
+        Log To Console    [PROD__MISTA__COM_ALIQ] cpv.Aliquota DIFERENCIADA: ${aliquota} | Comissão: ${Total_Comissao_Produtos}
+
+    ELSE IF    '${cenario}' == 'PROD__MISTA__COM_ALIQ_ZERO'
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+
+        Should Be Equal As Numbers    ${valor_bd}    0    msg=[PROD__MISTA__COM_ALIQ_ZERO] Comissão deveria ser 0, mas encontrou ${valor_bd}.
+
+        ${Total_Comissao_Produtos}    Set Variable    ${0}
+
+        Log To Console    [PROD__MISTA__COM_ALIQ_ZERO] cpv.Aliquota = 0 → Comissão: 0 (registro com valor 0, NÃO aparece no grid)
+
+    ELSE IF    '${cenario}' == 'PROD__MISTA__SEM_REG_CPLV'
+
+        Verifica Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    deve_gerar=${True}
+
+        ${aliquota_geral}    Consulta alíquota geral produto    ${COD_PRODUTO}
+
+        ${Total_Comissao_Produtos}    Calcula Comissao Produto Com Aliquota    ${valor_base}    ${aliquota_geral}
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+        
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${valor_bd}
+
+        Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_Produtos}    msg=[PROD__MISTA__SEM_REG_CPLV] Comissão do produto diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_Produtos}
+
+        Log To Console    [PROD__MISTA__SEM_REG_CPLV] SEM cpv → Aliquota Geral: ${aliquota_geral} | Comissão: ${Total_Comissao_Produtos}
+
+    ELSE
+
+        Fail    Cenário '${cenario}' não reconhecido para tipo '${tipo_linha}' em validação de produto.
+
+    END
+
+    Set Test Variable    ${Total_Comissao_Produtos}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
 
 E gero o relatório de comissões
 

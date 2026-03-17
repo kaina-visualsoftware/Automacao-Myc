@@ -1,0 +1,10 @@
+# Sikuli temporary logs
+Sikuli_java*.txt
+
+# Sikuli captured images
+sikuli_captured/
+
+# Robot Framework outputs
+log.html
+output.xml
+report.html

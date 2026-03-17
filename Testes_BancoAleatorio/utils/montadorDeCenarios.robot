@@ -277,6 +277,18 @@ Dado que realizo uma ordem de serviço com produto e serviço incluso, considera
 
     END
 
+Dado que realizo uma ordem de serviço somente com serviço incluso, considerando funcionário comissionado por serviço
+
+    # É necessário que o parametro 'Habilite está opção caso deseje selecionar os funcionários em uma lista' esteja ***DESABILITADO***
+
+    KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
+    KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
+    KeyOrdemDeSevico1.E adiciono vendedor e cliente
+    KeyOrdemDeSevico1.E insiro um serviço informando a quantidade(1)
+    KeyOrdemDeSevico1.E acesso a aba pagamentos
+    KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
+    utils.E saio da tela(OrdemDeServico)
+
 Dado que cadastro uma conta a pagar avulsa
 
     keyContasPagar1.Dado que acesso a tela de cadastro avulso de contas a pagar
@@ -447,6 +459,16 @@ Dado que realizo uma ordem de serviço somente com serviço - A prazo
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
 
+Dado que realizo uma ordem de serviço somente com produto - A prazo
+
+    KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
+    KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
+    KeyOrdemDeSevico1.E adiciono vendedor e cliente
+    KeyOrdemDeSevico1.E insiro um produto normal informando a quantidade(1)
+    KeyOrdemDeSevico1.E acesso a aba pagamentos
+    KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
+    utils.E saio da tela(OrdemDeServico)
+
 Dado que realizo uma ordem de serviço somente com serviço totalmente recebida no caixa - A prazo
 
     Dado que realizo uma ordem de serviço somente com serviço - A prazo
@@ -482,7 +504,7 @@ Dado que realizo uma venda com múltiplos produtos com desconto - A prazo
         Quando insiro um produto normal informando a quantidade e desconto    ${Quantidade_Produto}    ${Desconto_Produto}
 
         # Essa validação é necessária porque, ao chamar a keyword "Quando insiro um produto normal informando a quantidade e desconto", a variável "${Codigos_Produtos}" inicia com valor ${None}.
-        IF    ${Codigos_Produtos} is None
+        IF    $Codigos_Produtos is None
 
             ${Codigos_Produtos}    Create List
             Set Test Variable    ${Codigos_Produtos}

@@ -1,14 +1,4 @@
-import time
-import mysql.connector
-import leituraConfig as config
 from decimal import Decimal, ROUND_HALF_UP
-
-dbname = config.config.Database
-porta = config.config.Porta
-ipservidor = config.config.IpServidor
-
-connection = mysql.connector.connect(host=ipservidor, user='root', password='vssql', database=dbname, port=porta)
-cursor = connection.cursor()
 
 class validaComissoes:
 
@@ -26,32 +16,9 @@ class validaComissoes:
         return valorDecimal.quantize(quant, rounding=ROUND_HALF_UP)
 
 
-    def calcula_comissao_linha_produto_unico(self, codigo_produto, codigo_operacao, quantidade_produto, total_comissao_produto):
+    def calcula_comissao_linha_produto_unico(self, valor_comissao_unitario, quantidade_produto, total_comissao_produto):
         
-        connection.commit()
-
-        cursor.execute(
-            """
-            SELECT vp.ValorUnitario * (cl.Aliquota / 100) AS ValorComissao
-            FROM comissaoporlinha cl
-            INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo
-            INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo
-            WHERE p.Codigo = %s
-            AND vp.CodigoVenda = %s
-            AND vp.Cancelada IS NULL
-            """,
-            (codigo_produto, codigo_operacao),
-        )
-
-        row = cursor.fetchone()
-
-        if row is None or row[0] is None:
-            raise ValueError(
-                f"Comissão não encontrada para produto {codigo_produto} "
-                f"na venda {codigo_operacao}"
-            )
-
-        comissao_produto = Decimal(str(row[0])) * Decimal(str(quantidade_produto))
+        comissao_produto = Decimal(str(valor_comissao_unitario)) * Decimal(str(quantidade_produto))
 
         total_comissao_produto = Decimal(str(total_comissao_produto)) + comissao_produto
         total_comissao_produto = self.converte_para_decimal(total_comissao_produto, 4)
@@ -60,29 +27,17 @@ class validaComissoes:
         return total_comissao_produto
 
 
-    def calcula_comissao_linha_produto_multiplos(self, codigos_produtos, quantidade_produto, dados_venda_devolucao, posicao_valor):
+    def calcula_comissao_linha_produto_multiplos(self, valores_comissao_por_produto, quantidade_produto, dados_venda_devolucao, posicao_valor):
         
         total_comissao = Decimal("0")
         total_comissao_produtos = Decimal("0")
 
-        for cod_produto in codigos_produtos or []:
+        for valor_comissao in valores_comissao_por_produto or []:
 
-            cursor.execute(
-                """
-                SELECT SUM(p.vendaT1 * (cl.Aliquota / 100))
-                FROM comissaoporlinha AS cl
-                INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo
-                WHERE p.Codigo = %s
-                """,
-                (cod_produto,),
-            )
-
-            row = cursor.fetchone()
-
-            if not row or row[0] is None:
+            if valor_comissao is None:
                 continue
 
-            comissao_produto = Decimal(str(row[0])) * Decimal(str(quantidade_produto))
+            comissao_produto = Decimal(str(valor_comissao)) * Decimal(str(quantidade_produto))
 
             total_comissao_produtos = self.converte_para_decimal(total_comissao_produtos + comissao_produto, 4)
 
@@ -99,30 +54,16 @@ class validaComissoes:
         return (total_comissao_produtos, total_comissao, percent_comissao)
 
 
-    def calcula_comissao_linha_produto_parcela_personalizada(self, codigos_produtos, quantidade_produto, dados_venda_devolucao, valores_parcelas, indice_parcela, total_comissao_atual):
+    def calcula_comissao_linha_produto_parcela_personalizada(self, valores_comissao_por_produto, quantidade_produto, dados_venda_devolucao, valores_parcelas, indice_parcela, total_comissao_atual):
         
         soma_comissao_parcela = Decimal("0")
 
-        qtde_produtos = len(codigos_produtos or [])
+        for valor_comissao in valores_comissao_por_produto or []:
 
-        for cod_produto in (codigos_produtos or [])[:qtde_produtos]:
-
-            cursor.execute(
-                """
-                SELECT SUM(p.vendaT1 * (cl.Aliquota / 100))
-                FROM comissaoporlinha AS cl
-                INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo
-                WHERE p.Codigo = %s
-                """,
-                (cod_produto,),
-            )
-
-            row = cursor.fetchone()
-
-            if not row or row[0] is None:
+            if valor_comissao is None:
                 continue
 
-            comissao_produto = Decimal(str(row[0])) * Decimal(str(quantidade_produto))
+            comissao_produto = Decimal(str(valor_comissao)) * Decimal(str(quantidade_produto))
             soma_comissao_parcela = self.converte_para_decimal(soma_comissao_parcela + comissao_produto, 4)
 
         valor_operacao = Decimal(str(dados_venda_devolucao[0][1]))
@@ -161,30 +102,72 @@ class validaComissoes:
             return (esper, True)
 
         return (calc, False)
-    
 
-    def calcula_comissao_linha_servico_unico(self, cod_servico, codigo_operacao_mov, total_tributos_servico):
+    def calcula_comissao_linha_servico_unico(self, valor_comissao_servico):
+        
+        if valor_comissao_servico is None:
+            raise ValueError("Valor de comissão do serviço não pode ser None.")
 
-        connection.commit()
+        total_comissao_os = self.converte_para_decimal(valor_comissao_servico, 2)
 
-        cursor.execute(
-            """
-            SELECT SUM((v.TotalServicos - (v.TotalServicos * (%s / 100))) * (cl.Aliquota / 100))
-            FROM comissaoporlinha cl
-            INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo AND s.Codigo = %s
-            INNER JOIN vendas v ON v.Codigo = %s
-            """,
-            (total_tributos_servico, cod_servico, codigo_operacao_mov),
-        )
-        
-        row = cursor.fetchone()
-        
-        if not row or row[0] is None:
-            raise ValueError(
-                f"Comissão não encontrada para serviço {cod_servico} "
-                f"na venda {codigo_operacao_mov}"
-            )
-        
-        total_comissao_os = self.converte_para_decimal(row[0], 2)
-        
         return total_comissao_os
+
+    def calcula_comissao_servico_com_aliquota(self, valor_base_servico, aliquota):
+        
+        valor_base = Decimal(str(valor_base_servico))
+        aliq = Decimal(str(aliquota))
+
+        comissao = valor_base * (aliq / Decimal("100"))
+        return self.converte_para_decimal(comissao, 2)
+
+    def calcula_comissao_servico_aliquota_somada(self, valor_base_servico, aliquota, aliquota_execucao):
+        
+        valor_base = Decimal(str(valor_base_servico))
+        aliq = Decimal(str(aliquota))
+        aliq_exec = Decimal(str(aliquota_execucao))
+
+        aliquota_total = aliq + aliq_exec
+        comissao = valor_base * (aliquota_total / Decimal("100"))
+        return self.converte_para_decimal(comissao, 2)
+
+    def calcula_comissao_servico_vendedores_diferentes(self, valor_base_servico, aliquota_executor, aliquota_vendedor_os):
+        
+        valor_base = Decimal(str(valor_base_servico))
+        aliq_exec = Decimal(str(aliquota_executor))
+        aliq_vend = Decimal(str(aliquota_vendedor_os))
+
+        # Comissão do executor
+        if aliq_exec > Decimal("0"):
+            comissao_executor = self.converte_para_decimal(valor_base * (aliq_exec / Decimal("100")), 2)
+        else:
+            comissao_executor = Decimal("0.00")
+
+        # Comissão do vendedor da OS
+        if aliq_vend > Decimal("0"):
+            comissao_vendedor = self.converte_para_decimal(valor_base * (aliq_vend / Decimal("100")), 2)
+        else:
+            comissao_vendedor = Decimal("0.00")
+
+        return {
+            'comissao_executor': comissao_executor,
+            'comissao_vendedor_os': comissao_vendedor
+        }
+
+    def busca_comissao_servico_gerada(self, resultado_query):
+        
+        if resultado_query is None or len(resultado_query) == 0:
+            return None
+
+        valor = resultado_query[0][0]
+        if valor is None:
+            return None
+
+        return self.converte_para_decimal(valor, 2)
+
+    def verifica_comissao_servico_existe(self, resultado_query):
+        
+        if resultado_query is None or len(resultado_query) == 0:
+            return False
+
+        count = resultado_query[0][0]
+        return int(count) > 0

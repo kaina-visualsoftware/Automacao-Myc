@@ -147,7 +147,11 @@ E insiro um serviço informando a quantidade(${Quantidade_Servico})
 
 E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     
-    IF     ${Parametro_VendaSemEstoqueOrdemDeServico}
+    IF    ${Teste_Comissao_Linha}
+
+        utils.Seleciona produto com linha cadastrada(${Parametro_VendaSemEstoqueOrdemDeServico})
+
+    ELSE IF     ${Parametro_VendaSemEstoqueOrdemDeServico}
         
         utils.Inserir Produto normal - Permite sem estoque
 
@@ -407,7 +411,7 @@ Calcula valor final da OS
 
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
 
-            IF    ${List_Quantidades_Produto} is not None
+            IF    $List_Quantidades_Produto is not None
 
                 ${Quantidade_Produto}    Set Variable    ${List_Quantidades_Produto[${i}]}
             
@@ -464,7 +468,7 @@ Calcula valor final da OS
 
     Should Be Equal    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
 
-    IF    not ${Parametro_NaoDeduzirISSQNComissaoOS}
+    IF    ${OS_PossuiServico} and not ${Parametro_NaoDeduzirISSQNComissaoOS}
 
         Set Test Variable    ${Valor_Total_Servicos}    ${calcValorTotalServicoDeducaoTrbutos}
 
@@ -856,7 +860,7 @@ E edito (${campo}) do serviço lançado
 
     ${servico}    Query    SELECT vs.CodigoServico, vs.Quantidade, vs.Desconto, vs.ValorUnitario, vs.ValorTotal, vs.DescExpandida FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO}
 
-    IF    ${servico[0][5]} is not None
+    IF    $servico[0][5] is not None
 
         Insere detalhamento no serviço
         

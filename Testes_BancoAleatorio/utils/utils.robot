@@ -98,6 +98,7 @@ ${Teste_Comissao_Escalonada}               ${False}
 ${Teste_Comissao_Total_Venda}              ${False}
 ${Teste_Comissao_Linha}                    ${False}
 ${Teste_Comissao_Forma_Parcelamento}       ${False}
+${Tipo_Comissao_Linha}                     ${None}
 ${PercentualComissaoTotalVenda_Servico}    ${None}
 ${OS_Vendedor_E_Tecnico_Diferentes}        ${False}
 ${Atualizacao_Ambiente_MyCommerce}         ${False}
@@ -108,7 +109,7 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    IF    ${Valores_Parcelas} is not None
+    IF    $Valores_Parcelas is not None
 
         Input Text    ${EMPTY}    ${Valores_Parcelas[${POSICAO_PARCELA}]}
         
@@ -303,6 +304,10 @@ Seleciona modalidade de cobrança
 Valida teste de comissão
         
     ${Test_Comissao}    Run Keyword And Return Status    Should Contain    ${SUITE_NAME}    Comissoes
+    
+    IF    not ${Test_Comissao}
+        RETURN
+    END
 
     ${Teste_Comissao_Escalonada}            Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Escalonada
     ${Teste_Comissao_Total_Venda}           Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Total Venda
@@ -318,135 +323,282 @@ Valida teste de comissão
     Set Test Variable    ${Teste_Comissao_Servico}
     Set Test Variable    ${Teste_Comissao_Devolucao}
 
-    IF    ${Test_Comissao}
+    ${Eh_Comissao_Linha_Simples}           Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha Simples
+    ${Eh_Comissao_Linha_Dif_Vendedor}      Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha Diferenciada Por Vendedor
+    ${Eh_Comissao_Linha_Mista}             Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha Mista
+    ${Eh_Comissao_Linha_Tabela_Preco}      Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha Tabela de Preco
 
-        ${Dados_Vendedor}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos, ComissaoServicos, ComissaoPercentualServicos, ComissaoVendaProdutos, Codigo, RazaoSocial FROM clientes WHERE Codigo = ${Codigo_Vendedor}
+    IF    ${Teste_Comissao_Linha}
 
-        ${Tipo_Comissao}    Set Variable    ${Dados_Vendedor[0][0]}
+        IF    ${Eh_Comissao_Linha_Simples}
 
-        IF    ${Teste_Comissao_Escalonada}
+            Set Test Variable    ${Tipo_Comissao_Linha}    Simples
 
-            # IF    '${Tipo_Comissao[0][0]}' != '1'
+        ELSE IF    ${Eh_Comissao_Linha_Dif_Vendedor}
 
-            #     Seleciona vendedor comissionado('D')
-                
-            # END
-                       
-            # IF    '${Tipo_Comissao[0][0]}' != 'D'
+            Set Test Variable    ${Tipo_Comissao_Linha}    Diferenciada Por Vendedor
 
-            #     Seleciona vendedor comissionado('D')
+        ELSE IF    ${Eh_Comissao_Linha_Mista}
 
-            # END
+            Set Test Variable    ${Tipo_Comissao_Linha}    Mista
 
-            # Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
+        ELSE IF    ${Eh_Comissao_Linha_Tabela_Preco}
 
-            Log To Console    \nComissão escalonada${\n}Selecionar vendedor por tipo D
+            Set Test Variable    ${Tipo_Comissao_Linha}    Tabela de Preco
 
-        ELSE IF    ${Teste_Comissao_Total_Venda}
+        ELSE
             
-            ${SelecionarVendedor}    Set Variable    ${False}
-            
-            IF    $Tipo_Comissao != 'T' or ('${Teste_Comissao_Servico}' == 'True' and ${Dados_Vendedor[0][2]} != '1')
+            Fail    Teste de comissão por linha detectado, mas nenhum subtipo reconhecido no nome do Test Case ('${TEST_NAME}'). Inclua no nome: 'Linha Simples', 'Linha Diferenciada Por Vendedor', 'Linha Mista' ou 'Linha Tabela de Preco'.
 
-                ${SelecionarVendedor}    Set Variable    ${True}
+        END
+
+    END
+
+    ${Dados_Vendedor}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos, ComissaoServicos, ComissaoPercentualServicos, ComissaoVendaProdutos, Codigo, RazaoSocial FROM clientes WHERE Codigo = ${Codigo_Vendedor}
+
+    ${Tipo_Comissao}    Set Variable    ${Dados_Vendedor[0][0]}
+
+    IF    ${Teste_Comissao_Escalonada}
+
+        # IF    '${Tipo_Comissao[0][0]}' != '1'
+
+        #     Seleciona vendedor comissionado('D')
+            
+        # END
+                   
+        # IF    '${Tipo_Comissao[0][0]}' != 'D'
+
+        #     Seleciona vendedor comissionado('D')
+
+        # END
+
+        # Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
+
+        Log To Console    \nComissão escalonada${\n}Selecionar vendedor por tipo D
+
+    ELSE IF    ${Teste_Comissao_Total_Venda}
+        
+        ${SelecionarVendedor}    Set Variable    ${False}
+        
+        IF    $Tipo_Comissao != 'T' or ('${Teste_Comissao_Servico}' == 'True' and ${Dados_Vendedor[0][2]} != '1')
+
+            ${SelecionarVendedor}    Set Variable    ${True}
+
+        ELSE
+
+            IF    ${Dados_Vendedor[0][1]} != None and ${Dados_Vendedor[0][1]} > 0
+
+                Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Dados_Vendedor[0][1]}
 
             ELSE
 
-                IF    ${Dados_Vendedor[0][1]} != None and ${Dados_Vendedor[0][1]} > 0
+                ${SelecionarVendedor}    Set Variable    ${True}
 
-                    Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Dados_Vendedor[0][1]}
+            END
+            
+            IF    ${Teste_Comissao_Servico}
+
+                IF    ${Dados_Vendedor[0][3]} != None and ${Dados_Vendedor[0][3]} > 0
+
+                    Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Dados_Vendedor[0][3]}
 
                 ELSE
 
                     ${SelecionarVendedor}    Set Variable    ${True}
 
                 END
-                
-                IF    ${Teste_Comissao_Servico}
 
-                    IF    ${Dados_Vendedor[0][3]} != None and ${Dados_Vendedor[0][3]} > 0
+            END
 
-                        Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Dados_Vendedor[0][3]}
+        END
 
-                    ELSE
+        IF    ${SelecionarVendedor}
 
-                        ${SelecionarVendedor}    Set Variable    ${True}
+            Seleciona vendedor comissionado('T')
+
+        END
+
+        Log To Console    \nComissão sobre total da venda.
+
+    ELSE IF    ${Teste_Comissao_Linha}
+
+        ${SelecionarVendedor}    Set Variable    ${False}
+
+        IF    $Tipo_Comissao != 'L' or '${Dados_Vendedor[0][4]}' != '1'
+
+            ${SelecionarVendedor}    Set Variable    ${True}
+
+        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
+
+            ${SelecionarVendedor}    Set Variable    ${True}
+
+        END
+
+        IF    ${SelecionarVendedor} == ${False}
+
+            ${cenario_definido}    Run Keyword And Return Status    Variable Should Exist    ${Cenario_Comissao_Linha}
+
+            IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+                IF    ${cenario_definido}
+
+                    IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC' or '${Cenario_Comissao_Linha}' == 'PROD__DIF_POR_VEND__COM_ALIQ'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PROD__DIF_POR_VEND__SEM_ALIQ'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_SEM_ALIQ'
+
+                        Log To Console    [Validação vendedor OS Dif ${Cenario_Comissao_Linha}] Vendedor ${Codigo_Vendedor} aceito — cenário com vendedores diferentes.
 
                     END
 
                 END
 
+            ELSE IF    '${Tipo_Comissao_Linha}' == 'Mista'
+
+                IF    ${cenario_definido}
+
+                    IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PROD__MISTA__COM_ALIQ'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PROD__MISTA__COM_ALIQ_ZERO'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PROD__MISTA__SEM_REG_CPLV'
+
+                        ${vendedor_tem_cpv}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1;
+
+                        IF    ${vendedor_tem_cpv}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao = 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ'
+
+                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0;
+
+                        IF    not ${vendedor_atende}
+                            ${SelecionarVendedor}    Set Variable    ${True}
+                        END
+
+                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+                        Log To Console    [Validação vendedor OS Mista ${Cenario_Comissao_Linha}] Vendedor ${Codigo_Vendedor} aceito — cenário com vendedores diferentes.
+
+                    END
+
+                END
+
+            ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+                Log To Console    [AVISO] Validação de cenário para Tabela de Preço ainda não implementada.
+
             END
-
-            IF    ${SelecionarVendedor}
-
-                Seleciona vendedor comissionado('T')
-
-            END
-
-            Log To Console    \nComissão sobre total da venda.
-
-        ELSE IF    ${Teste_Comissao_Linha}
-
-            ${SelecionarVendedor}    Set Variable    ${False}
-
-            IF    $Tipo_Comissao != 'L' or '${Dados_Vendedor[0][4]}' != '1'
-
-                ${SelecionarVendedor}    Set Variable    ${True}
-
-            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
-
-                ${SelecionarVendedor}    Set Variable    ${True}
-
-            END
-
-            IF    ${SelecionarVendedor}
-
-                Seleciona vendedor comissionado('L')
-
-            END
-
-            IF    ${Teste_Comissao_Servico}
-
-                Set Test Variable    ${Teste_Comissao_Linha_Servico}    ${True}
-                    
-            END
-
-            Log To Console    \nComissão por linha.
-        
-        ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
-            
-            ${SelecionarVendedor}    Set Variable    ${False}
-
-            # Necessário para os cenários de comissões por forma de parcelamento.
-            Set Test Variable    ${FORMA_PRAZO}
-
-            IF    $Tipo_Comissao != 'F' or '${Dados_Vendedor[0][4]}' != '1'
-
-                ${SelecionarVendedor}    Set Variable    ${True}
-
-            END
-
-            IF    ${SelecionarVendedor}
-
-                Seleciona vendedor comissionado('F')
-
-            END
-    
-            IF    ${FORMA_PRAZO[5]} == 0
-
-                ${FORMA_PRAZO}    validaParametros.Seleciona Forma Prazo Com Comissao
-                
-            END
-
-            Set Test Variable    ${PercentualComissaoFormaParcParcela_Produto}    ${FORMA_PRAZO[5]}
-            Set Test Variable    ${FORMA_PRAZO}
-            Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
-
-            Log To Console    \nComissão sobre formas de parcelamento.
 
         END
+
+        IF    ${SelecionarVendedor}
+
+            ${cenario_definido}    Run Keyword And Return Status    Variable Should Exist    ${Cenario_Comissao_Linha}
+
+            IF    not ${cenario_definido}
+                Fail    Variável \${Cenario_Comissao_Linha} não definida. Para testes de comissão por linha, defina o cenário no [Setup] ou no corpo do teste antes de chamar o montadorDeCenarios.
+            END
+
+            Seleciona Vendedor Comissão Linha    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+
+        END
+
+        IF    ${Teste_Comissao_Servico}
+
+            Set Test Variable    ${Teste_Comissao_Linha_Servico}    ${True}
+                
+        END
     
+    ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
+        
+        ${SelecionarVendedor}    Set Variable    ${False}
+
+        # Necessário para os cenários de comissões por forma de parcelamento.
+        Set Test Variable    ${FORMA_PRAZO}
+
+        IF    $Tipo_Comissao != 'F' or '${Dados_Vendedor[0][4]}' != '1'
+
+            ${SelecionarVendedor}    Set Variable    ${True}
+
+        END
+
+        IF    ${SelecionarVendedor}
+
+            Seleciona vendedor comissionado('F')
+
+        END
+
+        IF    ${FORMA_PRAZO[5]} == 0
+
+            ${FORMA_PRAZO}    validaParametros.Seleciona Forma Prazo Com Comissao
+            
+        END
+
+        Set Test Variable    ${PercentualComissaoFormaParcParcela_Produto}    ${FORMA_PRAZO[5]}
+        Set Test Variable    ${FORMA_PRAZO}
+        Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
+
+        Log To Console    \nComissão sobre formas de parcelamento.
+
     END
 
 Seleciona vendedor comissionado(${Tipo_Comissao_Selecionar})
@@ -512,6 +664,182 @@ Seleciona vendedor comissionado(${Tipo_Comissao_Selecionar})
 
     END
 
+Seleciona Vendedor Comissão Linha
+    [Arguments]    ${tipo_linha}    ${cenario}
+
+    Log To Console    \n[Seleção vendedor comissão linha] Tipo: ${tipo_linha} | Cenário: ${cenario}
+
+    IF    ${Teste_Comissao_Servico}
+        ${filtro_servico}    Set Variable    AND c.ComissaoServicos = 1
+    ELSE
+        ${filtro_servico}    Set Variable    ${EMPTY}
+    END
+
+    ${base_query}    Set Variable    SELECT c.Codigo, c.ComissaoDiferenciadapor FROM clientes c
+    ${base_where}    Set Variable    c.ComissaoDiferenciadapor = 'L' AND c.ComissaoVendaProdutos = 1 AND c.Tipo IN ('D','V') AND c.Ativo = -1 AND c.Status = 'ATIVA' ${filtro_servico}
+
+    IF    '${tipo_linha}' == 'Simples'
+
+        ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+
+    ELSE IF    '${tipo_linha}' == 'Diferenciada Por Vendedor'
+
+        IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__DIF_POR_VEND__COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__DIF_POR_VEND__SEM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ'
+        
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_ALIQ' or '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_SEM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            Fail    Cenário '${cenario}' não mapeado para Diferenciada Por Vendedor na seleção de vendedor.
+
+        END
+
+    ELSE IF    '${tipo_linha}' == 'Mista'
+
+        IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__MISTA__COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__MISTA__COM_ALIQ_ZERO'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV'
+
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__MISTA__SEM_REG_CPLV'
+
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV'
+
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            Fail    Cenário '${cenario}' não mapeado para Mista na seleção de vendedor.
+
+        END
+
+    ELSE IF    '${tipo_linha}' == 'Tabela de Preco'
+
+        ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+
+        Log To Console    [AVISO] Tabela de Preço — cenário '${cenario}' registrado, mas seleção pendente de implementação.
+
+    END
+
+    ${vendedorExiste}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedor}
+
+    IF    not ${vendedorExiste}
+        Fail    Nenhum vendedor elegível encontrado para comissão por linha tipo '${tipo_linha}', cenário '${cenario}'. Verifique os cadastros no MyCommerce.
+    END
+
+    ${Dados_Vendedor}    Query    ${consultaVendedor}
+
+    Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
+    Set Test Variable    ${Codigo_Vendedor}    ${Dados_Vendedor[0][0]}
+    Set Test Variable    ${Cenario_Comissao_Linha}    ${cenario}
+
+    Log To Console    Vendedor selecionado: ${Dados_Vendedor[0][0]} | ComissaoDiferenciadapor: ${Dados_Vendedor[0][1]}
+
 Valida vendedor padrao
     
     ${VENDEDOR_PADRAO}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.CodigoVendedor FROM clientes AS c WHERE Codigo = ${Codigo_Cliente} AND c.CodigoVendedor IS NOT NULL;
@@ -560,7 +888,101 @@ Inserir serviço
 
 Seleciona serviço com linha de comissão
 
-    ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 and s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo LIKE 'N' AND cl.Aliquota > 0) ORDER BY RAND() LIMIT 1;
+    IF    '${Tipo_Comissao_Linha}' == 'Simples'
+
+        ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'N' AND cl.Aliquota > 0) ORDER BY RAND() LIMIT 1;
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+        ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND (cl.Mista = 0 OR cl.Mista IS NULL)) ORDER BY RAND() LIMIT 1;
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Mista'
+
+        ${cenario}    Set Variable    ${Cenario_Comissao_Linha}
+
+        IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) AND s.TabelaComissao NOT IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor}) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) AND s.TabelaComissao NOT IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor}) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Tecnico_Servico} AND cpv.Aliquota > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Tecnico_Servico} AND cpv.Aliquota = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Tecnico_Servico} AND cpv.AliquotaExecucao > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Tecnico_Servico} AND cpv.AliquotaExecucao = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Tecnico_Servico} AND cpv.AliquotaExecucao = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota = 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        END
+
+    END
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.S
@@ -572,7 +994,8 @@ Seleciona serviço com linha de comissão
     ${condicao}    Run Keyword And Return Status    Check If Exists In Database    ${consultaServico}
 
     IF    ${condicao}
-    
+        
+        Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    ${codServico[0][0]}
         Sleep    ${SLEEP_BAIXO}
 
@@ -588,7 +1011,7 @@ Seleciona serviço com linha de comissão
 
     ELSE
 
-        Log To Console    Cliente sem serviços ou serviço inativo, OS sem serviço.
+        Fail    Cliente sem serviços ou serviço inativo, OS sem serviço.
         
     END
 
@@ -996,14 +1419,66 @@ Cancela venda com senha
     Sleep    ${SLEEP_BAIXO}
 
 Seleciona produto com linha cadastrada(${Parametro_Operação_Sem_Estoque})
-    
+
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    Key.P
     Sleep    ${SLEEP_BAIXO}
 
+    ${tipo_linha_definido}    Run Keyword And Return Status    Variable Should Exist    ${Tipo_Comissao_Linha}
+
+    IF    ${tipo_linha_definido} and '${Tipo_Comissao_Linha}' == 'Simples'
+
+        ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'N' AND cp.Aliquota > 0
+
+    ELSE IF    ${tipo_linha_definido} and '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+        ${cenario_prod_dif_definido}    Run Keyword And Return Status    Variable Should Exist    ${Cenario_Comissao_Linha}
+
+        IF    ${cenario_prod_dif_definido} and '${Cenario_Comissao_Linha}' == 'PROD__DIF_POR_VEND__COM_ALIQ'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND p.CodigoComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0)
+
+        ELSE IF    ${cenario_prod_dif_definido} and '${Cenario_Comissao_Linha}' == 'PROD__DIF_POR_VEND__SEM_ALIQ'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND p.CodigoComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota = 0)
+
+        ELSE
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL)
+
+        END
+
+    ELSE IF    ${tipo_linha_definido} and '${Tipo_Comissao_Linha}' == 'Mista'
+
+        ${cenario_prod_definido}    Run Keyword And Return Status    Variable Should Exist    ${Cenario_Comissao_Linha}
+
+        IF    ${cenario_prod_definido} and '${Cenario_Comissao_Linha}' == 'PROD__MISTA__COM_ALIQ'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND cp.Mista = 1 AND p.CodigoComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0)
+
+        ELSE IF    ${cenario_prod_definido} and '${Cenario_Comissao_Linha}' == 'PROD__MISTA__COM_ALIQ_ZERO'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND cp.Mista = 1 AND p.CodigoComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota = 0)
+
+        ELSE IF    ${cenario_prod_definido} and '${Cenario_Comissao_Linha}' == 'PROD__MISTA__SEM_REG_CPLV'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND cp.Mista = 1 AND p.CodigoComissao NOT IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv WHERE cpv.CodigoVendedor = ${Codigo_Vendedor})
+
+        ELSE
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'D' AND cp.Mista = 1
+
+        END
+
+    ELSE IF    ${tipo_linha_definido} and '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+        ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'DT'
+
+    END
+
     IF     ${Parametro_Operação_Sem_Estoque}
 
-        ${codProduto}    Query    SELECT p.Codigo FROM produtos p WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos p INNER JOIN comissaoporlinha cp ON cp.Codigo = p.CodigoComissao WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND ${filtro_tipo_comissao} AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
 
         Sleep    ${SLEEP_MEDIO}
 
@@ -1011,11 +1486,11 @@ Seleciona produto com linha cadastrada(${Parametro_Operação_Sem_Estoque})
         
         IF    '${TELA}' == 'Pedido'
             
-            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON pe.CodigoProduto = p.Codigo WHERE pe.Estoque > 1 AND p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND COALESCE((SELECT SUM(pvp.Quantidade - pvp.QtdeGerada) FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoProduto = p.Codigo AND pvp.Cancelada IS NULL), 0) < pe.Estoque AND p.CodigoComissao IN (SELECT cpl.Codigo FROM comissaoporlinha AS cpl WHERE cpl.Tipo = 'N' AND cpl.Aliquota > 0) AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
+            ${codProduto}    Query    SELECT p.Codigo AS codigoProduto FROM produtos AS p INNER JOIN produtosestoque AS pe ON pe.CodigoProduto = p.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = p.CodigoComissao WHERE pe.Estoque > 1 AND p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND COALESCE((SELECT SUM(pvp.Quantidade - pvp.QtdeGerada) FROM pedidosvendaprodutos AS pvp WHERE pvp.CodigoProduto = p.Codigo AND pvp.Cancelada IS NULL), 0) < pe.Estoque AND ${filtro_tipo_comissao} AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
 
         ELSE
 
-            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle LIKE 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND p.CodigoComissao IN (SELECT Codigo FROM comissaoporlinha WHERE Tipo LIKE 'N' AND Aliquota > 0) AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
+            ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 INNER JOIN comissaoporlinha cp ON cp.Codigo = p.CodigoComissao WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND ${filtro_tipo_comissao} AND p.VendaT1 > 0 ORDER BY RAND() LIMIT 1;
 
         END
 
@@ -1261,17 +1736,26 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
 
     ELSE
 
-        ${consultaVendedorTecnicoServico}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Comissao_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoServicos = 1 AND ComissaoVendaProdutos = 1 AND Tecnico = 1 AND clientes.Codigo <> ${Codigo_Vendedor} ORDER BY RAND() LIMIT 1;
+        IF    ${Tipo_Comissao_Selecionar} == 'L'
 
-        ${tecnicoComissServico}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedorTecnicoServico}
+            Seleciona técnico executor comissão linha
+            RETURN
 
-        IF    not ${tecnicoComissServico}
+        ELSE
 
-            Fail    Não foi encontrado vendedor técnico executor, diferente do vendedor da OS, com comissão por serviço para o tipo de comissão ${Tipo_Comissao_Selecionar}.
-            
+            ${consultaVendedorTecnicoServico}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Comissao_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoServicos = 1 AND ComissaoVendaProdutos = 1 AND Tecnico = 1 AND clientes.Codigo <> ${Codigo_Vendedor} ORDER BY RAND() LIMIT 1;
+
+            ${tecnicoComissServico}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedorTecnicoServico}
+
+            IF    not ${tecnicoComissServico}
+
+                Fail    Não foi encontrado vendedor técnico executor, diferente do vendedor da OS, com comissão por serviço para o tipo de comissão ${Tipo_Comissao_Selecionar}.
+                
+            END
+
+            ${Dados_Vendedor}    Query    ${consultaVendedorTecnicoServico}
+
         END
-
-        ${Dados_Vendedor}    Query    ${consultaVendedorTecnicoServico}
 
     END
 
@@ -1280,6 +1764,91 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
         Set Test Variable    ${Codigo_Tecnico_Servico}    ${Dados_Vendedor[0][0]}
 
     END
+
+Seleciona técnico executor comissão linha
+
+    Log To Console    \n[Seleção técnico executor comissão linha] Tipo: ${Tipo_Comissao_Linha} | Cenário: ${Cenario_Comissao_Linha}
+
+    ${base_query}    Set Variable    SELECT c.Codigo, c.ComissaoPercentualProdutos, c.ComissaoDiferenciadapor FROM clientes c
+    ${base_where}    Set Variable    c.ComissaoDiferenciadapor = 'L' AND c.ComissaoVendaProdutos = 1 AND c.ComissaoServicos = 1 AND c.Tipo IN ('D','V') AND c.Ativo = -1 AND c.Status = 'ATIVA' AND c.Codigo <> ${Codigo_Vendedor}
+
+    IF    '${Tipo_Comissao_Linha}' == 'Simples'
+
+        ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor'
+
+        IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND (cl.Mista = 0 OR cl.Mista IS NULL) AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND (cl.Mista = 0 OR cl.Mista IS NULL) AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_ALIQ'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND (cl.Mista = 0 OR cl.Mista IS NULL) AND cpv.AliquotaExecucao > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_SEM_ALIQ'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND (cl.Mista = 0 OR cl.Mista IS NULL) AND cpv.AliquotaExecucao = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND (cl.Mista = 0 OR cl.Mista IS NULL) ORDER BY RAND() LIMIT 1;
+
+        END
+
+    ELSE IF    '${Tipo_Comissao_Linha}' == 'Mista'
+
+        IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.AliquotaExecucao > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.AliquotaExecucao = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            ${consultaVendedorTecnicoServico}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+
+        END
+
+    END
+
+    ${tecnicoExiste}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedorTecnicoServico}
+
+    IF    not ${tecnicoExiste}
+        Fail    Nenhum técnico executor elegível encontrado para comissão por linha tipo '${Tipo_Comissao_Linha}', cenário '${Cenario_Comissao_Linha}'.
+    END
+
+    ${Dados_Vendedor}    Query    ${consultaVendedorTecnicoServico}
+
+    Set Test Variable    ${Codigo_Tecnico_Servico}    ${Dados_Vendedor[0][0]}
+
+    Log To Console    Técnico executor selecionado: ${Dados_Vendedor[0][0]} | Tipo: ${Tipo_Comissao_Linha} | Cenário: ${Cenario_Comissao_Linha}
 
 Validação após incluir serviço
 
@@ -1525,7 +2094,6 @@ Valida telas que utilizam quantidade padrão de produtos
     Set Global Variable    ${Parametro_QtdePadraoEmissaoManualSaida}    ${False}
 
     IF    '${Parametro_TelasQtdePadraoProduto}' == 'None'
-        Log To Console    DESABILITADO.
         RETURN
     END
 
