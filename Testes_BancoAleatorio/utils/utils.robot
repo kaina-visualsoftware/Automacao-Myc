@@ -474,10 +474,6 @@ Valida teste de comissão
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__DIF_POR_VEND__DIF_EXEC__EXEC_SEM_ALIQEXEC__VEND_SEM_ALIQ'
-
-                        Log To Console    [Validação vendedor OS Dif ${Cenario_Comissao_Linha}] Vendedor ${Codigo_Vendedor} aceito — cenário com vendedores diferentes.
-
                     END
 
                 END
@@ -533,10 +529,6 @@ Valida teste de comissão
                         IF    not ${vendedor_atende}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
-
-                    ELSE IF    '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Comissao_Linha}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
-
-                        Log To Console    [Validação vendedor OS Mista ${Cenario_Comissao_Linha}] Vendedor ${Codigo_Vendedor} aceito — cenário com vendedores diferentes.
 
                     END
 
@@ -808,7 +800,7 @@ Seleciona Vendedor Comissão Linha
 
             ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_vendedor cpv ON cpv.CodigoVendedor = c.Codigo INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE ${base_where} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 ORDER BY RAND() LIMIT 1;
 
-        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
 
             ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} AND c.Codigo NOT IN (SELECT cpv.CodigoVendedor FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cp.Tipo = 'D' AND cp.Mista = 1) ORDER BY RAND() LIMIT 1;
 
@@ -822,7 +814,7 @@ Seleciona Vendedor Comissão Linha
 
         ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
 
-        Log To Console    [AVISO] Tabela de Preço — cenário '${cenario}' registrado, mas seleção pendente de implementação.
+        Fail    Pendente de implementação.
 
     END
 
@@ -971,10 +963,6 @@ Seleciona serviço com linha de comissão
         ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
 
             ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cpv.IDLinhaComissao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao WHERE cl.Tipo = 'D' AND cl.Mista = 1 AND cpv.CodigoVendedor = ${Codigo_Vendedor} AND cpv.Aliquota > 0) ORDER BY RAND() LIMIT 1;
-
-        ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
-
-            ${consultaServico}    Set Variable    SELECT s.Codigo, s.Detalha FROM servicos AS s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IN (SELECT cl.Codigo FROM comissaoporlinha AS cl WHERE cl.Tipo = 'D' AND cl.Mista = 1) ORDER BY RAND() LIMIT 1;
 
         ELSE
 
@@ -1731,7 +1719,6 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
 
         ${Dados_Vendedor}    Query    ${consultaVendedorTecnicoServico}
 
-        #Set Test Variable    ${PercentualComissaoTotalVenda_Servico_TecnicoExec}    ${Dados_Vendedor[0][3]}
         Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Dados_Vendedor[0][3]}
 
     ELSE
@@ -1766,8 +1753,6 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
     END
 
 Seleciona técnico executor comissão linha
-
-    Log To Console    \n[Seleção técnico executor comissão linha] Tipo: ${Tipo_Comissao_Linha} | Cenário: ${Cenario_Comissao_Linha}
 
     ${base_query}    Set Variable    SELECT c.Codigo, c.ComissaoPercentualProdutos, c.ComissaoDiferenciadapor FROM clientes c
     ${base_where}    Set Variable    c.ComissaoDiferenciadapor = 'L' AND c.ComissaoVendaProdutos = 1 AND c.ComissaoServicos = 1 AND c.Tipo IN ('D','V') AND c.Ativo = -1 AND c.Status = 'ATIVA' AND c.Codigo <> ${Codigo_Vendedor}
@@ -1848,7 +1833,7 @@ Seleciona técnico executor comissão linha
 
     Set Test Variable    ${Codigo_Tecnico_Servico}    ${Dados_Vendedor[0][0]}
 
-    Log To Console    Técnico executor selecionado: ${Dados_Vendedor[0][0]} | Tipo: ${Tipo_Comissao_Linha} | Cenário: ${Cenario_Comissao_Linha}
+    Log To Console    Técnico executor selecionado: ${Dados_Vendedor[0][0]}
 
 Validação após incluir serviço
 

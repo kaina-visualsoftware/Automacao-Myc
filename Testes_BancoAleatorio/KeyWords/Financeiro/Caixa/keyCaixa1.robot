@@ -45,14 +45,16 @@ ${TELA_ADIANTAMENTOS}                         tela_Adiantamenos_Caixa.png
 ${TELA_REC_PAG_RÁPIDO}                        tela_RecPagRápido.png
 
 # Telas Avisos
-${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}      aviso_confirmacaoBaixaContaPagar.png
+# ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}      aviso_confirmacaoBaixaContaPagar.png
 ${AVISO_REALMENTE_EFETUAR_BAIXA}              aviso_PerguntaQualquer.png
-${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    aviso_confirmacaoBaixaContaReceber.png
+# ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    aviso_confirmacaoBaixaContaReceber.png
+${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}              aviso_confirmacaoBaixaConta.png
 
 # Botões
 ${BT_ESTORNAR}                                bt_Estornar.png
 ${BT_SETA_DIREITA}                            bt_SetaDireita.png
 ${BT_SETA_DIREITA_DATAS}                      bt_SetaDireitaDatas.png
+${BT_SIM}                                     bt_Sim.png
 
 # Outros
 ${INPUT_NUMERO_DOCUMENTO}                     caixa_PesquisaPorNDoc.png
@@ -209,9 +211,14 @@ Então concluo o pagamento da mesma
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${SLEEP_ALTO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${SLEEP_ALTO}
+    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${SLEEP_ALTO}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.S
+    # Press Combination    KEY.ALT    KEY.S
+    SikuliLibrary.Click    ${BT_SIM}
+
+    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
 
     Valida tela de confirmação de data
 
@@ -281,12 +288,23 @@ Então faço o recebimento da conta
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT    KEY.C
+    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.S
+    ${tela_baixa_conta_visivel}    Exists    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}
+    Log To Console    tela_baixa_conta_visivel: ${tela_baixa_conta_visivel}
+    
     Sleep    ${SLEEP_BAIXO}
+    
+    ${bt_sim_visivel}    Exists    ${BT_SIM}
+    Log To Console    bt_sim_visivel: ${bt_sim_visivel}
+
+    # Press Combination    KEY.ALT    KEY.S
+    SikuliLibrary.Click    ${BT_SIM}
+
+    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
 
     Valida tela de confirmação de data
 
@@ -785,11 +803,15 @@ Então faço o recebimento das parcelas da conta
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.S
+    # Press Combination    KEY.ALT    KEY.S
+    SikuliLibrary.Click    ${BT_SIM}
     Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
 
     Valida tela de confirmação de data
 
@@ -896,11 +918,15 @@ Então faço o recebimento da venda e da devolução
     Sleep    ${SLEEP_BAIXO}
 
     Press Combination    KEY.ALT    KEY.C 
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.S
+    # Press Combination    KEY.ALT    KEY.S
+    SikuliLibrary.Click    ${BT_SIM}
     Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
 
     Valida tela de confirmação de data
 

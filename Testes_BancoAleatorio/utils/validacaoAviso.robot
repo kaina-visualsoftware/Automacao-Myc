@@ -69,6 +69,7 @@ ${AVISO_ATUALIZAR_NUMERO_CADASTRO_PRICIPAL}            aviso_AtualizarNumeroCada
 # Botões
 ${BT_NÃO}                                              bt_Nao.png
 ${BT_FECHAR_X}                                         bt_FecharX.png
+${BT_SIM_AVISO_VENCIMENTO_FERIADO}                     bt_SimAvisoVencimentoFeriado.png
 
 # Inputs
 ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
@@ -804,8 +805,9 @@ Valida vencimento em fins de semana e feriados(${N_Pagamentos})
         ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_VENCIMENTO_FIM_DE_SEMANA}    ${SLEEP_ALTO}
 
         IF    ${aviso}
-
-            Press Combination    KEY.ALT    KEY.S
+            
+            SikuliLibrary.Click    ${BT_SIM_AVISO_VENCIMENTO_FERIADO}
+            # Press Combination    KEY.ALT    KEY.S
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -1024,6 +1026,8 @@ Valida cliente com vales compra disponíveis
     
     Sleep    ${SLEEP_ALTO}
     ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
+    
+    Log To Console    Aviso de cliente com vales compra disponíveis: ${aviso}
 
     IF    ${aviso}
         

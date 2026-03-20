@@ -43,18 +43,18 @@ ${TELA_DETALHES_COMISSAO}                         tela_DetalhesComissao.png
 ${CAIXA_PRINCIPAL}                                tela_CaixaPrinicipal.png
 ${TELA_IMPRESSAO}                                 tela_Impressao.png
 ${TELA_RELATORIO_COMISSOES}                       tela_RelatorioComissoes.png
-${TELA_IMPRESSAO}                                 tela_Impressao.png
 ${TELA_VISUALIZACAO_IMPRESSAO}                    tela_VisualizacaoImpressao.png
 ${TELA_PESQUISA_TEXTO_IMPRESSAO}                  tela_PesquisaTextoImpressao.png
 
 # Telas Avisos
 ${AVISO_BAIXA_SUCESSO}                            aviso_BaixaSucesso.png
-${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}          aviso_confirmacaoBaixaContaPagar.png
+# ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}          aviso_confirmacaoBaixaContaPagar.png
 ${AVISO_BAIXA_VALE_COMPRA}                        aviso_BaixaValeCompra.png
 ${AVISO_COMISSAO_ZERADA}                          aviso_ComissaoZerada.png
 ${AVISO_SEM_DADOS_PARA_EXIBICAO}                  aviso_SemDadosParaExibicao.png
 ${AVISO_PERIODO_COM_LOTE_PAGAMENTO}               aviso_PeriodoComLotePagamento.png
 ${AVISO_PESQUISA_TEXTO_CONCLUIDA}                 aviso_PesquisaTextoConcluida.png
+${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}                  aviso_confirmacaoBaixaConta.png
 
 # Botões
 ${BT_BAIXAR}                                      bt_Baixar.png
@@ -62,18 +62,15 @@ ${BT_OK}                                          bt_OkComisssao.png
 ${BT_FECHAR}                                      bt_fechar.png
 ${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelatorio.png
 ${BT_OK_AVISO_LOTE_DE_PAGAMENTO}                  bt_OKAvisoLoteDePagamento.png
+${BT_SIM}                                         bt_Sim.png
 
 # Checkbox
 ${CHECK_BOX_SELE_TODOS}                           checkBox_Comissao.png
 ${CHECKBOX_CONTASPAGAR}                           checkBox_ContasPagar.png
-${CHECK_BOX_SELE_TODOS_SERVICO}                   checkBox_ComissaoServico.png
 ${CHECKBOX_PRODUTOS_HABILITADO}                   check_Produtos_Habilitado.png
 ${CHECKBOX_PRODUTOS_DESABILITADO}                 check_Produtos.png
 ${CHECKBOX_SERVICOS_HABILITADO}                   check_Servicos_Habilitado.png
 ${CHECKBOX_SERVICOS_DESABILITADO}                 check_Servicos.png
-${CHECKBOX_COMISSAO_FOCO_GRID}                    checkBox_ComissaoFocoGrid.png
-${CHECKBOX_CONTA_FOCO_GRID}                       checkBoxContaFocoGrid.png
-${CHECKBOX_CONTA_FOCO_GRID_2}                     checkBox_ComissaoFocoGrid2.png
 
 # ComboBox
 ${COMBOBOX_GERAR_SOBRE_VENDAS}                    combo_gerar_sobre_vendas.png
@@ -82,7 +79,6 @@ ${COMBOBOX_GERAR_SOBRE_VENDAS}                    combo_gerar_sobre_vendas.png
 ${INPUT_NUMERO_DOCUMENTO}                         caixa_PesquisaPorNDoc.png
 
 # Labels
-${LABEL_DATA_PAGAMENTO_NULA}                      lb_DataPagamentoComBranco.png
 ${LABEL_CARREGANDO_COMISSOES_GRID}                lb_CarregandoComissoesGrid.png
 ${LABEL_STATUS_ABERTO}                            lb_StatusAbertoCaixa.png
 ${LABEL_GERANDO_RELATORIO_AGUARDE}                lb_GerandoRelatorioAguarde.png
@@ -106,7 +102,6 @@ ${Quantidade_Zeros_Incluidos}
 ${ABA_A_PAGAR}                                    aba_contasAPagar.png
 ${GRID_COMISSOES_PAGAR}                           grid_ComissoesPagar.png
 ${Total_Comissao}                                 ${0}
-${Total_Comissao_Final}                           ${0}
 ${COL_LOTE}                                       grid_ComissoesLote.png
 ${ABA_SERVICOS}                                   aba_servicosSelecionada.png
 ${SETA_ESQUERDA_GRID}                             setaEsqGrid.png
@@ -115,11 +110,9 @@ ${NomeTerminalExecucao}                           ${config.terminal_name}
 ${GUIA_COMISSOES_PAGAS_AGENDADAS}                 guia_ComissoesPagasAgendadas.png
 ${TOOLTIP_ATALHOS_DATA}                           tooltip_AtalhosData.png
 ${j}                                              ${0}
-${Total_Comissao_Venda}                           ${0}
 ${Total_Comissao_Produtos}                        ${0}
 ${Total_Comissao_Servicos}                        ${0}
 ${Teste_Cenario_Sem_Dados_Exibicao}               ${False}
-${Teste_Cenario_Sem_Dados_Exibicao_Outras_Mov}    ${False}
 ${Comissao_SomenteRecebidas}                      ${False}
 ${Teste_Comissao_Produto}                         ${False}
 ${Teste_Comissao_Servico}                         ${False}
@@ -129,11 +122,12 @@ ${Comissao_Zerada_Por_Devolucao}                  ${False}
 ${Cenario_Sem_Comissao_Servico}                   ${False}
 ${Cenario_Sem_Comissao_Produto}                   ${False}
 ${Codigo_Vendedor_Comissao_Tela}                  ${EMPTY}
+${Total_Comissao_Executor_Baixa}                  ${0}
+${NDoc_Comissao_VendedorOS}                       ${0}
 ${comissao_anterior}                              ${0}
 ${COMISSOES_AGENDADAS}                            ${False}
 ${COMISSOES_PAGAS}                                ${False}
 ${COMISSOES_PENDENTES}                            ${False}
-${ESPERAVA_MENSAGEM_SEM_DADOS}
 ${Relatorio_Deve_Conter_Dados}                    ${True}
 ${Dado_Localizado_Na_Pesquisa_Relatorio}          dadoFoiLocalizadoPesquisaRelatorio.png
 
@@ -225,8 +219,6 @@ E seleciono a comissão de produtos
 
     Set Test Variable    ${Teste_Comissao_Produto}    ${True}
 
-    # Se o cenário é "sem comissão de produto" (ex: alíquota = 0), a operação NÃO aparece no grid.
-    # Nesse caso, pula a pesquisa no grid e valida apenas via banco.
     IF    ${Cenario_Sem_Comissao_Produto}
     
         Log To Console    [Cenario_Sem_Comissao_Produto] Operação não gera comissão → pulando pesquisa no grid.
@@ -486,7 +478,6 @@ E seleciono a comissão de serviços
 
     Set Test Variable    ${Baixa_Eh_Servico}    ${True}
 
-    # Se o cenário é "sem comissão de serviço", a OS NÃO aparece no grid. Nesse caso, pula a pesquisa no grid e valida apenas a ausência de registro via banco.
     IF    ${Cenario_Sem_Comissao_Servico}
     
         Log To Console    [Cenario_Sem_Comissao_Servico] OS não gera comissão → pulando pesquisa no grid.
@@ -533,6 +524,33 @@ E seleciono a comissão de serviços
 
     END
 
+E seleciono a comissão de serviços do executor
+    [Documentation]    Seleciona a comissão de serviço no grid SEM recalcular valores (usada na segunda baixa, do executor).
+
+    Set Test Variable    ${Baixa_Eh_Servico}    ${True}
+
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${CHECK_BOX_SELE_TODOS}
+
+    Sleep    ${SLEEP_BAIXO}
+    ${gridPassouTamPadrao}    Exists    ${SETA_ESQUERDA_GRID}
+
+    IF    ${gridPassouTamPadrao}
+
+        SikuliLibrary.Click    ${SETA_ESQUERDA_GRID}
+
+    END
+
+    SikuliLibrary.Click    ${LISTAGEM_GRID}
+    Sleep    ${SLEEP_BAIXO}
+
+    Pesquisa código da operação com zeros a esquerda
+
+    Sleep    ${SLEEP_ALTO}
+
+    Log To Console    [Baixa Dupla] Comissão do executor selecionada no grid (sem recálculo). Total_Comissao_OS = ${Total_Comissao_OS}
+
 Calcula comissão por linha de serviço - apenas 1 serviço
 
     IF    '${Tipo_Comissao_Linha}' == 'Simples'
@@ -549,7 +567,6 @@ Calcula comissão por linha de serviço - apenas 1 serviço
 
     ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor' or '${Tipo_Comissao_Linha}' == 'Mista'
 
-        # Se o cenário é de PRODUTO (PROD__*), o serviço usa cálculo genérico por tipo de linha (sem cenário específico de serviço).
         ${eh_cenario_produto}    Evaluate    '${Cenario_Comissao_Linha}'.startswith('PROD__')
 
         IF    ${eh_cenario_produto}
@@ -594,11 +611,11 @@ Verifica Comissão Serviço Gerada
 
     IF    ${deve_gerar}
 
-        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Registro encontrado para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Registro encontrado para OS ${codigo_os} | Funcionário ${codigo_funcionario}.
 
     ELSE
 
-        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Nenhum registro (esperado) para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Nenhum registro (esperado) para OS ${codigo_os} | Funcionário ${codigo_funcionario}.
 
     END
 
@@ -673,8 +690,6 @@ Busca Valor Comissão Serviço Gerada Por Papel
 
 Valida Comissão Linha Serviço
     [Arguments]    ${tipo_linha}    ${cenario}
-
-    Log To Console    \n[Valida Comissão Linha Serviço] Tipo: ${tipo_linha} | Cenário: ${cenario}
 
     ${valor_base}    Consulta valor base serviço    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
 
@@ -878,7 +893,16 @@ Valida Comissão Linha Serviço
 
         END
 
-        IF    ${comissao_executor} > 0
+        IF    ${comissao_executor} > 0 and ${comissao_vendedor_os} > 0
+
+            ${Total_Comissao_OS}    Set Variable    ${comissao_vendedor_os}
+
+            Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Vendedor}
+            Set Test Variable    ${Total_Comissao_Executor_Baixa}    ${comissao_executor}
+
+            Log To Console    [${cenario}] Baixa dupla: Vendedor OS ${Codigo_Vendedor} → ${comissao_vendedor_os} | Executor ${Codigo_Tecnico_Servico} → ${comissao_executor}
+
+        ELSE IF    ${comissao_executor} > 0
 
             ${Total_Comissao_OS}    Set Variable    ${comissao_executor}
 
@@ -1164,7 +1188,17 @@ Valida Comissão Linha Serviço
 
         END
 
-        IF    ${comissao_executor} > 0
+        IF    ${comissao_executor} > 0 and ${comissao_vendedor_os} > 0
+
+            # Baixa dupla: vendedor OS primeiro, executor depois
+            ${Total_Comissao_OS}    Set Variable    ${comissao_vendedor_os}
+
+            Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Vendedor}
+            Set Test Variable    ${Total_Comissao_Executor_Baixa}    ${comissao_executor}
+
+            Log To Console    [${cenario}] Baixa dupla: Vendedor OS ${Codigo_Vendedor} → ${comissao_vendedor_os} | Executor ${Codigo_Tecnico_Servico} → ${comissao_executor}
+
+        ELSE IF    ${comissao_executor} > 0
 
             ${Total_Comissao_OS}    Set Variable    ${comissao_executor}
 
@@ -1297,7 +1331,6 @@ E baixo a comissao recém recebida
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${BT_OK}
 
-    # IF    ${Total_Comissao} == 0 and ${Comissao_Zerada_Por_Devolucao}
     IF    ${Comissao_Zerada_Por_Devolucao}
 
         Wait Until Screen Contain    ${AVISO_COMISSAO_ZERADA}    ${TEMPO_TELA}
@@ -1323,7 +1356,6 @@ E baixo a comissao recém recebida
             Wait Until Screen Contain    ${AVISO_PERIODO_COM_LOTE_PAGAMENTO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
 
-            # Press Special Key    ENTER
             SikuliLibrary.Click    ${BT_OK_AVISO_LOTE_DE_PAGAMENTO}
             
         END
@@ -1333,6 +1365,151 @@ E baixo a comissao recém recebida
         Valida baixa de comissão
 
     END
+
+E preparo a baixa do executor após baixa do vendedor OS
+
+    # Após baixar a comissão do vendedor, é reconfigurado as variáveis para a baixa a comissão do executor.
+    Set Test Variable    ${NDoc_Comissao_VendedorOS}    ${NDoc_Comissao}
+    Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_Executor_Baixa}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Executor_Baixa}
+    Set Test Variable    ${Total_Comissao_OS}    ${Total_Comissao_Executor_Baixa}
+    Set Test Variable    ${Codigo_Vendedor_Comissao_Tela}    ${Codigo_Tecnico_Servico}
+
+Então visualizo os detalhes da comissão paga do vendedor OS e do executor
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+
+    IF    ${Comissao_SomenteRecebidas}
+
+        FOR    ${i}    IN RANGE    2
+
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+        Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+    
+        ${dataInicial}    Copia data do campo e converte para o formato ISO 8601
+        Sleep    ${SLEEP_BAIXO}
+
+        Type With Modifiers    H
+        Press Special Key    TAB
+
+        Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+
+        Type With Modifiers    H
+        ${dataFinal}    Copia data do campo e converte para o formato ISO 8601
+
+        Press Combination    KEY.ALT    KEY.C
+        Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
+
+        IF    ${gridSemRegistro}
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_ALTO}
+            Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
+
+        END
+
+    END
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.C
+    Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+
+    ${Cod_Com_String}    Convert To String    ${NDoc_Comissao_VendedorOS}
+    ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Com_String}
+    ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
+    FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
+        ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${COL_LOTE}
+    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${NDoc_Comissao_VendedorOS}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.D
+    Wait Until Screen Contain    ${TELA_DETALHES_COMISSAO}    ${SLEEP_ALTO}
+    Press Special Key    ESC
+
+    Log To Console    [Baixa Dupla] Detalhes da comissão do vendedor OS (NDoc: ${NDoc_Comissao_VendedorOS}) visualizados.
+
+    E saio da tela(Comissoes)
+
+    Dado que acesso a tela de comissões
+    Quando insiro o técnico executor de serviço comissionado
+
+    IF    ${Comissao_SomenteRecebidas}
+
+        FOR    ${i}    IN RANGE    2
+
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        
+        Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+    
+        ${dataInicial}    Copia data do campo e converte para o formato ISO 8601
+        Sleep    ${SLEEP_BAIXO}
+
+        Type With Modifiers    H
+        Press Special Key    TAB
+
+        Wait Until Screen Contain    ${TOOLTIP_ATALHOS_DATA}    ${SLEEP_ALTO}
+
+        Type With Modifiers    H
+        ${dataFinal}    Copia data do campo e converte para o formato ISO 8601
+
+        Press Combination    KEY.ALT    KEY.C
+        Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+
+        Sleep    ${SLEEP_BAIXO}
+        ${gridSemRegistro}    Exists    ${GRID_SEM_REGISTROS}
+
+        IF    ${gridSemRegistro}
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_ALTO}
+            Wait Until Screen Not Contain    ${LABEL_CARREGANDO_COMISSOES_GRID}    ${TEMPO_TELA}
+
+        END
+
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.C
+    Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+
+    ${Cod_Com_String}    Convert To String    ${NDoc_Comissao}
+    ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Com_String}
+    ${Quantidade_de_zeros_esquerda}    Evaluate    6 - ${Quantidade_de_zeros_esquerda}
+    FOR    ${J}    IN RANGE    ${Quantidade_de_zeros_esquerda}
+        ${Quantidade_Zeros_Incluidos}    Set Variable    0${Quantidade_Zeros_Incluidos}
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${COL_LOTE}
+    Input Text    ${EMPTY}    ${Quantidade_Zeros_Incluidos} ${NDoc_Comissao}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.D
+    Wait Until Screen Contain    ${TELA_DETALHES_COMISSAO}    ${SLEEP_ALTO}
+    Press Special Key    ESC
+
+    Log To Console    [Baixa Dupla] Detalhes da comissão do executor (NDoc: ${NDoc_Comissao}) visualizados.
 
 Valida baixa de comissão
 
@@ -1436,9 +1613,15 @@ Então faço o pagamento da comissao
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
 
     Press Combination    KEY.ALT    KEY.C
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${TEMPO_TELA}
+    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.S
+    # Press Combination    KEY.ALT    KEY.S
+    SikuliLibrary.Click    ${BT_SIM}
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
 
     IF    ${Parametro_CaixaControladoPorUsuario}
 
@@ -1551,6 +1734,9 @@ Então visualizo os detalhes da comissao recem paga
 
     END
 
+    Press Combination    KEY.ALT    KEY.C
+    Wait Until Screen Contain    ${GUIA_COMISSOES_PAGAS_AGENDADAS}    ${TEMPO_TELA}
+
     ${Cod_Com_String}    Convert To String    ${NDoc_Comissao}
 
     ${Quantidade_de_zeros_esquerda}    Get Length    ${Cod_Com_String}
@@ -1621,14 +1807,6 @@ Dado que acesso a tela de relatório de comissão
     SikuliLibrary.Click    ${SUBMENU_RELATORIOS_COMISSOES}
 
     Wait Until Screen Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
-
-Informa o vendedor
-
-    SikuliLibrary.Click    ${LABEL_COD_VENDEDOR_RELATORIO}
-
-    Input Text    ${EMPTY}    ${Codigo_Vendedor}
-
-    Press Special Key    TAB
 
 Valida os dados do relatório de comissões
 
@@ -1853,22 +2031,6 @@ Quando insiro o técnico executor de serviço comissionado
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
-E seleciono as comissaos das vendas
-
-    ${QuantidadeVendas}    Get Length    ${Codigo_Vendas}
-
-    FOR    ${I}    IN RANGE    ${QuantidadeVendas}
-
-        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendas[${I}]}
-
-        Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${Valor_Final_Vendas[${I}]}
-
-        Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${DESCONTOS_COMISSOES[${I}][1]}
-
-        E seleciono a comissão de produtos
-
-    END
-
 Calcula comissão por linha de produto - apenas 1 produto - Devolução
 
     Sleep    ${SLEEP_MEDIO}
@@ -2036,7 +2198,7 @@ Consulta valor comissão produto único
 
     END
 
-    IF    $resultado == []
+    IF    not $resultado
         Fail    Comissão não encontrada para produto ${codigo_produto} na operação ${codigo_operacao} (tipo: ${Tipo_Comissao_Linha}).
     END
 
@@ -2126,7 +2288,7 @@ Consulta valor comissão serviço único
 
     END
 
-    IF    $resultado == [] or $resultado[0][0] is None
+    IF    not $resultado or $resultado[0][0] is None
         Fail    Comissão não encontrada para serviço ${cod_servico} na operação ${codigo_operacao} (tipo: ${Tipo_Comissao_Linha}).
     END
 
@@ -2141,7 +2303,7 @@ Consulta valor base serviço
 
     ${resultado}    Query    SELECT (v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) AS ValorBase FROM vendas v WHERE v.Codigo = ${codigo_operacao};
 
-    IF    $resultado == []
+    IF    not $resultado
         Fail    Valor base do serviço não encontrado para a operação ${codigo_operacao}.
     END
 
@@ -2156,7 +2318,7 @@ Consulta alíquotas serviço por vendedor
 
     ${resultado}    Query    SELECT cpv.Aliquota, cpv.AliquotaExecucao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${codigo_vendedor_consulta} AND s.Codigo = ${cod_servico};
 
-    IF    $resultado == []
+    IF    not $resultado
 
         Log To Console    [Consulta alíquotas serviço] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o serviço ${cod_servico}.
         RETURN    ${None}
@@ -2175,7 +2337,7 @@ Consulta alíquota geral serviço
 
     ${resultado}    Query    SELECT cl.Aliquota FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE s.Codigo = ${cod_servico};
 
-    IF    $resultado == []
+    IF    not $resultado
         Fail    Alíquota geral da comissaoporlinha não encontrada para o serviço ${cod_servico}.
     END
 
@@ -2185,16 +2347,12 @@ Consulta alíquota geral serviço
 
     RETURN    ${aliquota_geral}
 
-# ============================================================================================
-# Keywords de Validação de Comissão por Linha — PRODUTO (Diferenciada Por Vendedor + Mista)
-# ============================================================================================
-
 Consulta alíquotas produto por vendedor
     [Arguments]    ${codigo_vendedor_consulta}    ${codigo_produto}
 
     ${resultado}    Query    SELECT cpv.Aliquota FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${codigo_vendedor_consulta} AND p.Codigo = ${codigo_produto};
 
-    IF    $resultado == []
+    IF    not $resultado
 
         Log To Console    [Consulta alíquotas produto] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o produto ${codigo_produto}.
         RETURN    ${None}
@@ -2212,7 +2370,7 @@ Consulta alíquota geral produto
 
     ${resultado}    Query    SELECT cl.Aliquota FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE p.Codigo = ${codigo_produto};
 
-    IF    $resultado == []
+    IF    not $resultado
         Fail    Alíquota geral da comissaoporlinha não encontrada para o produto ${codigo_produto}.
     END
 
@@ -2227,7 +2385,7 @@ Consulta valor base produto
 
     ${resultado}    Query    SELECT vp.ValorUnitario FROM vendasprodutos vp WHERE vp.CodigoProduto = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
 
-    IF    $resultado == []
+    IF    not $resultado
         Fail    Valor base do produto ${codigo_produto} não encontrado para a operação ${codigo_operacao}.
     END
 
