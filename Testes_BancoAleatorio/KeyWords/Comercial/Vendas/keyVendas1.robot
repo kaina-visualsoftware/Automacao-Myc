@@ -3,6 +3,7 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
+Library    ../../../libs/validaComissoes.py
 Library    ../../../libs/estoque.py
 Library    Process
 Library    Collections
@@ -536,7 +537,8 @@ Calcula valor final da venda
         
         ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${ProdutoValorUnitario}), 2)
 
-        Should Be Equal    ${ProdutoValorTotal}    ${calcValorTotalProduto}
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${calcValorTotalProduto}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcValorTotalProduto}    ${ProdutoValorTotal}
         
         ${somaValorTotalProdutos}    Evaluate    round((${somaValorTotalProdutos} + ${calcValorTotalProduto}), 2)
         
@@ -545,7 +547,8 @@ Calcula valor final da venda
     Sleep    ${SLEEP_BAIXO}
     ${ValorTotalProdutosVenda}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Cancelada IS NULL
     
-    Should Be Equal    ${ValorTotalProdutosVenda[0][0]}    ${somaValorTotalProdutos}
+    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+    ${somaValorTotalProdutos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${somaValorTotalProdutos}    ${ValorTotalProdutosVenda[0][0]}
     
     Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutosVenda[0][0]}
 

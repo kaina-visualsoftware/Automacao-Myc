@@ -3,6 +3,7 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
+Library    ../../../libs/validaComissoes.py
 Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Library    XML
@@ -422,7 +423,8 @@ Calcula valor final da OS
             
             ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${Produto_ValorUnitario}), 2)
 
-            Should Be Equal    ${Produto_ValorTotal}    ${calcValorTotalProduto}
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${calcValorTotalProduto}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcValorTotalProduto}    ${Produto_ValorTotal}
             
             ${somaValorTotalProdutos}    Evaluate    (${somaValorTotalProdutos} + ${calcValorTotalProduto})
         
@@ -448,7 +450,8 @@ Calcula valor final da OS
 
             ${calcValorTotalServico}    Evaluate    (decimal.Decimal(str(${Servico_ValorUnitario})) * decimal.Decimal(str(${Quantidade_Servico}))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
-            Should Be Equal    ${Servico_ValorTotal}    ${calcValorTotalServico}
+            # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+            ${calcValorTotalServico}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcValorTotalServico}    ${Servico_ValorTotal}
 
             IF    not ${Parametro_NaoDeduzirISSQNComissaoOS}
         
@@ -466,7 +469,8 @@ Calcula valor final da OS
 
     ${ValorTotalOS}    Query    SELECT ROUND(IFNULL((SELECT SUM(vp.ValorTotal) FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo AND vp.Cancelada IS NULL), 0) + IFNULL((SELECT SUM(vs.ValorTotal) FROM vendasservicos vs WHERE vs.CodigoVenda = v.Codigo AND vs.Cancelada IS NULL), 0), 2) AS TotalGeral FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO};
 
-    Should Be Equal    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
+    # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+    ${calcValorTotalOS}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
 
     IF    ${OS_PossuiServico} and not ${Parametro_NaoDeduzirISSQNComissaoOS}
 

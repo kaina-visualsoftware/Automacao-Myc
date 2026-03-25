@@ -294,12 +294,10 @@ Então faço o recebimento da conta
     Sleep    ${SLEEP_BAIXO}
 
     ${tela_baixa_conta_visivel}    Exists    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}
-    Log To Console    tela_baixa_conta_visivel: ${tela_baixa_conta_visivel}
     
     Sleep    ${SLEEP_BAIXO}
     
     ${bt_sim_visivel}    Exists    ${BT_SIM}
-    Log To Console    bt_sim_visivel: ${bt_sim_visivel}
 
     # Press Combination    KEY.ALT    KEY.S
     SikuliLibrary.Click    ${BT_SIM}

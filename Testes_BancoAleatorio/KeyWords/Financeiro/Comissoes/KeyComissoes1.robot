@@ -121,6 +121,9 @@ ${Baixa_Eh_Servico}                               ${False}
 ${Comissao_Zerada_Por_Devolucao}                  ${False}
 ${Cenario_Sem_Comissao_Servico}                   ${False}
 ${Cenario_Sem_Comissao_Produto}                   ${False}
+${Cenario_Comissao_Linha}                         ${None}
+${Cenario_Comissao_Linha_Servico}                 ${None}
+${Tipo_Comissao_Linha_Servico}                    ${None}
 ${Codigo_Vendedor_Comissao_Tela}                  ${EMPTY}
 ${Total_Comissao_Executor_Baixa}                  ${0}
 ${NDoc_Comissao_VendedorOS}                       ${0}
@@ -221,7 +224,7 @@ E seleciono a comissão de produtos
 
     IF    ${Cenario_Sem_Comissao_Produto}
     
-        Log To Console    [Cenario_Sem_Comissao_Produto] Operação não gera comissão → pulando pesquisa no grid.
+        Log To Console    Cenário Sem Geração De Comissão De Serviço -> Pulando pesquisa no grid...
 
         Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
 
@@ -478,11 +481,24 @@ E seleciono a comissão de serviços
 
     Set Test Variable    ${Baixa_Eh_Servico}    ${True}
 
+    # Se há cenário separado para serviço (testes combinados prod+serv), usa ele; caso contrário, usa o cenário padrão.
+    # Para testes "Total Venda" que não definem nenhum cenário de linha, ambas variáveis ficam ${None}.
+    IF    $Cenario_Comissao_Linha_Servico is not None
+        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha_Servico}
+    ELSE
+        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha}
+    END
+    IF    $Tipo_Comissao_Linha_Servico is not None
+        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha_Servico}
+    ELSE
+        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha}
+    END
+
     IF    ${Cenario_Sem_Comissao_Servico}
     
-        Log To Console    [Cenario_Sem_Comissao_Servico] OS não gera comissão → pulando pesquisa no grid.
+        Log To Console    Cenário Sem Geração De Comissão De Serviço -> Pulando pesquisa no grid...
 
-        Valida Comissão Linha Serviço    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+        Valida Comissão Linha Serviço    ${tipo_linha_serv}    ${cenario_serv}
 
         RETURN
 
@@ -549,11 +565,21 @@ E seleciono a comissão de serviços do executor
 
     Sleep    ${SLEEP_ALTO}
 
-    Log To Console    [Baixa Dupla] Comissão do executor selecionada no grid (sem recálculo). Total_Comissao_OS = ${Total_Comissao_OS}
-
 Calcula comissão por linha de serviço - apenas 1 serviço
 
-    IF    '${Tipo_Comissao_Linha}' == 'Simples'
+    # Se há cenário separado para serviço (testes combinados prod+serv), usa ele; caso contrário, usa o cenário padrão.
+    IF    $Cenario_Comissao_Linha_Servico is not None
+        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha_Servico}
+    ELSE
+        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha}
+    END
+    IF    $Tipo_Comissao_Linha_Servico is not None
+        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha_Servico}
+    ELSE
+        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha}
+    END
+
+    IF    '${tipo_linha_serv}' == 'Simples'
 
         ${valor_comissao_servico}    Consulta valor comissão serviço único    ${COD_SERVICO}    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
 
@@ -565,9 +591,9 @@ Calcula comissão por linha de serviço - apenas 1 serviço
 
         Log To Console    [OS] Valor final da comissão (Linha Simples): ${Total_Comissao_Servicos}
 
-    ELSE IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor' or '${Tipo_Comissao_Linha}' == 'Mista'
+    ELSE IF    '${tipo_linha_serv}' == 'Diferenciada Por Vendedor' or '${tipo_linha_serv}' == 'Mista'
 
-        ${eh_cenario_produto}    Evaluate    '${Cenario_Comissao_Linha}'.startswith('PROD__')
+        ${eh_cenario_produto}    Evaluate    '${cenario_serv}'.startswith('PROD__')
 
         IF    ${eh_cenario_produto}
 
@@ -578,15 +604,15 @@ Calcula comissão por linha de serviço - apenas 1 serviço
             Set Test Variable    ${Total_Comissao_OS}
             Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
 
-            Log To Console    [OS] Valor final da comissão de serviço (cenário PROD__* — cálculo genérico ${Tipo_Comissao_Linha}): ${Total_Comissao_Servicos}
+            Log To Console    [OS] Valor final da comissão de serviço (cenário PROD__* — cálculo genérico ${tipo_linha_serv}): ${Total_Comissao_Servicos}
 
         ELSE
 
-            Valida Comissão Linha Serviço    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+            Valida Comissão Linha Serviço    ${tipo_linha_serv}    ${cenario_serv}
 
         END
 
-    ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+    ELSE IF    '${tipo_linha_serv}' == 'Tabela de Preco'
 
         Fail    Comissão por linha de serviço para Tabela de Preço ainda não implementada.
 
@@ -601,21 +627,11 @@ Verifica Comissão Serviço Gerada
 
     IF    ${deve_gerar} and not ${existe}
 
-        Fail    Comissão de serviço deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas NÃO foi encontrado registro em comissoesservico.
+        Fail    Comissão de serviço deveria ter sido gerada para OS ${codigo_os} | Funcionário ${codigo_funcionario}, mas NÃO foi encontrado registro em comissoesservico.
 
     ELSE IF    not ${deve_gerar} and ${existe}
 
-        Fail    Comissão de serviço NÃO deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas FOI encontrado registro em comissoesservico.
-
-    END
-
-    IF    ${deve_gerar}
-
-        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Registro encontrado para OS ${codigo_os} | Funcionário ${codigo_funcionario}.
-
-    ELSE
-
-        Log To Console    [Verifica Comissão Serviço Gerada] ✓ Nenhum registro (esperado) para OS ${codigo_os} | Funcionário ${codigo_funcionario}.
+        Fail    Comissão de serviço NÃO deveria ter sido gerada para OS ${codigo_os} | Funcionário ${codigo_funcionario}, mas FOI encontrado registro em comissoesservico.
 
     END
 
@@ -649,21 +665,11 @@ Verifica Comissão Serviço Gerada Por Papel
 
     IF    ${deve_gerar} and not ${existe}
 
-        Fail    Comissão de serviço (${papel}) deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas NÃO foi encontrado registro na tabela 'comissoesservico'.
+        Fail    Comissão de serviço (${papel}) deveria ter sido gerada para OS ${codigo_os} | Funcionário ${codigo_funcionario}, mas NÃO foi encontrado registro na tabela 'comissoesservico'.
 
     ELSE IF    not ${deve_gerar} and ${existe}
 
-        Fail    Comissão de serviço (${papel}) NÃO deveria ter sido gerada para OS ${codigo_os} / Funcionário ${codigo_funcionario}, mas FOI encontrado registro na tabela 'comissoesservico'.
-
-    END
-
-    IF    ${deve_gerar}
-
-        Log To Console    [Verifica Comissão Serviço Gerada Por Papel] ✓ Registro (${papel}) encontrado para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
-
-    ELSE
-
-        Log To Console    [Verifica Comissão Serviço Gerada Por Papel] ✓ Nenhum registro (${papel}) (esperado) para OS ${codigo_os} / Funcionário ${codigo_funcionario}.
+        Fail    Comissão de serviço (${papel}) NÃO deveria ter sido gerada para OS ${codigo_os} | Funcionário ${codigo_funcionario}, mas FOI encontrado registro na tabela 'comissoesservico'.
 
     END
 
@@ -1222,6 +1228,46 @@ Valida Comissão Linha Serviço
 
         END
 
+    ELSE IF    '${cenario}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ'
+
+        # Param habilitado, mesmo vendedor, cpv.Aliquota = 0 E cpv.AliquotaExecucao = 0 → Ninguém recebe
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Should Be Equal As Numbers    ${valor_vendedor_bd}    0    msg=[PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ] Comissão do vendedor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_vendedor_bd}.
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ] Comissão do executor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+        ${Total_Comissao_OS}    Set Variable    ${0}
+
+        Log To Console    [PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ] Aliquota: 0 | AliquotaExec: 0 | Ninguém recebe
+
+    ELSE IF    '${cenario}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO'
+
+        # Param habilitado, mesmo vendedor, cpv.Aliquota = 0 E cpv.AliquotaExecucao = 0 → Ninguém recebe (Mista)
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor    deve_gerar=${True}
+
+        ${valor_vendedor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    vendedor
+
+        Should Be Equal As Numbers    ${valor_vendedor_bd}    0    msg=[PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO] Comissão do vendedor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_vendedor_bd}.
+
+        Verifica Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor    deve_gerar=${True}
+
+        ${valor_executor_bd}    Busca Valor Comissão Serviço Gerada Por Papel    ${CODIGO_OPERACAO_MOV}    ${Codigo_Vendedor}    executor
+
+        Should Be Equal As Numbers    ${valor_executor_bd}    0    msg=[PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO] Comissão do executor (${Codigo_Vendedor}) deveria ser 0, mas encontrou ${valor_executor_bd}.
+
+        ${Total_Comissao_OS}    Set Variable    ${0}
+
+        Log To Console    [PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO] cpv.Aliquota: 0 | cpv.AliquotaExec: 0 | Ninguém recebe
+
     ELSE
 
         Fail    Cenário '${cenario}' não reconhecido para tipo '${tipo_linha}'.
@@ -1313,14 +1359,14 @@ E baixo a comissao recém recebida
 
     IF    ${Cenario_Sem_Comissao_Servico} and ${Baixa_Eh_Servico}
 
-        Log To Console    [Cenario_Sem_Comissao_Servico] Sem comissão de serviço para baixar → pulando baixa.
+        Log To Console    Cenário Sem Geração De Comissão De Serviço -> Pulando baixa...
         RETURN
 
     END
 
     IF    ${Cenario_Sem_Comissao_Produto} and not ${Baixa_Eh_Servico}
 
-        Log To Console    [Cenario_Sem_Comissao_Produto] Sem comissão de produto para baixar → pulando baixa.
+        Log To Console    Cenário Sem Geração De Comissão De Produto -> Pulando baixa...
         RETURN
 
     END
@@ -1441,8 +1487,6 @@ Então visualizo os detalhes da comissão paga do vendedor OS e do executor
     Wait Until Screen Contain    ${TELA_DETALHES_COMISSAO}    ${SLEEP_ALTO}
     Press Special Key    ESC
 
-    Log To Console    [Baixa Dupla] Detalhes da comissão do vendedor OS (NDoc: ${NDoc_Comissao_VendedorOS}) visualizados.
-
     E saio da tela(Comissoes)
 
     Dado que acesso a tela de comissões
@@ -1508,8 +1552,6 @@ Então visualizo os detalhes da comissão paga do vendedor OS e do executor
     Press Combination    KEY.ALT    KEY.D
     Wait Until Screen Contain    ${TELA_DETALHES_COMISSAO}    ${SLEEP_ALTO}
     Press Special Key    ESC
-
-    Log To Console    [Baixa Dupla] Detalhes da comissão do executor (NDoc: ${NDoc_Comissao}) visualizados.
 
 Valida baixa de comissão
 
@@ -2198,7 +2240,7 @@ Consulta valor comissão produto único
 
     END
 
-    IF    not $resultado
+    IF    len($resultado) == 0
         Fail    Comissão não encontrada para produto ${codigo_produto} na operação ${codigo_operacao} (tipo: ${Tipo_Comissao_Linha}).
     END
 
@@ -2241,7 +2283,7 @@ Consulta valores comissão por produto
 
         END
 
-        IF    $resultado != [] and $resultado[0][0] is not None
+        IF    len($resultado) > 0 and $resultado[0][0] is not None
 
             Append To List    ${valores_comissao}    ${resultado[0][0]}
 
@@ -2252,8 +2294,6 @@ Consulta valores comissão por produto
         END
 
     END
-
-    Log To Console    [Consulta comissão múltiplos produtos] Tipo: ${Tipo_Comissao_Linha} | Valores: ${valores_comissao}
 
     RETURN    ${valores_comissao}
 
@@ -2288,7 +2328,7 @@ Consulta valor comissão serviço único
 
     END
 
-    IF    not $resultado or $resultado[0][0] is None
+    IF    len($resultado) == 0 or $resultado[0][0] is None
         Fail    Comissão não encontrada para serviço ${cod_servico} na operação ${codigo_operacao} (tipo: ${Tipo_Comissao_Linha}).
     END
 
@@ -2303,13 +2343,13 @@ Consulta valor base serviço
 
     ${resultado}    Query    SELECT (v.TotalServicos - (v.TotalServicos * (${total_tributos_servico} / 100))) AS ValorBase FROM vendas v WHERE v.Codigo = ${codigo_operacao};
 
-    IF    not $resultado
+    IF    len($resultado) == 0
         Fail    Valor base do serviço não encontrado para a operação ${codigo_operacao}.
     END
 
     ${valor_base}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    [Consulta valor base serviço] Operação: ${codigo_operacao} | Tributos: ${total_tributos_servico}% | Valor base: ${valor_base}
+    Log To Console    Operação: ${codigo_operacao} | Tributos: ${total_tributos_servico}% | Valor base: ${valor_base}
 
     RETURN    ${valor_base}
 
@@ -2318,7 +2358,7 @@ Consulta alíquotas serviço por vendedor
 
     ${resultado}    Query    SELECT cpv.Aliquota, cpv.AliquotaExecucao FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${codigo_vendedor_consulta} AND s.Codigo = ${cod_servico};
 
-    IF    not $resultado
+    IF    len($resultado) == 0
 
         Log To Console    [Consulta alíquotas serviço] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o serviço ${cod_servico}.
         RETURN    ${None}
@@ -2328,7 +2368,7 @@ Consulta alíquotas serviço por vendedor
     ${aliquota}             Set Variable    ${resultado[0][0]}
     ${aliquota_execucao}    Set Variable    ${resultado[0][1]}
 
-    Log To Console    [Consulta alíquotas serviço] Vendedor: ${codigo_vendedor_consulta} | Serviço: ${cod_servico} | Aliquota: ${aliquota} | AliquotaExecucao: ${aliquota_execucao}
+    Log To Console    Vendedor: ${codigo_vendedor_consulta} | Serviço: ${cod_servico} | Aliquota: ${aliquota} | AliquotaExecucao: ${aliquota_execucao}
 
     RETURN    ${aliquota}    ${aliquota_execucao}
 
@@ -2337,7 +2377,7 @@ Consulta alíquota geral serviço
 
     ${resultado}    Query    SELECT cl.Aliquota FROM comissaoporlinha cl INNER JOIN servicos s ON s.TabelaComissao = cl.Codigo WHERE s.Codigo = ${cod_servico};
 
-    IF    not $resultado
+    IF    len($resultado) == 0
         Fail    Alíquota geral da comissaoporlinha não encontrada para o serviço ${cod_servico}.
     END
 
@@ -2352,7 +2392,7 @@ Consulta alíquotas produto por vendedor
 
     ${resultado}    Query    SELECT cpv.Aliquota FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cl ON cl.Codigo = cpv.IDLinhaComissao INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE cpv.CodigoVendedor = ${codigo_vendedor_consulta} AND p.Codigo = ${codigo_produto};
 
-    IF    not $resultado
+    IF    len($resultado) == 0
 
         Log To Console    [Consulta alíquotas produto] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o produto ${codigo_produto}.
         RETURN    ${None}
@@ -2370,13 +2410,13 @@ Consulta alíquota geral produto
 
     ${resultado}    Query    SELECT cl.Aliquota FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo WHERE p.Codigo = ${codigo_produto};
 
-    IF    not $resultado
+    IF    len($resultado) == 0
         Fail    Alíquota geral da comissaoporlinha não encontrada para o produto ${codigo_produto}.
     END
 
     ${aliquota_geral}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    [Consulta alíquota geral produto] Produto: ${codigo_produto} | Aliquota geral: ${aliquota_geral}
+    Log To Console    Produto: ${codigo_produto} | Aliquota geral: ${aliquota_geral}
 
     RETURN    ${aliquota_geral}
 
@@ -2385,13 +2425,13 @@ Consulta valor base produto
 
     ${resultado}    Query    SELECT vp.ValorUnitario FROM vendasprodutos vp WHERE vp.CodigoProduto = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL;
 
-    IF    not $resultado
+    IF    len($resultado) == 0
         Fail    Valor base do produto ${codigo_produto} não encontrado para a operação ${codigo_operacao}.
     END
 
     ${valor_base}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    [Consulta valor base produto] Produto: ${codigo_produto} | Operação: ${codigo_operacao} | Valor base (unitário): ${valor_base}
+    Log To Console    Produto: ${codigo_produto} | Operação: ${codigo_operacao} | Valor base (unitário): ${valor_base}
 
     RETURN    ${valor_base}
 
@@ -2415,12 +2455,11 @@ Verifica Comissão Produto Gerada
 
     IF    ${deve_gerar}
 
-        Log To Console    [Verifica Comissão Produto Gerada] ✓ ValorComissao > 0 encontrado para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
+        Log To Console    ✓ ValorComissao > 0 encontrado para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
 
     ELSE
 
-        Log To Console    [Verifica Comissão Produto Gerada] ✓ Nenhum ValorComissao > 0 (esperado) para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
-
+        Log To Console    ✓ Nenhum ValorComissao > 0 (esperado) para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
     END
 
 Busca Valor Comissão Produto Gerada
@@ -2430,7 +2469,7 @@ Busca Valor Comissão Produto Gerada
 
     ${valor}    Evaluate    decimal.Decimal(str(${query_valor[0][0]})).quantize(decimal.Decimal("0.00"))    modules=decimal
 
-    Log To Console    [Busca Valor Comissão Produto Gerada] Operação: ${codigo_operacao} | Produto: ${codigo_produto} | Valor: ${valor}
+    Log To Console    Operação: ${codigo_operacao} | Produto: ${codigo_produto} | Valor: ${valor}
 
     RETURN    ${valor}
 
@@ -2445,8 +2484,6 @@ Calcula Comissao Produto Com Aliquota
 
 Valida Comissão Linha Produto
     [Arguments]    ${tipo_linha}    ${cenario}
-
-    Log To Console    \n[Valida Comissão Linha Produto] Tipo: ${tipo_linha} | Cenário: ${cenario}
 
     ${valor_base}    Consulta valor base produto    ${COD_PRODUTO}    ${CODIGO_OPERACAO_MOV}
 

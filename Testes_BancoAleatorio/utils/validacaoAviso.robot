@@ -1026,8 +1026,6 @@ Valida cliente com vales compra disponíveis
     
     Sleep    ${SLEEP_ALTO}
     ${aviso}    Exists    ${AVISO_CLIENTE_POSSUI_VALES_COMPRA}
-    
-    Log To Console    Aviso de cliente com vales compra disponíveis: ${aviso}
 
     IF    ${aviso}
         
@@ -1125,7 +1123,7 @@ Valida lançamento de orçamento em aberto
 
 Valida lançamento de ordem de serviço em aberto
 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     ${OSEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` = 'a' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'OS' ORDER BY v.Codigo DESC LIMIT 1;
 
     IF    ${OSEmAberto}
