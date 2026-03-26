@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este documento descreve os **36 cenários de teste** (Testes 73–108) que validam a comissão por linha quando a OS contém **produto e serviço simultaneamente**, com cenários **independentes** para cada um.
+Este documento descreve os **14 cenários de teste** (Testes 72–85) que validam a comissão por linha quando a OS contém **produto e serviço simultaneamente**, com cenários **independentes** para cada um.
 
 ### Premissa
 
@@ -23,11 +23,11 @@ Cada teste utiliza a OS com produto e serviço incluso (`montadorDeCenarios.Dado
 Nas keywords `E seleciono a comissão de serviços` e `Calcula comissão por linha de serviço - apenas 1 serviço`, as variáveis de serviço são resolvidas com:
 
 ```robotframework
-${cenario_serv}    Set Variable If    $Cenario_Comissao_Linha_Servico is not None    ${Cenario_Comissao_Linha_Servico}    ${Cenario_Comissao_Linha}
-${tipo_linha_serv}    Set Variable If    $Tipo_Comissao_Linha_Servico is not None    ${Tipo_Comissao_Linha_Servico}    ${Tipo_Comissao_Linha}
+${cenario_servico}    Set Variable If    $Cenario_Comissao_Linha_Servico is not None    ${Cenario_Comissao_Linha_Servico}    ${Cenario_Comissao_Linha}
+${tipo_linha_servico}    Set Variable If    $Tipo_Comissao_Linha_Servico is not None    ${Tipo_Comissao_Linha_Servico}    ${Tipo_Comissao_Linha}
 ```
 
-Isso garante compatibilidade total com os **72 testes existentes** (que não setam as novas variáveis).
+Isso garante compatibilidade total com os **71 testes existentes** (que não setam as novas variáveis).
 
 ---
 
@@ -81,61 +81,39 @@ Isso garante compatibilidade total com os **72 testes existentes** (que não set
 
 ## Matriz de Testes
 
-### Grupo A — Produto Diferenciada × Serviço Diferenciada, Param Desab (4 testes)
+### Grupo A — Produto Diferenciada × Serviço Diferenciada, Param Desab (2 testes)
 
 | Teste | Cenário Produto | Cenário Serviço | Prod Gera? | Serv Gera? |
 |---|---|---|---|---|
-| **73** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ` | ✅ | ✅ |
-| **74** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ` | ✅ | ❌ |
-| **75** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ` | ❌ | ✅ |
-| **76** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ` | ❌ | ❌ |
+| **72** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ` | ✅ | ✅ |
+| **73** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ` | ❌ | ❌ |
 
-### Grupo B — Produto Diferenciada × Serviço Diferenciada, Param Hab (8 testes)
+### Grupo B — Produto Diferenciada × Serviço Diferenciada, Param Hab (4 testes)
 
 | Teste | Cenário Produto | Cenário Serviço | Prod Gera? | Serv Gera? |
 |---|---|---|---|---|
-| **77** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC` | ✅ | ✅ |
-| **78** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC` | ✅ | ✅ |
-| **79** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ` | ✅ | ✅ |
-| **80** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ` | ✅ | ❌ |
-| **81** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC` | ❌ | ✅ |
-| **82** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC` | ❌ | ✅ |
-| **83** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ` | ❌ | ✅ |
-| **84** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ` | ❌ | ❌ |
+| **74** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC` | ✅ | ✅ |
+| **75** | `PROD__DIF_POR_VEND__COM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ` | ✅ | ✅ |
+| **76** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC` | ❌ | ✅ |
+| **77** | `PROD__DIF_POR_VEND__SEM_ALIQ` | `PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ` | ❌ | ❌ |
 
-### Grupo C — Produto Mista × Serviço Mista, Param Desab (9 testes)
+### Grupo C — Produto Mista × Serviço Mista, Param Desab (3 testes)
 
 | Teste | Cenário Produto | Cenário Serviço | Prod Gera? | Serv Gera? |
 |---|---|---|---|---|
-| **85** | `PROD__MISTA__COM_ALIQ` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ` | ✅ | ✅ |
-| **86** | `PROD__MISTA__COM_ALIQ` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO` | ✅ | ❌ |
-| **87** | `PROD__MISTA__COM_ALIQ` | `PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ✅ | ✅ |
-| **88** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ` | ❌ | ✅ |
-| **89** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO` | ❌ | ❌ |
-| **90** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ❌ | ✅ |
-| **91** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ` | ✅ | ✅ |
-| **92** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO` | ✅ | ❌ |
-| **93** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ✅ | ✅ |
+| **78** | `PROD__MISTA__COM_ALIQ` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ` | ✅ | ✅ |
+| **79** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO` | ❌ | ❌ |
+| **80** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ✅ | ✅ |
 
-### Grupo D — Produto Mista × Serviço Mista, Param Hab (15 testes)
+### Grupo D — Produto Mista × Serviço Mista, Param Hab (5 testes)
 
 | Teste | Cenário Produto | Cenário Serviço | Prod Gera? | Serv Gera? |
 |---|---|---|---|---|
-| **94** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO` | ✅ | ✅ |
-| **95** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC` | ✅ | ✅ |
-| **96** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ` | ✅ | ✅ |
-| **97** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ✅ | ✅ |
-| **98** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO` | ✅ | ❌ |
-| **99** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO` | ❌ | ✅ |
-| **100** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC` | ❌ | ✅ |
-| **101** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ` | ❌ | ✅ |
-| **102** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ❌ | ✅ |
-| **103** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO` | ❌ | ❌ |
-| **104** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO` | ✅ | ✅ |
-| **105** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC` | ✅ | ✅ |
-| **106** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ` | ✅ | ✅ |
-| **107** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ✅ | ✅ |
-| **108** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO` | ✅ | ❌ |
+| **81** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO` | ✅ | ✅ |
+| **82** | `PROD__MISTA__COM_ALIQ` | `PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ` | ✅ | ✅ |
+| **83** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC` | ❌ | ✅ |
+| **84** | `PROD__MISTA__COM_ALIQ_ZERO` | `PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO` | ❌ | ❌ |
+| **85** | `PROD__MISTA__SEM_REG_CPLV` | `PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV` | ✅ | ✅ |
 
 ---
 
@@ -181,7 +159,7 @@ Ambos validam no BD que os registros existem com `ValorComissao = 0` para vended
 | Arquivo | Alteração |
 |---|---|
 | `KeyComissoes1.robot` | Adicionadas variáveis `${Cenario_Comissao_Linha_Servico}` e `${Tipo_Comissao_Linha_Servico}` (default `${None}`). Modificadas keywords `E seleciono a comissão de serviços` e `Calcula comissão por linha de serviço - apenas 1 serviço` com lógica de fallback. Adicionadas 2 branches novas na keyword `Valida Comissão Linha Serviço`. |
-| `Teste_Comissoes1.robot` | 36 novos casos de teste (Testes 73–108) organizados em 4 grupos (A–D). |
+| `Teste_Comissoes1.robot` | 14 novos casos de teste (Testes 72–85) organizados em 4 grupos (A–D). |
 
 ---
 
@@ -189,8 +167,8 @@ Ambos validam no BD que os registros existem com `ValorComissao = 0` para vended
 
 | Grupo | Tipo Produto | Tipo Serviço | Parâmetro | Qtd Testes |
 |---|---|---|---|---|
-| **A** | Diferenciada | Diferenciada | Desabilitado | 4 |
-| **B** | Diferenciada | Diferenciada | Habilitado | 8 |
-| **C** | Mista | Mista | Desabilitado | 9 |
-| **D** | Mista | Mista | Habilitado | 15 |
-| | | | **Total** | **36** |
+| **A** | Diferenciada | Diferenciada | Desabilitado | 2 |
+| **B** | Diferenciada | Diferenciada | Habilitado | 4 |
+| **C** | Mista | Mista | Desabilitado | 3 |
+| **D** | Mista | Mista | Habilitado | 5 |
+| | | | **Total** | **14** |
