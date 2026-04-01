@@ -11,98 +11,104 @@ Library    String
 Resource    ./validacaoAviso.robot
 *** Variables ***
 # Sleep's    
-${SLEEP_BAIXO}                             0.7
-${SLEEP_MEDIO}                             1.5
-${SLEEP_ALTO}                              3
-${TEMPO_TELA}                              20
+${SLEEP_BAIXO}                                      0.7
+${SLEEP_MEDIO}                                      1.5
+${SLEEP_ALTO}                                       3
+${TEMPO_TELA}                                       20
 
 # Telas
-${TELA_RECB_DUPLICATAS}                    tela_RecebimentoDuplicatas.png
-${TELA_IMPRESSAO}                          tela_Impressao.png
-${TELA_SOLICITACAO_SENHA_USUARIO}          tela_SolicitaSenha.png
-${TELA_OBSERVACAO_PRODUTO}                 tela_ObservacaoProduto.png
-${TELA_SELECIONA_TIPO_ENTREGA}             tela_SelecionaEntrega.png
-${TELA_SOLICITACAO_CREDITO}                tela_SolicitaLiberacaoCredito.png
-${TELA_CONTROLE_CRÉDITO}                   tela_ControleDeCredito.png
-${TELA_CONFIRMA_LIBERACAO_CREDITO}         tela_ConfirmaLiberacao.png
-${TELA_DETALHAMENTO_SERVIÇO}               tela_DetalhamentoServico.png
-${TELA_FUNCIONARIO_COMISSIONADO}           modal_FuncionarioComissionadoServico.png
-${TELA_PERSONALIZACAO_PAGAMENTO}           modal_PersonalizacaoPagamento.png
-${TELA_RECEBIMENTO_CARTAO}                 tela_RecebimentoCartaoCreditoDebito.png
-${TELA_MOVIMENTACAO_CONTA_CORRENTE}        tela_MovimentacaoContaCorrente.png
-${TELA_CONS_FINAL}                         tela_cons_final.png
-${TELA_TRANSP_FAT_NF}                      tela_TranspFatNotaFiscal.png
-${MODAL_LOCAL_NEGOCIACAO}                  tela_LocalNegociacao.png
-${TELA_CONDICIONAIS}                       tela_Condicionais.png
-${TELA_DEVOLUÇÕES}                         tela_Devolucoes.png
-${TELA_ORCAMENTO}                          tela_Orcamento.png
-${TELA_ORDEM_DE_SERVICO}                   tela_OrdemDeServico.png
-${TELA_VENDAS}                             tela_VendasDeBalcao.png
-${TELA_PEDIDOS}                            tela_Pedidos.png
-${TELA_CONTAS_A_PAGAR_AVULSA}              tela_CadastroContasAPagar.png
-${TELA_NOTA_FISCAL_MANUAL}                 tela_NotaFiscalPreenchimentoManual.png
-${TELA_COMISSOES}                          tela_Comissoes.png
-${CAIXA_PRINCIPAL}                         tela_CaixaPrinicipal.png
-${TELA_LIBERACAO_DESCONTO_MAXIMO}          tela_liberacaoDesconto.png
-${MODAL_CANCELAR_VENDA}                    modal_SenhaDoSupervisor.png
-${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}        tela_MotivoPrecoZeradoProduto.png
-${TELA_IMPRESSAO_DIRETA}                   tela_ImpressaoDireta.png
-${MODAL_PERSONALIZACAO_PAGAMENTO}          modal_PersonalizacaoPagamento.png
-${TELA_RELATORIO_COMISSOES}                tela_RelatorioComissoes.png
+${TELA_RECB_DUPLICATAS}                             tela_RecebimentoDuplicatas.png
+${TELA_IMPRESSAO}                                   tela_Impressao.png
+${TELA_SOLICITACAO_SENHA_USUARIO}                   tela_SolicitaSenha.png
+${TELA_OBSERVACAO_PRODUTO}                          tela_ObservacaoProduto.png
+${TELA_SELECIONA_TIPO_ENTREGA}                      tela_SelecionaEntrega.png
+${TELA_SOLICITACAO_CREDITO}                         tela_SolicitaLiberacaoCredito.png
+${TELA_CONTROLE_CRÉDITO}                            tela_ControleDeCredito.png
+${TELA_CONFIRMA_LIBERACAO_CREDITO}                  tela_ConfirmaLiberacao.png
+${TELA_DETALHAMENTO_SERVIÇO}                        tela_DetalhamentoServico.png
+${TELA_FUNCIONARIO_COMISSIONADO}                    modal_FuncionarioComissionadoServico.png
+${TELA_PERSONALIZACAO_PAGAMENTO}                    modal_PersonalizacaoPagamento.png
+${TELA_RECEBIMENTO_CARTAO}                          tela_RecebimentoCartaoCreditoDebito.png
+${TELA_MOVIMENTACAO_CONTA_CORRENTE}                 tela_MovimentacaoContaCorrente.png
+${TELA_CONS_FINAL}                                  tela_cons_final.png
+${TELA_TRANSP_FAT_NF}                               tela_TranspFatNotaFiscal.png
+${MODAL_LOCAL_NEGOCIACAO}                           tela_LocalNegociacao.png
+${TELA_CONDICIONAIS}                                tela_Condicionais.png
+${TELA_DEVOLUÇÕES}                                  tela_Devolucoes.png
+${TELA_ORCAMENTO}                                   tela_Orcamento.png
+${TELA_ORDEM_DE_SERVICO}                            tela_OrdemDeServico.png
+${TELA_VENDAS}                                      tela_VendasDeBalcao.png
+${TELA_PEDIDOS}                                     tela_Pedidos.png
+${TELA_CONTAS_A_PAGAR_AVULSA}                       tela_CadastroContasAPagar.png
+${TELA_NOTA_FISCAL_MANUAL}                          tela_NotaFiscalPreenchimentoManual.png
+${TELA_COMISSOES}                                   tela_Comissoes.png
+${CAIXA_PRINCIPAL}                                  tela_CaixaPrinicipal.png
+${TELA_LIBERACAO_DESCONTO_MAXIMO}                   tela_liberacaoDesconto.png
+${MODAL_CANCELAR_VENDA}                             modal_SenhaDoSupervisor.png
+${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}                 tela_MotivoPrecoZeradoProduto.png
+${TELA_IMPRESSAO_DIRETA}                            tela_ImpressaoDireta.png
+${MODAL_PERSONALIZACAO_PAGAMENTO}                   modal_PersonalizacaoPagamento.png
+${TELA_RELATORIO_COMISSOES}                         tela_RelatorioComissoes.png
 
 # Telas Avisos
-${AVISO_SEM_ESTOQUE}                       aviso_QuantidadeSemEstoque.png
-${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}        aviso_JaIncluiuProdutoNoGrid.png
-${AVISO_USAR_ESSE_VENDEDOR}                aviso_UsarEsseVendedor.png
-${AVISO_EST_INSUFICIENTE_CONTINUAR}        aviso_EstoqueInsuficienteContinuar.png
-${AVISO_PRODUTO_JA_INCLUSO}                aviso_ProdutoJaIncluso.png
-${AVISO_CADASTRE_CANAL_DE_VENDA}           aviso_CadastreCanaisVenda.png
-${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}      aviso_EspecifiqueVlrUnitProduto.png
+${AVISO_SEM_ESTOQUE}                                aviso_QuantidadeSemEstoque.png
+${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}                 aviso_JaIncluiuProdutoNoGrid.png
+${AVISO_USAR_ESSE_VENDEDOR}                         aviso_UsarEsseVendedor.png
+${AVISO_EST_INSUFICIENTE_CONTINUAR}                 aviso_EstoqueInsuficienteContinuar.png
+${AVISO_PRODUTO_JA_INCLUSO}                         aviso_ProdutoJaIncluso.png
+${AVISO_CADASTRE_CANAL_DE_VENDA}                    aviso_CadastreCanaisVenda.png
+${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}               aviso_EspecifiqueVlrUnitProduto.png
 
 # Botões
-${BT_CONFIRMA_CANAL_NEGOCIACAO}            bt_ConfirmarCanal.png
-${BT_SOLICITAR_CRÉDITO}                    bt_SolicitarCredito.png
-${BT_OK_LIBERACAO_CRÉDITO}                 bt_OkLiberacaoCredito.png
-${BT_SETA_DIREITA}                         bt_SetaDireita.png
-${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}        bt_IncluirProdutoNFeSaidaManual.png
+${BT_CONFIRMA_CANAL_NEGOCIACAO}                     bt_ConfirmarCanal.png
+${BT_SOLICITAR_CRÉDITO}                             bt_SolicitarCredito.png
+${BT_OK_LIBERACAO_CRÉDITO}                          bt_OkLiberacaoCredito.png
+${BT_SETA_DIREITA}                                  bt_SetaDireita.png
+${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}                 bt_IncluirProdutoNFeSaidaManual.png
 
 # Inputs
-${INPUT_COD_CLIENTE}                       lb_CodCliente.png
-${INPUT_COD_CLIENTE_VENDA}                 lb_CodClienteVenda.png
-${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}      lb_CodClienteOS.png
-${INPUT_COD_CLIENTE_CONDICIONAL}           lb_CodClienteCondicional.png
-${INPUT_CODIGO_CLIENTE_DEVOLUCAO}          lb_CodClienteDevolucao.png
-${INPUT_COD_BENEFICIADO_DOACAO}            lb_CodBeneficiadoDoacao.png
-${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}      input_CodCliente.png
-${INPUT_VALOR_UNITARIO_PRODUTO}            input_ValorUnitarioProduto.png
+${INPUT_COD_CLIENTE}                                lb_CodCliente.png
+${INPUT_COD_CLIENTE_VENDA}                          lb_CodClienteVenda.png
+${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}               lb_CodClienteOS.png
+${INPUT_COD_CLIENTE_CONDICIONAL}                    lb_CodClienteCondicional.png
+${INPUT_CODIGO_CLIENTE_DEVOLUCAO}                   lb_CodClienteDevolucao.png
+${INPUT_COD_BENEFICIADO_DOACAO}                     lb_CodBeneficiadoDoacao.png
+${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}               input_CodCliente.png
+${INPUT_VALOR_UNITARIO_PRODUTO}                     input_ValorUnitarioProduto.png
 
 # Labels
-${LABEL_AVISO_CREDITO_LIBERADO}            lb_CreditoLiberado.png
-${LABEL_AVISO_CREDITO_LIBERADO2}           lb_CreditoLiberado2.png
-${LABEL_REF_PRODUTO}                       label_RefProduto.png
+${LABEL_AVISO_CREDITO_LIBERADO}                     lb_CreditoLiberado.png
+${LABEL_AVISO_CREDITO_LIBERADO2}                    lb_CreditoLiberado2.png
+${LABEL_REF_PRODUTO}                                label_RefProduto.png
 
 # Rows
-${ROW_PROD_INCLUSO}                        row_ProdIncluso.png
-${ROW_FUNCIONARIO_INCLUSO_SERVICO_OS}      row_FuncComissionadoInclusoServicoOS.png
+${ROW_PROD_INCLUSO}                                 row_ProdIncluso.png
+${ROW_FUNCIONARIO_INCLUSO_SERVICO_OS}               row_FuncComissionadoInclusoServicoOS.png
 
 # Outros
-${CORRIGE_FOCO}                            corrigeFoco.png
-${Teste_Comissao_Linha_Servico}            ${False}
-${Cenario_Comissao_Linha_Servico}          ${None}
-${Vendedor_Selecionada_Escalonada}         ${False}
-${Valores_Parcelas}                        ${None}
-${AJUSTE_FOCO}                             bt_SetaUltimaVenda.png
-${AJUSTE_FOCO_DEVOLUCAO}                   ajusteFocoDevolucao.png
-${QUANTIDADE_PRODUTOS}                     1
-${POSICAO_PARCELA}                         ${None}
-${Teste_Comissao_Escalonada}               ${False}
-${Teste_Comissao_Total_Venda}              ${False}
-${Teste_Comissao_Linha}                    ${False}
-${Teste_Comissao_Forma_Parcelamento}       ${False}
-${Tipo_Comissao_Linha}                     ${None}
-${PercentualComissaoTotalVenda_Servico}    ${None}
-${OS_Vendedor_E_Tecnico_Diferentes}        ${False}
-${Atualizacao_Ambiente_MyCommerce}         ${False}
+${CORRIGE_FOCO}                                     corrigeFoco.png
+${Teste_Comissao_Linha_Servico}                     ${False}
+${Cenario_Comissao_Linha_Servico}                   ${None}
+${Vendedor_Selecionada_Escalonada}                  ${False}
+${Valores_Parcelas}                                 ${None}
+${AJUSTE_FOCO}                                      bt_SetaUltimaVenda.png
+${AJUSTE_FOCO_DEVOLUCAO}                            ajusteFocoDevolucao.png
+${QUANTIDADE_PRODUTOS}                              1
+${POSICAO_PARCELA}                                  ${None}
+${Teste_Comissao_Escalonada}                        ${False}
+${Teste_Comissao_Total_Venda}                       ${False}
+${Teste_Comissao_Linha}                             ${False}
+${Teste_Comissao_Forma_Parcelamento}                ${False}
+${Tipo_Comissao_Linha}                              ${None}
+${PercentualComissaoTotalVenda_Servico}             ${None}
+${PercentualComissaoEscalonada_Servico}             ${None}
+${PercentualComissaoEscalonada_Servico_Executor}    ${None}
+${Desconto_Escalonada}                              ${None}
+${Aliquota_Escalonada}                              ${None}
+${Faixas_Escalonada}                                ${None}
+${OS_Vendedor_E_Tecnico_Diferentes}                 ${False}
+${Cenario_Sem_Comissao_Servico}                     ${False}
+${Atualizacao_Ambiente_MyCommerce}                  ${False}
 
 *** Keywords ***
 Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
@@ -361,21 +367,41 @@ Valida teste de comissão
 
     IF    ${Teste_Comissao_Escalonada}
 
-        # IF    '${Tipo_Comissao[0][0]}' != '1'
+        ${SelecionarVendedor}    Set Variable    ${False}
 
-        #     Seleciona vendedor comissionado('D')
-            
-        # END
-                   
-        # IF    '${Tipo_Comissao[0][0]}' != 'D'
+        IF    $Tipo_Comissao != 'D' or '${Dados_Vendedor[0][4]}' != '1'
 
-        #     Seleciona vendedor comissionado('D')
+            ${SelecionarVendedor}    Set Variable    ${True}
 
-        # END
+        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
 
-        # Set Test Variable    ${Vendedor_Selecionada_Escalonada}    ${True}
+            ${SelecionarVendedor}    Set Variable    ${True}
 
-        Log To Console    [TODO] Comissão escalonada: seleção de vendedor pendente de implementação.
+        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and not ${Cenario_Sem_Comissao_Servico} and ($Dados_Vendedor[0][3] is None or ${Dados_Vendedor[0][3]} == 0)
+
+            # Cenário exige percentual > 0, mas vendedor atual tem 0 ou NULL
+            ${SelecionarVendedor}    Set Variable    ${True}
+
+        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and ${Cenario_Sem_Comissao_Servico} and $Dados_Vendedor[0][3] is not None and ${Dados_Vendedor[0][3]} > 0
+
+            # Cenário exige percentual = 0/NULL, mas vendedor atual tem > 0
+            ${SelecionarVendedor}    Set Variable    ${True}
+
+        END
+
+        IF    ${SelecionarVendedor}
+
+            Seleciona vendedor comissionado escalonada
+
+        ELSE IF    ${Teste_Comissao_Servico}
+
+            Set Test Variable    ${PercentualComissaoEscalonada_Servico}    ${Dados_Vendedor[0][3]}
+
+        END
+
+        Gera desconto aleatório para comissão escalonada
+
+        Log To Console    \nComissão escalonada (Tipo Padrão).
 
     ELSE IF    ${Teste_Comissao_Total_Venda}
         
@@ -435,14 +461,15 @@ Valida teste de comissão
 
         END
 
-        # Em testes combinados MESMO_VEND, o cenário de serviço é mais restritivo
-        # (inclui filtro de AliquotaExecucao), então deve prevalecer na validação/seleção do vendedor.
-        ${cenario_efetivo}    Set Variable    ${Cenario_Comissao_Linha}
-        ${_cenario_serv_definido}    Evaluate    $Cenario_Comissao_Linha_Servico is not None
-        IF    ${_cenario_serv_definido}
-            ${_contem_mesmo_vend}    Evaluate    'MESMO_VEND' in $Cenario_Comissao_Linha_Servico
-            IF    ${_contem_mesmo_vend}
-                ${cenario_efetivo}    Set Variable    ${Cenario_Comissao_Linha_Servico}
+        # Em testes com produto e serviço combinados e MESMO_VEND, o cenário de serviço é mais restritivo (inclui filtro de AliquotaExecucao), então deve prevalecer na validação/seleção do vendedor.
+        ${Cenario_Linha_Para_Selecao_Vendedor}    Set Variable    ${Cenario_Comissao_Linha}
+        ${_cenario_servico_esta_definido}    Evaluate    $Cenario_Comissao_Linha_Servico is not None
+
+        IF    ${_cenario_servico_esta_definido}
+            ${_cenario_servico_usa_mesmo_vendedor}    Evaluate    'MESMO_VEND' in $Cenario_Comissao_Linha_Servico
+
+            IF    ${_cenario_servico_usa_mesmo_vendedor}
+                ${Cenario_Linha_Para_Selecao_Vendedor}    Set Variable    ${Cenario_Comissao_Linha_Servico}
             END
         END
 
@@ -454,43 +481,43 @@ Valida teste de comissão
 
                 IF    ${cenario_definido}
 
-                    IF    '${cenario_efetivo}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ' or '${cenario_efetivo}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC' or '${cenario_efetivo}' == 'PROD__DIF_POR_VEND__COM_ALIQ'
+                    IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_ALIQ__SEM_ALIQEXEC' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__DIF_POR_VEND__COM_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ' or '${cenario_efetivo}' == 'PROD__DIF_POR_VEND__SEM_ALIQ'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__DIF_POR_VEND__SEM_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_ALIQ__COM_ALIQEXEC'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__COM_AMBAS_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__DIF_POR_VEND__MESMO_VEND__SEM_AMBAS_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao = 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND (cp.Mista = 0 OR cp.Mista IS NULL) AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao = 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
@@ -502,23 +529,23 @@ Valida teste de comissão
 
                 IF    ${cenario_definido}
 
-                    IF    '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ' or '${cenario_efetivo}' == 'PROD__MISTA__COM_ALIQ'
+                    IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__MISTA__COM_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO' or '${cenario_efetivo}' == 'PROD__MISTA__COM_ALIQ_ZERO'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__MISTA__COM_ALIQ_ZERO'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV' or '${cenario_efetivo}' == 'PROD__MISTA__SEM_REG_CPLV'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__MESMO_VEND__SEM_REG_CPLV' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__MISTA__SEM_REG_CPLV'
 
                         ${vendedor_tem_cpv}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1;
 
@@ -526,55 +553,55 @@ Valida teste de comissão
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ__COM_ALIQEXEC_ZERO'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao = 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao = 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_AMBAS_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0 AND cpv.AliquotaExecucao > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__MESMO_VEND__COM_ALIQ_ZERO__COM_ALIQEXEC_ZERO'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao = 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0 AND cpv.AliquotaExecucao = 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota > 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_COM_ALIQ_ZERO' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_COM_ALIQ_ZERO' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC_ZERO__VEND_COM_ALIQ_ZERO' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_COM_ALIQ_ZERO'
 
-                        ${vendedor_atende}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0;
+                        ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1 AND cpv.Aliquota = 0;
 
-                        IF    not ${vendedor_atende}
+                        IF    not ${vendedor_atende_ao_cenario}
                             ${SelecionarVendedor}    Set Variable    ${True}
                         END
 
-                    ELSE IF    '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV' or '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV' or '${cenario_efetivo}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${cenario_efetivo}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
+                    ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ__VEND_SEM_REG_CPLV' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_COM_ALIQ_ZERO__VEND_SEM_REG_CPLV' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_DESAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_COM_ALIQEXEC__VEND_SEM_REG_CPLV' or '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV'
 
                         ${vendedor_tem_cpv}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_vendedor cpv INNER JOIN comissaoporlinha cp ON cp.Codigo = cpv.IDLinhaComissao WHERE cpv.CodigoVendedor = ${Codigo_Vendedor} AND cp.Tipo = 'D' AND cp.Mista = 1;
 
@@ -600,14 +627,13 @@ Valida teste de comissão
                 Fail    Variável \${Cenario_Comissao_Linha} não definida. Para testes de comissão por linha, defina o cenário no [Setup] ou no corpo do teste antes de chamar o montadorDeCenarios.
             END
 
-            # Guarda o cenário original de produto antes da seleção, pois Seleciona Vendedor Comissão Linha
-            # sobrescreve ${Cenario_Comissao_Linha} com o cenário passado como argumento.
+            # Guarda o cenário original de produto antes da seleção, pois 'Seleciona Vendedor Comissão Linha' sobrescreve ${Cenario_Comissao_Linha} com o cenário passado como argumento.
             ${_cenario_produto_original}    Set Variable    ${Cenario_Comissao_Linha}
 
-            Seleciona Vendedor Comissão Linha    ${Tipo_Comissao_Linha}    ${cenario_efetivo}
+            Seleciona Vendedor Comissão Linha    ${Tipo_Comissao_Linha}    ${Cenario_Linha_Para_Selecao_Vendedor}
 
             # Restaura o cenário de produto original se foi substituído pelo cenário de serviço
-            IF    '${cenario_efetivo}' != '${_cenario_produto_original}'
+            IF    '${Cenario_Linha_Para_Selecao_Vendedor}' != '${_cenario_produto_original}'
                 Set Test Variable    ${Cenario_Comissao_Linha}    ${_cenario_produto_original}
             END
 
@@ -712,6 +738,45 @@ Seleciona vendedor comissionado(${Tipo_Comissao_Selecionar})
             Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Dados_Vendedor[0][1]}
 
         END
+
+    END
+
+Seleciona vendedor comissionado escalonada
+
+    IF    ${Teste_Comissao_Servico}
+
+        IF    ${Cenario_Sem_Comissao_Servico}
+            ${filtro_percentual}    Set Variable    AND (c.ComissaoPercentualServicos = 0 OR c.ComissaoPercentualServicos IS NULL)
+        ELSE
+            ${filtro_percentual}    Set Variable    AND c.ComissaoPercentualServicos > 0
+        END
+
+        ${consultaVendedor}    Set Variable    SELECT c.Codigo, c.ComissaoPercentualServicos FROM clientes c WHERE c.ComissaoDiferenciadapor = 'D' AND c.ComissaoVendaProdutos = 1 AND c.ComissaoServicos = 1 ${filtro_percentual} AND c.Tipo IN ('D','V') AND c.Ativo = -1 AND c.Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
+
+        ${vendedorExiste}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedor}
+
+        IF    not ${vendedorExiste}
+            Fail    Não há cadastro de vendedor comissionado escalonada (tipo 'D') com comissão de serviço habilitada (Cenario_Sem_Comissao_Servico=${Cenario_Sem_Comissao_Servico}).
+        END
+
+        ${Dados_Vendedor}    Query    ${consultaVendedor}
+
+        Set Test Variable    ${Codigo_Vendedor}    ${Dados_Vendedor[0][0]}
+        Set Test Variable    ${PercentualComissaoEscalonada_Servico}    ${Dados_Vendedor[0][1]}
+
+    ELSE
+
+        ${consultaVendedor}    Set Variable    SELECT c.Codigo FROM clientes c WHERE c.ComissaoDiferenciadapor = 'D' AND c.ComissaoVendaProdutos = 1 AND c.Tipo IN ('D','V') AND c.Ativo = -1 AND c.Status = 'ATIVA' ORDER BY RAND() LIMIT 1;
+
+        ${vendedorExiste}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedor}
+
+        IF    not ${vendedorExiste}
+            Fail    Não há cadastro de vendedor comissionado escalonada (tipo 'D').
+        END
+
+        ${Dados_Vendedor}    Query    ${consultaVendedor}
+
+        Set Test Variable    ${Codigo_Vendedor}    ${Dados_Vendedor[0][0]}
 
     END
 
@@ -1564,6 +1629,35 @@ Pesquisa comissões por escalonamento
 
     RETURN    ${Descontos_Comissoes}
 
+Gera desconto aleatório para comissão escalonada
+
+    ${faixas}    Query    SELECT ce.Ate, ce.Comissao FROM comissao_escalonadaprod ce ORDER BY ce.Ate ASC
+
+    IF    len($faixas) == 0
+        Fail    Nenhuma faixa encontrada na tabela comissao_escalonadaprod.
+    END
+
+    ${ultima_faixa_ate}    Set Variable    ${faixas[-1][0]}
+    ${limite_rand}    Evaluate    int(${ultima_faixa_ate})
+
+    ${desconto_aleatorio}    Evaluate    random.randint(0, ${limite_rand})    modules=random
+
+    ${aliquota_escalonada}    Set Variable    ${faixas[-1][1]}
+
+    FOR    ${faixa}    IN    @{faixas}
+        ${ate}    Set Variable    ${faixa[0]}
+        IF    ${desconto_aleatorio} <= ${ate}
+            ${aliquota_escalonada}    Set Variable    ${faixa[1]}
+            BREAK
+        END
+    END
+
+    Set Test Variable    ${Desconto_Escalonada}    ${desconto_aleatorio}
+    Set Test Variable    ${Aliquota_Escalonada}    ${aliquota_escalonada}
+    Set Test Variable    ${Faixas_Escalonada}    ${faixas}
+
+    Log To Console    \nDesconto: ${desconto_aleatorio}% | Alíquota da faixa: ${aliquota_escalonada}%
+
 Valida a inserção do mesmo produto várias vezes no grid
 
     ${AVISO}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}    ${SLEEP_ALTO}
@@ -1796,7 +1890,17 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
 
         ELSE
 
-            ${consultaVendedorTecnicoServico}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Comissao_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoServicos = 1 AND ComissaoVendaProdutos = 1 AND Tecnico = 1 AND clientes.Codigo <> ${Codigo_Vendedor} ORDER BY RAND() LIMIT 1;
+            IF    ${Teste_Comissao_Escalonada}
+                IF    ${Cenario_Sem_Comissao_Servico}
+                    ${filtro_perc_exec}    Set Variable    AND (ComissaoPercentualServicos = 0 OR ComissaoPercentualServicos IS NULL)
+                ELSE
+                    ${filtro_perc_exec}    Set Variable    AND ComissaoPercentualServicos > 0
+                END
+            ELSE
+                ${filtro_perc_exec}    Set Variable    ${EMPTY}
+            END
+
+            ${consultaVendedorTecnicoServico}    Set Variable    SELECT codigo, ComissaoPercentualProdutos, ComissaoDiferenciadapor, ComissaoPercentualServicos FROM clientes WHERE Tipo IN ('D','V') AND ComissaoDiferenciadapor = ${Tipo_Comissao_Selecionar} AND Ativo = -1 AND Status = 'ATIVA' AND ComissaoServicos = 1 AND ComissaoVendaProdutos = 1 AND Tecnico = 1 AND clientes.Codigo <> ${Codigo_Vendedor} ${filtro_perc_exec} ORDER BY RAND() LIMIT 1;
 
             ${tecnicoComissServico}    Run Keyword And Return Status    Check If Exists In Database    ${consultaVendedorTecnicoServico}
 
@@ -1815,6 +1919,10 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
     IF    ${Dados_Vendedor} != 'None'
 
         Set Test Variable    ${Codigo_Tecnico_Servico}    ${Dados_Vendedor[0][0]}
+
+        IF    ${Teste_Comissao_Escalonada}
+            Set Test Variable    ${PercentualComissaoEscalonada_Servico_Executor}    ${Dados_Vendedor[0][3]}
+        END
 
     END
 
@@ -1901,8 +2009,6 @@ Seleciona técnico executor comissão linha
     ${Dados_Vendedor}    Query    ${consultaVendedorTecnicoServico}
 
     Set Test Variable    ${Codigo_Tecnico_Servico}    ${Dados_Vendedor[0][0]}
-
-    Log To Console    Técnico executor selecionado: ${Dados_Vendedor[0][0]}
 
 Validação após incluir serviço
 

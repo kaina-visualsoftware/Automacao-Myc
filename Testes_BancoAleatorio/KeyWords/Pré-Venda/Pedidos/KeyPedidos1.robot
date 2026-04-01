@@ -329,6 +329,8 @@ Valida baixa de estoque
 
     Should Be Equal    ${Baixa_De_Estoque}    ${True}
 
+    Log To Console    \n
+
     IF    ${Baixa_De_Estoque}
 
         Log To Console    Baixou estoque corretamente na venda gerada a partir do pedido!

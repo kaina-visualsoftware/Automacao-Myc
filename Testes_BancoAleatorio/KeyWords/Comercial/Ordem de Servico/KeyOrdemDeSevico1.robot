@@ -167,7 +167,25 @@ E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     utils.Valida parametros após incluir produto
 
     Set Test Variable    ${OS_PossuiProduto}    ${True}
+
+E insiro um produto normal informando a quantidade e desconto(${Quantidade_Produto}, ${Desconto_Produto})
+
+    IF     ${Parametro_VendaSemEstoqueOrdemDeServico}
+        
+        utils.Inserir Produto normal - Permite sem estoque
+
+    ELSE
+
+        utils.Inserir Produto normal - Necessita de estoque
+
+    END
     
+    Informa a quantidade e desconto do produto(${Quantidade_Produto}, ${Desconto_Produto})
+
+    utils.Valida parametros após incluir produto
+
+    Set Test Variable    ${OS_PossuiProduto}    ${True}
+
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_BAIXO}
@@ -291,6 +309,10 @@ Quando clico em editar
 E excluo os pagamentos lançados
 
     validacaoAviso.Valida cliente com vales compra disponíveis
+    
+    # Validação até corrigir a tarefa 184700.
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}
     
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.M 
@@ -756,6 +778,26 @@ Informa a quantidade do produto(${Quantidade_Produto})
 
     END
 
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Produto}
+
+    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
+
+Informa a quantidade e desconto do produto(${Quantidade_Produto}, ${Desconto_Produto})
+
+    IF    ${Quantidade_Produto} != ${Parametro_QuantidadePadraoProduto}
+
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+        Sleep    ${SLEEP_BAIXO}
+
+        Input Text    ${EMPTY}    ${Quantidade_Produto}
+
+    END
+
+    Press Special Key    TAB
+
+    Input Text    ${EMPTY}    ${Desconto_Produto}
     Press Special Key    TAB
 
     Set Test Variable    ${Quantidade_Produto}

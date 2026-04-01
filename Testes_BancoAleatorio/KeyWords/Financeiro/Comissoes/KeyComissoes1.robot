@@ -140,6 +140,17 @@ Ler imagens iniciais
 
 Dado que acesso a tela de comissões
 
+    IF    $Cenario_Comissao_Linha is not None
+
+        ${_ja_logou_cenario}    Run Keyword And Return Status    Variable Should Exist    ${_cenario_logado}
+
+        IF    not ${_ja_logou_cenario}
+            Log To Console    \n[CENÁRIO] Cenario_Comissao_Linha = ${Cenario_Comissao_Linha}
+            Set Test Variable    ${_cenario_logado}    ${True}
+        END
+        
+    END
+
     SikuliLibrary.Click    ${MENU_FINANCEIRO}
     Wait Until Screen Contain    ${SUB_MENU_COMISSOES}    ${TEMPO_TELA}
 
@@ -314,7 +325,7 @@ E seleciono a comissão de produtos
     
     ELSE IF    ${Teste_Comissao_Escalonada}
 
-        Fail    Validar posteriormente comissão escalonada.
+        Calcula comissão escalonada - Produtos
 
     ELSE IF    ${Teste_Comissao_Forma_Parcelamento}
 
@@ -407,6 +418,103 @@ Calcula comissão sobre forma de parcelamento - Produtos
 
     Log To Console    [VENDA] Valor final da comissão (Forma Parcelamento): ${Total_Comissao_Produtos}
 
+Calcula comissão escalonada - Produtos
+
+    # Reconectar ao BD para evitar InterfaceError por timeout de conexão
+    Disconnect From Database
+    Connect To Database    pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+
+    ${faixas_escalonada}    Query    SELECT ce.Ate, ce.Comissao FROM comissao_escalonadaprod ce ORDER BY ce.Ate ASC
+
+    IF    len($faixas_escalonada) == 0
+        Fail    Nenhuma faixa encontrada na tabela comissao_escalonadaprod.
+    END
+
+    ${dados_produto}    Query    SELECT vp.Desconto, vp.ValorUnitario, vp.Quantidade FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.CodigoProduto = ${COD_PRODUTO} AND vp.Cancelada IS NULL LIMIT 1;
+
+    IF    len($dados_produto) == 0
+        Fail    Produto ${COD_PRODUTO} não encontrado na operação ${CODIGO_OPERACAO_MOV}.
+    END
+
+    ${desconto_percentual}    Set Variable    ${dados_produto[0][0]}
+    ${valor_unitario}         Set Variable    ${dados_produto[0][1]}
+    ${quantidade}             Set Variable    ${dados_produto[0][2]}
+
+    IF    $desconto_percentual is None
+        ${desconto_percentual}    Set Variable    0
+    END
+
+    ${aliquota_escalonada}    Busca Faixa Comissao Escalonada    ${desconto_percentual}    ${faixas_escalonada}
+
+    ${Total_Comissao_Produtos}    Calcula Comissao Escalonada Produto    ${valor_unitario}    ${aliquota_escalonada}    ${quantidade}
+
+    ${query_comissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL
+
+    ${valor_bd}    Evaluate    decimal.Decimal(str(${query_comissaoProdutos[0][0]}))    modules=decimal
+
+    ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${valor_bd}
+
+    Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_Produtos}    msg=Comissão do produto diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_Produtos}
+
+    Set Test Variable    ${Total_Comissao_Produtos}
+    Set Test Variable    ${Total_Comissao}    ${Total_Comissao_Produtos}
+
+    Log To Console    Desconto: ${desconto_percentual}% | Faixa alíquota: ${aliquota_escalonada}% | Comissão produto: ${Total_Comissao_Produtos}
+
+Calcula comissão escalonada - Serviços
+
+    # Reconectar ao BD para evitar InterfaceError por timeout de conexão
+    Disconnect From Database
+    Connect To Database    pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+
+    # Busca o percentual de comissão de serviço do vendedor/executor
+    IF    ${OS_Vendedor_E_Tecnico_Diferentes}
+
+        ${percentual_servico}    Set Variable    ${PercentualComissaoEscalonada_Servico_Executor}
+        ${codigo_funcionario}    Set Variable    ${Codigo_Tecnico_Servico}
+
+    ELSE
+
+        ${percentual_servico}    Set Variable    ${PercentualComissaoEscalonada_Servico}
+        ${codigo_funcionario}    Set Variable    ${Codigo_Vendedor}
+
+    END
+
+    # Validar se tem percentual de serviço
+    IF    $percentual_servico is None or ${percentual_servico} == 0
+
+        Log To Console    ComissaoPercentualServicos = ${percentual_servico} → NÃO gera comissão de serviço.
+
+        Verifica Comissão Serviço Escalonada Zerada    ${CODIGO_OPERACAO_MOV}    ${codigo_funcionario}
+
+        Set Test Variable    ${Total_Comissao_Servicos}    ${0}
+        Set Test Variable    ${Total_Comissao_OS}    ${0}
+        Set Test Variable    ${Total_Comissao}    ${0}
+
+    ELSE
+
+        # Busca valor base do serviço (TotalServicos - tributos)
+        ${valor_base}    Consulta valor base serviço    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
+
+        # Calcula comissão do serviço
+        ${Total_Comissao_OS}    Calcula Comissao Escalonada Servico    ${valor_base}    ${percentual_servico}
+
+        # Valida contra o BD
+        ${valor_bd}    Busca Valor Comissão Serviço Gerada    ${CODIGO_OPERACAO_MOV}    ${codigo_funcionario}
+
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${Total_Comissao_OS}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_OS}    ${valor_bd}
+
+        Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_OS}    msg=Comissão de serviço diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_OS}
+
+        Set Test Variable    ${Total_Comissao_OS}
+        Set Test Variable    ${Total_Comissao}    ${Total_Comissao_OS}
+        Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
+
+        Log To Console    Percentual serviço: ${percentual_servico}% | Comissão serviço: ${Total_Comissao_OS} | Funcionário: ${codigo_funcionario}
+
+    END
+
 E seleciono a comissão de produtos - Devolução
 
     Set Test Variable    ${Teste_Comissao_Produto}    ${True}
@@ -481,24 +589,44 @@ E seleciono a comissão de serviços
 
     Set Test Variable    ${Baixa_Eh_Servico}    ${True}
 
-    # Se há cenário separado para serviço (testes combinados prod+serv), usa ele; caso contrário, usa o cenário padrão.
+    # Se há cenário separado para serviço (testes com produto e serviço), usa ele; caso contrário, usa o cenário padrão.
     # Para testes "Total Venda" que não definem nenhum cenário de linha, ambas variáveis ficam ${None}.
     IF    $Cenario_Comissao_Linha_Servico is not None
-        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha_Servico}
+        ${cenario_servico}    Set Variable    ${Cenario_Comissao_Linha_Servico}
     ELSE
-        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha}
+        ${cenario_servico}    Set Variable    ${Cenario_Comissao_Linha}
     END
+    
     IF    $Tipo_Comissao_Linha_Servico is not None
-        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha_Servico}
+        ${tipo_linha_servico}    Set Variable    ${Tipo_Comissao_Linha_Servico}
     ELSE
-        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha}
+        ${tipo_linha_servico}    Set Variable    ${Tipo_Comissao_Linha}
     END
 
     IF    ${Cenario_Sem_Comissao_Servico}
     
         Log To Console    Cenário Sem Geração De Comissão De Serviço -> Pulando pesquisa no grid...
 
-        Valida Comissão Linha Serviço    ${tipo_linha_serv}    ${cenario_serv}
+        IF    ${Teste_Comissao_Escalonada}
+
+            # Na escalonada, quando não gera comissão de serviço, o sistema pode gerar registro zerado no BD
+            IF    ${OS_Vendedor_E_Tecnico_Diferentes}
+                ${codigo_funcionario}    Set Variable    ${Codigo_Tecnico_Servico}
+            ELSE
+                ${codigo_funcionario}    Set Variable    ${Codigo_Vendedor}
+            END
+
+            Verifica Comissão Serviço Escalonada Zerada    ${CODIGO_OPERACAO_MOV}    ${codigo_funcionario}
+
+            Set Test Variable    ${Total_Comissao_Servicos}    ${0}
+            Set Test Variable    ${Total_Comissao_OS}    ${0}
+            Set Test Variable    ${Total_Comissao}    ${0}
+
+        ELSE
+
+            Valida Comissão Linha Serviço    ${tipo_linha_servico}    ${cenario_servico}
+
+        END
 
         RETURN
 
@@ -538,12 +666,32 @@ E seleciono a comissão de serviços
 
         Calcula comissão sobre total venda - Serviços
 
+    ELSE IF    ${Teste_Comissao_Escalonada}
+
+        Calcula comissão escalonada - Serviços
+
     END
 
 E seleciono a comissão de serviços do executor
-    [Documentation]    Seleciona a comissão de serviço no grid SEM recalcular valores (usada na segunda baixa, do executor).
+    [Documentation]    Seleciona a comissão de serviço no grid e calcula valores do executor (segunda entrada na tela de comissões).
 
     Set Test Variable    ${Baixa_Eh_Servico}    ${True}
+
+    IF    ${Cenario_Sem_Comissao_Servico} and ${Teste_Comissao_Escalonada}
+
+        Log To Console    Cenário Sem Geração De Comissão De Serviço (executor) -> Pulando pesquisa no grid...
+
+        Verifica Comissão Serviço Escalonada Zerada    ${CODIGO_OPERACAO_MOV}    ${Codigo_Tecnico_Servico}
+
+        Set Test Variable    ${Total_Comissao_Servicos}    ${0}
+        Set Test Variable    ${Total_Comissao_OS}    ${0}
+        Set Test Variable    ${Total_Comissao}    ${0}
+
+        Log To Console    ComissaoPercentualServicos executor = 0/NULL → SEM comissão de serviço
+
+        RETURN
+
+    END
 
     Sleep    ${SLEEP_BAIXO}
 
@@ -565,21 +713,27 @@ E seleciono a comissão de serviços do executor
 
     Sleep    ${SLEEP_ALTO}
 
+    IF    ${Teste_Comissao_Escalonada}
+
+        Calcula comissão escalonada - Serviços
+
+    END
+
 Calcula comissão por linha de serviço - apenas 1 serviço
 
     # Se há cenário separado para serviço (testes combinados prod+serv), usa ele; caso contrário, usa o cenário padrão.
     IF    $Cenario_Comissao_Linha_Servico is not None
-        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha_Servico}
+        ${cenario_servico}    Set Variable    ${Cenario_Comissao_Linha_Servico}
     ELSE
-        ${cenario_serv}    Set Variable    ${Cenario_Comissao_Linha}
+        ${cenario_servico}    Set Variable    ${Cenario_Comissao_Linha}
     END
     IF    $Tipo_Comissao_Linha_Servico is not None
-        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha_Servico}
+        ${tipo_linha_servico}    Set Variable    ${Tipo_Comissao_Linha_Servico}
     ELSE
-        ${tipo_linha_serv}    Set Variable    ${Tipo_Comissao_Linha}
+        ${tipo_linha_servico}    Set Variable    ${Tipo_Comissao_Linha}
     END
 
-    IF    '${tipo_linha_serv}' == 'Simples'
+    IF    '${tipo_linha_servico}' == 'Simples'
 
         ${valor_comissao_servico}    Consulta valor comissão serviço único    ${COD_SERVICO}    ${CODIGO_OPERACAO_MOV}    ${Total_Tributos_Servico}
 
@@ -591,9 +745,9 @@ Calcula comissão por linha de serviço - apenas 1 serviço
 
         Log To Console    [OS] Valor final da comissão (Linha Simples): ${Total_Comissao_Servicos}
 
-    ELSE IF    '${tipo_linha_serv}' == 'Diferenciada Por Vendedor' or '${tipo_linha_serv}' == 'Mista'
+    ELSE IF    '${tipo_linha_servico}' == 'Diferenciada Por Vendedor' or '${tipo_linha_servico}' == 'Mista'
 
-        ${eh_cenario_produto}    Evaluate    '${cenario_serv}'.startswith('PROD__')
+        ${eh_cenario_produto}    Evaluate    '${cenario_servico}'.startswith('PROD__')
 
         IF    ${eh_cenario_produto}
 
@@ -604,15 +758,15 @@ Calcula comissão por linha de serviço - apenas 1 serviço
             Set Test Variable    ${Total_Comissao_OS}
             Set Test Variable    ${Total_Comissao_Servicos}    ${Total_Comissao_OS}
 
-            Log To Console    [OS] Valor final da comissão de serviço (cenário PROD__* — cálculo genérico ${tipo_linha_serv}): ${Total_Comissao_Servicos}
+            Log To Console    [OS] Valor final da comissão de serviço (cenário PROD__* — cálculo genérico ${tipo_linha_servico}): ${Total_Comissao_Servicos}
 
         ELSE
 
-            Valida Comissão Linha Serviço    ${tipo_linha_serv}    ${cenario_serv}
+            Valida Comissão Linha Serviço    ${tipo_linha_servico}    ${cenario_servico}
 
         END
 
-    ELSE IF    '${tipo_linha_serv}' == 'Tabela de Preco'
+    ELSE IF    '${tipo_linha_servico}' == 'Tabela de Preco'
 
         Fail    Comissão por linha de serviço para Tabela de Preço ainda não implementada.
 
@@ -634,6 +788,18 @@ Verifica Comissão Serviço Gerada
         Fail    Comissão de serviço NÃO deveria ter sido gerada para OS ${codigo_os} | Funcionário ${codigo_funcionario}, mas FOI encontrado registro em comissoesservico.
 
     END
+
+Verifica Comissão Serviço Escalonada Zerada
+    [Documentation]    Na escalonada, quando ComissaoPercentualServicos = 0/NULL, o sistema gera registro em comissoesservico com ValorComissao = 0. Esta keyword valida que o valor é realmente zero.
+    [Arguments]    ${codigo_os}    ${codigo_funcionario}
+
+    ${query_valor}    Query    SELECT ROUND(COALESCE(SUM(cs.ValorComissao), 0), 2) FROM comissoesservico cs WHERE cs.CodigoVenda = ${codigo_os} AND cs.CodigoFuncionario = ${codigo_funcionario} AND cs.Cancelada IS NULL;
+
+    ${valor_comissao}    Evaluate    decimal.Decimal(str(${query_valor[0][0]}))    modules=decimal
+
+    Should Be Equal As Numbers    ${valor_comissao}    0    msg=Comissão de serviço deveria ser ZERO para OS ${codigo_os} | Funcionário ${codigo_funcionario}, mas o valor encontrado foi ${valor_comissao}.
+
+    Log To Console    Comissão de serviço zerada confirmada para OS ${codigo_os} | Funcionário ${codigo_funcionario} (Comissão serviço: ${valor_comissao})
 
 Busca Valor Comissão Serviço Gerada
     [Arguments]    ${codigo_os}    ${codigo_funcionario}
@@ -1730,7 +1896,7 @@ Valida baixa comissao
 
     Check If Exists In Database    SELECT Sequencia, nDocumento, CodigoAbertura, ValorDocumento FROM caixamovimentos WHERE nDocumento = ${NDoc_Comissao}
 
-Então visualizo os detalhes da comissao recem paga
+Então visualizo os detalhes da comissão recém paga
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
@@ -2334,7 +2500,7 @@ Consulta valor comissão serviço único
 
     ${valor_comissao_servico}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    [Consulta comissão serviço único] Serviço: ${cod_servico} | Operação: ${codigo_operacao} | Tipo: ${Tipo_Comissao_Linha} | Valor comissão: ${valor_comissao_servico}
+    Log To Console    Serviço: ${cod_servico} | Operação: ${codigo_operacao} | Tipo: ${Tipo_Comissao_Linha} | Valor comissão: ${valor_comissao_servico}
 
     RETURN    ${valor_comissao_servico}
 
@@ -2360,7 +2526,7 @@ Consulta alíquotas serviço por vendedor
 
     IF    len($resultado) == 0
 
-        Log To Console    [Consulta alíquotas serviço] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o serviço ${cod_servico}.
+        Log To Console    Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o serviço ${cod_servico}.
         RETURN    ${None}
         
     END
@@ -2383,7 +2549,7 @@ Consulta alíquota geral serviço
 
     ${aliquota_geral}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    [Consulta alíquota geral serviço] Serviço: ${cod_servico} | Aliquota geral: ${aliquota_geral}
+    Log To Console    Serviço: ${cod_servico} | Aliquota geral: ${aliquota_geral}
 
     RETURN    ${aliquota_geral}
 
@@ -2394,14 +2560,14 @@ Consulta alíquotas produto por vendedor
 
     IF    len($resultado) == 0
 
-        Log To Console    [Consulta alíquotas produto] Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o produto ${codigo_produto}.
+        Log To Console    Vendedor ${codigo_vendedor_consulta} não possui registro em comissaoporlinha_vendedor para o produto ${codigo_produto}.
         RETURN    ${None}
         
     END
 
     ${aliquota}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    [Consulta alíquotas produto] Vendedor: ${codigo_vendedor_consulta} | Produto: ${codigo_produto} | Aliquota: ${aliquota}
+    Log To Console    Vendedor: ${codigo_vendedor_consulta} | Produto: ${codigo_produto} | Aliquota: ${aliquota}
 
     RETURN    ${aliquota}
 
@@ -2478,7 +2644,7 @@ Calcula Comissao Produto Com Aliquota
 
     ${comissao}    Evaluate    (decimal.Decimal(str(${valor_base})) * (decimal.Decimal(str(${aliquota})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
-    Log To Console    [Calcula Comissao Produto] Base: ${valor_base} | Aliquota: ${aliquota}% | Comissão: ${comissao}
+    Log To Console    Base: ${valor_base} | Aliquota: ${aliquota}% | Comissão: ${comissao}
 
     RETURN    ${comissao}
 

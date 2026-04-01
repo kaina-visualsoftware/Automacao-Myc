@@ -73,7 +73,7 @@ Teste 04 - Comissão sobre total da venda com múltiplos produtos gerada sobre s
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     E saio da tela(CaixaPrincipal)
-    Então visualizo os detalhes da comissao recem paga
+    Então visualizo os detalhes da comissão recém paga
     E saio da tela(Comissoes)
 
 # Teste 05 - Comissão escalonada sobre mesmos produtos, com desconto diferentes - Escalonada
@@ -120,7 +120,7 @@ Teste 07 - Comissão sobre total da venda oriunda de uma pré-venda, gerada sobr
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     E saio da tela(CaixaPrincipal)
-    Então visualizo os detalhes da comissao recem paga
+    Então visualizo os detalhes da comissão recém paga
     E saio da tela(Comissoes)
 
 Teste 08 - Comissão por linha sobre venda oriunda de uma condicional e pagamento da comissão no caixa - Linha Simples
@@ -167,7 +167,7 @@ Teste 10 - Comissão sobre total de venda parcial oriunda de uma condicional, ge
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     E saio da tela(CaixaPrincipal)
-    Então visualizo os detalhes da comissao recem paga
+    Então visualizo os detalhes da comissão recém paga
     E saio da tela(Comissoes)
 
 Teste 11 - Comissão por linha de serviço e pagamento da comissão no caixa sem receber a Ordem de Serviço - Linha Simples
@@ -234,7 +234,7 @@ Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela
         KeyComissoes1.E vou para a aba de contas a pagar
         Então faço o pagamento da comissao
         E saio da tela(CaixaPrincipal)
-        Então visualizo os detalhes da comissao recem paga
+        Então visualizo os detalhes da comissão recém paga
         E saio da tela(Comissoes)
         
     END
@@ -372,7 +372,7 @@ Teste 20 - Comissão por linha de venda com múltiplos produtos gerada sobre som
     KeyComissoes1.E vou para a aba de contas a pagar
     Então faço o pagamento da comissao
     E saio da tela(CaixaPrincipal)
-    Então visualizo os detalhes da comissao recem paga
+    Então visualizo os detalhes da comissão recém paga
     E saio da tela(Comissoes)
 
 Teste 21 - Comissão sobre total da venda com exclusão e reinserção de produto na edição, e validação no relatório de comissões pendentes - Total Venda
@@ -1064,39 +1064,13 @@ Teste 56 - Comissão por linha mista de serviço com vendedores diferentes, exec
     Então visualizo os detalhes da comissão paga do vendedor OS e do executor
     E saio da tela(Comissoes)
 
-Teste 57 - Comissão por linha mista de serviço com vendedores diferentes, executor e vendedor OS ambos sem registro cpv usando alíquota geral e parâmetro habilitado - Linha Mista
-    # Parâmetro habilitado, vendedores diferentes, executor SEM registro na tabela `comissaoporlinha_vendedor`, vendedor SEM registro na tabela `comissaoporlinha_vendedor` → ambos usam Aliquota Geral Mista
-    [Tags]    Teste57
-    [Setup]    Run Keywords    
-    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
-    ...    Inicializar Pré-Condições    AND    
-    ...    Reiniciar MyCommerce Se Necessário    AND    
-    ...    Set Test Variable    ${Cenario_Comissao_Linha}    PARAM_HAB__MISTA__DIF_EXEC__EXEC_SEM_REG_CPLV__VEND_SEM_REG_CPLV    AND    
-    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com serviço, com vendedor e técnico executor distintos - A prazo
-
-    Dado que acesso a tela de comissões
-    Quando insiro o vendedor comissionado
-    E vou para a aba de servicos
-    E seleciono a comissão de serviços
-    E baixo a comissao recém recebida
-    E preparo a baixa do executor após baixa do vendedor OS
-    E saio da tela(Comissoes)
-    Dado que acesso a tela de comissões
-    Quando insiro o técnico executor de serviço comissionado
-    E vou para a aba de servicos
-    E seleciono a comissão de serviços do executor
-    E baixo a comissao recém recebida
-    E saio da tela(Comissoes)
-    Então visualizo os detalhes da comissão paga do vendedor OS e do executor
-    E saio da tela(Comissoes)
-
 # ============================================================================================
 # Testes de Comissão por Linha em Produtos — Linha Diferenciada Por Vendedor
 # ============================================================================================
 
-Teste 58 - Comissão por linha diferenciada de produto com alíquota do vendedor positiva sobre venda de balcão - Linha Diferenciada Por Vendedor
+Teste 57 - Comissão por linha diferenciada de produto com alíquota do vendedor positiva sobre venda de balcão - Linha Diferenciada Por Vendedor
     # Venda balcão, cpv.Aliquota > 0 --> gera comissão
-    [Tags]    Teste58
+    [Tags]    Teste57
     [Setup]    Run Keywords    
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__DIF_POR_VEND__COM_ALIQ    AND    
     ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
@@ -1107,9 +1081,9 @@ Teste 58 - Comissão por linha diferenciada de produto com alíquota do vendedor
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 59 - Comissão por linha diferenciada de produto com alíquota do vendedor positiva sobre OS com produto e serviço - Linha Diferenciada Por Vendedor
+Teste 58 - Comissão por linha diferenciada de produto com alíquota do vendedor positiva sobre OS com produto e serviço - Linha Diferenciada Por Vendedor
     # OS com produto + serviço, cpv.Aliquota > 0 --> gera comissão de produto e de serviço; parâmetro vendedor/executor desmarcado
-    [Tags]    Teste59
+    [Tags]    Teste58
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1126,9 +1100,9 @@ Teste 59 - Comissão por linha diferenciada de produto com alíquota do vendedor
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 60 - Comissão por linha diferenciada de produto com alíquota do vendedor positiva sobre OS somente com produto - Linha Diferenciada Por Vendedor
+Teste 59 - Comissão por linha diferenciada de produto com alíquota do vendedor positiva sobre OS somente com produto - Linha Diferenciada Por Vendedor
     # OS somente com produto, cpv.Aliquota > 0 --> gera comissão de produto
-    [Tags]    Teste60
+    [Tags]    Teste59
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1142,9 +1116,9 @@ Teste 60 - Comissão por linha diferenciada de produto com alíquota do vendedor
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 61 - Comissão por linha diferenciada de produto com alíquota do vendedor zerada sobre venda de balcão - Linha Diferenciada Por Vendedor
+Teste 60 - Comissão por linha diferenciada de produto com alíquota do vendedor zerada sobre venda de balcão - Linha Diferenciada Por Vendedor
     # Venda balcão, cpv.Aliquota = 0 --> comissão = 0
-    [Tags]    Teste61
+    [Tags]    Teste60
     [Setup]    Run Keywords    
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__DIF_POR_VEND__SEM_ALIQ    AND    
     ...    Set Test Variable    ${Cenario_Sem_Comissao_Produto}    ${True}    AND    
@@ -1156,9 +1130,9 @@ Teste 61 - Comissão por linha diferenciada de produto com alíquota do vendedor
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 62 - Comissão por linha diferenciada de produto com alíquota do vendedor zerada sobre OS com produto e serviço - Linha Diferenciada Por Vendedor
+Teste 61 - Comissão por linha diferenciada de produto com alíquota do vendedor zerada sobre OS com produto e serviço - Linha Diferenciada Por Vendedor
     # OS com produto + serviço, cpv.Aliquota = 0 --> produto sem comissão; parâmetro vendedor/executor desmarcado --> serviço também sem comissão
-    [Tags]    Teste62
+    [Tags]    Teste61
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1173,9 +1147,9 @@ Teste 62 - Comissão por linha diferenciada de produto com alíquota do vendedor
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 63 - Comissão por linha diferenciada de produto com alíquota do vendedor zerada sobre OS somente com produto - Linha Diferenciada Por Vendedor
+Teste 62 - Comissão por linha diferenciada de produto com alíquota do vendedor zerada sobre OS somente com produto - Linha Diferenciada Por Vendedor
     # OS somente com produto, cpv.Aliquota = 0 --> comissão = 0
-    [Tags]    Teste63
+    [Tags]    Teste62
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1194,58 +1168,58 @@ Teste 63 - Comissão por linha diferenciada de produto com alíquota do vendedor
 # Testes de Comissão por Linha em Produtos — Linha Mista
 # ============================================================================================
 
-Teste 64 - Comissão por linha mista de produto com alíquota diferenciada positiva sobre venda de balcão - Linha Mista
+Teste 63 - Comissão por linha mista de produto com alíquota diferenciada positiva sobre venda de balcão - Linha Mista
     # Venda balcão, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota > 0 --> usa cpv.Aliquota
+    [Tags]    Teste63
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__COM_ALIQ    AND    
+    ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 64 - Comissão por linha mista de produto com alíquota diferenciada positiva sobre OS com produto e serviço - Linha Mista
+    # OS com produto + serviço, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota > 0 --> usa cpv.Aliquota (produto e serviço); parâmetro vendedor/executor desmarcado
     [Tags]    Teste64
     [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__COM_ALIQ    AND    
-    ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 65 - Comissão por linha mista de produto com alíquota diferenciada positiva sobre OS com produto e serviço - Linha Mista
-    # OS com produto + serviço, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota > 0 --> usa cpv.Aliquota (produto e serviço); parâmetro vendedor/executor desmarcado
+Teste 65 - Comissão por linha mista de produto com alíquota diferenciada positiva sobre OS somente com produto - Linha Mista
+    # OS somente com produto, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota > 0 --> usa cpv.Aliquota
     [Tags]    Teste65
     [Setup]    Run Keywords    
-    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
     ...    Reiniciar MyCommerce Se Necessário    AND    
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__COM_ALIQ    AND    
-    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com produto - A prazo
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado
     E seleciono a comissão de produtos
     E baixo a comissao recém recebida
-    E vou para a aba de servicos
-    E seleciono a comissão de serviços
-    E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 66 - Comissão por linha mista de produto com alíquota diferenciada positiva sobre OS somente com produto - Linha Mista
-    # OS somente com produto, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota > 0 --> usa cpv.Aliquota
+Teste 66 - Comissão por linha mista de produto com alíquota diferenciada zerada sobre venda de balcão - Linha Mista
+    # Venda balcão, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota = 0 --> comissão = 0
     [Tags]    Teste66
     [Setup]    Run Keywords    
-    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
-    ...    Inicializar Pré-Condições    AND    
-    ...    Reiniciar MyCommerce Se Necessário    AND    
-    ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__COM_ALIQ    AND    
-    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com produto - A prazo
-
-    Dado que acesso a tela de comissões
-    Quando insiro o vendedor comissionado
-    E seleciono a comissão de produtos
-    E baixo a comissao recém recebida
-    E saio da tela(Comissoes)
-
-Teste 67 - Comissão por linha mista de produto com alíquota diferenciada zerada sobre venda de balcão - Linha Mista
-    # Venda balcão, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota = 0 --> comissão = 0
-    [Tags]    Teste67
-    [Setup]    Run Keywords    
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__COM_ALIQ_ZERO    AND    
     ...    Set Test Variable    ${Cenario_Sem_Comissao_Produto}    ${True}    AND    
     ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
@@ -1256,9 +1230,9 @@ Teste 67 - Comissão por linha mista de produto com alíquota diferenciada zerad
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 68 - Comissão por linha mista de produto com alíquota diferenciada zerada sobre OS com produto e serviço - Linha Mista
+Teste 67 - Comissão por linha mista de produto com alíquota diferenciada zerada sobre OS com produto e serviço - Linha Mista
     # OS com produto + serviço, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota = 0 --> produto sem comissão; parâmetro vendedor/executor desmarcado --> serviço também sem comissão
-    [Tags]    Teste68
+    [Tags]    Teste67
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1273,9 +1247,9 @@ Teste 68 - Comissão por linha mista de produto com alíquota diferenciada zerad
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 69 - Comissão por linha mista de produto com alíquota diferenciada zerada sobre OS somente com produto - Linha Mista
+Teste 68 - Comissão por linha mista de produto com alíquota diferenciada zerada sobre OS somente com produto - Linha Mista
     # OS somente com produto, vendedor TEM registro na tabela `comissaoporlinha_vendedor`, cpv.Aliquota = 0 --> comissão = 0
-    [Tags]    Teste69
+    [Tags]    Teste68
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1290,9 +1264,9 @@ Teste 69 - Comissão por linha mista de produto com alíquota diferenciada zerad
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 70 - Comissão por linha mista de produto sem registro diferenciado usando alíquota geral sobre venda de balcão - Linha Mista
+Teste 69 - Comissão por linha mista de produto sem registro diferenciado usando alíquota geral sobre venda de balcão - Linha Mista
     # Venda balcão, vendedor SEM registro na tabela `comissaoporlinha_vendedor` --> usa Aliquota Geral Mista;
-    [Tags]    Teste70
+    [Tags]    Teste69
     [Setup]    Run Keywords    
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__SEM_REG_CPLV    AND    
     ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
@@ -1303,9 +1277,9 @@ Teste 70 - Comissão por linha mista de produto sem registro diferenciado usando
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 71 - Comissão por linha mista de produto sem registro diferenciado usando alíquota geral sobre OS com produto e serviço - Linha Mista
+Teste 70 - Comissão por linha mista de produto sem registro diferenciado usando alíquota geral sobre OS com produto e serviço - Linha Mista
     # OS com produto + serviço, vendedor SEM registro na tabela `comissaoporlinha_vendedor` --> usa Aliquota Geral Mista; parâmetro vendedor/executor desmarcado
-    [Tags]    Teste71
+    [Tags]    Teste70
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1322,9 +1296,9 @@ Teste 71 - Comissão por linha mista de produto sem registro diferenciado usando
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 72 - Comissão por linha mista de produto sem registro diferenciado usando alíquota geral sobre OS somente com produto - Linha Mista
+Teste 71 - Comissão por linha mista de produto sem registro diferenciado usando alíquota geral sobre OS somente com produto - Linha Mista
     # OS somente com produto, vendedor SEM registro na tabela `comissaoporlinha_vendedor` --> usa Aliquota Geral Mista
-    [Tags]    Teste72
+    [Tags]    Teste71
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1343,9 +1317,9 @@ Teste 72 - Comissão por linha mista de produto sem registro diferenciado usando
 # Produto Diferenciada × Serviço Diferenciada, Parâmetro Desabilitado
 # ============================================================================================
 
-Teste 73 - Combinado: produto diferenciada com alíquota + serviço diferenciada com alíquota, parâmetro desabilitado - Linha Diferenciada Por Vendedor
+Teste 72 - Combinado: produto diferenciada com alíquota + serviço diferenciada com alíquota, parâmetro desabilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq>0 → gera | Serviço: cpv.Aliq>0 → gera | Param desab
-    [Tags]    Teste73
+    [Tags]    Teste72
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1363,9 +1337,9 @@ Teste 73 - Combinado: produto diferenciada com alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 74 - Combinado: produto diferenciada sem alíquota + serviço diferenciada sem alíquota, parâmetro desabilitado - Linha Diferenciada Por Vendedor
+Teste 73 - Combinado: produto diferenciada sem alíquota + serviço diferenciada sem alíquota, parâmetro desabilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: cpv.Aliq=0 → NÃO gera | Param desab
-    [Tags]    Teste74
+    [Tags]    Teste73
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1389,9 +1363,9 @@ Teste 74 - Combinado: produto diferenciada sem alíquota + serviço diferenciada
 # Produto Diferenciada × Serviço Diferenciada, Parâmetro Habilitado
 # ============================================================================================
 
-Teste 75 - Combinado: produto diferenciada com alíquota + serviço diferenciada hab alíquota positiva sem alíquota execução, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 74 - Combinado: produto diferenciada com alíquota + serviço diferenciada hab alíquota positiva sem alíquota execução, parâmetro habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: Aliq>0, AliqExec=0 → gera com cpv.Aliq | Param hab
-    [Tags]    Teste75
+    [Tags]    Teste74
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1409,9 +1383,9 @@ Teste 75 - Combinado: produto diferenciada com alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 76 - Combinado: produto diferenciada com alíquota + serviço diferenciada hab ambas alíquotas positivas, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 75 - Combinado: produto diferenciada com alíquota + serviço diferenciada hab ambas alíquotas positivas, parâmetro habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: Aliq>0 e AliqExec>0 → gera com cpv.Aliq | Param hab
-    [Tags]    Teste76
+    [Tags]    Teste75
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1429,9 +1403,9 @@ Teste 76 - Combinado: produto diferenciada com alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 77 - Combinado: produto diferenciada sem alíquota + serviço diferenciada hab sem alíquota com alíquota execução, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 76 - Combinado: produto diferenciada sem alíquota + serviço diferenciada hab sem alíquota com alíquota execução, parâmetro habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0, AliqExec>0 → gera com cpv.AliqExec | Param hab
-    [Tags]    Teste77
+    [Tags]    Teste76
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1450,9 +1424,9 @@ Teste 77 - Combinado: produto diferenciada sem alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 78 - Combinado: produto diferenciada sem alíquota + serviço diferenciada hab ambas alíquotas zeradas, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 77 - Combinado: produto diferenciada sem alíquota + serviço diferenciada hab ambas alíquotas zeradas, parâmetro habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0 e AliqExec=0 → NÃO gera | Param hab
-    [Tags]    Teste78
+    [Tags]    Teste77
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1476,9 +1450,9 @@ Teste 78 - Combinado: produto diferenciada sem alíquota + serviço diferenciada
 # Produto Mista × Serviço Mista, Parâmetro Desabilitado
 # ============================================================================================
 
-Teste 79 - Combinado: produto mista com alíquota + serviço mista com alíquota, parâmetro desabilitado - Linha Mista
+Teste 78 - Combinado: produto mista com alíquota + serviço mista com alíquota, parâmetro desabilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: cpv.Aliq>0 → gera com cpv.Aliq | Param desab
-    [Tags]    Teste79
+    [Tags]    Teste78
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1496,9 +1470,9 @@ Teste 79 - Combinado: produto mista com alíquota + serviço mista com alíquota
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 80 - Combinado: produto mista com alíquota zerada + serviço mista com alíquota zerada, parâmetro desabilitado - Linha Mista
+Teste 79 - Combinado: produto mista com alíquota zerada + serviço mista com alíquota zerada, parâmetro desabilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: cpv.Aliq=0 → NÃO gera | Param desab
-    [Tags]    Teste80
+    [Tags]    Teste79
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1518,9 +1492,9 @@ Teste 80 - Combinado: produto mista com alíquota zerada + serviço mista com al
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 81 - Combinado: produto mista sem registro cpv usando geral + serviço mista sem registro cpv usando geral, parâmetro desabilitado - Linha Mista
+Teste 80 - Combinado: produto mista sem registro cpv usando geral + serviço mista sem registro cpv usando geral, parâmetro desabilitado - Linha Mista
     # OS prod+serv | Produto: sem cpv → gera com Aliq Geral Mista | Serviço: sem cpv → gera com Aliq Geral Mista | Param desab
-    [Tags]    Teste81
+    [Tags]    Teste80
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1542,9 +1516,9 @@ Teste 81 - Combinado: produto mista sem registro cpv usando geral + serviço mis
 # Produto Mista × Serviço Mista, Parâmetro Habilitado
 # ============================================================================================
 
-Teste 82 - Combinado: produto mista com alíquota + serviço mista hab alíquota positiva sem alíquota execução, parâmetro habilitado - Linha Mista
+Teste 81 - Combinado: produto mista com alíquota + serviço mista hab alíquota positiva sem alíquota execução, parâmetro habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq| Serviço: Aliq>0, AliqExec=0 → gera com cpv.Aliq | Param hab
-    [Tags]    Teste82
+    [Tags]    Teste81
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1562,9 +1536,9 @@ Teste 82 - Combinado: produto mista com alíquota + serviço mista hab alíquota
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 83 - Combinado: produto mista com alíquota + serviço mista hab ambas alíquotas positivas, parâmetro habilitado - Linha Mista
+Teste 82 - Combinado: produto mista com alíquota + serviço mista hab ambas alíquotas positivas, parâmetro habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: Aliq>0 e AliqExec>0 → gera com cpv.Aliq + cpv.AliqExec | Param hab
-    [Tags]    Teste83
+    [Tags]    Teste82
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1582,9 +1556,9 @@ Teste 83 - Combinado: produto mista com alíquota + serviço mista hab ambas al�
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 84 - Combinado: produto mista com alíquota zerada + serviço mista hab sem alíquota com alíquota execução, parâmetro habilitado - Linha Mista
+Teste 83 - Combinado: produto mista com alíquota zerada + serviço mista hab sem alíquota com alíquota execução, parâmetro habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0, AliqExec>0 → gera com cpv.AliqExec | Param hab
-    [Tags]    Teste84
+    [Tags]    Teste83
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1603,9 +1577,9 @@ Teste 84 - Combinado: produto mista com alíquota zerada + serviço mista hab se
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 85 - Combinado: produto mista com alíquota zerada + serviço mista hab ambas alíquotas zeradas, parâmetro habilitado - Linha Mista
+Teste 84 - Combinado: produto mista com alíquota zerada + serviço mista hab ambas alíquotas zeradas, parâmetro habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0 e AliqExec=0 → NÃO gera | Param hab
-    [Tags]    Teste85
+    [Tags]    Teste84
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1625,9 +1599,9 @@ Teste 85 - Combinado: produto mista com alíquota zerada + serviço mista hab am
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 86 - Combinado: produto mista sem registro cpv usando geral + serviço mista hab sem registro cpv usando dupla geral, parâmetro habilitado - Linha Mista
+Teste 85 - Combinado: produto mista sem registro cpv usando geral + serviço mista hab sem registro cpv usando dupla geral, parâmetro habilitado - Linha Mista
     # OS prod+serv | Produto: sem cpv → usa Geral → gera com Aliq Geral Mista | Serviço: sem cpv → gera com 2xAliq Geral Mista | Param hab
-    [Tags]    Teste86
+    [Tags]    Teste85
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
     ...    Inicializar Pré-Condições    AND    
@@ -1635,6 +1609,135 @@ Teste 86 - Combinado: produto mista sem registro cpv usando geral + serviço mis
     ...    Set Test Variable    ${Cenario_Comissao_Linha}    PROD__MISTA__SEM_REG_CPLV    AND    
     ...    Set Test Variable    ${Cenario_Comissao_Linha_Servico}    PARAM_HAB__MISTA__MESMO_VEND__SEM_REG_CPLV    AND    
     ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+# ============================================================================================
+# Comissão Escalonada — Tipo Padrão
+# ============================================================================================
+
+Teste 86 - Comissão escalonada sobre venda de balcão com produto normal - Escalonada
+    # Venda balcão | Produto: comissão via faixa ce.Comissao baseada no desconto do produto
+    [Tags]    Teste86
+    [Setup]    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal e desconto escalonada
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 87 - Comissão escalonada OS com produto e serviço, parâmetro desabilitado, vendedor com percentual de serviço - Escalonada
+    # OS prod+serv | Param desab | Vendedor_OS: ComissaoPercentualServicos > 0 | Produto: ce.Comissao | Serviço: clientes.ComissaoPercentualServicos
+    [Tags]    Teste87
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 88 - Comissão escalonada OS com produto e serviço, parâmetro desabilitado, vendedor sem percentual de serviço - Escalonada
+    # OS prod+serv | Param desab | Vendedor_OS: ComissaoPercentualServicos = 0/NULL | Produto: ce.Comissao | Serviço: NÃO gera
+    [Tags]    Teste88
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    0    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    Set Test Variable    ${Cenario_Sem_Comissao_Servico}    ${True}    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 89 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, mesmo vendedor com percentual de serviço - Escalonada
+    # OS prod+serv | Param hab | Mesmo vendedor | Vendedor_OS: ComissaoPercentualServicos > 0 | Produto: ce.Comissao | Serviço: clientes.ComissaoPercentualServicos
+    [Tags]    Teste89
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 90 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, mesmo vendedor sem percentual de serviço - Escalonada
+    # OS prod+serv | Param hab | Mesmo vendedor | Vendedor_OS: ComissaoPercentualServicos = 0/NULL | Produto: ce.Comissao | Serviço: NÃO gera
+    [Tags]    Teste90
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    Set Test Variable    ${Cenario_Sem_Comissao_Servico}    ${True}    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 91 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, diferentes vendedores, executor com percentual de serviço - Escalonada
+    # OS prod+serv | Param hab | Vendedores diferentes | Executor: ComissaoPercentualServicos > 0 | Produto: ce.Comissao (vend_os) | Serviço: clientes.ComissaoPercentualServicos (executor)
+    [Tags]    Teste91
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
+
+    Dado que acesso a tela de comissões
+    Quando insiro o vendedor comissionado
+    E seleciono a comissão de produtos
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+    Dado que acesso a tela de comissões
+    Quando insiro o técnico executor de serviço comissionado
+    E vou para a aba de servicos
+    E seleciono a comissão de serviços do executor
+    E baixo a comissao recém recebida
+    E saio da tela(Comissoes)
+
+Teste 92 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, diferentes vendedores, executor sem percentual de serviço - Escalonada
+    # OS prod+serv | Param hab | Vendedores diferentes | Executor: ComissaoPercentualServicos = 0/NULL | Produto: ce.Comissao (vend_os) | Serviço: NÃO gera para executor
+    [Tags]    Teste92
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    OS_COMISSAO_VENDEDOR_EXECUTOR    1    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário    AND    
+    ...    Set Test Variable    ${Cenario_Sem_Comissao_Servico}    ${True}    AND    
+    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
 
     Dado que acesso a tela de comissões
     Quando insiro o vendedor comissionado

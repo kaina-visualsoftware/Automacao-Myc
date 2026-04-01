@@ -36,6 +36,9 @@ ${TELA_CONFIRMAÇÃO_EXCLUSÃO}         tela_exclusaoVenda.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}    modal_PersonalizacaoPagamento.png
 ${MODAL_GERAR_VENDA_ORCAMENTO}       modal_GerarVendaOrcamento.png
 
+# Botões
+${BT_GERAR_PRE_VEN}                  bt_GerarPreVen.png
+
 # Telas Avisos
 ${AVISO_DESEJA_EXCLUIR}              aviso_DesejaExcluir.png
 
@@ -264,6 +267,8 @@ Quando clico em gerar venda
 
     Valida indicação de venda(${Parametro_IndicacaoOrcamento})
 
+    Valida vencimento em fins de semana e feriados(1)    
+
     Valida parâmetros/impressões pós venda
 
     Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
@@ -289,3 +294,112 @@ Consulta venda gerada a partir do orçamento
     Set Test Variable    ${CODIGO_VENDA_GERADA_ORCAMENTO}    ${Consulta[0][0]}
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${CODIGO_VENDA_GERADA_ORCAMENTO}
+
+E acesso a guia Pagamentos
+
+    Press Combination    KEY.ALT    KEY.M 
+    Sleep    ${SLEEP_BAIXO}
+
+    Valida cliente com vales compra disponíveis
+
+Então gero pré-venda do orçamento
+
+    Press Combination    KEY.ALT    KEY.V
+
+    Processa geração de pré-venda do orçamento
+
+Validação da pré-venda gerada a partir do orçamento
+
+    Check If Exists In Database    SELECT 1 FROM pedidosvenda pv WHERE pv.CodigoOrcamento = ${COD_ORCAMENTO} AND pv.Codigo = ${Codigo_Pedido} AND pv.`Status` = 'f' AND pv.Cancelada IS NULL;
+
+    Check If Exists In Database    SELECT 1 FROM orcamentos o WHERE o.Codigo = ${COD_ORCAMENTO} AND o.`Status` = 'p';
+
+Processa geração de pré-venda do orçamento
+
+    Valida impressão pré-venda ao finalizar pré-venda
+
+    Wait Until Screen Contain    ${TELA_ORCAMENTO}    ${TEMPO_TELA}
+
+    ${codigo_do_pedido}    Query    SELECT pv.Codigo FROM pedidosvenda pv WHERE pv.CodigoOrcamento = ${COD_ORCAMENTO} AND pv.`Status` = 'f' AND pv.Cancelada IS NULL AND pv.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+    Set Test Variable    ${Codigo_Pedido}    ${codigo_do_pedido[0][0]}
+
+    keyOrcamento1.Valida baixa de estoque
+
+    Validação da pré-venda gerada a partir do orçamento
+
+Valida baixa de estoque
+
+    Log To Console    \n
+
+    IF    ${Parametro_BaixaEstoquePreVenda}
+
+        ${COD_OPERACAO}    Set Variable    ${Codigo_Pedido}
+
+        Sleep    ${SLEEP_MEDIO}
+
+        IF    ${QUANTIDADE_PRODUTOS} > 1
+
+            FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+                ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
+
+                ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}    ${QTDE_BAIXA_PRODUTO}
+
+                IF    ${Baixa_De_Estoque}
+                    Log To Console    Baixou estoque corretamente do produto [${COD_PRODUTO}] na pré-venda gerada a partir do orçamento!
+                ELSE
+                    Fail    Falha na baixa do estoque do produto [${COD_PRODUTO}] na pré-venda gerada a partir do orçamento! Verifique!
+                END
+
+            END
+
+        ELSE
+
+            ${Baixa_De_Estoque}    Valida Movimentacao Estoque Venda    ${COD_PRODUTO}    ${COD_OPERACAO}    ${QTDE_BAIXA_PRODUTO}
+
+            IF    ${Baixa_De_Estoque}
+                Log To Console    Baixou estoque corretamente do produto [${COD_PRODUTO}] na pré-venda gerada a partir do orçamento!
+            ELSE
+                Fail    Falha na baixa do estoque do produto [${COD_PRODUTO}] na pré-venda gerada a partir do orçamento! Verifique!
+            END
+
+        END
+
+    ELSE
+
+        IF    ${QUANTIDADE_PRODUTOS} > 1
+
+            FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
+
+                ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
+
+                ${movimentou_estoque}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM produtosestoque pe WHERE pe.CodigoOperacao = ${Codigo_Pedido} AND pe.CodigoProduto = ${COD_PRODUTO};
+
+                IF    ${movimentou_estoque}
+                    Fail    O parâmetro BaixaEstoquePreVenda está desabilitado, mas houve movimentação de estoque para o produto [${COD_PRODUTO}] na pré-venda!
+                ELSE
+                    Log To Console    Produto [${COD_PRODUTO}] não teve movimentação de estoque na pré-venda, conforme esperado.
+                END
+
+            END
+
+        ELSE
+
+            ${movimentou_estoque}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM produtosestoque pe WHERE pe.CodigoOperacao = ${Codigo_Pedido} AND pe.CodigoProduto = ${COD_PRODUTO};
+
+            IF    ${movimentou_estoque}
+                Fail    O parâmetro BaixaEstoquePreVenda está desabilitado, mas houve movimentação de estoque para o produto [${COD_PRODUTO}] na pré-venda!
+            ELSE
+                Log To Console    Produto [${COD_PRODUTO}] não teve movimentação de estoque na pré-venda, conforme esperado.
+            END
+
+        END
+
+    END
+
+E clico em Gerar Pré-Ven
+
+    SikuliLibrary.Click    ${BT_GERAR_PRE_VEN}
+
+    Processa geração de pré-venda do orçamento

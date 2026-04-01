@@ -106,3 +106,34 @@ Teste 08 - Cancelamento da geração da venda parcial da condicional
     E gero a venda de parte dos produtos(2)
     Então cancelo a geração da venda
     E saio da tela(Condicional)
+
+Teste 09 - Devolução parcial de condicional com múltiplos produtos, utilizando a opção de itens selecionados
+    [Tags]    Teste09
+
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional
+    Quando insiro vendedor e cliente
+    E insiro mais de um produto normal(3)
+    Então finalizo a condicional
+    E pesquiso pela condicional gerada
+    Quando acesso a devolução de condicional
+    E acesso a guia Itens Disponíveis
+    E seleciono os produtos para devolução(2)
+    E acesso a guia Finalizar
+    Então gravo a devolução
+    E saio da tela(Condicional)
+
+Teste 10 - Devolução total de condicional com múltiplos produtos, utilizando a opção de seleção de produtos
+    [Tags]    Teste10
+
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional
+    Quando insiro vendedor e cliente
+    E insiro mais de um produto normal(2)
+    Então finalizo a condicional
+    E pesquiso pela condicional gerada
+    Quando acesso a devolução de condicional
+    E seleciono os produtos para devolução(2)
+    E acesso a guia Finalizar
+    Então gravo a devolução
+    E saio da tela(Condicional)

@@ -257,6 +257,12 @@ Dado que realizo uma ordem de serviço com produto e serviço incluso, considera
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
 
+Dado que realizo uma ordem de serviço com produto e serviço incluso, com vendedor e técnico executor distintos
+
+    Set Test Variable    ${OS_Vendedor_E_Tecnico_Diferentes}    ${True}
+
+    Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
+
 Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço - Totalmente recebida
     
     Dado que realizo uma ordem de serviço com produto e serviço incluso, considerando funcionário comissionado por serviço
@@ -558,3 +564,39 @@ Dado que realizo a edição da venda e exclusão e inserção do produto lançad
     keyVendas1.E acesso a aba pagamentos
     keyVendas1.Então finalizo a venda personalizada com múltiplas parcelas(2)
     utils.E saio da tela(Venda)
+
+# ============================================================================================
+# Montadores - Comissão Escalonada
+# ============================================================================================
+
+Dado que realizo uma venda completa, com produto normal e desconto escalonada
+
+    keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto normal informando a quantidade e desconto    1    ${Desconto_Escalonada}
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+    utils.Exclui ordem de entrega(${COD_VENDA})
+    utils.E saio da tela(Venda)
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada
+
+    # É necessário que o parametro 'Habilite está opção caso deseje selecionar os funcionários em uma lista' esteja ***DESABILITADO***
+
+    KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
+    KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
+    KeyOrdemDeSevico1.E adiciono vendedor e cliente
+    KeyOrdemDeSevico1.E insiro um serviço informando a quantidade(1)
+    KeyOrdemDeSevico1.E insiro um produto normal informando a quantidade e desconto(1, ${Desconto_Escalonada})
+    KeyOrdemDeSevico1.E acesso a aba pagamentos
+    KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
+    utils.E saio da tela(OrdemDeServico)
+
+Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
+
+    Set Test Variable    ${OS_Vendedor_E_Tecnico_Diferentes}    ${True}
+
+    Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada

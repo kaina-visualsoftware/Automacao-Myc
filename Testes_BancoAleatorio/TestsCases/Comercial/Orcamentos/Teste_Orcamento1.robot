@@ -80,3 +80,42 @@ Teste 06 - Geração de venda de orçamento
     Validação da venda gerada a partir do orçamento
     utils.E saio da tela(Venda)
     utils.E saio da tela(Orçamento)
+
+Teste 07 - Geração de pré-venda durante o lançamento do orçamento
+    [Tags]    Teste07
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro um produto normal informando a quantidade(2)
+    E acesso a guia Pagamentos
+    Então gero pré-venda do orçamento
+    utils.E saio da tela(Orçamento)
+
+Teste 08 - Geração de pré-venda após o lançamento do orçamento
+    [Tags]    Teste08
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro um produto normal informando a quantidade(2)
+    Então gravo o orçamento
+    E pesquiso pelo orçamento gerado
+    E clico em Gerar Pré-Ven
+    utils.E saio da tela(Orçamento)
+
+Teste 09 - Geração de pré-venda após o lançamento do orçamento com múltiplos produtos com baixa de estoque na pré-venda
+    [Tags]    Teste09
+    [Setup]    Run Keywords    
+    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    BAIXA_ESTOQUE_PREVENDA    1    AND    
+    ...    Inicializar Pré-Condições    AND    
+    ...    Reiniciar MyCommerce Se Necessário
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro mais de um produto normal(3)
+    Então gravo o orçamento
+    E pesquiso pelo orçamento gerado
+    E clico em Gerar Pré-Ven
+    utils.E saio da tela(Orçamento)

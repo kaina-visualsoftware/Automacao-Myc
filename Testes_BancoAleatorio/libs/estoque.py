@@ -113,3 +113,102 @@ class estoque:
                 connection.close()
             except Exception:
                 pass
+
+    def Valida_Movimentacao_Estoque_Devolucao(self, idProduto, idMovimentacao, quantidade_devolvida):
+        
+        connection = mysql.connector.connect(
+            host=ipservidor,
+            user='root',
+            password='vssql',
+            database=dbname,
+            port=porta)
+
+        print("Código do produto:", idProduto, "Movimentação (devolução):", idMovimentacao, "Quantidade devolvida:", quantidade_devolvida)
+
+        cursor = None
+        try:
+            if connection.is_connected():
+                cursor = connection.cursor()
+
+                # Modalidade do produto
+                cursor.execute("SELECT ModalidadeControle FROM produtos WHERE Codigo = " + str(idProduto))
+                row_produto = cursor.fetchone()
+                if row_produto is None:
+                    print("Produto não encontrado.")
+                    return False
+
+                Modalidade = row_produto[0]
+
+                if Modalidade == "Normal":
+
+                    # produtosestoque
+                    consultaPE = (
+                        "SELECT Estoque, Tela, Operacao FROM produtosestoque "
+                        "WHERE CodigoOperacao = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto)
+                    )
+                    cursor.execute(consultaPE)
+                    row_pe = cursor.fetchone()
+                    if row_pe is None:
+                        print("Linha em produtosestoque não encontrada para a devolução/produto.")
+                        return False
+
+                    print("-------- " + consultaPE + " --------")
+
+                    estoqueAtual = int(row_pe[0])
+                    tabelaProdutosEstoque = [(int(row_pe[0]), row_pe[1], row_pe[2])]
+
+                    # auditoriaestoque (último registro — devolução)
+                    consultaAud = (
+                        "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque "
+                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "ORDER BY ID DESC LIMIT 1;"
+                    )
+                    cursor.execute(consultaAud)
+                    row_aud = cursor.fetchone()
+                    if row_aud is None:
+                        print("Auditoria não encontrada para a devolução/produto.")
+                        return False
+
+                    tabelaAuditoriaEstoque = [(int(row_aud[0]), row_aud[1], row_aud[2])]
+                    print(tabelaAuditoriaEstoque)
+                    print(consultaAud)
+
+                    # EstoqueAnterior da mesma linha mais recente
+                    consultaAudAnterior = (
+                        "SELECT EstoqueAnterior FROM auditoriaestoque "
+                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "ORDER BY ID DESC LIMIT 1;"
+                    )
+                    cursor.execute(consultaAudAnterior)
+                    row_prev = cursor.fetchone()
+                    if row_prev is None:
+                        print("Auditoria (EstoqueAnterior) não encontrada.")
+                        return False
+
+                    estoqueValidacao = int(row_prev[0]) + int(quantidade_devolvida)
+
+                    if tabelaProdutosEstoque == tabelaAuditoriaEstoque:
+                        print("Auditoria de estoque (devolução) está de acordo.")
+                        if estoqueAtual == estoqueValidacao:
+                            print("Estoque retornou corretamente após devolução.")
+                            return True
+                        else:
+                            print(f"Estoque NÃO retornou corretamente. Esperado {estoqueValidacao}, obtido {estoqueAtual}.")
+                            return False
+                    else:
+                        print("Auditoria não está de acordo!")
+                        print("Auditoria de estoque =", tabelaAuditoriaEstoque, "Produtos Estoque =", tabelaProdutosEstoque)
+                        return False
+
+            return False
+
+        finally:
+            try:
+                if cursor:
+                    cursor.close()
+            except Exception:
+                pass
+            try:
+                connection.close()
+            except Exception:
+                pass

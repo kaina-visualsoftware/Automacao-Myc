@@ -171,3 +171,37 @@ class validaComissoes:
 
         count = resultado_query[0][0]
         return int(count) > 0
+
+    def busca_faixa_comissao_escalonada(self, desconto_percentual, faixas_escalonada):
+        
+        desconto = Decimal(str(desconto_percentual))
+
+        for faixa in faixas_escalonada:
+            ate = Decimal(str(faixa[0]))
+            comissao = Decimal(str(faixa[1]))
+
+            if desconto <= ate:
+                return comissao
+
+        # Se o desconto exceder todas as faixas, usa a última faixa
+        if faixas_escalonada:
+            return Decimal(str(faixas_escalonada[-1][1]))
+
+        raise ValueError(f"Nenhuma faixa encontrada na tabela comissao_escalonadaprod para desconto {desconto}%.")
+
+    def calcula_comissao_escalonada_produto(self, valor_unitario, aliquota_escalonada, quantidade):
+        
+        valor = Decimal(str(valor_unitario))
+        aliq = Decimal(str(aliquota_escalonada))
+        qtde = Decimal(str(quantidade))
+
+        comissao = valor * (aliq / Decimal("100")) * qtde
+        return self.converte_para_decimal(comissao, 2)
+
+    def calcula_comissao_escalonada_servico(self, valor_base_servico, percentual_servico):
+        
+        valor_base = Decimal(str(valor_base_servico))
+        perc = Decimal(str(percentual_servico))
+
+        comissao = valor_base * (perc / Decimal("100"))
+        return self.converte_para_decimal(comissao, 2)

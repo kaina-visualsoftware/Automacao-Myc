@@ -3,6 +3,7 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
+Library    ../../../libs/estoque.py
 Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Library    Telnet
@@ -41,12 +42,32 @@ ${MODAL_GERAR_VENDA_CONDICIONAL}        modal_GerarVendaCondicional.png
 ${MODAL_GERAR_VENDA_PARCIAL}            modal_GerarVendaParcialCondicional.png
 ${MODAL_CANCELAR_VENDA}                 modal_CancelarVenda.png
 ${TELA_VENDAS}                          tela_VendasDeBalcao.png
+${TELA_DEVOLUCAO_CONDICIONAL}           tela_DevolucaoCondicional.png
+
+# Botões
+${BT_DEVOLVER_ITENS_SELECIONADOS}       bt_DevolverItensSelecionados.png
+${BT_SIM}                               bt_Sim.png
+
+# Inputs
+${INPUT_QUANTIDADE_PRODUTO_DEV_COND}    input_QuantidadeProdutoDevCond.png
+
+# Labels
+${LABEL_CRITERIO_CODIGO_CONDICIONAL}    label_CriterioCodigo_Venda.png
+${LABEL_REGISTRO_ENCONTRADO_COND}       lb_RegistroEncontradoCondicional.png
+${LABEL_CODIGO_GRID_DEV_COND}           lb_CodigoGridDevCond.png
+${LABEL_CODIGO_VENDEDOR_DEV_COND}       lb_CodVendedorDevCond.png
 
 # Telas Avisos
 ${AVISO_DESEJA_EXCLUIR}                 aviso_DesejaExcluir.png
+${AVISO_DEV_EFETUADA_COM_SUCESSO}       aviso_DevolucaoEfetuadaComSucesso.png
 
 # Outros
 ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    row_ProdInclusoVendaParcialCond.png
+${GUIA_ITENS_DISPONIVEIS_DEV_COND}      guia_ItensDisponiveisDevCond.png
+${GUIA_DEVOLUCAO_DEV_COND}              guia_DevolucaoDevCond.png
+${GUIA_FINALIZAR_DEV_COND}              guia_FinalizarDevCond.png
+${Selecao_De_Produtos}                  ${None}
+${Selecao_Por_Itens_Selecionados}       ${False}
 
 *** Keywords ***
 Ler imagens iniciais
@@ -264,13 +285,13 @@ Então cancelo a geração da venda
     
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${TELA_VENDAS}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
     Press Special Key    ESC
     Wait Until Screen Contain    ${MODAL_CANCELAR_VENDA}    ${TEMPO_TELA}
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.S
+    SikuliLibrary.Click    ${BT_SIM}
 
     IF    ${Parametro_ExigeSenhaCancelarVenda}
 
@@ -306,6 +327,8 @@ Valida baixa de estoque
 
     Sleep    ${SLEEP_MEDIO}
 
+    Log To Console    \n
+
     IF    ${QUANTIDADE_PRODUTOS} > 1
         
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
@@ -333,6 +356,26 @@ Valida baixa de estoque
 
     END
 
+Valida retorno de estoque na devolução
+
+    Sleep    ${SLEEP_MEDIO}
+
+    Log To Console    \n
+
+    FOR    ${i}    IN RANGE    ${QTDE_PRODUTOS_DEVOLVIDOS}
+
+        ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos_Devolvidos[${i}]}
+
+        ${Retorno_De_Estoque}    Valida Movimentacao Estoque Devolucao    ${COD_PRODUTO}    ${COD_CONDICIONAL}    ${Quantidade_Produto_Devolucao}
+
+        IF    ${Retorno_De_Estoque}
+            Log To Console    Estoque retornou corretamente do produto [${COD_PRODUTO}] na devolução da Condicional!
+        ELSE
+            Fail    Falha no retorno do estoque do produto [${COD_PRODUTO}] na devolução da Condicional! Verifique!
+        END
+
+    END
+
 Consulta venda gerada a partir da condicional
 
     ${Consulta}    Query    SELECT v.Codigo FROM vendas v WHERE v.CodCondicional = ${COD_CONDICIONAL} AND v.`Status` = 'e';
@@ -353,3 +396,142 @@ Informa a quantidade do produto(${Quantidade_Produto})
     Set Test Variable    ${Quantidade_Produto}
 
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
+
+E pesquiso pela condicional gerada
+
+    Sleep    ${SLEEP_BAIXO}
+    ${criterioCodigo}    Exists    ${LABEL_CRITERIO_CODIGO_CONDICIONAL}
+
+    IF    not ${criterioCodigo}
+
+        SikuliLibrary.Click    ${LABEL_CODIGO_GRID}
+        
+    END
+
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${codigo_condicional}    Convert To String    ${COD_CONDICIONAL}
+
+    Type    ${EMPTY}    ${codigo_condicional}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    ENTER
+
+    Wait Until Screen Contain    ${LABEL_REGISTRO_ENCONTRADO_COND}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${LABEL_REGISTRO_ENCONTRADO_COND}
+
+Quando acesso a devolução de condicional
+
+    Press Combination    KEY.ALT    KEY.D
+    Wait Until Screen Contain    ${TELA_DEVOLUCAO_CONDICIONAL}    ${TEMPO_TELA}
+
+E acesso a guia Itens Disponíveis
+
+    Press Combination    KEY.ALT    KEY.T
+    Wait Until Screen Contain    ${GUIA_ITENS_DISPONIVEIS_DEV_COND}    ${TEMPO_TELA}
+
+    Set Test Variable    ${Selecao_Por_Itens_Selecionados}    ${True}
+
+E seleciono os produtos para devolução(${Qtde_Produto_A_Devolver})
+
+    Set Test Variable    ${Quantidade_Produto_Devolucao}    ${Quantidade_Produto}
+
+    ${Codigos_Produtos_Devolvidos}    Create List
+
+    IF    ${Selecao_Por_Itens_Selecionados}
+                
+        FOR    ${i}    IN RANGE    ${Qtde_Produto_A_Devolver}
+
+            ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
+
+            Append To List    ${Codigos_Produtos_Devolvidos}    ${COD_PRODUTO}
+
+            SikuliLibrary.Click    ${LABEL_CODIGO_GRID_DEV_COND}
+
+            Input Text    ${EMPTY}    ${COD_PRODUTO}
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Special Key    LEFT
+
+            Press Special Key    SPACE
+            Sleep    ${SLEEP_BAIXO}
+                
+        END
+
+        SikuliLibrary.Click    ${BT_DEVOLVER_ITENS_SELECIONADOS}
+
+        Wait Until Screen Contain    ${GUIA_DEVOLUCAO_DEV_COND}    ${SLEEP_ALTO}
+
+        FOR    ${i}    IN RANGE    ${Qtde_Produto_A_Devolver}
+            
+            SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO_DEV_COND}
+
+            Input Text    ${EMPTY}    ${Quantidade_Produto_Devolucao}
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Special Key    TAB
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+
+    ELSE
+        
+        FOR    ${i}    IN RANGE    ${Qtde_Produto_A_Devolver}
+
+            Press Combination    KEY.ALT    KEY.D
+
+            ${COD_PRODUTO}    Set Variable    ${Codigos_Produtos[${i}]}
+
+            Append To List    ${Codigos_Produtos_Devolvidos}    ${COD_PRODUTO}
+            
+            Input Text    ${EMPTY}    ${COD_PRODUTO}
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Special Key    TAB
+
+            SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO_DEV_COND}
+
+            Input Text    ${EMPTY}    ${Quantidade_Produto_Devolucao}
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Special Key    TAB
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+
+    END
+
+    Set Test Variable    ${Codigos_Produtos_Devolvidos}
+    Set Test Variable    ${QTDE_PRODUTOS_DEVOLVIDOS}    ${Qtde_Produto_A_Devolver}
+
+E acesso a guia Finalizar
+
+    Press Combination    KEY.ALT    KEY.F
+    Wait Until Screen Contain    ${GUIA_FINALIZAR_DEV_COND}    ${TEMPO_TELA}
+
+Então gravo a devolução
+
+    SikuliLibrary.Click    ${LABEL_CODIGO_VENDEDOR_DEV_COND}
+
+    Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.G
+
+    Valida impressao direta de venda(${True})
+
+    Wait Until Screen Contain    ${AVISO_DEV_EFETUADA_COM_SUCESSO}    ${TEMPO_TELA}
+
+    Press Special Key    ENTER
+
+    Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+
+    keyCondicional1.Valida retorno de estoque na devolução

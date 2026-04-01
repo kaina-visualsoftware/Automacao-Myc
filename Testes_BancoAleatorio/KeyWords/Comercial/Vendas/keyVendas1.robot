@@ -653,6 +653,8 @@ Valida baixa de estoque
 
     ${Teste_Condicional}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    condicional
 
+    Log To Console    \n
+
     FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
         
         IF    $Codigos_Produtos is not None
