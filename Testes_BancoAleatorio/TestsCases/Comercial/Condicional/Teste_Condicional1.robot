@@ -122,6 +122,7 @@ Teste 09 - Devolução parcial de condicional com múltiplos produtos, utilizand
     E acesso a guia Finalizar
     Então gravo a devolução
     E saio da tela(Condicional)
+    # VERIFICAR, POIS AS VEZES É FECHADO A TELA DE CONDICIONAIS AO FECHAR A MENSAGEM DE SUCESSO DA DEVOLUÇÃO.
 
 Teste 10 - Devolução total de condicional com múltiplos produtos, utilizando a opção de seleção de produtos
     [Tags]    Teste10
@@ -137,3 +138,4 @@ Teste 10 - Devolução total de condicional com múltiplos produtos, utilizando 
     E acesso a guia Finalizar
     Então gravo a devolução
     E saio da tela(Condicional)
+    # VERIFICAR, POIS AS VEZES É FECHADO A TELA DE CONDICIONAIS AO FECHAR A MENSAGEM DE SUCESSO DA DEVOLUÇÃO.

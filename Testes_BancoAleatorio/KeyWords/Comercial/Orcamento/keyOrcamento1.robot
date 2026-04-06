@@ -245,7 +245,7 @@ E pesquiso pelo orçamento gerado
     
     ${codigo_orcamento}    Convert To String    ${COD_ORCAMENTO}
 
-    Type    ${EMPTY}    ${codigo_orcamento}
+    Input Text    ${EMPTY}    ${codigo_orcamento}
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    ENTER
@@ -263,9 +263,18 @@ Quando clico em gerar venda
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.S
 
-    validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
+    Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
-    Valida indicação de venda(${Parametro_IndicacaoOrcamento})
+    Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
+
+    IF    ${Parametro_InfoCreditoClienteVenda}
+
+        Valida informações de crédito
+
+    END
+
+    Valida indicação de venda(${Parametro_IndicacaoVenda})
 
     Valida vencimento em fins de semana e feriados(1)    
 

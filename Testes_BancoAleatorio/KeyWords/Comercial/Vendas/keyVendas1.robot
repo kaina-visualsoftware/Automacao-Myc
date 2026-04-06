@@ -69,7 +69,6 @@ ${ALERTA_CLIENTE}                        alertaCliente.png
 ${AVISO_DESEJA_EXCLUIR_PRODUTO_VENDA}    aviso_DesejaExcluirProdutoVenda.png
 
 # Botões
-${BT_OK}                                 bt_Ok.png
 ${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
 ${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
 ${BT_ADICIONAR}                          bt_Adicionar.png
@@ -495,23 +494,6 @@ Valida ncm invalido ao faturar nota
 
     END
 
-Valida erro ao faturar NFC
-
-    Sleep    ${SLEEP_BAIXO}
-    ${ERRO}    Exists    ${ERRO_FATURAR_NFC}
-
-    IF     ${ERRO}
-
-        SikuliLibrary.Click    ${BT_OK}
-        Sleep    ${SLEEP_MEDIO}
-
-        Press Combination    KEY.ALT    KEY.C
-        Sleep    ${SLEEP_MEDIO}
-
-        Log To Console    \n Script cancelou o faturamento por conter erro!\n
-
-    END
-
 Calcula valor final da venda
     
     ${somaValorTotalProdutos}    Evaluate    0
@@ -546,11 +528,13 @@ Calcula valor final da venda
     
     Sleep    ${SLEEP_BAIXO}
     ${ValorTotalProdutosVenda}    Query    SELECT ROUND(SUM(ValorTotal), 2) FROM vendasprodutos WHERE CodigoVenda = ${COD_VENDA} AND Cancelada IS NULL
-    
+
+    ${ValorTotalBD}    Set Variable If    $ValorTotalProdutosVenda[0][0] is None    ${0}    ${ValorTotalProdutosVenda[0][0]}
+
     # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
-    ${somaValorTotalProdutos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${somaValorTotalProdutos}    ${ValorTotalProdutosVenda[0][0]}
+    ${somaValorTotalProdutos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${somaValorTotalProdutos}    ${ValorTotalBD}
     
-    Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalProdutosVenda[0][0]}
+    Set Test Variable    ${VALOR_FINAL_VENDA}    ${ValorTotalBD}
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO[0][1]}    ${VALOR_FINAL_VENDA}
 
@@ -558,7 +542,7 @@ Calcula valor final da venda
 
     ${DADOS_VENDA_DEVOLUÇÃO}    Create List    ${DADOS_VENDA}
 
-    Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalProdutosVenda[0][0]}
+    Set Test Variable    ${Valor_Total_Produtos}    ${ValorTotalBD}
 
     Set Test Variable    ${DADOS_VENDA_DEVOLUÇÃO}
 

@@ -60,9 +60,9 @@ ${AVISO_CADASTRE_CANAL_DE_VENDA}                    aviso_CadastreCanaisVenda.pn
 ${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}               aviso_EspecifiqueVlrUnitProduto.png
 
 # Botões
+
 ${BT_CONFIRMA_CANAL_NEGOCIACAO}                     bt_ConfirmarCanal.png
 ${BT_SOLICITAR_CRÉDITO}                             bt_SolicitarCredito.png
-${BT_OK_LIBERACAO_CRÉDITO}                          bt_OkLiberacaoCredito.png
 ${BT_SETA_DIREITA}                                  bt_SetaDireita.png
 ${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}                 bt_IncluirProdutoNFeSaidaManual.png
 
@@ -1491,10 +1491,8 @@ Valida Controle de Credito - Liberação(${VALOR_FINAL})
             IF    ${MSG} or ${MSG2}
                 
                 Sleep    ${SLEEP_MEDIO}
-                Press Combination    KEY.ALT    KEY.o
-                
-                #Correção temporária até a correção da tarefa: 144920
-                SikuliLibrary.Click    ${BT_OK_LIBERACAO_CRÉDITO}
+                Press Combination    KEY.ALT    KEY.O
+
                 Sleep    ${SLEEP_MEDIO}
 
                 Press Combination    KEY.ALT    KEY.F

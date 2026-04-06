@@ -70,6 +70,7 @@ ${AVISO_ATUALIZAR_NUMERO_CADASTRO_PRICIPAL}            aviso_AtualizarNumeroCada
 ${BT_NÃO}                                              bt_Nao.png
 ${BT_FECHAR_X}                                         bt_FecharX.png
 ${BT_SIM_AVISO_VENCIMENTO_FERIADO}                     bt_SimAvisoVencimentoFeriado.png
+${BT_OK}                                               bt_OK_sem_atalho.png
 
 # Inputs
 ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
@@ -1029,7 +1030,9 @@ Valida cliente com vales compra disponíveis
 
     IF    ${aviso}
         
-        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Click    ${BT_OK}
+
         Wait Until Screen Contain    ${LABEL_VALES_COMPRA_DISPONIVEIS}    ${TEMPO_TELA}
         
     END
@@ -1143,7 +1146,7 @@ Valida lançamento de ordem de serviço em aberto
 Valida lançamento de venda em aberto
 
     Sleep    ${SLEEP_BAIXO}
-    ${VendaEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` = 'a' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'VP' AND TIMESTAMP(v.`Data`, v.Hora) <= NOW() - INTERVAL 5 MINUTE ORDER BY v.Codigo DESC LIMIT 1;
+    ${VendaEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` IN ('a', 'e') AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'VP' AND TIMESTAMP(v.`Data`, v.Hora) <= NOW() - INTERVAL 5 MINUTE ORDER BY v.Codigo DESC LIMIT 1;
 
     IF    ${VendaEmAberto}
 
@@ -1180,14 +1183,18 @@ Valida lançamento de pré-venda em aberto
 
 Valida desconto que não se encaixa em nenhuma escala de comissão
     
-    Sleep    ${SLEEP_BAIXO}
-    ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
-
-    IF    ${aviso}
-
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_BAIXO}
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
         
+        Sleep    ${SLEEP_BAIXO}
+        ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
+
+        IF    ${aviso}
+
+            Press Special Key    ENTER
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+         
     END
 
 Valida edição de ordem de serviço finalizada

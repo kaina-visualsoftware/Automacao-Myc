@@ -58,10 +58,10 @@ ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}                  aviso_confirmacaoBaixaConta.
 
 # Botões
 ${BT_BAIXAR}                                      bt_Baixar.png
-${BT_OK}                                          bt_OkComisssao.png
+# ${BT_OK}                                          bt_OkComisssao.png
 ${BT_FECHAR}                                      bt_fechar.png
 ${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelatorio.png
-${BT_OK_AVISO_LOTE_DE_PAGAMENTO}                  bt_OKAvisoLoteDePagamento.png
+# ${BT_OK_AVISO_LOTE_DE_PAGAMENTO}                  bt_OKAvisoLoteDePagamento.png
 ${BT_SIM}                                         bt_Sim.png
 
 # Checkbox
@@ -1568,7 +1568,7 @@ E baixo a comissao recém recebida
             Wait Until Screen Contain    ${AVISO_PERIODO_COM_LOTE_PAGAMENTO}    ${TEMPO_TELA}
             Sleep    ${SLEEP_BAIXO}
 
-            SikuliLibrary.Click    ${BT_OK_AVISO_LOTE_DE_PAGAMENTO}
+            SikuliLibrary.Click    ${BT_OK}
             
         END
 
