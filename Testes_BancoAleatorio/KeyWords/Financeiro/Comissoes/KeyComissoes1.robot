@@ -7,6 +7,7 @@ Library    ../../../libs/validaParametros.py
 Library    ../../../libs/verificacoesExtras.py
 Library    ../../../libs/estoque.py
 Library    ../../../libs/validaComissoes.py
+Library    ../../../libs/validaTelasIni.py
 Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/validacaoAviso.robot
@@ -48,7 +49,6 @@ ${TELA_PESQUISA_TEXTO_IMPRESSAO}                  tela_PesquisaTextoImpressao.pn
 
 # Telas Avisos
 ${AVISO_BAIXA_SUCESSO}                            aviso_BaixaSucesso.png
-# ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}          aviso_confirmacaoBaixaContaPagar.png
 ${AVISO_BAIXA_VALE_COMPRA}                        aviso_BaixaValeCompra.png
 ${AVISO_COMISSAO_ZERADA}                          aviso_ComissaoZerada.png
 ${AVISO_SEM_DADOS_PARA_EXIBICAO}                  aviso_SemDadosParaExibicao.png
@@ -58,19 +58,15 @@ ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}                  aviso_confirmacaoBaixaConta.
 
 # Botões
 ${BT_BAIXAR}                                      bt_Baixar.png
-# ${BT_OK}                                          bt_OkComisssao.png
 ${BT_FECHAR}                                      bt_fechar.png
 ${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelatorio.png
-# ${BT_OK_AVISO_LOTE_DE_PAGAMENTO}                  bt_OKAvisoLoteDePagamento.png
 ${BT_SIM}                                         bt_Sim.png
 
 # Checkbox
 ${CHECK_BOX_SELE_TODOS}                           checkBox_Comissao.png
 ${CHECKBOX_CONTASPAGAR}                           checkBox_ContasPagar.png
-${CHECKBOX_PRODUTOS_HABILITADO}                   check_Produtos_Habilitado.png
-${CHECKBOX_PRODUTOS_DESABILITADO}                 check_Produtos.png
-${CHECKBOX_SERVICOS_HABILITADO}                   check_Servicos_Habilitado.png
-${CHECKBOX_SERVICOS_DESABILITADO}                 check_Servicos.png
+${CHECKBOX_PRODUTOS}                              check_Produtos.png
+${CHECKBOX_SERVICOS}                              check_Servicos.png
 
 # ComboBox
 ${COMBOBOX_GERAR_SOBRE_VENDAS}                    combo_gerar_sobre_vendas.png
@@ -1821,11 +1817,9 @@ Então faço o pagamento da comissao
     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
 
     Press Combination    KEY.ALT    KEY.C
-    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}    ${TEMPO_TELA}
     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    # Press Combination    KEY.ALT    KEY.S
     SikuliLibrary.Click    ${BT_SIM}
     Sleep    ${SLEEP_BAIXO}
 
@@ -2193,11 +2187,13 @@ Verifica se a operação gerada está vinculada a uma comissão pendente
 
     ${dado_encontrado}    Exists    ${Dado_Localizado_Na_Pesquisa_Relatorio}
 
+    Log To Console    \n
+
     IF    ${Relatorio_Deve_Conter_Dados} == $False
         
         IF    ${dado_encontrado} == $False
             
-            Log To Console    \nNenhum registro encontrado, conforme o esperado.
+            Log To Console    Nenhum registro encontrado, conforme o esperado.
             
             # Nesse cenário, a mensagem 'Pesquisa do relatório concluída' significa que o valor pesquisado não foi encontrado no relatório.
             Wait Until Screen Contain    ${AVISO_PESQUISA_TEXTO_CONCLUIDA}    ${SLEEP_ALTO}
@@ -2214,7 +2210,7 @@ Verifica se a operação gerada está vinculada a uma comissão pendente
 
         IF    ${dado_encontrado}
             
-            Log To Console    \nRegistro encontrado no relatório de comissões, conforme o esperado.
+            Log To Console    Registro encontrado no relatório de comissões, conforme o esperado.
         
         ELSE
             
@@ -2334,46 +2330,44 @@ E seleciono para gerar sobre(${tipo_geracao})
         END
 
     END
- 
+
 E valido os filtros de produtos e serviços
-    [Arguments]    ${marcar_produtos}    ${marcar_servicos}
+    [Arguments]    ${filtrar_produtos}    ${filtrar_servicos}
 
-    # Validação Checkbox Produtos
-    ${is_produtos_habilitado}    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_PRODUTOS_HABILITADO}    ${SLEEP_MEDIO}
+    ${is_produtos_habilitado}    Set Variable    ${True}
 
-    IF    ${marcar_produtos}
+    IF    ${filtrar_produtos}
         
         IF    not ${is_produtos_habilitado}
-            SikuliLibrary.Click    ${CHECKBOX_PRODUTOS_DESABILITADO}
+            SikuliLibrary.Click    ${CHECKBOX_PRODUTOS}
         END
 
     ELSE
         
         IF    ${is_produtos_habilitado}
-            SikuliLibrary.Click    ${CHECKBOX_PRODUTOS_HABILITADO}
+            SikuliLibrary.Click    ${CHECKBOX_PRODUTOS}
         END
 
     END
     
-    # Validação Checkbox Serviços
-    ${is_servicos_habilitado}    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_SERVICOS_HABILITADO}    ${SLEEP_MEDIO}
+    ${is_servicos_habilitado}    validaTelasIni.Valida Telas Ini    FrmRelatorioComissao    chkServico
     
-    IF    ${marcar_servicos}
+    IF    ${filtrar_servicos}
         
         IF    not ${is_servicos_habilitado}
-            SikuliLibrary.Click    ${CHECKBOX_SERVICOS_DESABILITADO}
+            SikuliLibrary.Click    ${CHECKBOX_SERVICOS}
         END
 
     ELSE
         
         IF    ${is_servicos_habilitado}
-            SikuliLibrary.Click    ${CHECKBOX_SERVICOS_HABILITADO}
+            SikuliLibrary.Click    ${CHECKBOX_SERVICOS}
         END
 
     END
 
-    Set Test Variable    ${Filtro_Produtos}    ${marcar_produtos}
-    Set Test Variable    ${Filtro_Servicos}    ${marcar_servicos}
+    Set Test Variable    ${Filtro_Produtos}    ${filtrar_produtos}
+    Set Test Variable    ${Filtro_Servicos}    ${filtrar_servicos}
 
 Consulta valor comissão produto único
     [Arguments]    ${codigo_produto}    ${codigo_operacao}

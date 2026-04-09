@@ -1221,14 +1221,10 @@ Teste 66 - Comissão por linha mista de produto, sem registro alíquota de venda
     E saio da tela(Comissoes)
 
 # ============================================================================================
-# Comissão por Linha: Produto + Serviço na mesma OS
+# Testes de Comissão por Linha em Produtos e Serviços — Linha Diferenciada Por Vendedor
 # ============================================================================================
 
-# ============================================================================================
-# Produto Diferenciada × Serviço Diferenciada, Parâmetro Desabilitado
-# ============================================================================================
-
-Teste 67 - Combinado: produto diferenciada com alíquota + serviço diferenciada com alíquota, parâmetro desabilitado - Linha Diferenciada Por Vendedor
+Teste 67 - Comissão por linha diferenciada de produto com alíquota de venda diferenciada positiva e serviço com alíquota de venda diferenciada positiva, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq>0 → gera | Serviço: cpv.Aliq>0 → gera | Param desab
     [Tags]    Teste67
     [Setup]    Run Keywords    
@@ -1248,7 +1244,7 @@ Teste 67 - Combinado: produto diferenciada com alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 68 - Combinado: produto diferenciada sem alíquota + serviço diferenciada sem alíquota, parâmetro desabilitado - Linha Diferenciada Por Vendedor
+Teste 68 - Comissão por linha diferenciada de produto com alíquota de venda diferenciada zerada e serviço com alíquota de venda diferenciada zerada, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: cpv.Aliq=0 → NÃO gera | Param desab
     [Tags]    Teste68
     [Setup]    Run Keywords    
@@ -1270,11 +1266,7 @@ Teste 68 - Combinado: produto diferenciada sem alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-# ============================================================================================
-# Produto Diferenciada × Serviço Diferenciada, Parâmetro Habilitado
-# ============================================================================================
-
-Teste 69 - Combinado: produto diferenciada com alíquota + serviço diferenciada hab alíquota positiva sem alíquota execução, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 69 - Comissão por linha diferenciada de produto com alíquota de venda diferenciada positiva e serviço com alíquota de venda positiva e alíquota de execução zerada, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: Aliq>0, AliqExec=0 → gera com cpv.Aliq | Param hab
     [Tags]    Teste69
     [Setup]    Run Keywords    
@@ -1294,7 +1286,7 @@ Teste 69 - Combinado: produto diferenciada com alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 70 - Combinado: produto diferenciada com alíquota + serviço diferenciada hab ambas alíquotas positivas, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 70 - Comissão por linha diferenciada de produto com alíquota de venda diferenciada positiva e serviço com ambas alíquotas positivas, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: Aliq>0 e AliqExec>0 → gera com cpv.Aliq | Param hab
     [Tags]    Teste70
     [Setup]    Run Keywords    
@@ -1314,7 +1306,7 @@ Teste 70 - Combinado: produto diferenciada com alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 71 - Combinado: produto diferenciada sem alíquota + serviço diferenciada hab sem alíquota com alíquota execução, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 71 - Comissão por linha diferenciada de produto com alíquota de venda diferenciada zerada e serviço com alíquota de venda zerada e alíquota de execução positiva, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0, AliqExec>0 → gera com cpv.AliqExec | Param hab
     [Tags]    Teste71
     [Setup]    Run Keywords    
@@ -1335,7 +1327,7 @@ Teste 71 - Combinado: produto diferenciada sem alíquota + serviço diferenciada
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 72 - Combinado: produto diferenciada sem alíquota + serviço diferenciada hab ambas alíquotas zeradas, parâmetro habilitado - Linha Diferenciada Por Vendedor
+Teste 72 - Comissão por linha diferenciada de produto com alíquota de venda diferenciada zerada e serviço com ambas alíquotas zeradas, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Diferenciada Por Vendedor
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0 e AliqExec=0 → NÃO gera | Param hab
     [Tags]    Teste72
     [Setup]    Run Keywords    
@@ -1358,10 +1350,10 @@ Teste 72 - Combinado: produto diferenciada sem alíquota + serviço diferenciada
     E saio da tela(Comissoes)
 
 # ============================================================================================
-# Produto Mista × Serviço Mista, Parâmetro Desabilitado
+# Testes de Comissão por Linha em Produtos e Serviços — Linha Mista
 # ============================================================================================
 
-Teste 73 - Combinado: produto mista com alíquota + serviço mista com alíquota, parâmetro desabilitado - Linha Mista
+Teste 73 - Comissão por linha mista de produto com alíquota de venda diferenciada positiva e serviço com alíquota de venda diferenciada positiva, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: cpv.Aliq>0 → gera com cpv.Aliq | Param desab
     [Tags]    Teste73
     [Setup]    Run Keywords    
@@ -1381,7 +1373,7 @@ Teste 73 - Combinado: produto mista com alíquota + serviço mista com alíquota
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 74 - Combinado: produto mista com alíquota zerada + serviço mista com alíquota zerada, parâmetro desabilitado - Linha Mista
+Teste 74 - Comissão por linha mista de produto com alíquota de venda diferenciada zerada e serviço com alíquota de venda diferenciada zerada, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: cpv.Aliq=0 → NÃO gera | Param desab
     [Tags]    Teste74
     [Setup]    Run Keywords    
@@ -1403,7 +1395,7 @@ Teste 74 - Combinado: produto mista com alíquota zerada + serviço mista com al
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 75 - Combinado: produto mista sem registro cpv usando geral + serviço mista sem registro cpv usando geral, parâmetro desabilitado - Linha Mista
+Teste 75 - Comissão por linha mista de produto sem registro de alíquota de venda diferenciada usando alíquota geral mista e serviço sem registro de alíquota diferenciada usando alíquota geral mista, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Linha Mista
     # OS prod+serv | Produto: sem cpv → gera com Aliq Geral Mista | Serviço: sem cpv → gera com Aliq Geral Mista | Param desab
     [Tags]    Teste75
     [Setup]    Run Keywords    
@@ -1423,11 +1415,7 @@ Teste 75 - Combinado: produto mista sem registro cpv usando geral + serviço mis
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-# ============================================================================================
-# Produto Mista × Serviço Mista, Parâmetro Habilitado
-# ============================================================================================
-
-Teste 76 - Combinado: produto mista com alíquota + serviço mista hab alíquota positiva sem alíquota execução, parâmetro habilitado - Linha Mista
+Teste 76 - Comissão por linha mista de produto com alíquota de venda diferenciada positiva e serviço com alíquota de venda positiva e alíquota de execução zerada, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq| Serviço: Aliq>0, AliqExec=0 → gera com cpv.Aliq | Param hab
     [Tags]    Teste76
     [Setup]    Run Keywords    
@@ -1447,7 +1435,7 @@ Teste 76 - Combinado: produto mista com alíquota + serviço mista hab alíquota
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 77 - Combinado: produto mista com alíquota + serviço mista hab ambas alíquotas positivas, parâmetro habilitado - Linha Mista
+Teste 77 - Comissão por linha mista de produto com alíquota de venda diferenciada positiva e serviço com ambas alíquotas positivas, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq>0 → gera com cpv.Aliq | Serviço: Aliq>0 e AliqExec>0 → gera com cpv.Aliq + cpv.AliqExec | Param hab
     [Tags]    Teste77
     [Setup]    Run Keywords    
@@ -1467,7 +1455,7 @@ Teste 77 - Combinado: produto mista com alíquota + serviço mista hab ambas al�
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 78 - Combinado: produto mista com alíquota zerada + serviço mista hab sem alíquota com alíquota execução, parâmetro habilitado - Linha Mista
+Teste 78 - Comissão por linha mista de produto com alíquota de venda diferenciada zerada e serviço com alíquota de venda zerada e alíquota de execução positiva, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0, AliqExec>0 → gera com cpv.AliqExec | Param hab
     [Tags]    Teste78
     [Setup]    Run Keywords    
@@ -1488,7 +1476,7 @@ Teste 78 - Combinado: produto mista com alíquota zerada + serviço mista hab se
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 79 - Combinado: produto mista com alíquota zerada + serviço mista hab ambas alíquotas zeradas, parâmetro habilitado - Linha Mista
+Teste 79 - Comissão por linha mista de produto com alíquota de venda diferenciada zerada e serviço com ambas alíquotas zeradas, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Mista
     # OS prod+serv | Produto: cpv.Aliq=0 → NÃO gera | Serviço: Aliq=0 e AliqExec=0 → NÃO gera | Param hab
     [Tags]    Teste79
     [Setup]    Run Keywords    
@@ -1510,7 +1498,7 @@ Teste 79 - Combinado: produto mista com alíquota zerada + serviço mista hab am
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 80 - Combinado: produto mista sem registro cpv usando geral + serviço mista hab sem registro cpv usando dupla geral, parâmetro habilitado - Linha Mista
+Teste 80 - Comissão por linha mista de produto sem registro de alíquota de venda diferenciada usando alíquota geral mista e serviço sem registro de alíquota diferenciada usando dupla alíquota geral mista, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Linha Mista
     # OS prod+serv | Produto: sem cpv → usa Geral → gera com Aliq Geral Mista | Serviço: sem cpv → gera com 2xAliq Geral Mista | Param hab
     [Tags]    Teste80
     [Setup]    Run Keywords    
@@ -1534,7 +1522,7 @@ Teste 80 - Combinado: produto mista sem registro cpv usando geral + serviço mis
 # Comissão Escalonada — Tipo Padrão
 # ============================================================================================
 
-Teste 81 - Comissão escalonada sobre venda de balcão com produto normal - Escalonada
+Teste 81 - Comissão escalonada de produto, com desconto aleatório sobre faixa de comissão, sobre venda de balcão - Escalonada
     # Venda balcão | Produto: comissão via faixa ce.Comissao baseada no desconto do produto
     [Tags]    Teste81
     [Setup]    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal e desconto escalonada
@@ -1545,7 +1533,7 @@ Teste 81 - Comissão escalonada sobre venda de balcão com produto normal - Esca
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 82 - Comissão escalonada OS com produto e serviço, parâmetro desabilitado, vendedor com percentual de serviço - Escalonada
+Teste 82 - Comissão escalonada de produto com mesmo vendedor comissionado por percentual de serviço, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Escalonada
     # OS prod+serv | Param desab | Vendedor_OS: ComissaoPercentualServicos > 0 | Produto: ce.Comissao | Serviço: clientes.ComissaoPercentualServicos
     [Tags]    Teste82
     [Setup]    Run Keywords    
@@ -1563,7 +1551,7 @@ Teste 82 - Comissão escalonada OS com produto e serviço, parâmetro desabilita
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 83 - Comissão escalonada OS com produto e serviço, parâmetro desabilitado, vendedor sem percentual de serviço - Escalonada
+Teste 83 - Comissão escalonada de produto com mesmo vendedor sem percentual de serviço, sobre OS com produto e serviço e parâmetro de vendedor/executor desabilitado - Escalonada
     # OS prod+serv | Param desab | Vendedor_OS: ComissaoPercentualServicos = 0/NULL | Produto: ce.Comissao | Serviço: NÃO gera
     [Tags]    Teste83
     [Setup]    Run Keywords    
@@ -1582,7 +1570,7 @@ Teste 83 - Comissão escalonada OS com produto e serviço, parâmetro desabilita
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 84 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, mesmo vendedor com percentual de serviço - Escalonada
+Teste 84 - Comissão escalonada de produto com mesmo vendedor comissionado por percentual de serviço, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Escalonada
     # OS prod+serv | Param hab | Mesmo vendedor | Vendedor_OS: ComissaoPercentualServicos > 0 | Produto: ce.Comissao | Serviço: clientes.ComissaoPercentualServicos
     [Tags]    Teste84
     [Setup]    Run Keywords    
@@ -1600,7 +1588,7 @@ Teste 84 - Comissão escalonada OS com produto e serviço, parâmetro habilitado
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 85 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, mesmo vendedor sem percentual de serviço - Escalonada
+Teste 85 - Comissão escalonada de produto com mesmo vendedor sem percentual de serviço, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Escalonada
     # OS prod+serv | Param hab | Mesmo vendedor | Vendedor_OS: ComissaoPercentualServicos = 0/NULL | Produto: ce.Comissao | Serviço: NÃO gera
     [Tags]    Teste85
     [Setup]    Run Keywords    
@@ -1619,7 +1607,7 @@ Teste 85 - Comissão escalonada OS com produto e serviço, parâmetro habilitado
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 86 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, diferentes vendedores, executor com percentual de serviço - Escalonada
+Teste 86 - Comissão escalonada de produto com vendedores diferentes e executor comissionado por percentual de serviço, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Escalonada
     # OS prod+serv | Param hab | Vendedores diferentes | Executor: ComissaoPercentualServicos > 0 | Produto: ce.Comissao (vend_os) | Serviço: clientes.ComissaoPercentualServicos (executor)
     [Tags]    Teste86
     [Setup]    Run Keywords    
@@ -1640,7 +1628,7 @@ Teste 86 - Comissão escalonada OS com produto e serviço, parâmetro habilitado
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 87 - Comissão escalonada OS com produto e serviço, parâmetro habilitado, diferentes vendedores, executor sem percentual de serviço - Escalonada
+Teste 87 - Comissão escalonada de produto com vendedores diferentes e executor sem percentual de serviço, sobre OS com produto e serviço e parâmetro de vendedor/executor habilitado - Escalonada
     # OS prod+serv | Param hab | Vendedores diferentes | Executor: ComissaoPercentualServicos = 0/NULL | Produto: ce.Comissao (vend_os) | Serviço: NÃO gera para executor
     [Tags]    Teste87
     [Setup]    Run Keywords    
