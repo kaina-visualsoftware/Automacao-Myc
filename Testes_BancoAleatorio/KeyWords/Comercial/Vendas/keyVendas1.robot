@@ -474,7 +474,8 @@ Então clico em excluir
     Sleep    ${SLEEP_BAIXO}
 
     ${venda_excluida}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_VENDA} AND Status = 'x' AND Cancelada = 1
-    
+    Sleep    ${SLEEP_BAIXO}
+
     Should Be True    ${venda_excluida}    Venda não foi excluída corretamente.
 
 Valida ncm invalido ao faturar nota

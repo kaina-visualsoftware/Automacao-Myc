@@ -199,10 +199,13 @@ Então excluo a condicional
     
     Valida solicitação de senha do usuário supervisor
     
-    Sleep    ${SLEEP_MEDIO}
-    Check If Exists In Database    SELECT * FROM condicionais AS c WHERE c.Codigo = ${COD_CONDICIONAL} AND c.`Status` = 'x' AND c.Cancelada = 1;
-
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    
+    ${condicional_excluida}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM condicionais AS c WHERE c.Codigo = ${COD_CONDICIONAL} AND c.`Status` = 'x' AND c.Cancelada = 1;
+    Sleep    ${SLEEP_BAIXO}
+
+    Should Be True    ${condicional_excluida}    Condicional não foi excluída corretamente.
 
 Quando clico em gerar venda
     

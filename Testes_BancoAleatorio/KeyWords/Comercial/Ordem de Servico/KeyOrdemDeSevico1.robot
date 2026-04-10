@@ -416,7 +416,8 @@ Então clico em excluir
     Sleep    ${SLEEP_BAIXO}
 
     ${os_excluida}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM vendas WHERE Codigo = ${COD_ORDEM_SERVICO} AND Status = 'x' AND Cancelada = 1
-    
+    Sleep    ${SLEEP_BAIXO}
+
     Should Be True    ${os_excluida}    Ordem de Serviço não foi excluída corretamente.
 
 Calcula valor final da OS
