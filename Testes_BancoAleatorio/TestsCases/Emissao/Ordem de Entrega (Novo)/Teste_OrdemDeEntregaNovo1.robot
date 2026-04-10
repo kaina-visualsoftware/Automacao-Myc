@@ -7,6 +7,7 @@ Suite Setup    Run Keywords    Start Sikuli Process    AND    KeyOrdemDeEntregaN
 Suite Teardown    Stop Remote Server
 
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
+Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
 *** Test Cases ***
 

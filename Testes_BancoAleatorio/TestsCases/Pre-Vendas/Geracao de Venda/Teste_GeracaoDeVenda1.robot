@@ -10,6 +10,7 @@ Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyGeracaoDeVenda
 Suite Teardown    Stop Remote Server
 
 Test Setup    montadorDeCenarios.Dado que realizo um pedido, com produto normal
+Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
 *** Test Cases ***
 Teste 01 – Geração de venda a partir de pedido

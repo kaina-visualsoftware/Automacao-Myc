@@ -9,6 +9,8 @@ Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyPedidos1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
 
+Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
+
 *** Test Cases ***
 Teste 01 - Lançamento de pedido
     [Tags]    Teste01

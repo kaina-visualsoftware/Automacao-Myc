@@ -193,6 +193,18 @@ Teardown Restaurar Parametros Alterados E Reiniciar MyCommerce Se Necessário
 
     Restaurar Parametros Alterados
     Reiniciar MyCommerce Se Necessário
+    Reiniciar MyCommerce Se Teste Falhar
+
+Reiniciar MyCommerce Se Teste Falhar
+
+    IF    '${TEST STATUS}' == 'FAIL'
+
+        Log To Console    \n[TEARDOWN] Teste falhou. Reiniciando MyCommerce...
+
+        Fechar MyCommerce
+        Abrir MyCommerce
+
+    END
 
 Preparar Ambiente MyCommerce
 

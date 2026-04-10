@@ -9,6 +9,7 @@ Suite Setup    Run Keywords    Start Sikuli Process    AND    KeyDevolucaoVenda1
 Suite Teardown    Stop Remote Server
 
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
+Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
 *** Test Cases ***
 Teste 01 - Lançamento de devolução de venda
