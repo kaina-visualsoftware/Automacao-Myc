@@ -844,6 +844,26 @@ Quando insiro um produto normal informando a quantidade(${Qtde_Produto})
 
         END
 
+    END            
+        
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida a tela de preços & prazos de pagamentos
+
+    END
+
+    Informa a quantidade do produto(${Qtde_Produto})
+
+    utils.Valida parametros após incluir produto
+
+Quando insiro um produto sem comissão por linha informando a quantidade(${Qtde_Produto})
+
+    utils.Inserir Produto sem comissão por linha    ${Parametro_RealizaVendaSemEstoque}
+
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida a tela de preços & prazos de pagamentos
+
     END
 
     Informa a quantidade do produto(${Qtde_Produto})
@@ -876,6 +896,12 @@ Quando insiro um produto normal informando a quantidade e desconto
             utils.Inserir Produto normal - Necessita de estoque
 
         END
+
+    END
+
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida a tela de preços & prazos de pagamentos
 
     END
 

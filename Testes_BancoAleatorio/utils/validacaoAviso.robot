@@ -314,6 +314,8 @@ Carregar parâmetros do sistema
     ${Parametro_ExigeSenhaOutroVendedor}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ExigeSenhaMudarVendedorVenda
     ${Parametro_ImprimirPreVendaAoFinalizarPreVenda}       Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    ImprimirPreVenda_FinalizarPreVenda
     ${Parametro_ImpressaoDiretaPreVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PrevendaDireto
+    ${Parametro_ExibirCampoNpedVenda}                      Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Exibir_Campo_Nped_Venda
+    ${Parametro_BloquearCampoNpedPreVenda}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    pula_foco_npedido
 
     IF    ${Parametro_VendaRapida}
 
@@ -503,6 +505,10 @@ Carregar parâmetros do sistema
 
     Set Global Variable    ${Parametro_EmitirBoletosAcimaDeValorMinimo}    ${ValorMinimoBoleto}
 
+    Set Global Variable    ${Parametro_ExibirCampoNpedVenda}
+
+    Set Global Variable    ${Parametro_BloquearCampoNpedPreVenda}
+
 Valida aviso exige senha para outro vendedor
 
     ${aviso}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}    ${SLEEP_ALTO}
@@ -643,15 +649,23 @@ Valida exibe cliente
 
     END
 
-Valida tabela de preco
+Valida a tela de preços & prazos de pagamentos
 
     Sleep    ${SLEEP_ALTO}
-    ${MSG}    Exists    ${TELA_SELECIONA_TABELA_PRECO}
+    ${tela}    Exists    ${TELA_SELECIONA_TABELA_PRECO}
 
-    IF    ${MSG}
+    IF    ${tela}
 
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_MEDIO}
+        IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco Geral'
+
+            Seleciona tabela de preço na tela de preços e prazos de pagamentos    ${Id_Tabela_Preco_Selecionada}
+
+        ELSE
+
+            Press Special Key    ENTER
+            Sleep    ${SLEEP_MEDIO}
+
+        END
 
     END
 

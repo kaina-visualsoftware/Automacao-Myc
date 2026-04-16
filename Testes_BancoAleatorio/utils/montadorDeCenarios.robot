@@ -600,3 +600,47 @@ Dado que realizo uma ordem de serviço com produto e serviço e desconto escalon
     Set Test Variable    ${OS_Vendedor_E_Tecnico_Diferentes}    ${True}
 
     Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada
+
+# ============================================================================================
+# Cenários — Tabela de Preço Geral (Bloco 2): produto SEM comissão por linha
+# ============================================================================================
+
+Dado que realizo uma venda completa, com produto sem comissão por linha
+
+    keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto sem comissão por linha informando a quantidade(1)
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+    utils.Exclui ordem de entrega(${COD_VENDA})
+    utils.E saio da tela(Venda)
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+# ============================================================================================
+# Cenários — Tabela de Preço Escalonada (Bloco 3): produto com desconto
+# ============================================================================================
+
+Dado que realizo uma venda completa, com produto normal e desconto tabela de preço escalonada
+
+    keyVendas1.Dado que acesso a tela de vendas de balcão
+    keyVendas1.Quando pressiono o atalho de adicionar
+    keyVendas1.E adiciono vendedor e cliente
+    keyVendas1.Quando insiro um produto normal informando a quantidade e desconto    1    ${Desconto_Escalonada}
+    keyVendas1.E acesso a aba pagamentos
+    keyVendas1.Então finalizo a venda
+    utils.Exclui ordem de entrega(${COD_VENDA})
+    utils.E saio da tela(Venda)
+
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
+
+Dado que realizo uma ordem de serviço somente com produto e desconto tabela de preço escalonada - A prazo
+
+    KeyOrdemDeSevico1.Dado que acesso a tela de ordens de serviços
+    KeyOrdemDeSevico1.Quando pressiono o atalho de adicionar
+    KeyOrdemDeSevico1.E adiciono vendedor e cliente
+    KeyOrdemDeSevico1.E insiro um produto normal informando a quantidade e desconto(1, ${Desconto_Escalonada})
+    KeyOrdemDeSevico1.E acesso a aba pagamentos
+    KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
+    utils.E saio da tela(OrdemDeServico)

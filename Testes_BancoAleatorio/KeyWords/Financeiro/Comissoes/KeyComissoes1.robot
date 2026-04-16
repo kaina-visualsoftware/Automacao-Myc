@@ -117,6 +117,8 @@ ${Baixa_Eh_Servico}                               ${False}
 ${Comissao_Zerada_Por_Devolucao}                  ${False}
 ${Cenario_Sem_Comissao_Servico}                   ${False}
 ${Cenario_Sem_Comissao_Produto}                   ${False}
+${Teste_Comissao_Tab_Preco_Geral}                 ${False}
+${Cenario_Comissao_Tabela_Preco}                  ${None}
 ${Cenario_Comissao_Linha}                         ${None}
 ${Cenario_Comissao_Linha_Servico}                 ${None}
 ${Tipo_Comissao_Linha_Servico}                    ${None}
@@ -138,10 +140,10 @@ Dado que acesso a tela de comissões
 
     IF    $Cenario_Comissao_Linha is not None
 
-        ${_ja_logou_cenario}    Run Keyword And Return Status    Variable Should Exist    ${_cenario_logado}
+        ${ja_logou_cenario}    Run Keyword And Return Status    Variable Should Exist    ${_cenario_logado}
 
-        IF    not ${_ja_logou_cenario}
-            Log To Console    \n[CENÁRIO] Cenario_Comissao_Linha = ${Cenario_Comissao_Linha}
+        IF    not ${ja_logou_cenario}
+            Log To Console    \n[CENÁRIO] Cenario_Comissao_Linha = ${Cenario_Comissao_Linha}\n
             Set Test Variable    ${_cenario_logado}    ${True}
         END
         
@@ -268,20 +270,27 @@ E seleciono a comissão de produtos
 
     Sleep    ${SLEEP_ALTO}
 
-    IF    ${Teste_Comissao_Linha}
+    IF    ${Teste_Comissao_Linha} or ${Teste_Comissao_Tab_Preco_Geral}
 
-        # Para cenários de produto com validação de linha DIF/MISTA, usa a keyword de validação detalhada
-        ${eh_cenario_produto_linha}    Evaluate    '${Cenario_Comissao_Linha}'.startswith('PROD__')
+        # Determina a variável de cenário correta conforme o tipo de teste
+        IF    ${Teste_Comissao_Tab_Preco_Geral}
+            ${cenario_atual}    Set Variable    ${Cenario_Comissao_Tabela_Preco}
+        ELSE
+            ${cenario_atual}    Set Variable    ${Cenario_Comissao_Linha}
+        END
+
+        # Para cenários de produto com validação de linha DIF/MISTA/TAB_PRECO, usa a keyword de validação detalhada
+        ${eh_cenario_produto_linha}    Evaluate    '${cenario_atual}'.startswith('PROD__')
 
         IF    ${eh_cenario_produto_linha}
 
-            IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor' or '${Tipo_Comissao_Linha}' == 'Mista'
+            IF    '${Tipo_Comissao_Linha}' == 'Diferenciada Por Vendedor' or '${Tipo_Comissao_Linha}' == 'Mista' or '${Tipo_Comissao_Linha}' == 'Tabela de Preco' or '${Tipo_Comissao_Linha}' == 'Tabela de Preco Geral'
 
-                Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+                Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${cenario_atual}
 
             ELSE
 
-                Fail    Cenário de produto '${Cenario_Comissao_Linha}' com tipo '${Tipo_Comissao_Linha}' não reconhecido.
+                Fail    Cenário de produto '${cenario_atual}' com tipo '${Tipo_Comissao_Linha}' não reconhecido.
 
             END
 
@@ -2396,7 +2405,7 @@ Consulta valor comissão produto único
 
     ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
 
-        Fail    Consulta de comissão para Tabela de Preço ainda não implementada.
+        ${resultado}    Query    SELECT vp.ValorUnitario * (cpt.Aliquota / 100) AS ValorComissao FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo INNER JOIN comissaoporlinha_tabpreco cpt ON cpt.IDLinhaComissao = cl.Codigo AND cpt.idTabela = vp.idTabela WHERE p.Codigo = ${codigo_produto} AND vp.CodigoVenda = ${codigo_operacao} AND vp.Cancelada IS NULL AND cl.Tipo = 'DT';
 
     END
 
@@ -2439,7 +2448,7 @@ Consulta valores comissão por produto
 
         ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
 
-            Fail    Consulta de comissão para Tabela de Preço ainda não implementada.
+            ${resultado}    Query    SELECT SUM(p.vendaT1 * (cpt.Aliquota / 100)) FROM comissaoporlinha AS cl INNER JOIN produtos AS p ON p.CodigoComissao = cl.Codigo INNER JOIN comissaoporlinha_tabpreco cpt ON cpt.IDLinhaComissao = cl.Codigo WHERE p.Codigo = ${cod_produto} AND cl.Tipo = 'DT' ORDER BY RAND() LIMIT 1;
 
         END
 
@@ -2591,7 +2600,7 @@ Consulta valor base produto
 
     ${valor_base}    Set Variable    ${resultado[0][0]}
 
-    Log To Console    Produto: ${codigo_produto} | Operação: ${codigo_operacao} | Valor base (unitário): ${valor_base}
+    Log To Console    Produto: ${codigo_produto} | Operação: ${codigo_operacao} | Valor base: ${valor_base}
 
     RETURN    ${valor_base}
 
@@ -2620,6 +2629,7 @@ Verifica Comissão Produto Gerada
     ELSE
 
         Log To Console    ✓ Nenhum ValorComissao > 0 (esperado) para operação ${codigo_operacao} / Vendedor ${codigo_vendedor_verifica}.
+
     END
 
 Busca Valor Comissão Produto Gerada
@@ -2629,7 +2639,7 @@ Busca Valor Comissão Produto Gerada
 
     ${valor}    Evaluate    decimal.Decimal(str(${query_valor[0][0]})).quantize(decimal.Decimal("0.00"))    modules=decimal
 
-    Log To Console    Operação: ${codigo_operacao} | Produto: ${codigo_produto} | Valor: ${valor}
+    Log To Console    Operação: ${codigo_operacao} | Produto: ${codigo_produto} | Valor comissão: ${valor}
 
     RETURN    ${valor}
 
@@ -2638,7 +2648,7 @@ Calcula Comissao Produto Com Aliquota
 
     ${comissao}    Evaluate    (decimal.Decimal(str(${valor_base})) * (decimal.Decimal(str(${aliquota})) / decimal.Decimal("100"))).quantize(decimal.Decimal("0.00"), rounding=decimal.ROUND_HALF_UP)    modules=decimal
 
-    Log To Console    Base: ${valor_base} | Aliquota: ${aliquota}% | Comissão: ${comissao}
+    Log To Console    Valor base: ${valor_base} | Aliquota: ${aliquota}% | Comissão: ${comissao}
 
     RETURN    ${comissao}
 
@@ -2725,6 +2735,75 @@ Valida Comissão Linha Produto
         Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_Produtos}    msg=[PROD__MISTA__SEM_REG_CPLV] Comissão do produto diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_Produtos}
 
         Log To Console    [PROD__MISTA__SEM_REG_CPLV] SEM cpv → Aliquota Geral: ${aliquota_geral} | Comissão: ${Total_Comissao_Produtos}
+
+    ELSE IF    '${cenario}' == 'PROD__TAB_PRECO__COM_ALIQ'
+
+        # Para comissão tipo 'DT' (Tabela de Preço), o MyCommerce NÃO grava ValorComissao em vendasprodutos
+        # no momento da venda. A comissão é calculada na geração do relatório de comissões.
+        # Portanto, NÃO usamos 'Verifica Comissão Produto Gerada' nem 'Busca Valor Comissão Produto Gerada'.
+
+        # Consulta alíquota da tabela de preço usada na venda
+        ${resultado_aliq}    Query    SELECT cpt.Aliquota FROM comissaoporlinha cl INNER JOIN produtos p ON p.CodigoComissao = cl.Codigo INNER JOIN vendasprodutos vp ON vp.CodigoProduto = p.Codigo INNER JOIN comissaoporlinha_tabpreco cpt ON cpt.IDLinhaComissao = cl.Codigo AND cpt.idTabela = vp.idTabela WHERE p.Codigo = ${COD_PRODUTO} AND vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL AND cl.Tipo = 'DT';
+
+        IF    len($resultado_aliq) == 0
+            Fail    Alíquota da comissaoporlinha_tabpreco não encontrada para o produto ${COD_PRODUTO} na operação ${CODIGO_OPERACAO_MOV}.
+        END
+
+        ${aliquota}    Set Variable    ${resultado_aliq[0][0]}
+
+        ${Total_Comissao_Produtos}    Calcula Comissao Produto Com Aliquota    ${valor_base}    ${aliquota}
+
+        Log To Console    Aliquota TabPreco: ${aliquota} | Comissão calculada: ${Total_Comissao_Produtos}
+
+    ELSE IF    '${cenario}' == 'PROD__TAB_PRECO__SEM_ALIQ'
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+
+        Should Be Equal As Numbers    ${valor_bd}    0    msg=Comissão deveria ser 0, mas encontrou ${valor_bd}.
+
+        ${Total_Comissao_Produtos}    Set Variable    ${0}
+
+        Log To Console    cpt.Aliquota = 0 → Comissão: 0 (registro com valor 0)
+
+    ELSE IF    '${cenario}' == 'PROD__TAB_PRECO_GERAL__COM_PERC'
+
+        # Tabela de Preço Geral com PComissao > 0.
+        # O produto NÃO possui vínculo em comissaoporlinha (CodigoComissao nulo/0).
+        # A comissão é calculada com base em tabelas.PComissao da tabela usada na venda.
+        # O MyCommerce grava ValorComissao em vendasprodutos para esse tipo.
+
+        ${resultado_perc}    Query    SELECT t.PComissao FROM vendasprodutos vp INNER JOIN tabelas t ON t.Codigo = vp.idTabela WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.CodigoProduto = ${COD_PRODUTO} AND vp.Cancelada IS NULL LIMIT 1;
+
+        IF    len($resultado_perc) == 0
+            Fail    Não foi possível encontrar a tabela de preço vinculada ao produto ${COD_PRODUTO} na operação ${CODIGO_OPERACAO_MOV}.
+        END
+
+        ${percentual_comissao}    Set Variable    ${resultado_perc[0][0]}
+
+        IF    $percentual_comissao is None
+            Fail    PComissao veio NULL para a tabela de preço vinculada ao produto ${COD_PRODUTO} na operação ${CODIGO_OPERACAO_MOV}. O cenário COM_PERC exige PComissao > 0.
+        END
+
+        Should Be True    ${percentual_comissao} > 0    msg=PComissao da tabela deveria ser > 0, mas é ${percentual_comissao}.
+
+        ${Total_Comissao_Produtos}    Calcula Comissao Produto Com Aliquota    ${valor_base}    ${percentual_comissao}
+
+        ${valor_bd}    Busca Valor Comissão Produto Gerada    ${CODIGO_OPERACAO_MOV}    ${COD_PRODUTO}
+
+        # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
+        ${Total_Comissao_Produtos}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${Total_Comissao_Produtos}    ${valor_bd}
+
+        Should Be Equal As Numbers    ${valor_bd}    ${Total_Comissao_Produtos}    msg=Comissão do produto diverge. BD: ${valor_bd} | Calculado: ${Total_Comissao_Produtos}
+
+        Log To Console    PComissao tabela: ${percentual_comissao} | Comissão calculada: ${Total_Comissao_Produtos} | Comissão BD: ${valor_bd}
+
+    ELSE IF    '${cenario}' == 'PROD__TAB_PRECO_GERAL__SEM_PERC'
+
+        # Tabela de Preço Geral com PComissao = 0 → NÃO gera comissão.
+
+        ${Total_Comissao_Produtos}    Set Variable    ${0}
+
+        Log To Console    PComissao = 0 → Comissão: 0
 
     ELSE
 

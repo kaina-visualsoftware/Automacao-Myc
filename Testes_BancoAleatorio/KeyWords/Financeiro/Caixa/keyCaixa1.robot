@@ -667,6 +667,12 @@ Cria novo NDocumento a partir da sequencia do caixa
     
     ${Ultima_Sequencia}    Query    SELECT Sequencia FROM caixamovimentos ORDER BY Sequencia DESC LIMIT 1;
 
+    IF    len($Ultima_Sequencia) == 0
+
+        Fail    Nenhuma sequência encontrada no caixa.
+        
+    END
+
     ${Novo_NDoc}    Evaluate    ${Ultima_Sequencia[0][0]} + 1
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Novo_NDoc}

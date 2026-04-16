@@ -90,6 +90,7 @@ ${CORRIGE_FOCO}                                     corrigeFoco.png
 ${Teste_Comissao_Linha_Servico}                     ${False}
 ${Cenario_Comissao_Linha_Servico}                   ${None}
 ${Vendedor_Selecionada_Escalonada}                  ${False}
+${Cenario_Comissao_Tabela_Preco}                    ${None}
 ${Valores_Parcelas}                                 ${None}
 ${AJUSTE_FOCO}                                      bt_SetaUltimaVenda.png
 ${AJUSTE_FOCO_DEVOLUCAO}                            ajusteFocoDevolucao.png
@@ -108,6 +109,7 @@ ${Aliquota_Escalonada}                              ${None}
 ${Faixas_Escalonada}                                ${None}
 ${OS_Vendedor_E_Tecnico_Diferentes}                 ${False}
 ${Cenario_Sem_Comissao_Servico}                     ${False}
+${Id_Tabela_Preco_Selecionada}                      ${None}
 ${Atualizacao_Ambiente_MyCommerce}                  ${False}
 
 *** Keywords ***
@@ -207,7 +209,32 @@ Adicionar Vendedor e Cliente(${TELA})
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
 
-        Verifica seleção de tabela de preço(${TELA})
+        IF    ${Parametro_ExibirCampoNpedVenda}
+
+            Press Special Key    TAB
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+
+        IF    not ${Parametro_BloquearCampoNpedPreVenda}
+
+            Press Special Key    TAB
+            Sleep    ${SLEEP_BAIXO}
+            
+        END
+
+        IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+            # Para cenários de comissão por Tabela de Preço POR LINHA, seleciona a tabela específica no combobox.
+            # Cenários de "Tabela de Preco Geral" NÃO usam o combobox — a seleção é feita pela
+            # tela popup que aparece após incluir o produto (em 'Valida a tela de preços & prazos de pagamentos').
+            Seleciona Tabela De Preco No Combobox    ${Id_Tabela_Preco_Selecionada}
+
+        ELSE
+
+            Verifica seleção de tabela de preço(${TELA})
+
+        END
         
     END
 
@@ -285,12 +312,24 @@ Seleciona cliente
     
     ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) AND Codigo <> 1 ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
+    
+    IF    len($codCliente) == 0
+        
+        Fail    Nenhum cliente foi encontrado.
+
+    END
 
     RETURN    ${codCliente[0][0]}
 
 Seleciona plano de contas - Débito
 
     ${Plano_de_Contas}    Query    SELECT ID FROM plano_subcontas WHERE IDConta IN (SELECT ID FROM plano_contas WHERE Tipo = 'D') AND Excluido IS NULL ORDER BY RAND() LIMIT 1;
+
+    IF    len($Plano_de_Contas) == 0
+        
+        Fail    Nenhum plano de contas débito encontrado.
+
+    END
 
     RETURN    ${Plano_de_Contas[0][0]}
 
@@ -322,6 +361,7 @@ Valida teste de comissão
     ${Teste_Comissao_Forma_Parcelamento}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Forma Parcelamento
     ${Teste_Comissao_Servico}               Run Keyword And Return Status    Should Contain    ${TEST_NAME}    serviço
     ${Teste_Comissao_Devolucao}             Run Keyword And Return Status    Should Contain    ${TEST_NAME}    devolução
+    ${Teste_Comissao_Tab_Preco_Geral}       Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Tabela de Preço Geral
 
     Set Test Variable    ${Teste_Comissao_Escalonada}
     Set Test Variable    ${Teste_Comissao_Total_Venda}
@@ -329,6 +369,7 @@ Valida teste de comissão
     Set Test Variable    ${Teste_Comissao_Forma_Parcelamento}
     Set Test Variable    ${Teste_Comissao_Servico}
     Set Test Variable    ${Teste_Comissao_Devolucao}
+    Set Test Variable    ${Teste_Comissao_Tab_Preco_Geral}
 
     ${Eh_Comissao_Linha_Simples}           Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha Simples
     ${Eh_Comissao_Linha_Dif_Vendedor}      Run Keyword And Return Status    Should Contain    ${TEST_NAME}    Linha Diferenciada Por Vendedor
@@ -353,11 +394,23 @@ Valida teste de comissão
 
             Set Test Variable    ${Tipo_Comissao_Linha}    Tabela de Preco
 
+        ELSE IF    ${Teste_Comissao_Tab_Preco_Geral}
+
+            # Testes de "Tabela de Preço Geral" contêm "Linha" implicitamente no contexto,
+            # mas usam PComissao da tabela geral, não comissaoporlinha_tabpreco.
+            Set Test Variable    ${Tipo_Comissao_Linha}    Tabela de Preco Geral
+
         ELSE
             
             Fail    Teste de comissão por linha detectado, mas nenhum subtipo reconhecido no nome do Test Case ('${TEST_NAME}'). Inclua no nome: 'Linha Simples', 'Linha Diferenciada Por Vendedor', 'Linha Mista' ou 'Linha Tabela de Preco'.
 
         END
+
+    ELSE IF    ${Teste_Comissao_Tab_Preco_Geral}
+
+        # Teste de tabela de preço geral: NÃO contém a palavra "Linha" no nome,
+        # mas requer vendedor com ComissaoDiferenciadapor = 'L'.
+        Set Test Variable    ${Tipo_Comissao_Linha}    Tabela de Preco Geral
 
     END
 
@@ -615,7 +668,23 @@ Valida teste de comissão
 
             ELSE IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
 
-                Log To Console    [AVISO] Validação de cenário para Tabela de Preço ainda não implementada.
+                IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__TAB_PRECO__COM_ALIQ'
+
+                    ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_tabpreco cpt INNER JOIN comissaoporlinha cp ON cp.Codigo = cpt.IDLinhaComissao WHERE cp.Tipo = 'DT' AND cpt.Aliquota > 0;
+
+                    IF    not ${vendedor_atende_ao_cenario}
+                        ${SelecionarVendedor}    Set Variable    ${True}
+                    END
+
+                ELSE IF    '${Cenario_Linha_Para_Selecao_Vendedor}' == 'PROD__TAB_PRECO__SEM_ALIQ'
+
+                    ${vendedor_atende_ao_cenario}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissaoporlinha_tabpreco cpt INNER JOIN comissaoporlinha cp ON cp.Codigo = cpt.IDLinhaComissao WHERE cp.Tipo = 'DT' AND cpt.Aliquota = 0;
+
+                    IF    not ${vendedor_atende_ao_cenario}
+                        ${SelecionarVendedor}    Set Variable    ${True}
+                    END
+
+                END
 
             END
 
@@ -636,6 +705,33 @@ Valida teste de comissão
             IF    '${Cenario_Linha_Para_Selecao_Vendedor}' != '${_cenario_produto_original}'
                 Set Test Variable    ${Cenario_Comissao_Linha}    ${_cenario_produto_original}
             END
+
+        END
+
+        # Para cenários de Tabela de Preço, determina qual idTabela usar e salva como variável de teste.
+        # Deve rodar SEMPRE (independente de SelecionarVendedor) pois a seleção de produto depende do idTabela.
+        IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
+
+            IF    '${Cenario_Comissao_Linha}' == 'PROD__TAB_PRECO__COM_ALIQ'
+
+                ${resultado_tabela}    Query    SELECT cpt.idTabela, t.Descricao FROM comissaoporlinha_tabpreco cpt INNER JOIN comissaoporlinha cp ON cp.Codigo = cpt.IDLinhaComissao INNER JOIN tabelas t ON t.Codigo = cpt.idTabela WHERE cp.Tipo = 'DT' AND cpt.Aliquota > 0 AND t.Cancelada IS NULL AND t.TP_Preco = 'G' ORDER BY RAND() LIMIT 1;
+
+            ELSE IF    '${Cenario_Comissao_Linha}' == 'PROD__TAB_PRECO__SEM_ALIQ'
+
+                ${resultado_tabela}    Query    SELECT cpt.idTabela, t.Descricao FROM comissaoporlinha_tabpreco cpt INNER JOIN comissaoporlinha cp ON cp.Codigo = cpt.IDLinhaComissao INNER JOIN tabelas t ON t.Codigo = cpt.idTabela WHERE cp.Tipo = 'DT' AND cpt.Aliquota = 0 AND t.Cancelada IS NULL AND t.TP_Preco = 'G' ORDER BY RAND() LIMIT 1;
+
+            END
+
+            IF    len($resultado_tabela) == 0
+                Fail    Nenhuma tabela de preço encontrada na comissaoporlinha_tabpreco para cenário '${Cenario_Comissao_Linha}'.
+            END
+
+            ${Id_Tabela_Preco_Selecionada}           Set Variable    ${resultado_tabela[0][0]}
+            ${Descricao_Tabela_Preco_Selecionada}    Set Variable    ${resultado_tabela[0][1]}
+
+            Set Test Variable    ${Id_Tabela_Preco_Selecionada}
+
+            Log To Console    \nTabela de preço selecionada: ${Id_Tabela_Preco_Selecionada} - ${Descricao_Tabela_Preco_Selecionada}
 
         END
 
@@ -675,6 +771,54 @@ Valida teste de comissão
         Set Test Variable    ${FORMA_PADRAO}    ${FORMA_PRAZO}
 
         Log To Console    \nComissão sobre formas de parcelamento.
+
+    ELSE IF    ${Teste_Comissao_Tab_Preco_Geral}
+
+        # Tabela de Preço Geral: produto SEM vínculo de comissão por linha (CodigoComissao nulo/0),
+        # mas o vendedor DEVE estar cadastrado para comissão por linha (ComissaoDiferenciadapor = 'L').
+        # A comissão é baseada em tabelas.PComissao.
+
+        ${SelecionarVendedor}    Set Variable    ${False}
+
+        IF    $Tipo_Comissao != 'L' or '${Dados_Vendedor[0][4]}' != '1'
+            ${SelecionarVendedor}    Set Variable    ${True}
+        END
+
+        IF    ${SelecionarVendedor}
+
+            IF    $Cenario_Comissao_Tabela_Preco is None
+                Fail    Variável \${Cenario_Comissao_Tabela_Preco} não definida. Para testes de comissão por tabela de preço geral, defina o cenário no [Setup] antes de chamar o montadorDeCenarios.
+            END
+
+            Seleciona Vendedor Comissão Linha    Tabela de Preco Geral    ${Cenario_Comissao_Tabela_Preco}
+
+        END
+
+        # Determina qual tabela de preço usar na tela de seleção:
+        # COM_PERC → tabela com PComissao > 0
+        # SEM_PERC → tabela com PComissao = 0 (ou NULL)
+        IF    '${Cenario_Comissao_Tabela_Preco}' == 'PROD__TAB_PRECO_GERAL__COM_PERC'
+
+            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND t.PComissao > 0 AND t.TP_Preco = 'G' ORDER BY RAND() LIMIT 1;
+            
+        ELSE IF    '${Cenario_Comissao_Tabela_Preco}' == 'PROD__TAB_PRECO_GERAL__SEM_PERC'
+
+            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND (t.PComissao = 0 OR t.PComissao IS NULL) AND t.TP_Preco = 'G' ORDER BY RAND() LIMIT 1;
+
+        END
+
+        IF    len($resultado_tabela) == 0
+            Fail    Nenhuma tabela de preço encontrada para cenário '${Cenario_Comissao_Tabela_Preco}'. Verifique a coluna PComissao na tabela 'tabelas'.
+        END
+
+        ${Id_Tabela_Preco_Selecionada}           Set Variable    ${resultado_tabela[0][0]}
+        ${Descricao_Tabela_Preco_Selecionada}    Set Variable    ${resultado_tabela[0][1]}
+
+        Set Test Variable    ${Id_Tabela_Preco_Selecionada}
+
+        Log To Console    Tabela de preço selecionada: ${Id_Tabela_Preco_Selecionada} - ${Descricao_Tabela_Preco_Selecionada}
+
+        Log To Console    \nComissão por tabela de preço geral.
 
     END
 
@@ -945,9 +1089,41 @@ Seleciona Vendedor Comissão Linha
 
     ELSE IF    '${tipo_linha}' == 'Tabela de Preco'
 
-        ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+        IF    '${cenario}' == 'PROD__TAB_PRECO__COM_ALIQ'
 
-        Fail    Pendente de implementação.
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_tabpreco cpt ON cpt.IDLinhaComissao IN (SELECT cp.Codigo FROM comissaoporlinha cp WHERE cp.Tipo = 'DT') WHERE ${base_where} AND cpt.Aliquota > 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__TAB_PRECO__SEM_ALIQ'
+
+            ${consultaVendedor}    Set Variable    ${base_query} INNER JOIN comissaoporlinha_tabpreco cpt ON cpt.IDLinhaComissao IN (SELECT cp.Codigo FROM comissaoporlinha cp WHERE cp.Tipo = 'DT') WHERE ${base_where} AND cpt.Aliquota = 0 ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            Fail    Cenário '${cenario}' não mapeado para Tabela de Preco na seleção de vendedor.
+
+        END
+
+    ELSE IF    '${tipo_linha}' == 'Tabela de Preco Geral'
+
+        # Tabela de Preço Geral: produto SEM CodigoComissao (sem vínculo de comissão por linha).
+        # O vendedor deve ser comissionado por linha (ComissaoDiferenciadapor = 'L').
+        # A comissão é calculada com base em tabelas.PComissao.
+
+        IF    '${cenario}' == 'PROD__TAB_PRECO_GERAL__COM_PERC'
+
+            # Vendedor com linha de comissão cadastrada (qualquer tipo) — a tabela de preço usada deve ter PComissao > 0
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+
+        ELSE IF    '${cenario}' == 'PROD__TAB_PRECO_GERAL__SEM_PERC'
+
+            # Vendedor com linha de comissão cadastrada (qualquer tipo) — a tabela de preço usada deve ter PComissao = 0
+            ${consultaVendedor}    Set Variable    ${base_query} WHERE ${base_where} ORDER BY RAND() LIMIT 1;
+
+        ELSE
+
+            Fail    Cenário '${cenario}' não mapeado para Tabela de Preco Geral na seleção de vendedor.
+
+        END
 
     END
 
@@ -962,6 +1138,48 @@ Seleciona Vendedor Comissão Linha
     Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
     Set Test Variable    ${Codigo_Vendedor}    ${Dados_Vendedor[0][0]}
     Set Test Variable    ${Cenario_Comissao_Linha}    ${cenario}
+
+Seleciona Tabela De Preco No Combobox
+    [Documentation]    Seleciona uma tabela de preço específica no combobox da tela de vendas/OS.
+    ...    O foco já deve estar no combobox de tabela (após os TABs dos campos anteriores).
+    ...    HOME vai ao primeiro item e DOWN N vezes chega na tabela desejada.
+    [Arguments]    ${id_tabela}
+
+    # Consulta a posição (0-indexed) da tabela alvo no combobox (tabelas ativas ordenadas por Codigo)
+    ${resultado_posicao}    Query    SELECT COUNT(*) FROM tabelas WHERE Cancelada IS NULL AND Codigo < ${id_tabela};
+    ${posicao}    Set Variable    ${resultado_posicao[0][0]}
+
+    # HOME seleciona o primeiro item do combobox (funciona com ou sem seleção prévia)
+    Press Special Key    HOME
+    Sleep    ${SLEEP_BAIXO}
+
+    # DOWN N vezes para chegar na tabela desejada (posição 0-indexed)
+    FOR    ${i}    IN RANGE    ${posicao}
+        Press Special Key    DOWN
+        Sleep    0.2
+    END
+
+    Sleep    ${SLEEP_BAIXO}
+
+Seleciona tabela de preço na tela de preços e prazos de pagamentos
+    [Arguments]    ${id_tabela}
+
+    # Consulta a posição (0-indexed) da tabela alvo no grid da tela popup
+    ${resultado_posicao}    Query    SELECT COUNT(*) FROM tabelas WHERE Cancelada IS NULL AND Codigo < ${id_tabela};
+    ${posicao}    Set Variable    ${resultado_posicao[0][0]}
+
+    # Vai para o topo da listagem e navega DOWN até a posição da tabela desejada
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    PAGE_UP
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${i}    IN RANGE    ${posicao} - 1
+        Press Special Key    DOWN
+        Sleep    0.2
+    END
+
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
 
 Valida vendedor padrao
     
@@ -1194,6 +1412,37 @@ Inserir Produto normal - Necessita de estoque
         
     # END
 
+Inserir Produto sem comissão por linha
+    [Arguments]    ${permite_sem_estoque}=${False}
+
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+
+    IF    ${permite_sem_estoque}
+
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos p WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND (p.CodigoComissao IS NULL OR p.CodigoComissao = 0) ORDER BY RAND() LIMIT 1;
+
+    ELSE
+
+        ${codProduto}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque > 1 WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND (p.CodigoComissao IS NULL OR p.CodigoComissao = 0) AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+
+    END
+
+    IF    len($codProduto) == 0
+        Fail    Nenhum produto sem comissão por linha (CodigoComissao IS NULL ou 0) encontrado com estoque. Verifique os cadastros no MyCommerce.
+    END
+
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    ${codProduto[0][0]}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
+
 Inserir Produto normal - Permite sem estoque
 
     IF    '${TELA}' == 'NFeSaidasManual'
@@ -1246,12 +1495,6 @@ Inserir produto pré-definido(${Produto})
     Sleep    ${SLEEP_MEDIO}
 
 Valida parametros após incluir produto
-    
-    IF     ${Parametro_Permite_Varias_Tabelas}
-
-        Valida tabela de preco
-
-    END
 
     FOR    ${I}    IN RANGE    3
 
@@ -1589,7 +1832,21 @@ Seleciona produto com linha cadastrada(${Parametro_Operação_Sem_Estoque})
 
     ELSE IF    ${tipo_linha_definido} and '${Tipo_Comissao_Linha}' == 'Tabela de Preco'
 
-        ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'DT'
+        ${cenario_tab_definido}    Run Keyword And Return Status    Variable Should Exist    ${Cenario_Comissao_Linha}
+
+        IF    ${cenario_tab_definido} and '${Cenario_Comissao_Linha}' == 'PROD__TAB_PRECO__COM_ALIQ'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'DT' AND p.CodigoComissao IN (SELECT cpt.IDLinhaComissao FROM comissaoporlinha_tabpreco cpt WHERE cpt.idTabela = ${Id_Tabela_Preco_Selecionada} AND cpt.Aliquota > 0)
+
+        ELSE IF    ${cenario_tab_definido} and '${Cenario_Comissao_Linha}' == 'PROD__TAB_PRECO__SEM_ALIQ'
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'DT' AND p.CodigoComissao IN (SELECT cpt.IDLinhaComissao FROM comissaoporlinha_tabpreco cpt WHERE cpt.idTabela = ${Id_Tabela_Preco_Selecionada} AND cpt.Aliquota = 0)
+
+        ELSE
+
+            ${filtro_tipo_comissao}    Set Variable    cp.Tipo = 'DT'
+
+        END
 
     END
 
@@ -1654,7 +1911,7 @@ Gera desconto aleatório para comissão escalonada
     Set Test Variable    ${Aliquota_Escalonada}    ${aliquota_escalonada}
     Set Test Variable    ${Faixas_Escalonada}    ${faixas}
 
-    Log To Console    \nDesconto: ${desconto_aleatorio}% | Alíquota da faixa: ${aliquota_escalonada}%
+    Log To Console    Desconto: ${desconto_aleatorio}% | Alíquota da faixa: ${aliquota_escalonada}%
 
 Valida a inserção do mesmo produto várias vezes no grid
 
@@ -1685,8 +1942,8 @@ Verifica seleção de tabela de preço(${TELA})
     Sleep    ${SLEEP_MEDIO}
     ${tabelaVendedor}    Run Keyword And Return Status    Check If Not Exists In Database    SELECT * FROM tabelas_vendedores tb WHERE tb.idVendedor = ${Codigo_Vendedor} AND tb.MyCommerce = 1 AND tb.Excluido = 0;
 
-    # Validação por conta que, nas telas 'OrdemDeServico', 'Condicional', 'Devolução' e 'Doação' ao informar o vendedor, o sistema não seleciona no combobox a primeira tabela de preço 
-    # da listagem, conforme ocorre nas outras telas, quando o cenário das sql's acima.
+    # Validação por conta que, nas telas 'OrdemDeServico', 'Condicional', 'Devolução' e 'Doação' ao informar o vendedor, o sistema 
+    # não seleciona no combobox a primeira tabela de preço  da listagem, conforme ocorre nas outras telas, quando o cenário das sql's acima.
     IF    '${TELA}' == 'OrdemDeServico' or '${TELA}' == 'Condicional' or '${TELA}' == 'Devolução' or '${TELA}' == 'Doação'
 
         Sleep    ${SLEEP_BAIXO}
@@ -2026,6 +2283,7 @@ Validação após incluir serviço
 Insere funcionários comissionados por serviço
 
     Wait Until Screen Contain    ${TELA_FUNCIONARIO_COMISSIONADO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
 
     IF    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
             

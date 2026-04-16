@@ -23,7 +23,8 @@ class validaParametros:
                           "BuscaReferencia, ConsultaSCPCVenda, FocoClienteVenda, IndicacaoPreVenda, TelasQtdePadraoProduto, QuantidadePadraoVenda, DiasInativo, "
                           "ControlaCreditoORC, ControlaCreditoCond, ControlaCreditoGeraPreOrcamento, ControlaCreditoOS, ControlaCreditoDevTroca, ControlaCreditoPRE, "
                           "ControlaCredPreSepPreVenda, DescontaChPre_CreditoCliente, Aviso_Info_Financeiro_Orc, VinculaDevolucaoEntrega, ObrigarMotivoDevolucao, "
-                          "IndicacaoOrcamento, IndicacaoOS, ImprimirPreVenda_FinalizarPreVenda, PrevendaDireto, ValorMinimoBoleto")
+                          "IndicacaoOrcamento, IndicacaoOS, ImprimirPreVenda_FinalizarPreVenda, PrevendaDireto, ValorMinimoBoleto, Exibir_Campo_Nped_Venda, "
+                          "pula_foco_npedido")
 
         telasQtdePadraoProduto = None
         quantidadePadraoVenda = None
@@ -44,7 +45,6 @@ class validaParametros:
                 nomeColuna = str("{}".format(desc[0]))
 
                 if parametrosMarcados[i] is None:
-                    # break
                     continue
 
                 elif nomeColuna == "NDias_Credito_Atu":
