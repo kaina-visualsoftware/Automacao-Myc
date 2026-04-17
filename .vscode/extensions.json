@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "d-biehl.robotcode",
+    "github.copilot-chat",
+    "ms-ceintl.vscode-language-pack-pt-br",
+    "ms-python.debugpy",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.vscode-python-envs"
+  ]
+}

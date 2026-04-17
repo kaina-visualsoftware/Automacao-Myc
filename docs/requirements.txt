@@ -1,0 +1,6 @@
+robotframework==7.1
+robotframework-sikulilibrary==2.0.3
+robotframework-imagehorizonlibrary
+robotframework-databaselibrary==1.4.4
+mysql-connector-python
+pymysql

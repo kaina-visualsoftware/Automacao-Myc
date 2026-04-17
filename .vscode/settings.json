@@ -1,0 +1,48 @@
+{
+    "files.autoSave": "afterDelay",
+    "explorer.confirmDelete": false,
+    "robot.pythonpath": [
+        "C:/Automacao/mycommerce-automacao/Testes_BancoAleatorio/libs"
+    ],
+    "python.analysis.extraPaths": [
+        "C:/Automacao/mycommerce-automacao/Testes_BancoAleatorio/libs"
+    ],
+    "robotcode.robot.rootDir": "Testes_BancoAleatorio",
+    "robotcode.robot.paths": [
+        "Testes_BancoAleatorio/TestsCases"
+    ],
+    "diffEditor.ignoreTrimWhitespace": false,
+    "workbench.startupEditor": "none",
+    "security.workspace.trust.untrustedFiles": "open",
+    "python.testing.unittestEnabled": false,
+    "[robotframework]": {
+        "editor.defaultFormatter": "d-biehl.robotcode"
+    },
+    "files.associations": {
+        "*.robot": "robotframework",
+        "*.resource": "robotframework"
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+}
+
+// {
+//     "python.defaultInterpreterPath": "python",
+//     "python.testing.unittestEnabled": false,
+//     "[robotframework]": {
+//         "editor.defaultFormatter": "d-biehl.robotcode"
+//     },
+//     "files.associations": {
+//         "*.robot": "robotframework",
+//         "*.resource": "robotframework"
+//     },
+//     "robotcode.robot.paths": [
+//         "Testes_BancoAleatorio/TestsCases"
+//     ],
+//     "python-envs.defaultEnvManager": "ms-python.python:system",
+//     "robot.pythonpath": [
+//         "C:/Automacao/automacao-mycommerce/Testes_BancoAleatorio/libs"
+//     ],
+//     "python.analysis.extraPaths": [
+//         "C:/Automacao/automacao-mycommerce/Testes_BancoAleatorio/libs"
+//     ],
+// }

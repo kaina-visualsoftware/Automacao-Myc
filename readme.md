@@ -14,41 +14,31 @@ ___
 ___
 ## Requisitos
 Para rodar os testes automatizados é necessário:
-* Vscode
-* Python 3.9.13 ou superior
-* Robotframework==5.0.1
-* Robotframework-SikuliLibrary==2.0.3
-* Robotframework-imagehorizonlibrary==1.0
-* Robotframework-faker==5.0.0
-* Robotframework-databaselibrary==1.2.4
-* MySql-Connector
+* Vscode com a extensão **RobotCode** (`d-biehl.robotcode`) — ao abrir o projeto, o VS Code sugerirá automaticamente
+* Python 3.12 ou superior (instalado **para todos os usuários** e adicionado ao PATH)
+* Java (JDK) — necessário para SikuliLibrary
+* Dependências Python (ver seção de instalação abaixo)
 ___
 ### Instalando o Python :smiley:
-Instalar o **Python** para Windows e incluí-lo ao path na hora da instalação. 
+Instalar o **Python** para Windows **para todos os usuários** e incluí-lo ao path na hora da instalação.
 ___
-### ATENÇÃO 🧨🎇💥❗🛑
-Para que as Libs em Python funcionem, é necessário configurar o caminho das mesmas nas settings do Visual Studio - Editar o Python Path: https://prnt.sc/Abom_I6hnyl0 E inserir o caminho com \\ : https://prnt.sc/CuJebXfd5Lxm
+### Instalando o Java :smiley:
+Instalar o **JDK** e configurar a variável de ambiente `JAVA_HOME` no **Sistema** (não no usuário).
+___
+### Instalando as dependências Python :smiley:
 
-**OBSERVAÇÃO**:
-> Caso não seja feito na hora da instalação, basta adicionar depois indo nas variáveis de ambiente 
-___
-### Instalando o Robot Framework :smiley:
-<code style="color : black">> pip install robotframework </code>
-___
-### Instalando a SikuliLibrary :smiley:
-<code style="color : black">> pip install robotframework-SikuliLibrary </code>
-___
-### Instalando a ImageHorizonLibrary :relaxed:
-<code style="color : black">> pip install robotframework-imagehorizonlibrary </code>
-___
-### Instalando a FakerLibrary :relaxed:
-<code style="color : black">> pip install robotframework-faker </code>
-___
-### Instalando a DatabaseLibrary :relaxed:
-<code style="color : black">> pip install robotframework-databaselibrary </code>
-___
-### Instalando MySql Connector :relaxed:
-<code style="color : black">> pip install mysql-connector-python </code>
+```bash
+cd C:\Automacao\mycommerce-automacao
+pip install -r docs/requirements.txt
+```
+
+As dependências do projeto estão no arquivo `docs/requirements.txt`:
+* robotframework
+* robotframework-SikuliLibrary
+* robotframework-imagehorizonlibrary
+* robotframework-databaselibrary
+* mysql-connector-python
+* pymysql
 
 
 ## Como rodar os testes
