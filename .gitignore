@@ -8,3 +8,9 @@ sikuli_captured/
 log.html
 output.xml
 report.html
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
