@@ -1,0 +1,4 @@
+[tool.robot]
+paths = ["Testes_BancoAleatorio"]
+python-path = ["Testes_BancoAleatorio/libs"]
+output-dir = "results"
