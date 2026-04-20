@@ -1,38 +1,47 @@
+import os
 import socket
+from pathlib import Path
+
+
+MYCOMMERCE_DIR = Path(r"C:\Visual Software\MyCommerce")
+
+
+def _resolve_config_path() -> Path:
+    
+    username = os.getenv("USERNAME", "").strip()
+    if username:
+        config_usuario = MYCOMMERCE_DIR / f"Config{username}.ini"
+        if config_usuario.exists():
+            return config_usuario
+    return MYCOMMERCE_DIR / "Config.ini"
+
 
 class config:
     def leituraConfig():
+        config_path = _resolve_config_path()
 
-            # Abrindo o arquivo de configuração
-            with open("C:\Visual Software\MyCommerce\Config.ini", "r") as config:
-                linhas = config.readlines()
+        with config_path.open("r", encoding="utf-8", errors="ignore") as arquivo_config:
+            linhas = arquivo_config.readlines()
 
-            # Filtrando as linhas relevantes
-            databaseConfig = [linha.strip() for linha in linhas if linha.startswith("Database=")]
-            PortaConfig = [linha.strip() for linha in linhas if linha.startswith("PortaServidor=")]
-            ipServidorConfig = [linha.strip() for linha in linhas if linha.startswith("IPServidor=")]
+        dados = {}
+        for linha in linhas:
+            if "=" not in linha:
+                continue
+            chave, valor = linha.strip().split("=", 1)
+            dados[chave.strip()] = valor.strip()
 
-            # Extraindo o valor do banco de dados
-            database = str(databaseConfig).split("=")
-            database = database[1].split("'")
+        database = dados.get("Database", "")
+        porta = dados.get("PortaServidor", "")
+        ip_servidor = dados.get("IPServidor", "")
 
-            # Extraindo o valor da porta
-            porta = str(PortaConfig).split("=")
-            porta = porta[1].split("'")
+        print(f"Arquivo de configuracao carregado: {config_path}")
+        print(f"Nome do banco de dados: {database}")
+        print(f"Porta do servidor: {porta}")
+        print(f"IP do servidor: {ip_servidor}")
 
-            # Extraindo o valor do ip do servidor
-            ipServidor = str(ipServidorConfig).split("=")
-            ipServidor = ipServidor[1].split("'")
+        return database, porta, ip_servidor
 
-            # Imprimindo as informações extraídas do arquivo de configuração
-            print(f"Nome do banco de dados: {database[0]}")
-            print(f"Porta do servidor: {porta[0]}")
-            print(f"IP do servidor: {ipServidor[0]}")
-
-            return database[0], porta[0], ipServidor[0]
-
-    # Obtendo o nome do terminal
     terminal_name = socket.gethostname()
     print(terminal_name)
-    # Obtendo o banco de dados, a porta e o ip retornados pelo método
+    ArquivoConfig = str(_resolve_config_path())
     Database, Porta, IpServidor = leituraConfig()

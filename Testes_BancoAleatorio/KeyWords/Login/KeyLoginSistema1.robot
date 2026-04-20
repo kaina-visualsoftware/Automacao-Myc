@@ -3,6 +3,7 @@ Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../libs/verificacoesExtras.py
+Library    ../../libs/configPorUsuarioWin.py
 
 Variables    ../../libs/leituraConfig.py
 
@@ -45,8 +46,11 @@ Dado que eu abro o MyCommerce
 
     Desativa avisos de inicialização nas permissões de usuário
 
+    ${comando_mycommerce}    Get Comando Mycommerce
+
     Press Combination    KEY.WIN    KEY.r
-    Type    ${EMPTY}    ${EXECUTAVEL_MYCOMMERCE}
+    Type    ${EMPTY}    ${comando_mycommerce}
+    Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
 
     Wait Until Screen Contain    ${TELA_LOGIN_SISTEMA}    ${TEMPO_TELA}
