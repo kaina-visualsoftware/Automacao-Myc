@@ -656,7 +656,9 @@ Valida a tela de preços & prazos de pagamentos
 
     IF    ${tela}
 
-        IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco Geral'
+        ${eh_tab_preco_escalonada}    Evaluate    $Cenario_Comissao_Tabela_Preco == 'PROD__TAB_PRECO_ESCALONADA__COM_DESC'
+
+        IF    '${Tipo_Comissao_Linha}' == 'Tabela de Preco Geral' or ${eh_tab_preco_escalonada}
 
             Seleciona tabela de preço na tela de preços e prazos de pagamentos    ${Id_Tabela_Preco_Selecionada}
 
@@ -1084,7 +1086,7 @@ Valida envio de xml à contabilidade
 Valida lançamento de condicional em aberto
     
     Sleep    ${SLEEP_BAIXO}
-    ${condicionalEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM condicionais AS c WHERE c.`Status` = 'a' AND c.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND c.Cancelada IS NULL ORDER BY c.Codigo DESC LIMIT 1;
+    ${condicionalEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM condicionais AS c WHERE c.`Status` IN ('a', 'e') AND c.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND c.Cancelada IS NULL ORDER BY c.Codigo DESC LIMIT 1;
 
     IF    ${condicionalEmAberto}
         
@@ -1122,7 +1124,7 @@ Valida lançamento de devolução em aberto
 Valida lançamento de orçamento em aberto
 
     Sleep    ${SLEEP_BAIXO}
-    ${orcamentoEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT o.Codigo FROM orcamentos AS o WHERE o.`Status` = 'a' AND o.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND o.Cancelada IS NULL AND TIMESTAMP(o.`Data`, o.Hora) <= NOW() - INTERVAL 5 MINUTE ORDER BY o.Codigo DESC LIMIT 1;
+    ${orcamentoEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT o.Codigo FROM orcamentos AS o WHERE o.`Status` IN ('a', 'e') AND o.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND o.Cancelada IS NULL AND TIMESTAMP(o.`Data`, o.Hora) <= NOW() - INTERVAL 5 MINUTE ORDER BY o.Codigo DESC LIMIT 1;
 
     IF    ${orcamentoEmAberto}
 
@@ -1141,7 +1143,7 @@ Valida lançamento de orçamento em aberto
 Valida lançamento de ordem de serviço em aberto
 
     Sleep    ${SLEEP_MEDIO}
-    ${OSEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` = 'a' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'OS' ORDER BY v.Codigo DESC LIMIT 1;
+    ${OSEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT v.Codigo FROM vendas AS v WHERE v.`Status` IN ('a', 'e') AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND v.Cancelada IS NULL AND v.Tipo = 'OS' ORDER BY v.Codigo DESC LIMIT 1;
 
     IF    ${OSEmAberto}
 
@@ -1179,7 +1181,7 @@ Valida lançamento de venda em aberto
 Valida lançamento de pré-venda em aberto
     
     Sleep    ${SLEEP_BAIXO}
-    ${PreVendaEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT pv.Codigo FROM pedidosvenda AS pv WHERE pv.`Status` = 'a' AND pv.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pv.Cancelada IS NULL ORDER BY pv.Codigo DESC LIMIT 1;
+    ${PreVendaEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT pv.Codigo FROM pedidosvenda AS pv WHERE pv.`Status` IN ('a', 'e') AND pv.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND pv.Cancelada IS NULL ORDER BY pv.Codigo DESC LIMIT 1;
 
     IF    ${PreVendaEmAberto}
 

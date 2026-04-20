@@ -119,6 +119,7 @@ ${Cenario_Sem_Comissao_Servico}                   ${False}
 ${Cenario_Sem_Comissao_Produto}                   ${False}
 ${Teste_Comissao_Tab_Preco_Geral}                 ${False}
 ${Cenario_Comissao_Tabela_Preco}                  ${None}
+${Id_Tabela_Preco_Selecionada}                    ${None}
 ${Cenario_Comissao_Linha}                         ${None}
 ${Cenario_Comissao_Linha_Servico}                 ${None}
 ${Tipo_Comissao_Linha_Servico}                    ${None}
@@ -429,10 +430,26 @@ Calcula comissão escalonada - Produtos
     Disconnect From Database
     Connect To Database    pymysql    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
 
-    ${faixas_escalonada}    Query    SELECT ce.Ate, ce.Comissao FROM comissao_escalonadaprod ce ORDER BY ce.Ate ASC
+    ${eh_tab_preco_escalonada}    Evaluate    $Cenario_Comissao_Tabela_Preco == 'PROD__TAB_PRECO_ESCALONADA__COM_DESC'
+
+    IF    ${eh_tab_preco_escalonada}
+
+        IF    $Id_Tabela_Preco_Selecionada is None
+            Fail    Variável \${Id_Tabela_Preco_Selecionada} não definida para cenário de tabela de preço escalonada.
+        END
+
+        ${faixas_escalonada}    Query    SELECT cet.Ate, cet.Comissao FROM comissao_escalonadatab cet WHERE cet.IDTabela = ${Id_Tabela_Preco_Selecionada} ORDER BY cet.Ate ASC
+        ${origem_faixas}    Set Variable    comissao_escalonadatab (IDTabela=${Id_Tabela_Preco_Selecionada})
+
+    ELSE
+
+        ${faixas_escalonada}    Query    SELECT ce.Ate, ce.Comissao FROM comissao_escalonadaprod ce ORDER BY ce.Ate ASC
+        ${origem_faixas}    Set Variable    comissao_escalonadaprod
+
+    END
 
     IF    len($faixas_escalonada) == 0
-        Fail    Nenhuma faixa encontrada na tabela comissao_escalonadaprod.
+        Fail    Nenhuma faixa encontrada na origem ${origem_faixas}.
     END
 
     ${dados_produto}    Query    SELECT vp.Desconto, vp.ValorUnitario, vp.Quantidade FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.CodigoProduto = ${COD_PRODUTO} AND vp.Cancelada IS NULL LIMIT 1;

@@ -417,44 +417,82 @@ Valida teste de comissão
     ${Dados_Vendedor}    Query    SELECT ComissaoDiferenciadapor, ComissaoPercentualProdutos, ComissaoServicos, ComissaoPercentualServicos, ComissaoVendaProdutos, Codigo, RazaoSocial FROM clientes WHERE Codigo = ${Codigo_Vendedor}
 
     ${Tipo_Comissao}    Set Variable    ${Dados_Vendedor[0][0]}
+    ${Eh_Tab_Preco_Escalonada}    Evaluate    $Cenario_Comissao_Tabela_Preco == 'PROD__TAB_PRECO_ESCALONADA__COM_DESC'
 
     IF    ${Teste_Comissao_Escalonada}
 
-        ${SelecionarVendedor}    Set Variable    ${False}
+        IF    ${Eh_Tab_Preco_Escalonada}
 
-        IF    $Tipo_Comissao != 'D' or '${Dados_Vendedor[0][4]}' != '1'
+            ${SelecionarVendedor}    Set Variable    ${False}
 
-            ${SelecionarVendedor}    Set Variable    ${True}
+            IF    $Tipo_Comissao != 'TPE' or '${Dados_Vendedor[0][4]}' != '1'
 
-        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
+                ${SelecionarVendedor}    Set Variable    ${True}
 
-            ${SelecionarVendedor}    Set Variable    ${True}
+            END
 
-        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and not ${Cenario_Sem_Comissao_Servico} and ($Dados_Vendedor[0][3] is None or ${Dados_Vendedor[0][3]} == 0)
+            IF    ${SelecionarVendedor}
 
-            # Cenário exige percentual > 0, mas vendedor atual tem 0 ou NULL
-            ${SelecionarVendedor}    Set Variable    ${True}
+                Seleciona vendedor comissionado('TPE')
 
-        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and ${Cenario_Sem_Comissao_Servico} and $Dados_Vendedor[0][3] is not None and ${Dados_Vendedor[0][3]} > 0
+            END
 
-            # Cenário exige percentual = 0/NULL, mas vendedor atual tem > 0
-            ${SelecionarVendedor}    Set Variable    ${True}
+            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND EXISTS (SELECT 1 FROM comissao_escalonadatab cet WHERE cet.IDTabela = t.Codigo) AND EXISTS (SELECT 1 FROM comissao_escalonadatab cet0 WHERE cet0.IDTabela = t.Codigo AND cet0.Ate = 0) ORDER BY RAND() LIMIT 1;
+
+            IF    len($resultado_tabela) == 0
+                Fail    Nenhuma tabela de preço com faixas em comissao_escalonadatab (incluindo faixa Ate=0) foi encontrada para comissão por tabela de preço escalonada.
+            END
+
+            ${Id_Tabela_Preco_Selecionada}           Set Variable    ${resultado_tabela[0][0]}
+            ${Descricao_Tabela_Preco_Selecionada}    Set Variable    ${resultado_tabela[0][1]}
+
+            Set Test Variable    ${Id_Tabela_Preco_Selecionada}
+
+            Log To Console    Tabela de preço escalonada selecionada: ${Id_Tabela_Preco_Selecionada} - ${Descricao_Tabela_Preco_Selecionada}
+
+            Gera desconto aleatório para tabela de preço escalonada    ${Id_Tabela_Preco_Selecionada}
+
+            Log To Console    \nComissão por tabela de preço escalonada.
+
+        ELSE
+
+            ${SelecionarVendedor}    Set Variable    ${False}
+
+            IF    $Tipo_Comissao != 'D' or '${Dados_Vendedor[0][4]}' != '1'
+
+                ${SelecionarVendedor}    Set Variable    ${True}
+
+            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
+
+                ${SelecionarVendedor}    Set Variable    ${True}
+
+            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and not ${Cenario_Sem_Comissao_Servico} and ($Dados_Vendedor[0][3] is None or ${Dados_Vendedor[0][3]} == 0)
+
+                # Cenário exige percentual > 0, mas vendedor atual tem 0 ou NULL
+                ${SelecionarVendedor}    Set Variable    ${True}
+
+            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and ${Cenario_Sem_Comissao_Servico} and $Dados_Vendedor[0][3] is not None and ${Dados_Vendedor[0][3]} > 0
+
+                # Cenário exige percentual = 0/NULL, mas vendedor atual tem > 0
+                ${SelecionarVendedor}    Set Variable    ${True}
+
+            END
+
+            IF    ${SelecionarVendedor}
+
+                Seleciona vendedor comissionado escalonada
+
+            ELSE IF    ${Teste_Comissao_Servico}
+
+                Set Test Variable    ${PercentualComissaoEscalonada_Servico}    ${Dados_Vendedor[0][3]}
+
+            END
+
+            Gera desconto aleatório para comissão escalonada
+
+            Log To Console    \nComissão escalonada (Tipo Padrão).
 
         END
-
-        IF    ${SelecionarVendedor}
-
-            Seleciona vendedor comissionado escalonada
-
-        ELSE IF    ${Teste_Comissao_Servico}
-
-            Set Test Variable    ${PercentualComissaoEscalonada_Servico}    ${Dados_Vendedor[0][3]}
-
-        END
-
-        Gera desconto aleatório para comissão escalonada
-
-        Log To Console    \nComissão escalonada (Tipo Padrão).
 
     ELSE IF    ${Teste_Comissao_Total_Venda}
         
@@ -1140,20 +1178,14 @@ Seleciona Vendedor Comissão Linha
     Set Test Variable    ${Cenario_Comissao_Linha}    ${cenario}
 
 Seleciona Tabela De Preco No Combobox
-    [Documentation]    Seleciona uma tabela de preço específica no combobox da tela de vendas/OS.
-    ...    O foco já deve estar no combobox de tabela (após os TABs dos campos anteriores).
-    ...    HOME vai ao primeiro item e DOWN N vezes chega na tabela desejada.
     [Arguments]    ${id_tabela}
 
-    # Consulta a posição (0-indexed) da tabela alvo no combobox (tabelas ativas ordenadas por Codigo)
     ${resultado_posicao}    Query    SELECT COUNT(*) FROM tabelas WHERE Cancelada IS NULL AND Codigo < ${id_tabela};
     ${posicao}    Set Variable    ${resultado_posicao[0][0]}
 
-    # HOME seleciona o primeiro item do combobox (funciona com ou sem seleção prévia)
     Press Special Key    HOME
     Sleep    ${SLEEP_BAIXO}
 
-    # DOWN N vezes para chegar na tabela desejada (posição 0-indexed)
     FOR    ${i}    IN RANGE    ${posicao}
         Press Special Key    DOWN
         Sleep    0.2
@@ -1912,6 +1944,42 @@ Gera desconto aleatório para comissão escalonada
     Set Test Variable    ${Faixas_Escalonada}    ${faixas}
 
     Log To Console    Desconto: ${desconto_aleatorio}% | Alíquota da faixa: ${aliquota_escalonada}%
+
+Gera desconto aleatório para tabela de preço escalonada
+    [Arguments]    ${id_tabela}
+
+    ${faixas}    Query    SELECT cet.Ate, cet.Comissao FROM comissao_escalonadatab cet WHERE cet.IDTabela = ${id_tabela} ORDER BY cet.Ate ASC
+
+    IF    len($faixas) == 0
+        Fail    Nenhuma faixa encontrada na tabela comissao_escalonadatab para a tabela de preço ${id_tabela}.
+    END
+
+    ${tem_faixa_zero}    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM comissao_escalonadatab cet WHERE cet.IDTabela = ${id_tabela} AND cet.Ate = 0;
+
+    IF    not ${tem_faixa_zero}
+        Fail    A tabela de preço ${id_tabela} não possui faixa obrigatória de desconto 0 em comissao_escalonadatab.
+    END
+
+    ${ultima_faixa_ate}    Set Variable    ${faixas[-1][0]}
+    ${limite_rand}    Evaluate    int(${ultima_faixa_ate})
+
+    ${desconto_aleatorio}    Evaluate    random.randint(0, ${limite_rand})    modules=random
+
+    ${aliquota_escalonada}    Set Variable    ${faixas[-1][1]}
+
+    FOR    ${faixa}    IN    @{faixas}
+        ${ate}    Set Variable    ${faixa[0]}
+        IF    ${desconto_aleatorio} <= ${ate}
+            ${aliquota_escalonada}    Set Variable    ${faixa[1]}
+            BREAK
+        END
+    END
+
+    Set Test Variable    ${Desconto_Escalonada}    ${desconto_aleatorio}
+    Set Test Variable    ${Aliquota_Escalonada}    ${aliquota_escalonada}
+    Set Test Variable    ${Faixas_Escalonada}    ${faixas}
+
+    Log To Console    Desconto: ${desconto_aleatorio}% | Alíquota da faixa (tabela ${id_tabela}): ${aliquota_escalonada}%
 
 Valida a inserção do mesmo produto várias vezes no grid
 

@@ -1754,22 +1754,9 @@ Teste 93 - Comissão por tabela de preço geral de produto, com percentual de co
 # ============================================================================================
 
 # tpe -> tabela `comissao_escalonadatab`
-Teste 94 - Comissão por tabela de preço escalonada de produto, sem desconto aplicado, sobre venda de balcão - Tabela de Preço Escalonada
-    # Venda balcão | Vendedor com ComissaoDiferenciadapor = 'TPE' | Produto sem desconto --> aplica faixa de desconto 0 (ex: 8%)
-    [Tags]    Teste94
-    [Setup]    Run Keywords    
-    ...    Set Test Variable    ${Cenario_Comissao_Tabela_Preco}    PROD__TAB_PRECO_ESCALONADA__SEM_DESC    AND    
-    ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
-
-    Dado que acesso a tela de comissões
-    Quando insiro o vendedor comissionado
-    E seleciono a comissão de produtos
-    E baixo a comissao recém recebida
-    E saio da tela(Comissoes)
-
-Teste 95 - Comissão por tabela de preço escalonada de produto, com desconto aleatório sobre faixa de comissão, sobre venda de balcão - Tabela de Preço Escalonada
+Teste 94 - Comissão por tabela de preço escalonada de produto, com desconto aleatório sobre faixa de comissão, sobre venda de balcão - Tabela de Preço Escalonada
     # Venda balcão | Vendedor com ComissaoDiferenciadapor = 'TPE' | Produto com desconto aleatório --> aplica faixa correspondente
-    [Tags]    Teste95
+    [Tags]    Teste94
     [Setup]    Run Keywords    
     ...    Set Test Variable    ${Cenario_Comissao_Tabela_Preco}    PROD__TAB_PRECO_ESCALONADA__COM_DESC    AND    
     ...    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal e desconto tabela de preço escalonada
@@ -1780,25 +1767,9 @@ Teste 95 - Comissão por tabela de preço escalonada de produto, com desconto al
     E baixo a comissao recém recebida
     E saio da tela(Comissoes)
 
-Teste 96 - Comissão por tabela de preço escalonada de produto, sem desconto aplicado, sobre OS somente com produto - Tabela de Preço Escalonada
-    # OS somente com produto | Vendedor com ComissaoDiferenciadapor = 'TPE' | Produto sem desconto --> aplica faixa de desconto 0 (ex: 8%)
-    [Tags]    Teste96
-    [Setup]    Run Keywords    
-    ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
-    ...    Inicializar Pré-Condições    AND    
-    ...    Reiniciar MyCommerce Se Necessário    AND    
-    ...    Set Test Variable    ${Cenario_Comissao_Tabela_Preco}    PROD__TAB_PRECO_ESCALONADA__SEM_DESC    AND    
-    ...    montadorDeCenarios.Dado que realizo uma ordem de serviço somente com produto - A prazo
-
-    Dado que acesso a tela de comissões
-    Quando insiro o vendedor comissionado
-    E seleciono a comissão de produtos
-    E baixo a comissao recém recebida
-    E saio da tela(Comissoes)
-
-Teste 97 - Comissão por tabela de preço escalonada de produto, com desconto aleatório sobre faixa de comissão, sobre OS somente com produto - Tabela de Preço Escalonada
+Teste 95 - Comissão por tabela de preço escalonada de produto, com desconto aleatório sobre faixa de comissão, sobre OS somente com produto - Tabela de Preço Escalonada
     # OS somente com produto | Vendedor com ComissaoDiferenciadapor = 'TPE' | Produto com desconto aleatório --> aplica faixa correspondente
-    [Tags]    Teste97
+    [Tags]    Teste95
     [Setup]    Run Keywords    
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    SELECIONA_FUNCIONARIO_OS    0    AND    
     ...    Inicializar Pré-Condições    AND    
