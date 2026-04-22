@@ -1,5 +1,5 @@
 {
-    "files.autoSave": "afterDelay",
+    "files.autoSave": "off",
     "explorer.confirmDelete": false,
     "robot.pythonpath": [
         "${workspaceFolder}/Testes_BancoAleatorio/libs"
@@ -10,5 +10,10 @@
     "diffEditor.ignoreTrimWhitespace": false,
     "workbench.startupEditor": "none",
     "security.workspace.trust.untrustedFiles": "open",
-    "github.copilot.nextEditSuggestions.enabled": true
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "python.testing.pytestArgs": [],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": false,
+    "python.testing.autoTestDiscoverOnSaveEnabled": false,
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
