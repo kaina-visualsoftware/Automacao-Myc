@@ -121,3 +121,37 @@ Teste 09 - Geração de pré-venda após o lançamento do orçamento com múltip
     E pesquiso pelo orçamento gerado
     E clico em Gerar Pré-Ven
     utils.E saio da tela(Orçamento)
+
+Teste 10 - Alteração de status do orçamento
+    [Tags]    Teste10
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro um produto normal informando a quantidade(1)
+    Então gravo o orçamento
+    E pesquiso pelo orçamento gerado
+    E pressiono o atalho de alterar status
+    Então altero o status do orçamento
+    E saio da tela(Orçamento)
+
+Teste 11 - Lançamento de orçamento somente com múltiplos serviços
+    [Tags]    Teste11
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro mais de um serviço(3)
+    Então gravo o orçamento
+    E saio da tela(Orçamento)
+
+Teste 12 - Lançamento de orçamento com múltiplos serviços e múltiplos produtos
+    [Tags]    Teste12
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro mais de um serviço(3)
+    keyOrcamento1.Quando insiro mais de um produto normal(3)
+    Então gravo o orçamento
+    E saio da tela(Orçamento)
