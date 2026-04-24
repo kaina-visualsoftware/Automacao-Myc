@@ -5,15 +5,32 @@ description: Gera novos test cases e keywords completos seguindo os padrões do 
 
 # Skill: Geração de Test Cases
 
-## Objetivo
-
-Gerar arquivos `.robot` completos (Test Cases e Keywords) seguindo rigorosamente os padrões do projeto.
+## Nome
+`geracao-testcases`
 
 ## Quando Usar
-
 - Quando o usuário pedir para **criar um teste** para algum módulo do ERP
 - Quando for necessário **expandir** cobertura de testes existentes
 - Quando for necessário gerar **templates** para novos módulos
+
+## Entrada
+- Módulo do ERP a ser testado
+- Cenários de teste desejados (CRUD, fluxos específicos)
+- Pré-condições (se aplicável)
+- Informações de imagens disponíveis (se já capturadas)
+
+## Saída
+- Arquivo de Keywords completo (`Key<Nome><N>.robot`)
+- Arquivo de Test Cases completo (`Teste_<Nome><N>.robot`)
+- Lista de imagens `.png` necessárias para captura
+
+## Regras
+1. **Sempre** verificar se o diretório do módulo já existe antes de criar
+2. **Sempre** verificar numeração do próximo arquivo (se já existe `Key<Nome>1.robot`, criar `Key<Nome>2.robot`)
+3. **Sempre** verificar keywords reutilizáveis em `utils/utils.robot` e `utils/montadorDeCenarios.robot`
+4. **Nunca** incluir implementação direta nos Test Cases
+5. **Sempre** incluir `Ler imagens iniciais` como primeira keyword
+6. **Sempre** seguir o template de código abaixo
 
 ---
 
@@ -24,22 +41,18 @@ Gerar arquivos `.robot` completos (Test Cases e Keywords) seguindo rigorosamente
 Antes de gerar, obter do usuário:
 - **Módulo do ERP**: Qual funcionalidade? (ex: Venda, Devolução, Condicional)
 - **Cenários de teste**: Quais operações testar? (CRUD? Fluxos específicos?)
-- **Pré-condições**: O teste depende de algo estar pronto antes? (ex: ter uma venda para devolver)
+- **Pré-condições**: O teste depende de algo estar pronto antes?
 - **Imagens disponíveis**: As imagens das telas já foram capturadas?
 
 ### 2. Verificar Estrutura Existente
 
-Antes de criar arquivos:
-
 1. Verificar se o diretório do módulo já existe em `KeyWords/` e `TestsCases/`
-2. Se existir, verificar numeração do próximo arquivo (ex: `Key<Nome>2.robot`)
-3. Verificar keywords reutilizáveis em `utils/utils.robot` e `utils/montadorDeCenarios.robot`
+2. Se existir, verificar numeração do próximo arquivo
+3. Verificar keywords reutilizáveis em `utils/`
 
-### 3. Gerar Keyword File
+### 3. Gerar Arquivo de Keywords
 
 Localização: `KeyWords/<Módulo>/<SubMódulo>/Key<Nome><N>.robot`
-
-#### Template Completo
 
 ```robot
 *** Settings ***
@@ -75,13 +88,6 @@ ${TEMPO_TELA}                           25
 # Telas
 ${TELA_PRINCIPAL}                       tela_NomeTelaPrincipal.png
 ${TELA_ADICIONAR}                       tela_NomeTelaAdicionar.png
-# ... mais variáveis de imagem conforme necessário
-
-# Telas Avisos
-# ${AVISO_EXEMPLO}                      aviso_Exemplo.png
-
-# Outros
-# ${INPUT_EXEMPLO}                      input_Exemplo.png
 
 *** Keywords ***
 Ler imagens iniciais
@@ -92,7 +98,6 @@ Ler imagens iniciais
 # ============================================================
 
 Dado que acesso a tela de <nome_modulo>
-    
     Press Special Key    <TECLA_ATALHO>
     Wait Until Screen Contain    ${TELA_PRINCIPAL}    ${TEMPO_TELA}
 
@@ -101,103 +106,79 @@ Dado que acesso a tela de <nome_modulo>
 # ============================================================
 
 E adiciono um novo <item>
-
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.A
     Wait Until Screen Contain    ${TELA_ADICIONAR}    ${TEMPO_TELA}
-
-    # Consulta para obter último código inserido
     ${Consulta}    Query    SELECT Codigo FROM <tabela> ORDER BY Codigo DESC LIMIT 1;
     Set Test Variable    ${COD_<ITEM>}    ${Consulta[0][0]}
-    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_<ITEM>}
 
 Quando insiro vendedor e cliente
-
     utils.Adicionar Vendedor e Cliente(<NomeTela>)
     validacaoAviso.Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
 
 Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
-
     IF    ${Parametro_RealizaVendaSemEstoque}
         utils.Inserir Produto normal - Permite sem estoque
     ELSE
         utils.Inserir Produto normal - Necessita de estoque
     END
-
-    # Informar quantidade
     SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${Quantidade_Produto}
     Press Special Key    TAB
-
     Set Test Variable    ${Quantidade_Produto}
-    Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
-
     utils.Valida parametros após incluir produto
 
-E insiro mais de um produto normal(${QuantidadeDeProduto})
-
-    ${Quantidade_Produto}    Set Variable    1
-    ${Codigos_Produtos}    Create List
-    
-    FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
-        Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
-        Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
-    END
-
-    Set Test Variable    ${Codigos_Produtos}
-    Set Test Variable    ${QUANTIDADE_PRODUTOS}    ${QuantidadeDeProduto}
-
-# ============================================================
-# FINALIZAÇÃO
-# ============================================================
-
 Então finalizo o <item>
-    
     Press Combination    KEY.ALT    KEY.F
     Wait Until Screen Contain    ${TELA_PRINCIPAL}    ${TEMPO_TELA}
 
-# ============================================================
-# VISUALIZAÇÃO
-# ============================================================
-
-Então visualizo o <item>
-
-    Press Combination    KEY.ALT    KEY.U
-    Wait Until Screen Contain    ${TELA_VISUALIZA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.r
-    Wait Until Screen Contain    ${TELA_PRINCIPAL}    ${TEMPO_TELA}
-
-# ============================================================
-# EDIÇÃO
-# ============================================================
-
-Quando clico em editar
-
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.E
-    utils.Valida solicitação de senha do usuário supervisor
-    Wait Until Screen Contain    ${TELA_ADICIONAR}    ${TEMPO_TELA}
-
-# ============================================================
-# EXCLUSÃO
-# ============================================================
-
 Então excluo o <item>
-
     Sleep    ${SLEEP_BAIXO}
     Press Combination    KEY.ALT    KEY.x
     Wait Until Screen Contain    ${AVISO_DESEJA_EXCLUIR}    ${SLEEP_ALTO}
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
-
     Valida solicitação de senha do usuário supervisor
-
-    # Validação no banco
     Check If Exists In Database    SELECT * FROM <tabela> WHERE Codigo = ${COD_<ITEM>} AND Status = 'x';
     Wait Until Screen Contain    ${TELA_PRINCIPAL}    ${TEMPO_TELA}
 ```
+
+### 4. Gerar Arquivo de Test Cases
+
+Localização: `TestsCases/<Módulo>/<SubMódulo>/Teste_<Nome><N>.robot`
+
+```robot
+*** Settings ***
+Documentation    <Descrição dos testes>
+
+Resource    ../../../KeyWords/<Módulo>/<SubMódulo>/Key<Nome><N>.robot
+Resource    ../../../utils/parametros_pre_condicoes.robot
+
+Suite Setup    Run Keywords
+...    Start Sikuli Process
+...    AND    Key<Nome><N>.Ler imagens iniciais
+...    AND    Conectar ao Banco de Dados
+...    AND    Preparar Ambiente MyCommerce
+Suite Teardown    Stop Remote Server
+
+*** Test Cases ***
+Teste 01 - <Descrição do teste>
+    [Tags]    Teste01
+
+    Dado que acesso a tela de <módulo>
+    E adiciono um novo <item>
+    Quando insiro vendedor e cliente
+    Key<Nome><N>.Quando insiro um produto normal informando a quantidade(1)
+    Então finalizo o <item>
+    E saio da tela(<TelaNome>)
+```
+
+### 5. Verificar referências
+Confirmar que os caminhos relativos (`../../../`) estão corretos para o nível de diretório.
+
+### 6. Listar imagens necessárias
+Informar ao usuário quais imagens `.png` precisam ser capturadas e salvas em `images/`.
 
 ### 4. Gerar Test Case File
 

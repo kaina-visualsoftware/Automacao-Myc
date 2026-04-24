@@ -1,40 +1,55 @@
 ---
-description: Análise completa do projeto de automação — mapeia módulos, keywords e cobertura
+description: Workflow passo a passo para análise completa do projeto de automação — mapeia módulos, keywords e cobertura
 ---
 
-# Análise Completa do Projeto
+# Workflow: Análise Completa do Projeto
+
+## Objetivo
+Gerar um relatório consolidado da cobertura de testes do projeto.
 
 ## Pré-requisitos
 - Acesso ao diretório `C:\Automacao\mycommerce-automacao`
 
+---
+
 ## Passos
 
-1. Listar todos os diretórios dentro de `Testes_BancoAleatorio/TestsCases/` para identificar os módulos cobertos.
+### Passo 1 — Mapear módulos de Test Cases
+Listar todos os diretórios dentro de `Testes_BancoAleatorio/TestsCases/` para identificar os módulos cobertos.
 
-2. Para cada módulo encontrado, listar os arquivos `.robot` de Test Cases.
+### Passo 2 — Listar arquivos de teste por módulo
+Para cada módulo encontrado, listar os arquivos `.robot` de Test Cases.
 
-3. Listar todos os diretórios dentro de `Testes_BancoAleatorio/KeyWords/` e verificar espelhamento com `TestsCases/`.
+### Passo 3 — Verificar espelhamento Keywords ↔ TestsCases
+Listar todos os diretórios dentro de `Testes_BancoAleatorio/KeyWords/` e verificar se cada módulo tem correspondência em `TestsCases/`.
 
-4. Listar arquivos em `Testes_BancoAleatorio/utils/` e anotar keywords compartilhadas.
+### Passo 4 — Inventariar componentes compartilhados
+Listar arquivos em `Testes_BancoAleatorio/utils/` e `Testes_BancoAleatorio/libs/`.
 
-5. Listar arquivos em `Testes_BancoAleatorio/libs/` e anotar bibliotecas Python.
-
-6. Para cada arquivo `.robot` de Test Cases, contar o número de test cases usando grep por linhas que começam com `Teste`:
+### Passo 5 — Contar test cases por arquivo
+Para cada arquivo `.robot` de Test Cases, contar o número de test cases:
 ```powershell
 Get-ChildItem -Path "C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio\TestsCases" -Recurse -Filter "*.robot" | ForEach-Object { $count = (Select-String -Path $_.FullName -Pattern "^Teste\s" | Measure-Object).Count; "$($_.Name): $count testes" }
 ```
 
-7. Listar imagens em `Testes_BancoAleatorio/images/` e contar quantas existem:
+### Passo 6 — Contar imagens disponíveis
 ```powershell
 (Get-ChildItem -Path "C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio\images" -Filter "*.png" | Measure-Object).Count
 ```
 
-8. Gerar relatório consolidado com:
-   - Total de módulos cobertos
-   - Total de test cases
-   - Total de keywords files
-   - Total de imagens
-   - Módulos sem cobertura (se houver)
-   - Recomendações de melhoria
+### Passo 7 — Gerar relatório consolidado
+Compilar resultados em tabela com:
+- Total de módulos cobertos
+- Total de test cases
+- Total de keywords files
+- Total de imagens
+- Módulos sem cobertura (se houver)
+- Recomendações de melhoria
 
-9. Consultar a skill `analise-codigo` para detalhamento de qualquer módulo específico que o usuário solicitar.
+### Passo 8 — Detalhar módulo específico (opcional)
+Se o usuário solicitar detalhamento, consultar a skill `analise-codigo` para análise individual.
+
+---
+
+## Saída Esperada
+Relatório consolidado em formato de tabela com totais e recomendações.

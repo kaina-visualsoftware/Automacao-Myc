@@ -5,86 +5,32 @@ description: Analisa a estrutura e código do projeto mycommerce-automacao, gera
 
 # Skill: Análise de Código
 
-## Objetivo
-
-Analisar o código-fonte do projeto `mycommerce-automacao` para entender a estrutura, mapear componentes e identificar cobertura de testes.
+## Nome
+`analise-codigo`
 
 ## Quando Usar
-
-- Quando o usuário pedir para **analisar** ou **entender** o código
+- Quando o usuário pedir para **analisar** ou **entender** o código existente
 - Quando for necessário **inventariar** recursos existentes antes de criar algo novo
 - Para gerar **relatórios de cobertura** de testes
+- Para **mapear dependências** entre arquivos
 
-## Procedimento
+## Entrada
+- Nome do arquivo, módulo ou componente a ser analisado
+- Ou solicitação de análise geral (sem parâmetro = projeto inteiro)
 
-### 1. Mapear Estrutura de Diretórios
+## Saída
+- Relatório estruturado contendo: módulos cobertos, keywords mapeadas, queries SQL, dependências e recomendações
 
-Percorrer `Testes_BancoAleatorio/` e listar:
+## Regras
+1. **Sempre** percorrer fisicamente os diretórios antes de responder — nunca assumir que a lista de módulos está atualizada
+2. **Sempre** documentar dependências entre arquivos (Resource, Library, Variables)
+3. **Sempre** listar queries SQL encontradas com seu propósito
+4. Para análise de arquivo individual, usar o template de documentação abaixo
+5. Para análise geral, usar o inventário de módulos abaixo
 
-| Diretório | Conteúdo |
-|---|---|
-| `KeyWords/<Módulo>/` | Keywords organizadas por módulo do ERP |
-| `TestsCases/<Módulo>/` | Test Cases espelhando KeyWords |
-| `utils/` | Keywords e cenários compartilhados |
-| `libs/` | Bibliotecas Python auxiliares |
-| `images/` | Imagens .png para reconhecimento visual |
+---
 
-### 2. Inventariar Módulos do ERP
-
-Módulos atualmente cobertos:
-
-| Módulo | Keywords | Test Cases | Status |
-|---|---|---|---|
-| **Comercial/Condicional** | `KeyCondicional1.robot` | `Teste_Condicional1.robot` | ✅ Coberto |
-| **Comercial/Vendas** | `keyVendas1.robot` | Testes de vendas | ✅ Coberto |
-| **Comercial/Devolução** | `KeyDevolucaoVenda1.robot` | Testes de devolução | ✅ Coberto |
-| **Comercial/Doação** | `KeyDocao1.robot` | Testes de doação | ✅ Coberto |
-| **Comercial/Orçamento** | `KeyOrcamento1.robot` | Testes de orçamento | ✅ Coberto |
-| **Comercial/OS** | `KeyOrdemDeSevico1.robot` | Testes de OS | ✅ Coberto |
-| **Financeiro/Caixa** | `keyCaixa1.robot` | Testes de caixa | ✅ Coberto |
-| **Financeiro/Contas a Pagar** | `keyContasPagar1.robot` | Testes de contas | ✅ Coberto |
-| **Login** | Keyword de login | `Teste_LoginSistema1.robot` | ✅ Coberto |
-| **Descontos** | Keywords | Test Cases | ✅ Coberto |
-| **Emissão** | Keywords | Test Cases | ✅ Coberto |
-| **Faturamento** | Keywords | Test Cases | ✅ Coberto |
-| **MyMonitorFaturamento** | Keywords | Test Cases | ✅ Coberto |
-| **Pré-Venda/Pedidos** | `KeyPedidos1.robot` | Testes de pedidos | ✅ Coberto |
-
-### 3. Inventariar Componentes Compartilhados
-
-#### utils/utils.robot (1600+ linhas)
-Contém keywords reutilizáveis:
-- `Adicionar Vendedor e Cliente(${TELA})` — Adiciona vendedor e cliente em qualquer tela
-- `Seleciona vendedor` — Query SQL para selecionar vendedor aleatório
-- `E saio da tela(${TELA})` — Fecha tela atual (parametrizado)
-- `Inserir Produto normal - Necessita de estoque` — Insere produto com estoque
-- `Inserir Produto normal - Permite sem estoque` — Insere sem verificar estoque
-- Variáveis globais de imagens (telas, avisos, modais, inputs, labels, botões)
-
-#### utils/montadorDeCenarios.robot (500+ linhas)
-Cenários compostos a partir de keywords de múltiplos módulos:
-- `Dado que realizo uma venda completa, com produto normal`
-- `Dado que realizo um pedido, com produto normal`
-- `Dado que realizo uma devolução completa da venda`
-- etc.
-
-#### utils/validacaoAviso.robot
-Keywords para tratar avisos/popups que o ERP pode exibir durante a execução.
-
-#### utils/parametros_pre_condicoes.robot
-Preparação do ambiente (validação de parâmetros do banco antes dos testes).
-
-### 4. Inventariar Bibliotecas Python (`libs/`)
-
-| Arquivo | Responsabilidade |
-|---|---|
-| `validaParametros.py` | Valida configurações do ERP (config, empresa, formas parcelamento) |
-| `validaComissoes.py` | Valida cálculos de comissões |
-| `estoque.py` | Valida movimentação de estoque |
-| `verificacoesExtras.py` | Verificações auxiliares |
-| `leituraConfig.py` | Lê configuração de conexão com o BD |
-
-### 5. Analisar Padrões de um Arquivo
+## Template de Análise Individual
 
 Para cada arquivo `.robot` analisado, documentar:
 
@@ -102,7 +48,6 @@ Variáveis:
   - Sleeps: [se definidos localmente]
 Keywords/TestCases:
   - <nome> — <breve descrição>
-  - <nome> — <breve descrição>
 Queries SQL usadas:
   - <query> — <propósito>
 Dependências:
@@ -110,7 +55,67 @@ Dependências:
   - Usado por: [quem importa este resource]
 ```
 
-### 6. Analisar o Executor (`Executar_Automacao.py`)
+---
+
+## Inventário de Módulos do ERP
+
+| Módulo | Keywords | Test Cases |
+|---|---|---|
+| **Comercial/Condicional** | `KeyCondicional1.robot` | `Teste_Condicional1.robot` |
+| **Comercial/Vendas** | `keyVendas1.robot` | Testes de vendas |
+| **Comercial/Devolução** | `KeyDevolucaoVenda1.robot` | Testes de devolução |
+| **Comercial/Doação** | `KeyDocao1.robot` | Testes de doação |
+| **Comercial/Orçamento** | `KeyOrcamento1.robot` | Testes de orçamento |
+| **Comercial/OS** | `KeyOrdemDeSevico1.robot` | Testes de OS |
+| **Financeiro/Caixa** | `keyCaixa1.robot` | Testes de caixa |
+| **Financeiro/Contas a Pagar** | `keyContasPagar1.robot` | Testes de contas |
+| **Login** | `KeyLoginSistema1.robot` | `Teste_LoginSistema1.robot` |
+| **Descontos** | Keywords | Test Cases |
+| **Emissão** | Keywords | Test Cases |
+| **Faturamento** | Keywords | Test Cases |
+| **MyMonitorFaturamento** | Keywords | Test Cases |
+| **Pré-Venda/Pedidos** | `KeyPedidos1.robot` | Testes de pedidos |
+
+---
+
+## Inventário de Componentes Compartilhados
+
+### utils/utils.robot (1600+ linhas)
+Keywords reutilizáveis:
+- `Adicionar Vendedor e Cliente(${TELA})` — Adiciona vendedor e cliente em qualquer tela
+- `Seleciona vendedor` — Query SQL para selecionar vendedor aleatório
+- `E saio da tela(${TELA})` — Fecha tela atual (parametrizado)
+- `Inserir Produto normal - Necessita de estoque` — Insere produto com estoque
+- `Inserir Produto normal - Permite sem estoque` — Insere sem verificar estoque
+- Variáveis globais de imagens (telas, avisos, modais, inputs, labels, botões)
+
+### utils/montadorDeCenarios.robot (500+ linhas)
+Cenários compostos:
+- `Dado que realizo uma venda completa, com produto normal`
+- `Dado que realizo um pedido, com produto normal`
+- `Dado que realizo uma devolução completa da venda`
+
+### utils/validacaoAviso.robot
+Keywords para tratar avisos/popups do ERP durante a execução.
+
+### utils/parametros_pre_condicoes.robot
+Preparação do ambiente (validação de parâmetros do banco antes dos testes).
+
+---
+
+## Inventário de Bibliotecas Python (`libs/`)
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `validaParametros.py` | Valida configurações do ERP (config, empresa, formas parcelamento) |
+| `validaComissoes.py` | Valida cálculos de comissões |
+| `estoque.py` | Valida movimentação de estoque |
+| `verificacoesExtras.py` | Verificações auxiliares |
+| `leituraConfig.py` | Lê configuração de conexão com o BD |
+
+---
+
+## Executor (`Executar_Automacao.py`)
 
 Script Python principal que:
 - Executa Login como primeiro teste obrigatório
@@ -120,7 +125,3 @@ Script Python principal que:
 - Gera relatórios em `Relatorios/<data>/Resultados Finais/`
 - Move artefatos do Sikuli para `sikuli_java/`
 - Filtra output sensível (DB name, port, IP, machine name)
-
-## Output Esperado
-
-Ao usar esta skill, gere um relatório no formato acima com os componentes solicitados pelo usuário. Seja específico sobre queries SQL, dependências entre arquivos e padrões identificados.

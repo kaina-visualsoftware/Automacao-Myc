@@ -1,103 +1,108 @@
 ---
-description: Executar testes automatizados do projeto mycommerce-automacao
+description: Workflow passo a passo para executar testes automatizados e diagnosticar falhas
 ---
 
-# Executar Testes
+# Workflow: Executar Testes
+
+## Objetivo
+Guiar a execução de testes e o diagnóstico de falhas.
 
 ## Pré-requisitos
 - Python 3.9.13+ instalado e no PATH
-- Robot Framework instalado: `pip install robotframework`
-- SikuliLibrary instalada: `pip install robotframework-SikuliLibrary`
-- ImageHorizonLibrary instalada: `pip install robotframework-imagehorizonlibrary`
-- FakerLibrary instalada: `pip install robotframework-faker`
-- DatabaseLibrary instalada: `pip install robotframework-databaselibrary`
-- MySQL Connector instalado: `pip install mysql-connector-python`
+- Robot Framework e bibliotecas instaladas
 - Java 8+ instalado e no PATH
-- myCommerce ERP aberto e logado (ou Login como primeiro teste)
-- Python Path configurado no VS Code (ver readme.md)
+- myCommerce ERP aberto (ou Login como primeiro teste)
 
-## Verificar Instalação
+---
 
-1. **Verificar Python**:
+## Passos — Verificação de Ambiente
+
+### Passo 1 — Verificar Python
 ```powershell
 python --version
 ```
 
-2. **Verificar Robot Framework**:
+### Passo 2 — Verificar Robot Framework
 ```powershell
 robot --version
 ```
 
-3. **Verificar bibliotecas instaladas**:
+### Passo 3 — Verificar bibliotecas
 ```powershell
 pip list | Select-String "robot"
 ```
 
-4. **Verificar Java**:
+### Passo 4 — Verificar Java
 ```powershell
 java -version
 ```
 
-## Executar Testes
+---
 
-### Opção 1 — Executar um arquivo específico
+## Passos — Execução
 
-5. Executar um arquivo de test case:
+### Passo 5 — Executar arquivo específico
 ```powershell
 cd C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio
 robot -d .\results\ .\TestsCases\<Modulo>\<SubModulo>\<Arquivo>.robot
 ```
 
-**Exemplo concreto:**
+### Passo 6 — Executar teste por tag (alternativa)
 ```powershell
-cd C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio
-robot -d .\results\ .\TestsCases\Comercial\Condicional\Teste_Condicional1.robot
+robot -d .\results\ -i Teste01 .\TestsCases\<Modulo>\<SubModulo>\<Arquivo>.robot
 ```
 
-### Opção 2 — Executar teste específico por tag
-
-6. Para executar apenas um teste:
+### Passo 7 — Executar a partir de um teste específico (alternativa)
 ```powershell
-cd C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio
-robot -d .\results\ -i Teste01 .\TestsCases\Comercial\Condicional\Teste_Condicional1.robot
+robot -d .\results\ -i Teste03 -i Teste04 -i Teste05 .\TestsCases\<Modulo>\<SubModulo>\<Arquivo>.robot
 ```
 
-### Opção 3 — Executar a partir de um teste específico
-
-7. Para executar a partir do teste 3 em diante:
-```powershell
-cd C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio
-robot -d .\results\ -i Teste03 -i Teste04 -i Teste05 .\TestsCases\Comercial\Condicional\Teste_Condicional1.robot
-```
-
-### Opção 4 — Executar todos os testes via script Python
-
-8. Executar o executor automático completo:
+### Passo 8 — Executar todos via script (alternativa)
 ```powershell
 cd C:\Automacao\mycommerce-automacao
 python Executar_Automacao.py
 ```
 
-> ⚠️ **IMPORTANTE**: Este script requer permissão de administrador e executa automaticamente (`runas`).
-> ⚠️ **IMPORTANTE**: Clicar na tela do myCommerce após iniciar a execução para garantir foco.
+> **IMPORTANTE**: Clicar na tela do myCommerce após iniciar a execução para garantir foco.
 
-## Analisar Resultados
+---
 
-9. Após a execução, verificar os relatórios gerados:
-   - `results/report.html` — Relatório resumido
-   - `results/log.html` — Log detalhado com screenshots de falha
+## Passos — Análise de Resultados
 
-10. Para abrir o relatório no navegador:
+### Passo 9 — Verificar relatórios
+- `results/report.html` — Relatório resumido
+- `results/log.html` — Log detalhado com screenshots de falha
+
+### Passo 10 — Abrir relatório
 ```powershell
 Start-Process "C:\Automacao\mycommerce-automacao\Testes_BancoAleatorio\results\report.html"
 ```
 
-## Diagnóstico de Falhas
+---
 
-11. Se um teste falhar:
-    - Verificar em qual keyword ocorreu a falha (no `log.html`)
-    - Verificar se é problema de imagem (screenshot esperado vs real)
-    - Isolar o teste por tag e re-executar
-    - Fazer o processo manualmente para verificar se o erro é do ERP ou da automação
-    - Verificar se o ERP está respondendo (pode ter travado)
-    - Verificar se as imagens em `images/` correspondem à versão atual do myCommerce
+## Passos — Diagnóstico de Falhas
+
+### Passo 11 — Identificar tipo de falha
+
+| Tipo de Falha | Sintoma | Solução |
+|---|---|---|
+| Imagem não encontrada | `Wait Until Screen Contain` timeout | Re-capturar imagem na resolução correta |
+| Elemento em posição errada | Clicou no lugar errado | Verificar unicidade da imagem |
+| Aviso inesperado | Popup apareceu e bloqueou | Adicionar tratamento em `validacaoAviso.robot` |
+| Dados do banco | Query não retorna resultados | Verificar se o banco tem os dados necessários |
+| Timing | Ação executada rápido demais | Aumentar `Sleep` antes da ação |
+| Foco da janela | Teclas foram para outra janela | Adicionar `Click` na tela antes da ação |
+
+### Passo 12 — Isolar e re-executar
+```powershell
+robot -d .\results\ -i <TagDoTesteFalho> .\TestsCases\<Modulo>\<SubModulo>\<Arquivo>.robot
+```
+
+### Passo 13 — Verificar manualmente
+Executar o mesmo fluxo manualmente no myCommerce para verificar se o sistema mudou.
+
+---
+
+## Saída Esperada
+- Resultado de execução (PASS/FAIL)
+- Em caso de falha: diagnóstico e sugestão de correção
