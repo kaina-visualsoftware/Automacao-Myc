@@ -16,8 +16,6 @@ class estoque:
         database=dbname,
         port=porta)
 
-        print("Código do produto:", idProduto, "Movimentação:", idMovimentacao, "Quantidade:", quantidade_baixa)
-
         cursor = None
         try:
             if connection.is_connected():
@@ -27,8 +25,8 @@ class estoque:
                 tabelaAuditoriaEstoque = []
 
                 # Modalidade do produto
-                consultaProdutos = "SELECT ModalidadeControle FROM produtos WHERE Codigo = " + str(idProduto)
-                cursor.execute(consultaProdutos)
+                consultaProdutos = "SELECT ModalidadeControle FROM produtos WHERE Codigo = %s"
+                cursor.execute(consultaProdutos, (idProduto,))
 
                 row_produto = cursor.fetchone()
                 if row_produto is None:
@@ -42,9 +40,9 @@ class estoque:
                     # produtosestoque
                     consultaProdutosEstoque = (
                         "SELECT Estoque, Tela, Operacao FROM produtosestoque "
-                        "WHERE CodigoOperacao = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto)
+                        "WHERE CodigoOperacao = %s AND CodigoProduto = %s"
                     )
-                    cursor.execute(consultaProdutosEstoque)
+                    cursor.execute(consultaProdutosEstoque, (idMovimentacao, idProduto))
 
                     row_pe = cursor.fetchone()
                     if row_pe is None:
@@ -59,10 +57,10 @@ class estoque:
                     # auditoriaestoque (último registro)
                     consultaAuditoriaEstoque = (
                         "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque "
-                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "WHERE IDMov = %s AND CodigoProduto = %s "
                         "ORDER BY ID DESC LIMIT 1;"
                     )
-                    cursor.execute(consultaAuditoriaEstoque)
+                    cursor.execute(consultaAuditoriaEstoque, (idMovimentacao, idProduto))
 
                     row_aud = cursor.fetchone()
                     if row_aud is None:
@@ -76,10 +74,10 @@ class estoque:
                     # EstoqueAnterior da mesma linha mais recente
                     consultaAuditoriaEstoqueMovAnterior = (
                         "SELECT EstoqueAnterior FROM auditoriaestoque "
-                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "WHERE IDMov = %s AND CodigoProduto = %s "
                         "ORDER BY ID DESC LIMIT 1;"
                     )
-                    cursor.execute(consultaAuditoriaEstoqueMovAnterior)
+                    cursor.execute(consultaAuditoriaEstoqueMovAnterior, (idMovimentacao, idProduto))
 
                     row_prev = cursor.fetchone()
                     if row_prev is None:
@@ -123,15 +121,13 @@ class estoque:
             database=dbname,
             port=porta)
 
-        print("Código do produto:", idProduto, "Movimentação (devolução):", idMovimentacao, "Quantidade devolvida:", quantidade_devolvida)
-
         cursor = None
         try:
             if connection.is_connected():
                 cursor = connection.cursor()
 
                 # Modalidade do produto
-                cursor.execute("SELECT ModalidadeControle FROM produtos WHERE Codigo = " + str(idProduto))
+                cursor.execute("SELECT ModalidadeControle FROM produtos WHERE Codigo = %s", (idProduto,))
                 row_produto = cursor.fetchone()
                 if row_produto is None:
                     print("Produto não encontrado.")
@@ -144,9 +140,9 @@ class estoque:
                     # produtosestoque
                     consultaPE = (
                         "SELECT Estoque, Tela, Operacao FROM produtosestoque "
-                        "WHERE CodigoOperacao = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto)
+                        "WHERE CodigoOperacao = %s AND CodigoProduto = %s"
                     )
-                    cursor.execute(consultaPE)
+                    cursor.execute(consultaPE, (idMovimentacao, idProduto))
                     row_pe = cursor.fetchone()
                     if row_pe is None:
                         print("Linha em produtosestoque não encontrada para a devolução/produto.")
@@ -160,10 +156,10 @@ class estoque:
                     # auditoriaestoque (último registro — devolução)
                     consultaAud = (
                         "SELECT EstoqueAtual, Tela_Nova, Operacao_Nova FROM auditoriaestoque "
-                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "WHERE IDMov = %s AND CodigoProduto = %s "
                         "ORDER BY ID DESC LIMIT 1;"
                     )
-                    cursor.execute(consultaAud)
+                    cursor.execute(consultaAud, (idMovimentacao, idProduto))
                     row_aud = cursor.fetchone()
                     if row_aud is None:
                         print("Auditoria não encontrada para a devolução/produto.")
@@ -176,10 +172,10 @@ class estoque:
                     # EstoqueAnterior da mesma linha mais recente
                     consultaAudAnterior = (
                         "SELECT EstoqueAnterior FROM auditoriaestoque "
-                        "WHERE IDMov = " + str(idMovimentacao) + " AND CodigoProduto = " + str(idProduto) + " "
+                        "WHERE IDMov = %s AND CodigoProduto = %s "
                         "ORDER BY ID DESC LIMIT 1;"
                     )
-                    cursor.execute(consultaAudAnterior)
+                    cursor.execute(consultaAudAnterior, (idMovimentacao, idProduto))
                     row_prev = cursor.fetchone()
                     if row_prev is None:
                         print("Auditoria (EstoqueAnterior) não encontrada.")
