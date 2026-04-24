@@ -40,6 +40,11 @@ ${BT_CONTAS_A_PAGAR}               bt_ContasAPagar.png
 # Outros
 ${NomeTerminalExecucao}            ${config.terminal_name}
 
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${Codigo_Cliente}                  None
+${CODIGO_OPERACAO_MOV}             None
+${VALOR_FINAL_OPERAÇÃO}            None
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}

@@ -40,6 +40,18 @@ ${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
 ${BT_SETA_DIREITA}                       bt_SetaDireita.png
 ${LABEL_DESCONTO_FINAL_VENDA}            lb_DescontoFinalVenda.png
 
+# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
+${Parametro_Local_Negociacao}             None
+${Parametro_IndicacaoVenda}               None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_VENDA}                             None
+${CODIGO_OPERACAO_MOV}                   None
+${Codigo_Cliente}                        None
+${COD_PRODUTO}                           None
+${TELA}                                  None
+${Aviso_Vendedor_Existe_Comissao}        ${False}
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}

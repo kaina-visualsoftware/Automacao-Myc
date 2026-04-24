@@ -8,7 +8,6 @@ Library    ../../../libs/verificacoesExtras.py
 Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/validacaoAviso.robot
-Resource    ../../../utils/utils.robot
 Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
@@ -35,6 +34,8 @@ ${TELA_VISUALIZA_VENDA}              tela_VisualizaVenda.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}         tela_exclusaoVenda.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}    modal_PersonalizacaoPagamento.png
 ${MODAL_GERAR_VENDA_ORCAMENTO}       modal_GerarVendaOrcamento.png
+${TELA_ALTERACAO_STATUS_ORCAMENTO}    tela_AlteracaoStatusOrcamento.png
+${TELA_STATUS_ORCAMENTO}              tela_StatusOrcamento.png
 
 # Botões
 ${BT_GERAR_PRE_VEN}                  bt_GerarPreVen.png
@@ -42,16 +43,50 @@ ${BT_GERAR_PRE_VEN}                  bt_GerarPreVen.png
 # Telas Avisos
 ${AVISO_DESEJA_EXCLUIR}              aviso_DesejaExcluir.png
 
+# Icones
+${ICONE_PASTA_STATUS}                icone_PastaStatusOrcamento.png
+
 # Inputs
 ${INPUT_QUANTIDADE_PRODUTO}          input_QuantidadeProduto.png
+${INPUT_QUANTIDADE_SERVICO}          input_QuantidadeServico.png
+${INPUT_DESCRICAO_STATUS_ORC}        input_DescricaoStatusOrcamento.png
 
 # Labels
 ${LABEL_CRITERIO_CODIGO_ORC}         label_CriterioCodigo_Orcamento.png
 ${LABEL_CODIGO_GRID}                 lb_Codigo_Grid.png
 ${LABEL_REGISTRO_ENCONTRADO_ORC}     lb_RegistroEncontradoOrcamento.png
+${LABEL_NOVO_STATUS}       lb_NovoStatusOrcamento.png
+
+# Abas
+${ABA_PAGAMENTOS}                    aba_Pagamentos.png
 
 # Outros
-${ABA_PAGAMENTOS}                    aba_Pagamentos.png
+${GRID_REGISTRO_STATUS_AUTOMACAO}    grid_RegistroStatusAutomacaoOrcamento.png
+
+# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
+${Parametro_BaixaEstoquePreVenda}                None
+${Parametro_ImprimirVendaAoFinalizarVenda}       None
+${Parametro_IndicacaoOrcamento}                  None
+${Parametro_IndicacaoVenda}                      None
+${Parametro_InfoCreditoClienteVenda}             None
+${Parametro_Permite_Varias_Tabelas}              None
+${Parametro_QtdePadraoOrcamentos}                None
+${Parametro_QuantidadePadraoProduto}             None
+${Parametro_RealizaVendaSemEstoque}              None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_ORCAMENTO}                                 None
+${COD_PRODUTO}                                   None
+${COD_SERVICO}                                   None
+${CODIGO_OPERACAO_MOV}                           None
+${CODIGO_VENDA_GERADA_ORCAMENTO}                 None
+${Codigo_Cliente}                                None
+${Codigo_Pedido}                                 None
+${Codigo_Venda_Gerada}                           None
+${Codigos_Servicos}                              ${None}
+${QTDE_BAIXA_PRODUTO}                            None
+${Quantidade_Servico}                            None
+${QUANTIDADE_SERVICOS}                           None
 
 *** Keywords ***
 Ler imagens iniciais
@@ -116,6 +151,12 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
     ELSE
 
         utils.Inserir Produto normal - Necessita de estoque
+
+    END
+
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida a tela de preços & prazos de pagamentos
 
     END
 
@@ -333,7 +374,7 @@ Processa geração de pré-venda do orçamento
 
     Set Test Variable    ${Codigo_Pedido}    ${codigo_do_pedido[0][0]}
 
-    keyOrcamento1.Valida baixa de estoque
+    Valida baixa de estoque
 
     Validação da pré-venda gerada a partir do orçamento
 
@@ -412,3 +453,89 @@ E clico em Gerar Pré-Ven
     SikuliLibrary.Click    ${BT_GERAR_PRE_VEN}
 
     Processa geração de pré-venda do orçamento
+
+Quando insiro um serviço informando a quantidade(${Quantidade_Servico})
+
+    utils.Inserir serviço
+
+    Informa a quantidade do serviço(${Quantidade_Servico})
+
+    utils.Validação após incluir serviço
+
+    Press Combination    KEY.ALT    KEY.I
+
+Quando insiro mais de um serviço(${QuantidadeDeServico})
+
+    ${Codigos_Servicos}    Create List
+
+    FOR    ${i}    IN RANGE    ${QuantidadeDeServico}
+
+        Quando insiro um serviço informando a quantidade(1)
+
+        Append To List    ${Codigos_Servicos}    ${COD_SERVICO}
+
+    END
+
+    Set Test Variable    ${Codigos_Servicos}
+    Set Test Variable    ${QUANTIDADE_SERVICOS}    ${QuantidadeDeServico}
+
+Informa a quantidade do serviço(${Quantidade_Servico})
+
+    IF    ${Quantidade_Servico} != 1
+
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_SERVICO}
+
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    ${Quantidade_Servico}
+
+    END
+
+    Press Special Key    TAB
+
+    Set Test Variable    ${Quantidade_Servico}
+
+E pressiono o atalho de alterar status
+
+    Press Combination    KEY.ALT    KEY.T
+
+    Wait Until Screen Contain    image=${TELA_ALTERACAO_STATUS_ORCAMENTO}    timeout=${TEMPO_TELA}
+
+Então altero o status do orçamento
+
+    SikuliLibrary.Click    ${ICONE_PASTA_STATUS}
+
+    Wait Until Screen Contain    ${TELA_STATUS_ORCAMENTO}    ${TEMPO_TELA}
+
+    ${status_automacao}    Query    SELECT 1 FROM status_registros WHERE Descricao = 'AUTOMACAO' AND Excluido = 0
+
+    IF    ${status_automacao} == ()
+
+        Execute Sql String    INSERT INTO `status_registros` (`Sequencia`, `Tipo`, `Codigo`, `Descricao`, `Cor`, `PadraoAbrir`, `PadraoFechar`, `ExibirAlerta`, `ExigirSenhaSupervisor`, `Excluido`, `Usuario_exclusao`, `Terminal_exclusao`, `Data_exclusao`, `padraoGerarPreVenda`) VALUES ((SELECT MAX(Sequencia) + 1 FROM status_registros), 'O', (SELECT COALESCE(MAX(Codigo), 0) + 1 FROM status_registros), 'AUTOMACAO', '9408399', 0, 0, 0, 0, 0, NULL, NULL, NULL, 0);
+
+        Log To Console    Inserido status 'AUTOMACAO'.
+
+    END
+
+    SikuliLibrary.Click    ${INPUT_DESCRICAO_STATUS_ORC}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    AUTOMACAO
+
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${GRID_REGISTRO_STATUS_AUTOMACAO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.S
+
+    Wait Until Screen Contain    ${LABEL_NOVO_STATUS}    ${TEMPO_TELA}
+
+    Press Combination    KEY.ALT    KEY.G
+
+    Wait Until Screen Not Contain    ${TELA_STATUS_ORCAMENTO}    ${SLEEP_ALTO}
+
+    # Valida alteração de status do orçamento
+    Check If Exists In Database    SELECT 1 FROM orcamentos WHERE Codigo = ${COD_ORCAMENTO} AND StatusOR = 'AUTOMACAO' AND IDStatusOR = (SELECT Codigo FROM status_registros WHERE Descricao = 'AUTOMACAO' AND Excluido = 0);
+
+    

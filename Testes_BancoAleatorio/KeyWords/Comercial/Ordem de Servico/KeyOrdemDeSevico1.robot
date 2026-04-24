@@ -71,6 +71,52 @@ ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
 
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}              Outros...
+
+# Parâmetros de Configuração (inicializados em runtime)
+${Check_List_Objeto}                     None
+${Codigo_CheckList}                      None
+${OS_Vendedor_E_Tecnico_Diferentes}      None
+${Parametro_BaixaAutomatico}             None
+${Parametro_ControlaCreditoOS}           None
+${Parametro_ControlaCreditoVenda}        None
+${Parametro_FaturamentoAoFinalizarOS}    None
+${Parametro_Imprime_Carne_OS}            None
+${Parametro_Imprime_OS}                  None
+${Parametro_IndicacaoOS}                 None
+${Parametro_InfoCreditoClienteVenda}     None
+${Parametro_NaoDeduzirISSQNComissaoOS}   None
+${Parametro_QtdePadraoOS}                None
+${Parametro_QuantidadePadraoProduto}     None
+${Parametro_VendaSemEstoqueOrdemDeServico}    None
+${Teste_Comissao_Escalonada}             None
+${Teste_Comissao_Forma_Parcelamento}     None
+${Teste_Comissao_Linha}                  None
+${Teste_Comissao_Linha_Servico}          None
+${Teste_Comissao_Total_Venda}            None
+${Total_Tributos_Servico}                None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${CODIGO_OPERACAO_MOV}                   None
+${COD_ORDEM_SERVICO}                     None
+${COD_PRODUTO}                           None
+${COD_SERVICO}                           None
+${Codigos_Produtos}                      ${None}
+${Codigos_Servicos}                      ${None}
+${Codigo_Cliente}                        None
+${DESCONTO_FORMA}                        None
+${EntradaIgualA_Outros}                  None
+${FORMA_PADRAO}                          None
+${FORMA_PRAZO}                           None
+${modalidadeCB_OS}                       None
+${Quantidade_Produto}                    None
+${QUANTIDADE_PRODUTOS}                   None
+${QUANTIDADE_SERVICOS}                   None
+${QTDE_BAIXA_PRODUTO}                    None
+${VALOR_FINAL_OPERAÇÃO}                  None
+${VALOR_FINAL_OS}                        None
+${Valor_Total_Produtos}                  None
+${Valor_Total_Servicos}                  None
+
 ${OS_PossuiProduto}                      ${False}
 ${OS_PossuiServico}                      ${False}
 ${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png

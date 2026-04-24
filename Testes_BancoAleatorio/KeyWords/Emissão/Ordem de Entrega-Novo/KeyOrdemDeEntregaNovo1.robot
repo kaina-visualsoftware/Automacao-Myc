@@ -59,6 +59,13 @@ ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}           checkbox_SelecionarItensEntrega.p
 ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}         checkbox_ItensEntregaSelecionados.png
 ${LABEL_VENDA_SELECIONADA_ENTREGA}             lb_VendaSelecionadaEntrega.png
 
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_VENDA}                                   None
+${COD_DOACAO}                                  None
+${ID_GRUPO_ENTREGA}                            None
+${Codigos_Vendas}                              ${None}
+${Quantidade_Vendas_Feitas}                    None
+
 *** Keywords ***
 
 Ler imagens iniciais

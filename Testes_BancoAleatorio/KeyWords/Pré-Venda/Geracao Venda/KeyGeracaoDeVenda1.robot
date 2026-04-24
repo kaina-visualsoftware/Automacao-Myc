@@ -43,7 +43,20 @@ ${LABEL_GERANDO_CONTA_A_RECEBER}    lb_GerandoContasAReceber.png
 
 # Outros
 ${GRID_LISTAGEM_PEDIDOS}            grid_PedidosGeracaoVenda.png
-# ${QTDE_BAIXA_PRODUTO}               ${1}
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_PRODUTO}                      None
+${COD_VENDA}                        None
+${CODIGO_OPERACAO_MOV}              None
+${Codigo_Pedido}                    None
+${Codigos_Pedidos}                  ${None}
+${Codigos_Produtos}                 ${None}
+${EntradaIgualA_Outros}             None
+${Parametro_BaixaAutomatico}        None
+${Parametro_BaixaEstoquePreVenda}   None
+${QTDE_BAIXA_PRODUTO}               None
+${Quantidade_Pedidos_Feitos}        None
+${TOTAL_PEDIDO}                     None
 
 *** Keywords ***
 Ler imagens iniciais

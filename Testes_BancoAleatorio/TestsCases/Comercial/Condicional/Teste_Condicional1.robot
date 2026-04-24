@@ -2,7 +2,7 @@
 Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Comercial/Condicional/KeyCondicional1.robot
-Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
+#Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
 Suite Setup    Run Keywords    Start Sikuli Process    AND    KeyCondicional1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
@@ -141,3 +141,14 @@ Teste 10 - Devolução total de condicional com múltiplos produtos, utilizando 
     Então gravo a devolução
     E saio da tela(Condicional)
     # VERIFICAR, POIS AS VEZES É FECHADO A TELA DE CONDICIONAIS AO FECHAR A MENSAGEM DE SUCESSO DA DEVOLUÇÃO.
+
+Teste 11 - Lançamento de condicional com 2 produtos e visualização
+    [Tags]    Teste11
+
+    Dado que acesso a tela de condicionais
+    E adiciono uma nova condicional
+    Quando insiro vendedor e cliente
+    E insiro mais de um produto normal(2)
+    Então finalizo a condicional
+    Então visualizo a condicional
+    E saio da tela(Condicional)

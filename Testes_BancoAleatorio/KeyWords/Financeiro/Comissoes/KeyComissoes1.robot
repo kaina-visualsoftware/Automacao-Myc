@@ -133,6 +133,55 @@ ${COMISSOES_PENDENTES}                            ${False}
 ${Relatorio_Deve_Conter_Dados}                    ${True}
 ${Dado_Localizado_Na_Pesquisa_Relatorio}          dadoFoiLocalizadoPesquisaRelatorio.png
 
+# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
+${Parametro_CaixaControladoPorUsuario}                 None
+${Parametro_ComissaoVendedorEExecutorServico}         None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test/Suite Variable)
+${_cenario_logado}                                    None
+${Total_Comissao_OS}                                  ${0}
+${queryConsulta}                                      None
+${Codigo_Vendedor}                                    None
+${CODIGO_OPERACAO_MOV}                                None
+${COD_PRODUTO}                                        None
+${COD_VENDA}                                          None
+${COD_SERVICO}                                        None
+${COD_ORDEM_SERVICO}                                  None
+${Quantidade_Produto}                                 None
+${Codigos_Produtos}                                   ${None}
+${Valores_Parcelas}                                   ${None}
+${DADOS_VENDA_DEVOLUÇÃO}                              ${None}
+${Tipo_Comissao_Linha}                                None
+${Teste_Comissao_Linha}                               ${False}
+${Teste_Comissao_Total_Venda}                         ${False}
+${Teste_Comissao_Devolucao}                           ${False}
+${Teste_Comissao_Escalonada}                          ${False}
+${Teste_Comissao_Forma_Parcelamento}                  ${False}
+${Valor_Total_Produtos}                               ${0}
+${Valor_Total_Servicos}                               ${0}
+${Total_Tributos_Servico}                             ${0}
+${OS_PossuiProduto}                                   ${False}
+${OS_Vendedor_E_Tecnico_Diferentes}                   ${False}
+${Codigo_Tecnico_Servico}                             None
+${PercentualComissaoTotalVenda_Produto}               None
+${PercentualComissaoTotalVenda_Servico}               None
+${PercentualComissaoFormaParcParcela_Produto}          None
+${PercentualComissaoEscalonada_Servico}               None
+${PercentualComissaoEscalonada_Servico_Executor}      None
+${VALOR_FINAL_OPERAÇÃO}                               None
+${VALOR_FINAL_VENDA}                                  None
+${VALOR_FINAL_DEVOLUCAO}                              None
+${Quantidade_Produto_Devolucao}                       None
+${Quantidade_Produto_Venda/Dev}                       None
+${NDoc_Comissao}                                      None
+${ID_VALE_COMPRA}                                     None
+${POSIÇÃO_VALOR}                                      ${0}
+${COMISSOES_GERAR_SOBRE}                              None
+${Filtro_Produtos}                                    ${False}
+${Filtro_Servicos}                                    ${False}
+${PERCENT_COMISSAO}                                   ${0}
+${BT_OK}                                              bt_OK.png
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}

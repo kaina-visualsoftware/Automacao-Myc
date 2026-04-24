@@ -55,7 +55,38 @@ ${LABEL_CODIGO_GRID}                   lb_Codigo_Grid.png
 ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}    lb_RegistroEncontradoPedido.png
 
 # Outros
-${FORMA_RECEBIMENTO_OUTROS}         Outros...
+${FORMA_RECEBIMENTO_OUTROS}            Outros...
+
+# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
+${Parametro_BaixaAutomatico}                       None
+${Parametro_BaixaEstoquePreVenda}                  None
+${Parametro_BloqueiaGeracaoVendaParcial}           None
+${Parametro_ExigeSenhaOutroVendedor}               None
+${Parametro_IndicacaoPreVenda}                     None
+${Parametro_ImprimirVendaAoFinalizarVenda}         None
+${Parametro_InfoCreditoClientePreVenda}            None
+${Parametro_QuantidadePadraoProduto}               None
+${Parametro_RealizaPreVendaSemEstoque}             None
+${Teste_Comissao_Linha}                            None
+${Parametro_Permite_Varias_Tabelas}                None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_PRODUTO}                         None
+${COD_VENDA}                           None
+${CODIGO_OPERACAO_MOV}                 None
+${Codigo_Cliente}                      None
+${Codigo_Pedido}                       None
+${DADOS_VENDA_DEVOLUÇÃO}               ${None}
+${EntradaIgualA_Outros}                None
+${FORMA_PADRAO_PEDIDO}                 ${None}
+${QTDE_BAIXA_PRODUTO}                  None
+${Quantidade_Produto}                  None
+${TOTAL_PEDIDO}                        None
+${Total_Pedido_Parcial}                None
+${VALOR_FINAL_OPERAÇÃO}                None
+${VALOR_FINAL_VENDA}                   None
+${Valor_Total_Produtos}                None
+${Valor_Total_Produtos_Pedido}         None
 
 *** Keywords ***
 Ler imagens iniciais
@@ -116,6 +147,12 @@ Quando insiro um produto normal informando a quantidade(${Qtde_Produto})
             utils.Inserir Produto normal - Necessita de estoque
 
         END
+
+    END
+
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida a tela de preços & prazos de pagamentos
 
     END
 

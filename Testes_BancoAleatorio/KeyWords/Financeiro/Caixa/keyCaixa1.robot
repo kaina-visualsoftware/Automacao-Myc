@@ -78,6 +78,26 @@ ${POSICAO_PARCELA}                            ${None}
 ${Total_Recebido_Venda}                       ${0}
 ${LABEL_APENAS_A_RECEBER_HABILITADO}          label_ApenasAReceberHabilitado.png
 
+# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
+${Parametro_CaixaControladoPorUsuario}        None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${Forma_Recebimento}                          None
+${Forma_Pagamento}                            None
+${Codigo_Cliente}                             None
+${CODIGO_OPERACAO_MOV}                        None
+${VALOR_FINAL_OPERAÇÃO}                       None
+${CODIGO_CAIXA}                               None
+${Sequencia_Caixa_Abertura}                   None
+${COD_VENDA}                                  None
+${COD_DEVOLUCAO}                              None
+${VALOR_FINAL_VENDA}                          None
+${VALOR_FINAL_DEVOLUCAO}                      None
+${Valor_Pago_Parcela}                         None
+${Valores_Parcelas}                           ${None}
+${N_Documento_Parcelas}                       ${None}
+${Controle_Pag_Rec_Diario}                    ${None}
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}

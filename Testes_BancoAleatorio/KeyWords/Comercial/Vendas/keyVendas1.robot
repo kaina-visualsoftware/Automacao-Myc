@@ -95,11 +95,41 @@ ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
 ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
 ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
+
+# Parâmetros de Configuração (inicializados em runtime)
+${Parametro_BaixaAutomatico}             None
+${Parametro_ControlaCreditoVenda}        None
+${Parametro_DescontoFinalRespeitaMaximoDosProdutos}    None
+${Parametro_IndicacaoVenda}              None
+${Parametro_Permite_Varias_Tabelas}      None
+${Parametro_QtdePadraoVendas}            None
+${Parametro_QuantidadePadraoProduto}     None
+${Parametro_RealizaVendaSemEstoque}      None
+${Teste_Comissao_Linha}                  None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${CODIGO_OPERACAO_MOV}                   None
+${COD_PRODUTO}                           None
+${COD_VENDA}                             None
+${Codigo_Cliente}                        None
 ${Codigos_Produtos}                      ${None}
+${DADOS_VENDA_DEVOLUÇÃO}                 None
+${DESCONTO_FORMA}                        None
+${EntradaIgualA_Outros}                  None
+${FORMA_PADRAO}                          None
+${FORMA_PRAZO}                           None
+${N_Documento_Parcelas}                  None
+${QTDE_BAIXA_PRODUTO}                    None
+${QTDE_PARCELAS_PAG_PERSONALIZADA}       None
 ${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
 ${QUANTIDADE_PRODUTOS}                   ${1}
 ${Desconto_Produto}                      ${None}
 ${List_Quantidades_Produto}              ${None}
+${Quantidade_Produto}                    None
+${VALOR_FINAL_OPERAÇÃO}                  None
+${VALOR_FINAL_VENDA}                     None
+${Valores_Parcelas}                      None
+${Valor_Total_Produtos}                  None
 
 *** Keywords ***
 Ler imagens iniciais
@@ -190,7 +220,7 @@ Informa a quantidade do produto(${Qtde_Produto})
 E acesso a aba pagamentos
 
     Sleep    ${SLEEP_ALTO}
-    Press Combination    KEY.ALT    Key.M
+    Press Combination    KEY.ALT    KEY.M
 
     Valida cliente com vales compra disponíveis
 
@@ -271,7 +301,7 @@ Então finalizo a venda
 
     Wait Until Screen Contain    ${TELA_VENDAS}    ${TEMPO_TELA}
 
-    keyVendas1.Valida baixa de estoque
+    Valida baixa de estoque
 
 Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
@@ -344,23 +374,23 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    keyVendas1.Valida baixa de estoque
+    Valida baixa de estoque
 
 Então visualizo a venda
 
     Dado que acesso a tela de vendas de balcão
 
-    Press Combination    KEY.ALT     Key.V
+    Press Combination    KEY.ALT     KEY.V
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.r
+    Press Combination    KEY.ALT     KEY.R
     Wait Until Screen Contain    ${TELA_VENDAS}     ${TEMPO_TELA}
 
 E acesso a aba pagamentos - A Prazo
 
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT     Key.M
+    Press Combination    KEY.ALT     KEY.M
     Sleep    ${SLEEP_ALTO}
 
 Então finalizo a venda - A Prazo
@@ -414,7 +444,7 @@ Então finalizo a venda - A Prazo
 
     Valida parâmetros/impressões pós venda
 
-    keyVendas1.Valida baixa de estoque
+    Valida baixa de estoque
 
     Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${VALOR_FINAL_VENDA}
 
@@ -636,7 +666,8 @@ Valida baixa de estoque
 
     Sleep    ${SLEEP_MEDIO}
 
-    ${Teste_Condicional}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    condicional
+    ${nome_teste_lower}    Convert To Lower Case    ${TEST_NAME}
+    ${Teste_Condicional}    Evaluate    'condicional' in '''${nome_teste_lower}'''
 
     Log To Console    \n
 
@@ -773,7 +804,7 @@ Então finalizo a venda personalizada com múltiplas parcelas(${qtdeParcelas})
     Wait Until Screen Contain    ${ROW_PAGAMENTO_INCLUSO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT     Key.F
+    Press Combination    KEY.ALT     KEY.F
 
     IF    ${Parametro_ControlaCreditoVenda}
 
@@ -788,7 +819,7 @@ Então finalizo a venda personalizada com múltiplas parcelas(${qtdeParcelas})
 
     Valida parâmetros/impressões pós venda
 
-    keyVendas1.Valida baixa de estoque
+    Valida baixa de estoque
 
     Set Test Variable    ${QTDE_PARCELAS_PAG_PERSONALIZADA}    ${qtdeParcelas}
 

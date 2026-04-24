@@ -44,6 +44,34 @@ ${LABEL_SERA_GERADO_VALE_COMPRA}       lb_SeraGeradoValeCompraValorDev.png
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}            Outros...
 
+# Parâmetros de Configuração (inicializados em runtime)
+${Parametro_DevolucaoAvulsa}           None
+${Parametro_DevolucaoExigeOBS}         None
+${Parametro_DevolucaoPermiteAberta}    None
+${Parametro_IncluiDireto}              None
+${Parametro_ObrigaMotivoDevolucao}     None
+${Parametro_RealizaVendaSemEstoque}    None
+${Parametro_ValeCompra_Dev_Menor0}     None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${CODIGO_OPERACAO_MOV}                 None
+${COD_DEVOLUCAO}                       None
+${COD_PRODUTO}                         None
+${COD_VENDA}                           None
+${Codigo_Cliente}                      None
+${Codigo_Vendedor}                     None
+${Codigos_Produtos}                    ${None}
+${DADOS_VENDA_DEVOLUÇÃO}               None
+${EntradaIgualA_Outros_dev}            None
+${FORMA_PADRAO_DEV}                    None
+${ID_VALE_COMPRA}                      None
+${Quantidade_Produto}                  None
+${Quantidade_Produto_Devolucao}        None
+${QUANTIDADE_PRODUTOS}                 None
+${VALOR_FINAL_DEVOLUCAO}               None
+${VALOR_FINAL_VENDA}                   None
+${Valor_Total_Produtos}                None
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}

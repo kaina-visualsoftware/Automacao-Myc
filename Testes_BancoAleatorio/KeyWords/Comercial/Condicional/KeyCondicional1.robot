@@ -66,8 +66,21 @@ ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    row_ProdInclusoVendaParcialCond.png
 ${GUIA_ITENS_DISPONIVEIS_DEV_COND}      guia_ItensDisponiveisDevCond.png
 ${GUIA_DEVOLUCAO_DEV_COND}              guia_DevolucaoDevCond.png
 ${GUIA_FINALIZAR_DEV_COND}              guia_FinalizarDevCond.png
-${Selecao_De_Produtos}                  ${None}
-${Selecao_Por_Itens_Selecionados}       ${False}
+# Parâmetros de Configuração (inicializados em runtime)
+${Parametro_ExigeSenhaCancelarVenda}     None
+${Parametro_ImprimeCondicional}          None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_CONDICIONAL}                       None
+${CODIGO_VENDA_GERADA_CONDICIONAL}       None
+${Codigo_Venda_Gerada}                   None
+${Codigo_Vendedor}                       None
+${Codigos_Produtos_Devolvidos}           ${None}
+${Edicao_Condicional}                    None
+${QTDE_PRODUTOS_DEVOLVIDOS}              None
+${Quantidade_Produto_Devolucao}          None
+${Selecao_De_Produtos}                   ${None}
+${Selecao_Por_Itens_Selecionados}        ${False}
 
 *** Keywords ***
 Ler imagens iniciais

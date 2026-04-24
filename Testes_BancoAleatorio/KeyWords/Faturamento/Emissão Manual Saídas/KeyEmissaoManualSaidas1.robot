@@ -49,6 +49,21 @@ ${ROW_PAGAMENTO_INCLUSO}                    row_PagInclusoNFeSaidasManual.png
 ${FORMA_RECEBIMENTO_OUTROS}                 Outros...
 ${Valor_Total_Produtos}                     0
 
+# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
+${Parametro_RealizaVendaSemEstoque}         None
+${Parametro_BaixaAutomatico}               None
+
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${valorTotalNota}                           ${0}
+@{Produtos_NF}
+${Codigo_Cliente}                           None
+${FORMA_PADRAO}                             ${None}
+${FORMA_PRAZO}                              None
+${DESCONTO_FORMA}                           ${0}
+${EntradaIgualA_Outros}                     None
+${VALOR_FINAL_NFE_SAIDA_MANUAL}             None
+${Valor_Total_ICMS}                         ${0}
+
 *** Keywords ***
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}
