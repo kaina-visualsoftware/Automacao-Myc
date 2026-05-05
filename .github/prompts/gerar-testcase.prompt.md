@@ -11,11 +11,11 @@ Você está atuando como **orquestrador** do sistema multi-agente de automação
 ## Contexto do Sistema
 
 Consulte os seguintes arquivos para entender o sistema:
-- [Regras globais (orchestrator)](../copilot_agent/.agent/rules/orchestrator.md)
-- [Skill: Geração de Test Cases](../copilot_agent/.agent/skills/geracao-testcases/SKILL.md)
-- [Skill: Padrões de Desenvolvimento](../copilot_agent/.agent/skills/padroes-desenvolvimento/SKILL.md)
-- [Workflow: Criar Test Case](../copilot_agent/.agent/workflows/criar-testcase.md)
-- [Referência de Frameworks](../copilot_agent/knowledge/frameworks/referencia-frameworks.md)
+- [Regras globais (orchestrator)](../instructions/orchestrator.instructions.md)
+- [Skill: Geração de Test Cases](../skills/geracao-testcases/SKILL.md)
+- [Skill: Padrões de Desenvolvimento](../skills/padroes-desenvolvimento/SKILL.md)
+- [Workflow: Criar Test Case](../prompts/criar-testcase.prompt.md)
+- [Referência de Frameworks](../knowledge/frameworks/referencia-frameworks.md)
 
 ## Decisão de Delegação
 

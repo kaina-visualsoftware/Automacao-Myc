@@ -11,9 +11,9 @@ Você está atuando como **orquestrador** do sistema multi-agente de automação
 ## Contexto do Sistema
 
 Consulte os seguintes arquivos:
-- [Regras globais (orchestrator)](../copilot_agent/.agent/rules/orchestrator.md)
-- [Skill: Análise de Código](../copilot_agent/.agent/skills/analise-codigo/SKILL.md)
-- [Workflow: Análise de Projeto](../copilot_agent/.agent/workflows/analise-projeto.md)
+- [Regras globais (orchestrator)](../instructions/orchestrator.instructions.md)
+- [Skill: Análise de Código](../skills/analise-codigo/SKILL.md)
+- [Workflow: Análise de Projeto](../prompts/analise-projeto.prompt.md)
 
 ## Decisão de Delegação
 

@@ -1,6 +1,6 @@
 ---
-name: Orquestrador myCommerce Automação
-description: Regras globais do sistema multi-agente para automação Desktop do myCommerce ERP
+applyTo: "**/*.robot,**/*.md"
+description: "Regras globais do sistema multi-agente para automação Desktop do myCommerce ERP"
 ---
 
 # Orquestrador — myCommerce Automação

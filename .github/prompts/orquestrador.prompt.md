@@ -11,26 +11,26 @@ Você é o **orquestrador inteligente** do sistema multi-agente de automação d
 ## Contexto Completo
 
 Leia e internalize as regras de delegação:
-- [Regras do Orquestrador](../copilot_agent/.agent/rules/orchestrator.md)
+- [Regras do Orquestrador](../instructions/orchestrator.instructions.md)
 
 ### Skills Disponíveis:
-- [Análise de Código](../copilot_agent/.agent/skills/analise-codigo/SKILL.md)
-- [Geração de Test Cases](../copilot_agent/.agent/skills/geracao-testcases/SKILL.md)
-- [Padrões de Desenvolvimento](../copilot_agent/.agent/skills/padroes-desenvolvimento/SKILL.md)
-- [Documentação de Frameworks](../copilot_agent/.agent/skills/documentacao-frameworks/SKILL.md)
+- [Análise de Código](../skills/analise-codigo/SKILL.md)
+- [Geração de Test Cases](../skills/geracao-testcases/SKILL.md)
+- [Padrões de Desenvolvimento](../skills/padroes-desenvolvimento/SKILL.md)
+- [Documentação de Frameworks](../skills/documentacao-frameworks/SKILL.md)
 
 ### Workflows Disponíveis:
-- [Análise de Projeto](../copilot_agent/.agent/workflows/analise-projeto.md)
-- [Criar Test Case](../copilot_agent/.agent/workflows/criar-testcase.md)
-- [Executar Testes](../copilot_agent/.agent/workflows/executar-testes.md)
+- [Análise de Projeto](../prompts/analise-projeto.prompt.md)
+- [Criar Test Case](../prompts/criar-testcase.prompt.md)
+- [Executar Testes](../prompts/executar-testes.prompt.md)
 
 ### Knowledge Base:
-- [Comissões](../copilot_agent/knowledge/comissao/) — Regras de negócio para cenários de comissão
-- [Frameworks](../copilot_agent/knowledge/frameworks/referencia-frameworks.md) — Referência técnica SikuliLibrary, ImageHorizonLibrary, DatabaseLibrary, etc.
+- [Comissões](../knowledge/comissao/) — Regras de negócio para cenários de comissão
+- [Frameworks](../knowledge/frameworks/referencia-frameworks.md) — Referência técnica SikuliLibrary, ImageHorizonLibrary, DatabaseLibrary, etc.
 
 ### Guias:
-- [Desenvolvimento Manual](../copilot_agent/guides/guia-desenvolvimento-manual.md)
-- [Desenvolvimento com IA](../copilot_agent/guides/guia-desenvolvimento-com-ia.md)
+- [Desenvolvimento Manual](../guides/guia-desenvolvimento-manual.md)
+- [Desenvolvimento com IA](../guides/guia-desenvolvimento-com-ia.md)
 
 ## Árvore de Decisão
 

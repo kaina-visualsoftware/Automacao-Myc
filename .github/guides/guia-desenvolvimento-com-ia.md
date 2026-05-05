@@ -6,7 +6,7 @@
 
 ## O que é o Sistema de Agentes?
 
-O projeto possui um **sistema multi-agente** no diretório `copilot_agent/.agent/` que funciona como um copiloto especializado. Ele conhece:
+O projeto possui um **sistema multi-agente** no diretório `.github/` que funciona como um copiloto especializado. Ele conhece:
 
 - Toda a **estrutura do projeto** (pastas, arquivos, padrões)
 - Os **frameworks** (Robot Framework, SikuliLibrary, ImageHorizonLibrary, DatabaseLibrary)
@@ -19,25 +19,31 @@ O projeto possui um **sistema multi-agente** no diretório `copilot_agent/.agent
 ## Estrutura do Sistema de Agentes
 
 ```
-copilot_agent/
-├── .agent/
-│   ├── rules/
-│   │   └── orchestrator.md          ← Regras globais e delegação
-│   ├── skills/
-│   │   ├── analise-codigo/          ← Análise de código e cobertura
-│   │   ├── documentacao-frameworks/ ← Referência para knowledge de frameworks
-│   │   ├── geracao-testcases/       ← Templates e geração de .robot
-│   │   └── padroes-desenvolvimento/ ← Padrões e arquitetura
-│   └── workflows/
-│       ├── analise-projeto.md       ← Análise completa do projeto
-│       ├── criar-testcase.md        ← Criação end-to-end de teste
-│       └── executar-testes.md       ← Execução e diagnóstico
+.github/
+├── agents/
+│   └── mycommerce-automacao.agent.md  ← Agente principal
+├── instructions/
+│   └── orchestrator.instructions.md    ← Regras globais e delegação
+├── prompts/
+│   ├── analisar-codigo.prompt.md       ← Análise de código e cobertura
+│   ├── consultar-framework.prompt.md   ← Referência para knowledge de frameworks
+│   ├── gerar-testcase.prompt.md        ← Templates e geração de .robot
+│   ├── gerar-cenarios.prompt.md        ← Cenários de comêssão e regras de negócio
+│   ├── orquestrador.prompt.md          ← Seleção automática de skill/workflow
+│   ├── analise-projeto.prompt.md       ← Análise completa do projeto
+│   ├── criar-testcase.prompt.md        ← Criação end-to-end de teste
+│   └── executar-testes.prompt.md       ← Execução e diagnóstico
+├── skills/
+│   ├── analise-codigo/SKILL.md
+│   ├── documentacao-frameworks/SKILL.md
+│   ├── geracao-testcases/SKILL.md
+│   └── padroes-desenvolvimento/SKILL.md
 ├── knowledge/
-│   ├── comissao/                    ← Regras de negócio de comissão
-│   └── frameworks/                  ← Referência de APIs dos frameworks
+│   ├── comissao/                        ← Regras de negócio de comissão
+│   └── frameworks/                      ← Referência de APIs dos frameworks
 └── guides/
-    ├── guia-desenvolvimento-manual.md     ← Este guia (manual)
-    └── guia-desenvolvimento-com-ia.md     ← Guia com IA (este arquivo)
+    ├── guia-desenvolvimento-manual.md   ← Guia manual
+    └── guia-desenvolvimento-com-ia.md   ← Este arquivo
 ```
 
 ---

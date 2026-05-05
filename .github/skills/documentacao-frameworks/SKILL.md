@@ -25,4 +25,4 @@ description: Redireciona para o knowledge de referência dos frameworks utilizad
 3. Sempre alertar sobre namespacing quando houver conflito de keywords
 
 ## Referência Principal
-→ `copilot_agent/knowledge/frameworks/referencia-frameworks.md`
+→ `.github/knowledge/frameworks/referencia-frameworks.md`

@@ -11,15 +11,15 @@ Você está atuando como **orquestrador** do sistema multi-agente de automação
 ## Contexto do Sistema
 
 Consulte os seguintes arquivos:
-- [Regras globais (orchestrator)](../copilot_agent/.agent/rules/orchestrator.md)
-- [Skill: Geração de Test Cases](../copilot_agent/.agent/skills/geracao-testcases/SKILL.md)
+- [Regras globais (orchestrator)](../instructions/orchestrator.instructions.md)
+- [Skill: Geração de Test Cases](../skills/geracao-testcases/SKILL.md)
 
 ### Knowledge de Comissões (consulte conforme o tipo solicitado):
-- [Comissão por Produto](../copilot_agent/knowledge/comissao/comissao-produto.md)
-- [Comissão por Serviço](../copilot_agent/knowledge/comissao/comissao-servico.md)
-- [Comissão Produto + Serviço](../copilot_agent/knowledge/comissao/comissao-prod-serv.md)
-- [Comissão Escalonada](../copilot_agent/knowledge/comissao/comissao-escalonada.md)
-- [Comissão por Tabela de Preço](../copilot_agent/knowledge/comissao/comissao-tabpreco.md)
+- [Comissão por Produto](../knowledge/comissao/comissao-produto.md)
+- [Comissão por Serviço](../knowledge/comissao/comissao-servico.md)
+- [Comissão Produto + Serviço](../knowledge/comissao/comissao-prod-serv.md)
+- [Comissão Escalonada](../knowledge/comissao/comissao-escalonada.md)
+- [Comissão por Tabela de Preço](../knowledge/comissao/comissao-tabpreco.md)
 
 ## Decisão de Delegação
 

@@ -7,17 +7,17 @@ Você é um especialista em automação de testes para o sistema ERP desktop **m
 
 ## Base de Conhecimento
 
-Antes de responder qualquer solicitação, **sempre** consulte os seguintes arquivos de referência no diretório `copilot_agent/`:
+Antes de responder qualquer solicitação, **sempre** consulte os seguintes arquivos de referência no diretório `.github/`:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `copilot_agent/comoDesenvolver.md` | Guia completo de desenvolvimento manual: estrutura do projeto, captura de imagens Sikuli, criação de Keywords e TestCases, convenções de nomenclatura, referência de keywords do Robot/Sikuli/DB |
-| `copilot_agent/comoDesenvolverAutomatizado.md` | Guia de desenvolvimento com IA: sistema de agentes, workflows (/criar-testcase, /analise-projeto, /executar-testes), skills, checklist de revisão de código gerado |
-| `copilot_agent/comissao_servico_cenarios.md` | Cenários de comissão por linha para SERVIÇO: Diferenciada por Vendedor e Mista, com parâmetro habilitado/desabilitado, mesmo/diferentes vendedores (Testes 23–58) |
-| `copilot_agent/comissao_produto_cenarios.md` | Cenários de comissão por linha para PRODUTO: Diferenciada por Vendedor e Mista, 15 cenários (Testes 57–71) |
-| `copilot_agent/comissao_prod_serv_cenarios.md` | Cenários combinados PRODUTO + SERVIÇO na mesma OS: 14 cenários com variáveis independentes (Testes 72–85) |
-| `copilot_agent/comissao_escalonada_cenarios.md` | Cenários de comissão escalonada (Tipo Padrão): faixas de desconto × alíquota via comissao_escalonadaprod (Testes 86–92) |
-| `copilot_agent/comissao_tabpreco_cenarios.md` | Cenários de comissão por tabela de preço: Linha Tab Preço, Tab Preço Geral, Tab Preço Escalonada (Testes 88–99) |
+| `.github/guides/guia-desenvolvimento-manual.md` | Guia completo de desenvolvimento manual: estrutura do projeto, captura de imagens Sikuli, criação de Keywords e TestCases, convenções de nomenclatura, referência de keywords do Robot/Sikuli/DB |
+| `.github/guides/guia-desenvolvimento-com-ia.md` | Guia de desenvolvimento com IA: sistema de agentes, workflows (/criar-testcase, /analise-projeto, /executar-testes), skills, checklist de revisão de código gerado |
+| `.github/knowledge/comissao/comissao-servico.md` | Cenários de comissão por linha para SERVIÇO: Diferenciada por Vendedor e Mista, com parâmetro habilitado/desabilitado, mesmo/diferentes vendedores (Testes 23–58) |
+| `.github/knowledge/comissao/comissao-produto.md` | Cenários de comissão por linha para PRODUTO: Diferenciada por Vendedor e Mista, 15 cenários (Testes 57–71) |
+| `.github/knowledge/comissao/comissao-prod-serv.md` | Cenários combinados PRODUTO + SERVIÇO na mesma OS: 14 cenários com variáveis independentes (Testes 72–85) |
+| `.github/knowledge/comissao/comissao-escalonada.md` | Cenários de comissão escalonada (Tipo Padrão): faixas de desconto × alíquota via comissao_escalonadaprod (Testes 86–92) |
+| `.github/knowledge/comissao/comissao-tabpreco.md` | Cenários de comissão por tabela de preço: Linha Tab Preço, Tab Preço Geral, Tab Preço Escalonada (Testes 88–99) |
 
 ## Regras Obrigatórias (R1–R10)
 

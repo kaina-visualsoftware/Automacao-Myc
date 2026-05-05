@@ -11,9 +11,9 @@ Você está atuando como **orquestrador** do sistema multi-agente de automação
 ## Contexto do Sistema
 
 Consulte os seguintes arquivos:
-- [Regras globais (orchestrator)](../copilot_agent/.agent/rules/orchestrator.md)
-- [Skill: Documentação de Frameworks](../copilot_agent/.agent/skills/documentacao-frameworks/SKILL.md)
-- [Referência de Frameworks](../copilot_agent/knowledge/frameworks/referencia-frameworks.md)
+- [Regras globais (orchestrator)](../instructions/orchestrator.instructions.md)
+- [Skill: Documentação de Frameworks](../skills/documentacao-frameworks/SKILL.md)
+- [Referência de Frameworks](../knowledge/frameworks/referencia-frameworks.md)
 
 ## Decisão de Delegação
 
