@@ -9,125 +9,91 @@ Library    ../../../libs/verificacoesExtras.py
 Library    XML
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                               ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
-
-# Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
-
 # Telas
-${TELA_ORDEM_DE_SERVICO}                 tela_OrdemDeServico.png
-${TELA_ADICIONAR_ORDEM_DE_SERVICO}       tela_OrdemDeServicoAdicionar.png
-${TELA_FATURAMENTO_OS}                   modal_OpcoesDeFaturamento.png
-${TELA_IMPRIME_CARNE_OS}                 tela_ImprimeCarneOS.png
-${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png
-${TELA_EXCLUIR_PAGAMENTOS_OS}            aviso_ExcluirPagOS.png
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
-${TELA_CHECKLIST}                        tela_CheckList.png
-${TELA_NFS-E}                            tela_NFSe.png
-${TELA_OPCOES_FATURAMENTO}               tela_OpcoesFaturamento.png
-${GUIA_SERVICOS_OS}                      guia_ServicosOS.png
+${TELA_ADICIONAR_ORDEM_DE_SERVICO}     tela_OrdemDeServicoAdicionar.png
+${TELA_FATURAMENTO_OS}                 modal_OpcoesDeFaturamento.png
+${TELA_IMPRIME_CARNE_OS}               tela_ImprimeCarneOS.png
+${TELA_VISUALIZA_VENDA}                tela_VisualizaVenda.png
+${TELA_EXCLUIR_PAGAMENTOS_OS}          aviso_ExcluirPagOS.png
+${TELA_CONFIRMAÇÃO_EXCLUSÃO}           tela_exclusaoVenda.png
+${TELA_SIMULADOR_FORMA_PACELAMENTO}    tela_SimuladorFormaParcelamento.png
+${TELA_CHECKLIST}                      tela_CheckList.png
+${TELA_NFS-E}                          tela_NFSe.png
+${TELA_OPCOES_FATURAMENTO}             tela_OpcoesFaturamento.png
+${GUIA_SERVICOS_OS}                    guia_ServicosOS.png
+${TELA_ALTERACAO_STATUS_OS}            tela_AlteracaoStatusOS.png
+${TELA_INCLUSAO_INSUMOS}               tela_InclusaoInsumos.png
+${TELA_STATUS_OS}                      tela_StatusOS.png
 
 # Telas Avisos
-${AVISO_NFSE_REJEITADA}                  aviso_NFSeRejeitada.png
-${AVISO_NFSE_COM_PROBLEMA}               aviso_NFSeComProblema.png
-${AVISO_NFSE_PROCESSAMENTO}              aviso_NFSeProcessamento.png
-${RETORNO_NFS}                           retornoNFS.png
+${AVISO_NFSE_REJEITADA}                aviso_NFSeRejeitada.png
+${AVISO_NFSE_COM_PROBLEMA}             aviso_NFSeComProblema.png
+${AVISO_NFSE_PROCESSAMENTO}            aviso_NFSeProcessamento.png
+${RETORNO_NFS}                         retornoNFS.png
+${AVISO_STATUS_ATUALIZADO}             aviso_StatusAtualizadoOS.png
+
+# Icones
+${ICONE_PASTA_STATUS_OS}               icone_PastaStatusOS.png
 
 # Botões
-${BT_EXCLUIR_PAGAMENTOS}                 bt_ExcluirPag.png
-${BT_SIMULADOR_FORMAS_PARCELAMENTO}      tela_SimulacaoRecebimentos.png
-${BT_ADICIONAR}                          bt_Adicionar.png
-${BT_EDITAR}                             bt_Editar.png
+${BT_EXCLUIR_PAGAMENTOS}               bt_ExcluirPag.png
+${BT_SIMULADOR_FORMAS_PARCELAMENTO}    tela_SimulacaoRecebimentos.png
+${BT_ADICIONAR}                        bt_Adicionar.png
+${BT_EDITAR}                           bt_Editar.png
+${BT_FECHAR_OS}                        bt_FecharOS.png
+${BT_REABRIR_OS}                       bt_ReabrirOS.png
 
 # Inputs
-${INPUT_QUANTIDADE_PRODUTO}              input_QuantidadeProduto.png
-${INPUT_QUANTIDADE_SERVICO}              input_QuantidadeServico.png
+${INPUT_QUANTIDADE_PRODUTO}            input_QuantidadeProduto.png
+${INPUT_QUANTIDADE_SERVICO}            input_QuantidadeServico.png
+${INPUT_DESCRICAO_STATUS_OS}           input_DescricaoStatusOS.png
 
 # Labels
-${LABEL_DESCRIÇÃO}                       lb_Descricao.png
-${LABEL_AGUARDE_GERANDO_NFSE}            lb_AguardeGerandoNFSe.png
-${LABEL_EMITIR_BOLETOS}                  lb_EmitirBoletos.png
-${LABEL_CRITERIO_CODIGO_OS}              label_CriterioCodigo_OS.png
-${LABEL_CODIGO_GRID}                     lb_Codigo_Grid.png
+${LABEL_DESCRIÇÃO}                     lb_Descricao.png
+${LABEL_AGUARDE_GERANDO_NFSE}          lb_AguardeGerandoNFSe.png
+${LABEL_EMITIR_BOLETOS}                lb_EmitirBoletos.png
+${LABEL_CRITERIO_CODIGO_OS}            label_CriterioCodigo_OS.png
+${LABEL_CODIGO_GRID}                   lb_Codigo_Grid.png
+
+# ComboBox
+${COMBO_SERVICO_DO_INSUMO}             combo_ServicoDoInsumo.png
 
 # Rows
-${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
+${ROW_PAGAMENTO_INCLUSO}               row_PagIncluso.png
+${ROW_INSUMO_INCLUSO_GRID}             insumo_incluso_grid.png
+${ROW_ADIANTAMENTO_INCLUSO_GRID}       row_AdiantamentoInclusoOS.png
 
 # Outros
-${FORMA_RECEBIMENTO_OUTROS}              Outros...
-
-# Parâmetros de Configuração (inicializados em runtime)
-${Check_List_Objeto}                     None
-${Codigo_CheckList}                      None
-${OS_Vendedor_E_Tecnico_Diferentes}      None
-${Parametro_BaixaAutomatico}             None
-${Parametro_ControlaCreditoOS}           None
-${Parametro_ControlaCreditoVenda}        None
-${Parametro_FaturamentoAoFinalizarOS}    None
-${Parametro_Imprime_Carne_OS}            None
-${Parametro_Imprime_OS}                  None
-${Parametro_IndicacaoOS}                 None
-${Parametro_InfoCreditoClienteVenda}     None
-${Parametro_NaoDeduzirISSQNComissaoOS}   None
-${Parametro_QtdePadraoOS}                None
-${Parametro_QuantidadePadraoProduto}     None
-${Parametro_VendaSemEstoqueOrdemDeServico}    None
-${Teste_Comissao_Escalonada}             None
-${Teste_Comissao_Forma_Parcelamento}     None
-${Teste_Comissao_Linha}                  None
-${Teste_Comissao_Linha_Servico}          None
-${Teste_Comissao_Total_Venda}            None
-${Total_Tributos_Servico}                None
+${FORMA_RECEBIMENTO_OUTROS}            Outros...
+${ABA_ADIANTAMENTOS_OS}                aba_AdiantamentosOS.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${CODIGO_OPERACAO_MOV}                   None
-${COD_ORDEM_SERVICO}                     None
-${COD_PRODUTO}                           None
-${COD_SERVICO}                           None
-${Codigos_Produtos}                      ${None}
-${Codigos_Servicos}                      ${None}
-${Codigo_Cliente}                        None
-${DESCONTO_FORMA}                        None
-${EntradaIgualA_Outros}                  None
-${FORMA_PADRAO}                          None
-${FORMA_PRAZO}                           None
-${modalidadeCB_OS}                       None
-${Quantidade_Produto}                    None
-${QUANTIDADE_PRODUTOS}                   None
-${QUANTIDADE_SERVICOS}                   None
-${QTDE_BAIXA_PRODUTO}                    None
-${VALOR_FINAL_OPERAÇÃO}                  None
-${VALOR_FINAL_OS}                        None
-${Valor_Total_Produtos}                  None
-${Valor_Total_Servicos}                  None
-
-${OS_PossuiProduto}                      ${False}
-${OS_PossuiServico}                      ${False}
-${GRID_REGISTRO_ENCONTRADO}              grid_RegistroEncontrado.png
-${Quantidade_Servico}                    ${1}
-${List_Quantidades_Produto}              ${None}
-${List_Quantidades_Servico}              ${None}
+${CODIGO_OPERACAO_MOV}                 None
+${COD_ORDEM_SERVICO}                   None
+${Codigos_Servicos}                    ${None}
+${DESCONTO_FORMA}                      None
+${EntradaIgualA_Outros}                None
+${modalidadeCB_OS}                     None
+${Quantidade_Produto}                  None
+${QUANTIDADE_SERVICOS}                 None
+${QTDE_BAIXA_PRODUTO}                  None
+${VALOR_FINAL_OPERAÇÃO}                None
+${Valor_Total_Produtos}                None
+${Valor_Total_Servicos}                None
+${Qtde_Minima_Estoque}                 None
+${valor_adiantamento}                  None
+${OS_PossuiProduto}                    ${False}
+${OS_PossuiServico}                    ${False}
+${GRID_REGISTRO_ENCONTRADO}            grid_RegistroEncontrado.png
+${Quantidade_Servico}                  ${1}
+${List_Quantidades_Produto}            ${None}
+${List_Quantidades_Servico}            ${None}
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de ordens de serviços
     
     ${FORMA_PADRAO}    Valida Configuracoes OS
@@ -480,7 +446,7 @@ Calcula valor final da OS
         ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
 
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-
+            
             IF    $List_Quantidades_Produto is not None
 
                 ${Quantidade_Produto}    Set Variable    ${List_Quantidades_Produto[${i}]}
@@ -994,3 +960,182 @@ E edito (${campo}) do serviço lançado
     Press Combination    KEY.ALT    KEY.N
 
     utils.Insere funcionários comissionados por serviço
+
+E pressiono o atalho de status
+
+    Press Combination    KEY.ALT    KEY.T
+    Wait Until Screen Contain    ${TELA_ALTERACAO_STATUS_OS}    ${TEMPO_TELA}
+
+Então altero o status da ordem de serviço
+
+    SikuliLibrary.Click    ${ICONE_PASTA_STATUS_OS}
+
+    Wait Until Screen Contain    ${TELA_STATUS_OS}    ${TEMPO_TELA}
+
+    ${status_automamacao}    Query    SELECT 1 FROM statusos s WHERE s.Descricao = 'AUTOMACAO';
+
+    IF    ${status_automamacao} == ()
+
+        Execute Sql String    INSERT INTO statusos (`Descricao`, `Cor`, `PadraoAbrirOS`, `PadraoFinalizarOS`, `ExigirSenhaSupervisor`, `PadraoFecharOS`, `sto_OrdemExibicao`) VALUES ('AUTOMACAO', '8421440', 0, 0, 1, 0, NULL);
+        
+        Log To Console    Inserido status 'AUTOMACAO'.
+
+    END
+
+    SikuliLibrary.Click    ${INPUT_DESCRICAO_STATUS_OS}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    AUTOMACAO
+    Sleep    ${SLEEP_BAIXO}
+    
+    Press Combination    KEY.ALT    KEY.S
+    
+    utils.Valida solicitação de senha do usuário supervisor para liberação de status da OS
+
+    Wait Until Screen Contain    ${TELA_ALTERACAO_STATUS_OS}    ${TEMPO_TELA}
+
+    Press Combination    KEY.ALT    KEY.G
+    
+    # Valida alteração de status da OS
+    Check If Exists In Database    SELECT 1 FROM vendas v INNER JOIN statusos s ON s.Codigo = v.IDStatusOS WHERE v.Codigo = ${COD_ORDEM_SERVICO} AND v.Tipo = 'OS' AND v.Cancelada IS NULL;
+
+    Wait Until Screen Contain    ${AVISO_STATUS_ATUALIZADO}    ${TEMPO_TELA}
+
+    Press Special Key    ENTER
+
+E pressiono o atalho de insumos
+
+    Press Combination    KEY.ALT    KEY.M
+    Wait Until Screen Contain    ${TELA_INCLUSAO_INSUMOS}    ${TEMPO_TELA}
+
+E insiro insumos para cada serviço da OS
+
+    ${consultaQtdeServicos}    Query    SELECT COUNT(*) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
+    ${qtdeServicos}    Set Variable    ${consultaQtdeServicos[0][0]}
+
+    SikuliLibrary.Double Click    ${COMBO_SERVICO_DO_INSUMO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    HOME
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${i}    IN RANGE    ${qtdeServicos}
+
+        ${codigoInsumo}    Query    SELECT p.Codigo FROM produtos AS p INNER JOIN produtosestoque AS pe ON p.Codigo = pe.CodigoProduto AND pe.Estoque >= ${Qtde_Minima_Estoque} WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+
+        IF    ${i} > 0
+
+            SikuliLibrary.Double Click    ${COMBO_SERVICO_DO_INSUMO}
+            Sleep    ${SLEEP_BAIXO}
+
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+
+        END
+
+        Inclui insumo para o serviço selecionado    ${codigoInsumo[0][0]}
+        
+    END
+
+    Press Combination    KEY.ALT    KEY.S
+
+Inclui insumo para o serviço selecionado
+    [Arguments]    ${codigoInsumo}
+    
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${codigoInsumo}
+    Press Special Key    TAB
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.I
+
+    Wait Until Screen Contain    ${ROW_INSUMO_INCLUSO_GRID}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+E acesso a aba adiantamentos
+
+    Press Combination    KEY.ALT    KEY.A
+    Wait Until Screen Contain    ${ABA_ADIANTAMENTOS_OS}    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    Adiantamento - Automacao
+
+    Press Special Key    TAB
+
+    ${valor_adiantamento}    Valor de adiantamento menor que o valor final da OS
+
+    Input Text    ${EMPTY}    ${valor_adiantamento}
+
+    Press Special Key    TAB
+
+    Press Combination    KEY.ALT    KEY.N
+
+    Wait Until Screen Contain    ${ROW_ADIANTAMENTO_INCLUSO_GRID}    ${TEMPO_TELA}
+
+    Set Test Variable    ${valor_adiantamento}
+
+Valor de adiantamento menor que o valor final da OS
+
+    ${valor_total_os}    Query    SELECT ROUND((SELECT COALESCE(SUM(ValorTotal), 0) FROM vendasprodutos AS vp WHERE vp.CodigoVenda = 12813) + (SELECT COALESCE(SUM(ValorTotal), 0) FROM vendasservicos AS vs WHERE vs.CodigoVenda = 12813), 2) AS TotalOS
+
+    ${valor_total}    Evaluate    int(${valor_total_os[0][0]})
+    ${valor_adiantamento}    Evaluate    random.randint(1, ${valor_total} - 1)    modules=random
+    ${valor_adiantamento}    Evaluate    f"{${valor_adiantamento}}.00"
+
+    RETURN    ${valor_adiantamento}
+
+E ajusto o valor a receber para o restante da OS
+
+    ${valor_restante}    Evaluate    round(float(${VALOR_FINAL_OPERAÇÃO}) - float(${valor_adiantamento}), 2)
+    Set Test Variable    ${VALOR_FINAL_OPERAÇÃO}    ${valor_restante}
+
+Então gravo a ordem de serviço
+
+    Press Combination    KEY.ALT    KEY.G
+    
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+
+    Verifica ordem de serviço após ser gravada
+
+Verifica ordem de serviço após ser gravada
+
+    Calcula valor final da OS
+
+    ${consulta}    Query    SELECT v.TotalPedido, v.ValorFinalPagamentos FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO} AND v.Tipo = 'OS' AND v.`Status` = 'o' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+    Should Not Be Empty    ${consulta}    msg=OS não encontrada no banco de dados.
+
+    ${total_pedido}              Convert To Number    ${consulta[0][0]}
+    ${valor_final_pagamentos}    Convert To Number    ${consulta[0][1]}
+
+    Should Be Equal As Numbers    ${total_pedido}    0    msg=Valor total da OS está divergente do esperado que é 0.
+    Should Be Equal As Numbers    ${valor_final_pagamentos}    0    msg=Valor final dos pagamentos da OS está divergente do esperado que é 0.
+
+Então fecho a ordem de serviço
+
+    SikuliLibrary.Click    ${BT_FECHAR_OS}
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+
+    Verifica ordem de serviço após ser fechada
+
+Verifica ordem de serviço após ser fechada
+
+    Calcula valor final da OS
+
+    ${consulta}    Query    SELECT v.TotalPedido, v.ValorFinalPagamentos FROM vendas v WHERE v.Codigo = ${COD_ORDEM_SERVICO} AND v.Tipo = 'OS' AND v.`Status` = 'c' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1);
+
+    Should Not Be Empty    ${consulta}    msg=OS não encontrada no banco de dados.
+
+    ${total_pedido}              Convert To Number    ${consulta[0][0]}
+    ${valor_final_pagamentos}    Convert To Number    ${consulta[0][1]}
+
+    Should Be Equal As Numbers    ${total_pedido}    0    msg=Valor total da OS está divergente do esperado que é 0.
+    Should Be Equal As Numbers    ${valor_final_pagamentos}    0    msg=Valor final dos pagamentos da OS está divergente do esperado que é 0.
+
+E clico em reabrir OS
+
+    SikuliLibrary.Click    ${BT_REABRIR_OS}
+    Sleep    ${SLEEP_BAIXO}

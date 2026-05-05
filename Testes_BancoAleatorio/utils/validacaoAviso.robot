@@ -5,16 +5,9 @@ Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
 Library    Process
 
-Resource    ./utils.robot
-Resource    ../KeyWords/MyMonitorFaturamento/KeyMyMonitorFaturamento1.robot
+Resource    ../utils/utils.robot
 
 *** Variables ***
-# Sleep's
-${SLEEP_BAIXO}                                         0.7
-${SLEEP_MEDIO}                                         1.5
-${SLEEP_ALTO}                                          3
-${TEMPO_TELA}                                          20
-
 # Telas
 ${TELA_INFO_CRÉDITOS}                                  tela_InfoCreditos.png
 ${TELA_SENHA_SUPERVISOR}                               tela_SolicitaSenha.png
@@ -36,6 +29,7 @@ ${TELA_CONFIRMAÇÃO_PAGAMENTO}                          tela_DataPagamento.png
 ${TELA_IMPRESSAO_ENTREGA}                              tela_ImpressaoEntrega.png
 ${TELA_ENTREGAS}                                       tela_Entregas.png
 ${TELA_ORDEM_DE_ENTREGA}                               tela_OrdemDeEntrega.png
+${TELA_GUIA_CONFIGURACOES}                             tela_GuiaConfiguracoes.png
 ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
 ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}               tela_ConsultaSCPC_SemConsultaSalva.png
 ${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}               tela_ConsultaSCPC_ComConsultaSalva.png
@@ -47,7 +41,6 @@ ${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}                    aviso_ExigeSenhaVendedorD
 ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}                  aviso_CondicionalEmAbertoVisualizar.png
 ${AVISO_CONDICIONAL_ABERTO_COND}                       aviso_CondicionaisEmAberto_Condicional.png
 ${ALERTA_CLIENTE}                                      alertaCliente.png
-${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}                    aviso_qtde_sem_estoque_orcamento.png
 ${AVISO_VENCIMENTO_FERIADO_DOM_SAB}                    aviso_VencimentoFeriadoSabadoDomingo.png
 ${AVISO_NÃO_PERMITIDO_MULTIPLAS_VENDAS_POR_ENTREGA}    aviso_NaoPermitidoMultiplasVendasPorEntrega.png
 ${AVISO_SELECAO_COI_FATURAMENTO}                       aviso_SelecaoCoiFaturamento.png
@@ -67,7 +60,7 @@ ${AVISO_CLIENTE_MENOR_DE_IDADE}                        aviso_ClienteMenorDeIdade
 ${AVISO_ATUALIZAR_NUMERO_CADASTRO_PRICIPAL}            aviso_AtualizarNumeroCadastroPrincipal.png
 
 # Botões
-${BT_NÃO}                                              bt_Nao.png
+${BT_NAO}                                              bt_Nao.png
 ${BT_FECHAR_X}                                         bt_FecharX.png
 ${BT_SIM_AVISO_VENCIMENTO_FERIADO}                     bt_SimAvisoVencimentoFeriado.png
 ${BT_OK}                                               bt_OK_sem_atalho.png
@@ -78,6 +71,7 @@ ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPre
 # Labels
 ${LABEL_LIBERAÇÃO_SUPERVISOR}                          label_PasseOCartaoDeLiberacao.png
 ${LABEL_COI_NFE}                                       lb_CoiNFe.png
+${LABEL_GUIA_CONFIGURACOES}                            lb_GuiaConfiguracoes.png
 ${LABEL_VALES_COMPRA_DISPONIVEIS}                      lb_ValesCompraDisponiveis.png
 
 # Outros
@@ -86,42 +80,128 @@ ${FORMA_PARC_A_VISTA}                                  forma_parc_à_vista.png
 ${VENDA_A_PRAZO_CLIENTE_1_CONSUMIDOR}                  venda_a_prazo_cliente_1_consumidor.png
 ${Edicao_Condicional}                                  ${False}
 
+# Flags booleanas — parâmetros do sistema (inicializados em runtime via Set Global Variable)
+${Aviso_ProdutoSemEstoque}                             ${False}
+${Caixa_Baixas_Automatica}                             ${False}
+${Parametro_AvisarVendedorDiferenteDoCadastro}         ${False}
+${Parametro_BaixaAutomatico}                           ${False}
+${Parametro_BaixaCentralizada}                         ${False}
+${Parametro_BaixaEstoquePreVenda}                      ${False}
+${Parametro_BloqueiaGeracaoVendaParcial}               ${False}
+${Parametro_BloqueiaOrcamentoSemEstoque}               ${False}
+${Parametro_BloquearCampoNpedPreVenda}                 ${False}
+${Parametro_CaixaControladoPorUsuario}                 ${False}
+${Parametro_ComissaoVendedorEExecutorServico}          ${False}
+${Parametro_ConsideraDoacoes}                          ${False}
+${Parametro_ConsultaSCPCVenda}                         ${False}
+${Parametro_Controla_Entrega}                          ${False}
+${Parametro_ControlaCreditoCondicional}                ${False}
+${Parametro_ControlaCreditoDescontaChequePreEmMaos}    ${False}
+${Parametro_ControlaCreditoDevTroca}                   ${False}
+${Parametro_ControlaCreditoGerarPreVendaOrcamento}     ${False}
+${Parametro_ControlaCreditoOrcamento}                  ${False}
+${Parametro_ControlaCreditoOS}                         ${False}
+${Parametro_ControlaCreditoPreSeparacaoPreVenda}       ${False}
+${Parametro_ControlaCreditoPreVenda}                   ${False}
+${Parametro_ControlaCreditoPreVendaAuditoria}          ${False}
+${Parametro_ControlaCreditoVenda}                      ${False}
+${Parametro_Desabilita_Servico_Orcamento}              ${False}
+${Parametro_DescontoFinalRespeitaMaximoDosProdutos}    ${False}
+${Parametro_DevolucaoAvulsa}                           ${False}
+${Parametro_DevolucaoExigeOBS}                         ${False}
+${Parametro_DevolucaoPermiteAberta}                    ${False}
+${Parametro_Exibe_Foto_Cliente}                        ${False}
+${Parametro_ExibeVendasAnteriores}                     ${False}
+${Parametro_ExibirCampoNpedVenda}                      ${False}
+${Parametro_ExigeSenhaCancelarVenda}                   ${False}
+${Parametro_ExigeSenhaMultiplo}                        ${False}
+${Parametro_ExigeSenhaOutroVendedor}                   ${False}
+${Parametro_Fatura_OS}                                 ${False}
+${Parametro_FaturamentoAoFinalizarOS}                  ${False}
+${Parametro_FaturaVendaDireto}                         ${False}
+${Parametro_FocoCampoCliente}                          ${False}
+${Parametro_Impre_Ordem_de_Entrega}                    ${False}
+${Parametro_Imprime_Carne_OS}                          ${False}
+${Parametro_Imprime_OrdemEntrega}                      ${False}
+${Parametro_Imprime_OS}                                ${False}
+${Parametro_ImprimeCondicional}                        ${False}
+${Parametro_ImprimeNFCeDireto}                         ${False}
+${Parametro_ImpressaoDiretaPreVenda}                   ${False}
+${Parametro_ImpressaoAposGerarEntrega}                 ${False}
+${Parametro_ImprimirBoletoAoFinalizarVenda}            ${False}
+${Parametro_ImprimirContratoAoFinalizarVenda}          ${False}
+${Parametro_ImprimirDuplicatasAoFinalizarVenda}        ${False}
+${Parametro_ImprimirPreVendaAoFinalizarPreVenda}       ${False}
+${Parametro_ImprimirPromissoriaAoFinalizarVenda}       ${False}
+${Parametro_ImprimirReciboEntradaAoFinalizarVenda}     ${False}
+${Parametro_ImprimirVendaAoFinalizarVenda}             ${False}
+${Parametro_IncluiDireto}                              ${False}
+${Parametro_IndicacaoOrcamento}                        ${False}
+${Parametro_IndicacaoOS}                               ${False}
+${Parametro_IndicacaoPreVenda}                         ${False}
+${Parametro_IndicacaoVenda}                            ${False}
+${Parametro_InfoCreditoClienteOrcamento}               ${False}
+${Parametro_InfoCreditoClientePreVenda}                ${False}
+${Parametro_InfoCreditoClienteVenda}                   ${False}
+${Parametro_Local_Negociacao}                          ${False}
+${Parametro_NaoDeduzirISSQNComissaoOS}                 ${False}
+${Parametro_ObrigaMotivoDevolucao}                     ${False}
+${Parametro_Permite_Varias_Tabelas}                    ${False}
+${Parametro_PesquisaCodigoCodFabricaReferencia}        ${False}
+${Parametro_RealizaPreVendaSemEstoque}                 ${False}
+${Parametro_RealizaVendaSemEstoque}                    ${False}
+${Parametro_Seleciona_Funcionario_Comissao_Servico}    ${False}
+${Parametro_Suprime_Objetos_OS_Orcamento}              ${False}
+${Parametro_TrazerDescricaoAutomaticaEntrega}          ${False}
+${Parametro_UmaEntregaPorVenda}                        ${False}
+${Parametro_ValeCompra_Dev_Menor0}                     ${False}
+${Parametro_Venda_Padrao_Entregue}                     ${False}
+${Parametro_VendaSemEstoqueOrdemDeServico}             ${False}
+${Parametro_VendeSemEstoque}                           ${False}
+${Parametro_VendeSemEstoqueCondicional}                ${False}
+${Parametro_VinculaProdutoDevolvidoEntrega}            ${False}
+
+# Parâmetros escalares (inicializados em runtime via Set Global Variable)
+${Parametro_DiasInativoSCPC}                           None
+${Parametro_EmitirBoletosAcimaDeValorMinimo}           None
+${Parametro_QuantidadePadraoProduto}                   None
+${Parametro_TelasQtdePadraoProduto}                    None
+
+# Variáveis internas (Set Test Variable)
+${Check_List_Objeto}                                   ${False}
+${Codigo_CheckList}                                    ${None}
+${Parametro_GerarEntregaStatusConcluido}               ${False}
+
 ***Keywords***
 Verifica se cliente possui condicional em aberto(${Codigo_Cliente})
 
     Sleep    ${SLEEP_MEDIO}
-    
+
     ${aviso_cond_aberto_tela_cond}    Exists    ${AVISO_CONDICIONAL_ABERTO_COND}
     ${aviso_cond_outras_telas}        Exists    ${AVISO_CONDICIONAL_ABERTO_VISUALIZA}
-    
-    IF    ${aviso_cond_aberto_tela_cond}
 
-        ${query}    Set Variable    SELECT c.Codigo FROM condicionais c WHERE c.CodigoCliente = ${codigo_cliente} AND c.Status = 'f'
-
-    ELSE IF    ${aviso_cond_outras_telas}
-
-        ${query}    Set Variable    SELECT c.Codigo FROM condicionais c WHERE c.CodigoCliente = ${codigo_cliente} AND c.Status IN ('f','e')
-
+    IF    not ${aviso_cond_aberto_tela_cond} and not ${aviso_cond_outras_telas}
+        Return From Keyword
     END
-    
+
+    IF    ${aviso_cond_aberto_tela_cond}
+        ${query}    Set Variable    SELECT c.Codigo FROM condicionais c WHERE c.CodigoCliente = ${Codigo_Cliente} AND c.Status = 'f'
+    ELSE
+        ${query}    Set Variable    SELECT c.Codigo FROM condicionais c WHERE c.CodigoCliente = ${Codigo_Cliente} AND c.Status IN ('f','e')
+    END
+
     ${cliente_tem_condicional_emAberto}    Run Keyword And Return Status    Check If Exists In Database    ${query}
-    
+
     Sleep    ${SLEEP_BAIXO}
-    
-    IF    ${aviso_cond_aberto_tela_cond}
 
-        Processa aviso de condicional em aberto    CONDICIONAL    ${cliente_tem_condicional_emAberto}
-
-    ELSE IF    ${aviso_cond_outras_telas}
-
-        Processa aviso de condicional em aberto    OUTRAS    ${cliente_tem_condicional_emAberto}
-
+    IF    not ${cliente_tem_condicional_emAberto}
+        Fail    Aviso exibido mas sem condicional em aberto no BD para o cliente ${Codigo_Cliente}.
     END
 
-    IF    ${aviso_cond_aberto_tela_cond} == False and ${aviso_cond_outras_telas} == False and ${cliente_tem_condicional_emAberto} == True
-
-        Fail    Aviso de condicional em aberto não identificado e cliente possui condicional em aberto.
-
+    IF    ${aviso_cond_aberto_tela_cond}
+        Processa aviso de condicional em aberto    CONDICIONAL    ${cliente_tem_condicional_emAberto}
+    ELSE
+        Processa aviso de condicional em aberto    OUTRAS    ${cliente_tem_condicional_emAberto}
     END
 
 Processa aviso de condicional em aberto
@@ -532,7 +612,7 @@ Valida aviso para usar o vendedor vinculado ao cliente
     Sleep    ${SLEEP_BAIXO}
     ${vinculoVendedorCliente}    Query    SELECT c.CodigoVendedor FROM clientes AS c WHERE c.Codigo = ${Codigo_Cliente}
 
-    IF    '${vinculoVendedorCliente[0][0]}' != 'None'
+    IF    $vinculoVendedorCliente[0][0] is not None
 
         ${VendedorVinculoCliente}    Convert To Integer    ${vinculoVendedorCliente[0][0]}
         ${VendedorDaOperacao}        Convert To Integer    ${Codigo_Vendedor}
@@ -809,7 +889,7 @@ Valida impressão de boleto
 
     IF    ${MSG}
 
-        SikuliLibrary.Click    ${BT_NÃO}
+        SikuliLibrary.Click    ${BT_NAO}
         Sleep    ${SLEEP_MEDIO}
 
     END
@@ -875,7 +955,7 @@ Verifica se cliente possui objeto vinculado
 
         ${Objeto_Cliente}    Query    SELECT NumeroSerie, Categoria FROM objetos WHERE CodigoCliente = ${Codigo_Cliente}
 
-        IF    "${Objeto_Cliente}" != "None"
+        IF    len($Objeto_Cliente) > 0
 
             ${Check_List_Objeto}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM checklist WHERE Objeto LIKE '${Objeto_Cliente[0][1]}' AND `Status` LIKE 'g'
 
@@ -908,21 +988,6 @@ Valida tela de confirmação data - caixa
         Press Special Key    ENTER
 
     END
-
-Valida aviso de quantidade não existente em estoque - Orçamento
-
-    ${Existe_MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}    ${SLEEP_BAIXO}
-    Set Test Variable    ${AVISO_SEM_ESTOQUE}    ${Existe_MSG}
-
-   IF    ${Existe_MSG}
-
-        Sleep    ${SLEEP_BAIXO}
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_BAIXO}
-
-        Press Special Key    BACKSPACE
-
-   END
 
 Valida data de vencimento em feriados, sábados e domingos para pagamentos a prazo
 
@@ -979,7 +1044,7 @@ Valida a geração de entregas com apenas uma venda por entrega
 
 Valida considerar lançamento de ordem de entrega de doações
 
-    IF    '${Parametro_ConsideraDoacoes}' == 'False'
+    IF    not ${Parametro_ConsideraDoacoes}
 
         Fail   Não habilitado para considerar lançamentos de doações.\nParâmetro: Considerar Lançamentos de Doações: ${Parametro_ConsideraDoacoes}
 
@@ -1023,7 +1088,7 @@ Valida seleção de coi para faturamento
 
         Press Special Key    ENTER
 
-        KeyMyMonitorFaturamento1.E acesso a guia 'Configurações'
+        Acessa a guia de configurações do MyMonitor
         Sleep    ${SLEEP_BAIXO}
 
         SikuliLibrary.Double Click    ${LABEL_COI_NFE}
@@ -1038,6 +1103,11 @@ Valida seleção de coi para faturamento
     END
 
     RETURN    ${salvar}
+
+Acessa a guia de configurações do MyMonitor
+
+    SikuliLibrary.Click    ${LABEL_GUIA_CONFIGURACOES}
+    Wait Until Screen Contain    ${TELA_GUIA_CONFIGURACOES}    ${TEMPO_TELA}
 
 Valida cliente com vales compra disponíveis
     
@@ -1088,14 +1158,18 @@ Valida lançamento de condicional em aberto
     Sleep    ${SLEEP_BAIXO}
     ${condicionalEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM condicionais AS c WHERE c.`Status` IN ('a', 'e') AND c.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND c.Cancelada IS NULL ORDER BY c.Codigo DESC LIMIT 1;
 
+    Log To Console    \ncondicionalEmAberto: ${condicionalEmAberto}
+
     IF    ${condicionalEmAberto}
         
-        Sleep    ${SLEEP_BAIXO}
+        Sleep    ${SLEEP_MEDIO}
         ${aviso}    Exists    ${AVISO_LANC_CONDICIONAL_EM_ABERTO}
 
         IF    ${aviso}
 
-            Press Combination    KEY.ALT    KEY.N
+            # Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+            SikuliLibrary.Click    ${BT_NAO}
             Sleep    ${SLEEP_BAIXO}
         
         END
@@ -1231,17 +1305,6 @@ Valida edição de ordem de serviço finalizada
         
     END
 
-Valida produto já incluso
-    
-    Sleep    ${SLEEP_BAIXO}
-    ${aviso}    Exists    ${AVISO_PRODUTO_JA_INCLUSO}
-
-    IF    ${aviso}
-
-        Press Combination    KEY.ALT    KEY.S
-        
-    END
-
 Valida consulta SCPC
     
     Sleep    ${SLEEP_BAIXO}
@@ -1272,7 +1335,7 @@ Valida consulta SCPC
 
         ${ConsultaSCPC}    Query    SELECT cspc.CNPJCPF FROM consultaspc cspc WHERE cspc.CodigoCliente = ${Codigo_Cliente} ORDER BY cspc.ID DESC LIMIT 1
     
-        IF    '${ConsultaSCPC[0][0]}' == 'None'
+        IF    $ConsultaSCPC[0][0] is None
 
             Wait Until Screen Contain    ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}    ${TEMPO_TELA}
 

@@ -8,26 +8,10 @@ Library    ../../../libs/verificacoesExtras.py
 Library    ../../../libs/estoque.py
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                             ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                              ${config.IpServidor}
-${DBName}                              ${config.Database}
-${DBPass}                              vssql
-${DBPort}                              ${config.Porta}
-${DBUser}                              root
-
-# Sleep's
-${SLEEP_BAIXO}                         0.7
-${SLEEP_MEDIO}                         1.5
-${SLEEP_ALTO}                          3
-${TEMPO_TELA}                          20
-
 # Telas
 ${TELA_GERACAO_VENDA}                  tela_GeracaoPedido.png
 ${TELA_WORKFLOW}                       tela_WorkFlowPedido.png
@@ -57,41 +41,16 @@ ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}    lb_RegistroEncontradoPedido.png
 # Outros
 ${FORMA_RECEBIMENTO_OUTROS}            Outros...
 
-# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
-${Parametro_BaixaAutomatico}                       None
-${Parametro_BaixaEstoquePreVenda}                  None
-${Parametro_BloqueiaGeracaoVendaParcial}           None
-${Parametro_ExigeSenhaOutroVendedor}               None
-${Parametro_IndicacaoPreVenda}                     None
-${Parametro_ImprimirVendaAoFinalizarVenda}         None
-${Parametro_InfoCreditoClientePreVenda}            None
-${Parametro_QuantidadePadraoProduto}               None
-${Parametro_RealizaPreVendaSemEstoque}             None
-${Teste_Comissao_Linha}                            None
-${Parametro_Permite_Varias_Tabelas}                None
-
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${COD_PRODUTO}                         None
-${COD_VENDA}                           None
-${CODIGO_OPERACAO_MOV}                 None
-${Codigo_Cliente}                      None
-${Codigo_Pedido}                       None
 ${DADOS_VENDA_DEVOLUÇÃO}               ${None}
 ${EntradaIgualA_Outros}                None
-${FORMA_PADRAO_PEDIDO}                 ${None}
 ${QTDE_BAIXA_PRODUTO}                  None
 ${Quantidade_Produto}                  None
-${TOTAL_PEDIDO}                        None
 ${Total_Pedido_Parcial}                None
-${VALOR_FINAL_OPERAÇÃO}                None
-${VALOR_FINAL_VENDA}                   None
 ${Valor_Total_Produtos}                None
 ${Valor_Total_Produtos_Pedido}         None
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de pedidos
 
     ${FORMA_PADRAO_PEDIDO}    Valida Forma Parcelamento    Pedido
@@ -346,7 +305,7 @@ Então gero a venda totalmente
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    KeyPedidos1.Valida baixa de estoque
+    Valida baixa de estoque
 
 Valida baixa de estoque
 

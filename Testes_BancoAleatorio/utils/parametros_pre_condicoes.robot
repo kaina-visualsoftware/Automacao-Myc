@@ -4,7 +4,6 @@ Library    Collections
 
 Resource   ../utils/parametros_admin_sistema.robot
 Resource   ../utils/myCommerce.robot
-Resource   ../utils/validacaoAviso.robot
 
 *** Variables ***
 @{PARAMS_ALTERADOS}
@@ -207,6 +206,8 @@ Reiniciar MyCommerce Se Teste Falhar
     END
 
 Preparar Ambiente MyCommerce
+
+    utils.Ler imagens iniciais
 
     validacaoAviso.Carregar parâmetros do sistema
 

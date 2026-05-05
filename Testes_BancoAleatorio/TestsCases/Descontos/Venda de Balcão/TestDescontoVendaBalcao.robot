@@ -2,7 +2,7 @@
 Resource     ../../../KeyWords/Descontos/Venda de Balcão/KeyDescontoVendaBalcao.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyDescontoVendaBalcao.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Setup    Run Keywords     Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown      Stop Remote Server
 
 *** Test Cases ***

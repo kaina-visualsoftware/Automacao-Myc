@@ -7,91 +7,52 @@ Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Variables    ../../../libs/leituraConfig.py
 
+Resource    ../../../utils/utils.robot
 Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                           ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                            ${config.IpServidor}
-${DBName}                            ${config.Database}
-${DBPass}                            vssql
-${DBPort}                            ${config.Porta}
-${DBUser}                            root
-
-# Sleep's
-${SLEEP_BAIXO}                       0.7
-${SLEEP_MEDIO}                       1.5
-${SLEEP_ALTO}                        3
-${TEMPO_TELA}                        20
 
 # Telas
-${TELA_ORCAMENTO}                    tela_Orcamento.png
-${TELA_ORC_ADICIONAR}                tela_OrcamentoAdicionar.png
-${TELA_VISUALIZA_VENDA}              tela_VisualizaVenda.png
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}         tela_exclusaoVenda.png
-${MODAL_PERSONALIZACAO_PAGAMENTO}    modal_PersonalizacaoPagamento.png
-${MODAL_GERAR_VENDA_ORCAMENTO}       modal_GerarVendaOrcamento.png
+${TELA_ORC_ADICIONAR}                 tela_OrcamentoAdicionar.png
+${MODAL_GERAR_VENDA_ORCAMENTO}        modal_GerarVendaOrcamento.png
 ${TELA_ALTERACAO_STATUS_ORCAMENTO}    tela_AlteracaoStatusOrcamento.png
 ${TELA_STATUS_ORCAMENTO}              tela_StatusOrcamento.png
 
 # Botões
-${BT_GERAR_PRE_VEN}                  bt_GerarPreVen.png
+${BT_GERAR_PRE_VEN}                   bt_GerarPreVen.png
 
 # Telas Avisos
-${AVISO_DESEJA_EXCLUIR}              aviso_DesejaExcluir.png
+${AVISO_DESEJA_EXCLUIR}               aviso_DesejaExcluir.png
 
 # Icones
-${ICONE_PASTA_STATUS}                icone_PastaStatusOrcamento.png
+${ICONE_PASTA_STATUS}                 icone_PastaStatusOrcamento.png
 
 # Inputs
-${INPUT_QUANTIDADE_PRODUTO}          input_QuantidadeProduto.png
-${INPUT_QUANTIDADE_SERVICO}          input_QuantidadeServico.png
-${INPUT_DESCRICAO_STATUS_ORC}        input_DescricaoStatusOrcamento.png
+${INPUT_QUANTIDADE_SERVICO}           input_QuantidadeServico.png
+${INPUT_DESCRICAO_STATUS_ORC}         input_DescricaoStatusOrcamento.png
 
 # Labels
-${LABEL_CRITERIO_CODIGO_ORC}         label_CriterioCodigo_Orcamento.png
-${LABEL_CODIGO_GRID}                 lb_Codigo_Grid.png
-${LABEL_REGISTRO_ENCONTRADO_ORC}     lb_RegistroEncontradoOrcamento.png
-${LABEL_NOVO_STATUS}       lb_NovoStatusOrcamento.png
+${LABEL_CRITERIO_CODIGO_ORC}          label_CriterioCodigo_Orcamento.png
+${LABEL_REGISTRO_ENCONTRADO_ORC}      lb_RegistroEncontradoOrcamento.png
+${LABEL_NOVO_STATUS}                  lb_NovoStatusOrcamento.png
 
 # Abas
-${ABA_PAGAMENTOS}                    aba_Pagamentos.png
+${ABA_PAGAMENTOS}                     aba_Pagamentos.png
 
 # Outros
-${GRID_REGISTRO_STATUS_AUTOMACAO}    grid_RegistroStatusAutomacaoOrcamento.png
-
-# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
-${Parametro_BaixaEstoquePreVenda}                None
-${Parametro_ImprimirVendaAoFinalizarVenda}       None
-${Parametro_IndicacaoOrcamento}                  None
-${Parametro_IndicacaoVenda}                      None
-${Parametro_InfoCreditoClienteVenda}             None
-${Parametro_Permite_Varias_Tabelas}              None
-${Parametro_QtdePadraoOrcamentos}                None
-${Parametro_QuantidadePadraoProduto}             None
-${Parametro_RealizaVendaSemEstoque}              None
+${GRID_REGISTRO_STATUS_AUTOMACAO}     grid_RegistroStatusAutomacaoOrcamento.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${COD_ORCAMENTO}                                 None
-${COD_PRODUTO}                                   None
-${COD_SERVICO}                                   None
-${CODIGO_OPERACAO_MOV}                           None
-${CODIGO_VENDA_GERADA_ORCAMENTO}                 None
-${Codigo_Cliente}                                None
-${Codigo_Pedido}                                 None
-${Codigo_Venda_Gerada}                           None
-${Codigos_Servicos}                              ${None}
-${QTDE_BAIXA_PRODUTO}                            None
-${Quantidade_Servico}                            None
-${QUANTIDADE_SERVICOS}                           None
+${COD_ORCAMENTO}                      None
+${CODIGO_VENDA_GERADA_ORCAMENTO}      None
+${Codigo_Pedido}                      None
+${Codigo_Venda_Gerada}                None
+${Codigos_Servicos}                   ${None}
+${Quantidade_Servico}                 None
+${QUANTIDADE_SERVICOS}                None
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de orçamentos
     
     ${FORMA_PADRAO}    Valida Configuracoes Venda
@@ -511,8 +472,6 @@ Então altero o status do orçamento
     IF    ${status_automacao} == ()
 
         Execute Sql String    INSERT INTO `status_registros` (`Sequencia`, `Tipo`, `Codigo`, `Descricao`, `Cor`, `PadraoAbrir`, `PadraoFechar`, `ExibirAlerta`, `ExigirSenhaSupervisor`, `Excluido`, `Usuario_exclusao`, `Terminal_exclusao`, `Data_exclusao`, `padraoGerarPreVenda`) VALUES ((SELECT MAX(Sequencia) + 1 FROM status_registros), 'O', (SELECT COALESCE(MAX(Codigo), 0) + 1 FROM status_registros), 'AUTOMACAO', '9408399', 0, 0, 0, 0, 0, NULL, NULL, NULL, 0);
-
-        Log To Console    Inserido status 'AUTOMACAO'.
 
     END
 

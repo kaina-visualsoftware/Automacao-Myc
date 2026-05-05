@@ -1,4 +1,8 @@
 *** Settings ***
+Library    SikuliLibrary
+Library    Collections
+
+Resource    ../utils/utils.robot
 Resource    ../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
 Resource    ../KeyWords/Comercial/Devolucao/KeyDevolucaoVenda1.robot
@@ -8,10 +12,6 @@ Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
-
-Resource    ../utils/utils.robot
-Library    SikuliLibrary
-Library    Collections
 
 *** Variables ***
 

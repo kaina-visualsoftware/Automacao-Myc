@@ -12,50 +12,14 @@ Resource    ../../../utils/utils.robot
 Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                                ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
-
-# Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            20
-
 # Telas
-${TELA_VENDAS}                           tela_VendasDeBalcao.png
 ${TELA_VENDAS_ADICIONAR}                 tela_VendaBalcaoAdicionar.png
-${TELA_LIBERAÇÃO_DESCONTO_SENHA}         tela_liberacaoDesconto.png
 ${MODAL_SUPERVISOR_SEM_PERMISSAO}        tela_SupervisorSemPermissao.png
 
-# Outros
-${Codigos_Produtos}                      ${None}
-${INPUT_COD_CLIENTE_VENDA}               lb_CodClienteVenda.png
-${BT_SETA_DIREITA}                       bt_SetaDireita.png
+# Labels
 ${LABEL_DESCONTO_FINAL_VENDA}            lb_DescontoFinalVenda.png
 
-# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
-${Parametro_Local_Negociacao}             None
-${Parametro_IndicacaoVenda}               None
-
-# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${COD_VENDA}                             None
-${CODIGO_OPERACAO_MOV}                   None
-${Codigo_Cliente}                        None
-${COD_PRODUTO}                           None
-${TELA}                                  None
-${Aviso_Vendedor_Existe_Comissao}        ${False}
-
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de vendas de balcão
 
     Press Special Key    F2

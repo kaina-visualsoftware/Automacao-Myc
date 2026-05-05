@@ -14,58 +14,18 @@ Resource    ../../../utils/utils.robot
 Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                               ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                                ${config.IpServidor}
-${DBName}                                ${config.Database}
-${DBPass}                                vssql
-${DBPort}                                ${config.Porta}
-${DBUser}                                root
-
-# Sleep's
-${SLEEP_BAIXO}                           0.7
-${SLEEP_MEDIO}                           1.5
-${SLEEP_ALTO}                            3
-${TEMPO_TELA}                            25
-
 # Telas
-${TELA_INFO_CRÉDITOS}                    tela_InfoCreditos.png
 ${TELA_ALTERAR_NUMERO}                   aviso_DesejaAlterarNumero.png
-${TELA_VENDAS}                           tela_VendasDeBalcao.png
 ${TELA_VENDAS_ADICIONAR}                 tela_VendaBalcaoAdicionar.png
-${TELA_RECB_DUPLICATAS}                  tela_RecebimentoDuplicatas.png
-${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
-${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
-${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png
-${TELA_SENHA_SUPERVISOR}                 tela_SolicitaSenha.png
-${TELA_EMISSAO_NFC}                      tela_EmissaoNFC.png
-${TELA_IMPRESSAO}                        tela_Impressao.png
-${TELA_VENDAS_ANTERIORES}                tela_ExibeAnteriores.png
-${TELA_EXIBE_CLIENTE}                    tela_exibeCliente.png
-${TELA_SELECIONA_TIPO_ENTREGA}           tela_SelecionaEntrega.png
-${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png
-${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
-${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png
-${TELA_RECIBO_ENTRADA}                   tela_ReciboEntrada.png
-${TELA_CONTRATO_VENDA}                   tela_ContratoVenda.png
-${TELA_EMISSAO_PROMISSÓRIA}              tela_EmisssaoPromissoria.png
 ${TELA_VISUALIZA_VENDA}                  tela_VisualizaVenda.png
 ${TELA_EXCLUIR_PAGAMENTOS}               aviso_ExcluirPag.png
 ${TELA_SIMULADOR_FORMA_PACELAMENTO}      tela_SimuladorFormaParcelamento.png
-${TELA_OBSERVACAO_PRODUTO}               tela_ObservacaoProduto.png
 ${TELA_CONFIRMAÇÃO_EXCLUSÃO}             tela_exclusaoVenda.png
-${MODAL_PERSONALIZACAO_PAGAMENTO}        modal_PersonalizacaoPagamento.png
 ${GUIA_PRODUTOS_VENDA}                   guia_ProdutosVenda.png
 
 # Telas Avisos
-${AVISO_USAR_ESSE_VENDEDOR}              aviso_clienteOutroVendedor.png
-${AVISO_EXIGE_SENHA_OUTRO_VENDEDOR}      aviso_ExigeSenhaVendedorDiferente.png
-${AVISO_CONDICIONAL_ABERTO_VISUALIZA}    aviso_CondicionalEmAbertoVisualizar.png
 ${AVISO_NCM_INVALIDO}                    aviso_NCMInvalidoNFC.png
 ${AVISO_LIMITE_CRÉDITO_DESATUALIZADO}    aviso_ClienteLimiteCreditoDesatualizado.png
-${ALERTA_CLIENTE}                        alertaCliente.png
 ${AVISO_DESEJA_EXCLUIR_PRODUTO_VENDA}    aviso_DesejaExcluirProdutoVenda.png
 
 # Botões
@@ -88,7 +48,6 @@ ${LABEL_CODIGO_GRID}                     lb_Codigo_Grid.png
 ${LABEL_REGISTRO_ENCONTRADO}             lb_RegistroEncontrado.png
 
 # Rows
-${ROW_PROD_INCLUSO}                      row_ProdIncluso.png
 ${ROW_PAGAMENTO_INCLUSO}                 row_PagIncluso.png
 
 # Outros
@@ -96,45 +55,19 @@ ${FORMA_RECEBIMENTO_OUTROS}              Outros...
 ${ERRO_FATURAR_NFC}                      erro_faturarNFC.png
 ${COMBOBOX_FORMA_RECEBIMENTO}            cb_FormaRecebimento.png
 
-# Parâmetros de Configuração (inicializados em runtime)
-${Parametro_BaixaAutomatico}             None
-${Parametro_ControlaCreditoVenda}        None
-${Parametro_DescontoFinalRespeitaMaximoDosProdutos}    None
-${Parametro_IndicacaoVenda}              None
-${Parametro_Permite_Varias_Tabelas}      None
-${Parametro_QtdePadraoVendas}            None
-${Parametro_QuantidadePadraoProduto}     None
-${Parametro_RealizaVendaSemEstoque}      None
-${Teste_Comissao_Linha}                  None
-
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${CODIGO_OPERACAO_MOV}                   None
-${COD_PRODUTO}                           None
-${COD_VENDA}                             None
-${Codigo_Cliente}                        None
-${Codigos_Produtos}                      ${None}
 ${DADOS_VENDA_DEVOLUÇÃO}                 None
 ${DESCONTO_FORMA}                        None
 ${EntradaIgualA_Outros}                  None
-${FORMA_PADRAO}                          None
-${FORMA_PRAZO}                           None
 ${N_Documento_Parcelas}                  None
 ${QTDE_BAIXA_PRODUTO}                    None
 ${QTDE_PARCELAS_PAG_PERSONALIZADA}       None
-${AJUSTE_FOCO}                           bt_SetaUltimaVenda.png
-${QUANTIDADE_PRODUTOS}                   ${1}
 ${Desconto_Produto}                      ${None}
 ${List_Quantidades_Produto}              ${None}
 ${Quantidade_Produto}                    None
-${VALOR_FINAL_OPERAÇÃO}                  None
-${VALOR_FINAL_VENDA}                     None
-${Valores_Parcelas}                      None
 ${Valor_Total_Produtos}                  None
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Verifica formas de recebimento da venda
 
     ${FORMA_PADRAO}    validaParametros.Valida Configuracoes Venda
@@ -750,6 +683,12 @@ Quando insiro um produto já definido(${Produto}) informando a quantidade do pro
     ELSE
 
         utils.Inserir produto pré-definido(${Produto})
+
+    END
+
+    IF     ${Parametro_Permite_Varias_Tabelas}
+
+        Valida a tela de preços & prazos de pagamentos
 
     END
 

@@ -6,39 +6,21 @@ Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
-Resource    ../../../utils/montadorDeCenarios.robot
+Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Imagens
-${IMAGENS}              ./testes_bancoAleatorio/images
-
-# Conexão com banco de dados
-${DBHost}               ${config.IpServidor}
-${DBName}               ${config.Database}
-${DBPass}               vssql
-${DBPort}               ${config.Porta}
-${DBUser}               root
-
-# Sleep's
-${SLEEP_BAIXO}          0.7
-${SLEEP_MEDIO}          1.7
-${SLEEP_ALTO}           3
-${TEMPO_TELA}           20
-
 ${MENU_COMERCIAL}       menu_Comercial.png
 ${SUBMENU_DOACOES}      subMenu_Doacoes.png
 ${TELA_DOACOES}         tela_Doacoes.png
 ${TELA_LANC_DOACOES}    tela_LancDoacoes.png
 ${ABA_DETALHES}         aba_Detalhes.png
-${TELA_IMPRESSAO}       tela_Impressao.png
 ${BT_ADICIONAR}         bt_Adicionar.png
 
-*** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
+# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
+${COD_DOACAO}           None
 
+*** Keywords ***
 Dado que eu acesso a tela de doações
 
     SikuliLibrary.Click    ${MENU_COMERCIAL}

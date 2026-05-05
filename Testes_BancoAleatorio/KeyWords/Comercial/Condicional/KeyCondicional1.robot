@@ -9,39 +9,18 @@ Library    ../../../libs/verificacoesExtras.py
 Library    Telnet
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                              ./Testes_BancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                               ${config.IpServidor}
-${DBName}                               ${config.Database}
-${DBPass}                               vssql
-${DBPort}                               ${config.Porta}
-${DBUser}                               root
-
-# Sleep's
-${SLEEP_BAIXO}                          0.7
-${SLEEP_MEDIO}                          1.5
-${SLEEP_ALTO}                           3
-${TEMPO_TELA}                           25
-
 # Telas
-${TELA_CONDICIONAIS}                    tela_Condicionais.png
 ${TELA_ADICIONAR_CONDICIONAL}           tela_CondicionaisAdicionar.png
 ${TELA_DETALHES_CONDICIONAL}            tela_DetalhesCondicional.png
 ${TELA_VISUALIZA_CONDICIONAL}           tela_VisualizaVenda.png
-${TELA_CONFIRMAÇÃO_EXCLUSÃO}            tela_exclusaoVenda.png
-${TELA_VENDAS_ADICIONAR}                tela_VendaBalcaoAdicionar.png
 ${TELA_GERAÇÃO_VENDA_PARICAL}           tela_GeracaoVendaParcialCondicional.png
 ${MODAL_GERAR_VENDA_CONDICIONAL}        modal_GerarVendaCondicional.png
 ${MODAL_GERAR_VENDA_PARCIAL}            modal_GerarVendaParcialCondicional.png
-${MODAL_CANCELAR_VENDA}                 modal_CancelarVenda.png
-${TELA_VENDAS}                          tela_VendasDeBalcao.png
 ${TELA_DEVOLUCAO_CONDICIONAL}           tela_DevolucaoCondicional.png
 
 # Botões
@@ -66,26 +45,18 @@ ${ROW_PRODUTO_INCLUSO_VENDA_PARCIAL}    row_ProdInclusoVendaParcialCond.png
 ${GUIA_ITENS_DISPONIVEIS_DEV_COND}      guia_ItensDisponiveisDevCond.png
 ${GUIA_DEVOLUCAO_DEV_COND}              guia_DevolucaoDevCond.png
 ${GUIA_FINALIZAR_DEV_COND}              guia_FinalizarDevCond.png
-# Parâmetros de Configuração (inicializados em runtime)
-${Parametro_ExigeSenhaCancelarVenda}     None
-${Parametro_ImprimeCondicional}          None
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${COD_CONDICIONAL}                       None
-${CODIGO_VENDA_GERADA_CONDICIONAL}       None
-${Codigo_Venda_Gerada}                   None
-${Codigo_Vendedor}                       None
-${Codigos_Produtos_Devolvidos}           ${None}
-${Edicao_Condicional}                    None
-${QTDE_PRODUTOS_DEVOLVIDOS}              None
-${Quantidade_Produto_Devolucao}          None
-${Selecao_De_Produtos}                   ${None}
-${Selecao_Por_Itens_Selecionados}        ${False}
+${COD_CONDICIONAL}                      None
+${CODIGO_VENDA_GERADA_CONDICIONAL}      None
+${Codigo_Venda_Gerada}                  None
+${Codigos_Produtos_Devolvidos}          ${None}
+${QTDE_PRODUTOS_DEVOLVIDOS}             None
+${Quantidade_Produto_Devolucao}         None
+${Selecao_De_Produtos}                  ${None}
+${Selecao_Por_Itens_Selecionados}       ${False}
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de condicionais
     
     Press Special Key    F11
@@ -134,7 +105,7 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
     END
 
-    KeyCondicional1.Informa a quantidade do produto(${Quantidade_Produto})
+    Informa a quantidade do produto(${Quantidade_Produto})
 
     utils.Valida parametros após incluir produto
 
@@ -146,7 +117,7 @@ E insiro mais de um produto normal(${QuantidadeDeProduto})
     
     FOR    ${I}    IN RANGE    ${QuantidadeDeProduto}
         
-        KeyCondicional1.Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
+        Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
 
         Append To List    ${Codigos_Produtos}    ${COD_PRODUTO}
         
@@ -167,7 +138,7 @@ Então finalizo a condicional
 
     Valida impressao direta de venda(${Parametro_ImprimeCondicional})
 
-    KeyCondicional1.Valida baixa de estoque
+    Valida baixa de estoque
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
@@ -237,7 +208,7 @@ Quando clico em gerar venda
     Wait Until Screen Contain    ${TELA_VENDAS_ADICIONAR}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
 
-    KeyCondicional1.Consulta venda gerada a partir da condicional
+    Consulta venda gerada a partir da condicional
 
     KeyVendas1.Verifica formas de recebimento da venda
 
@@ -550,4 +521,4 @@ Então gravo a devolução
 
     Wait Until Screen Contain    ${TELA_CONDICIONAIS}    ${TEMPO_TELA}
 
-    keyCondicional1.Valida retorno de estoque na devolução
+    Valida retorno de estoque na devolução

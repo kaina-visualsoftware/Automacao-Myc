@@ -11,22 +11,6 @@ Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                          ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                           ${config.IpServidor}
-${DBName}                           ${config.Database}
-${DBPass}                           vssql
-${DBPort}                           ${config.Porta}
-${DBUser}                           root
-
-# Sleep's
-${SLEEP_BAIXO}                      0.7
-${SLEEP_MEDIO}                      1.5
-${SLEEP_ALTO}                       3
-${TEMPO_TELA}                       20
-
 # Telas
 ${TELA_GERACAO_VENDAS}              tela_GeracaoVenda.png
 ${TELA_CARREGANDO_PEDIDOS}          tela_CarregandoPedidos.png
@@ -45,23 +29,13 @@ ${LABEL_GERANDO_CONTA_A_RECEBER}    lb_GerandoContasAReceber.png
 ${GRID_LISTAGEM_PEDIDOS}            grid_PedidosGeracaoVenda.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${COD_PRODUTO}                      None
-${COD_VENDA}                        None
-${CODIGO_OPERACAO_MOV}              None
-${Codigo_Pedido}                    None
-${Codigos_Pedidos}                  ${None}
-${Codigos_Produtos}                 ${None}
 ${EntradaIgualA_Outros}             None
 ${Parametro_BaixaAutomatico}        None
 ${Parametro_BaixaEstoquePreVenda}   None
 ${QTDE_BAIXA_PRODUTO}               None
 ${Quantidade_Pedidos_Feitos}        None
-${TOTAL_PEDIDO}                     None
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de geração de vendas
     
     Sleep    ${SLEEP_BAIXO}
@@ -114,7 +88,7 @@ Então confirmo a geração da venda
 
     Valida vencimento em fins de semana e feriados(1)
 
-    KeyGeracaoDeVenda1.Validação de geração de venda
+    Validação de geração de venda
 
     utils.Valida tela de transportadora/faturamento nota fiscal
 
@@ -150,7 +124,7 @@ Então confirmo a geração dos pedidos
     
     Valida vencimento em fins de semana e feriados(${Quantidade_Pedidos_Feitos})
     
-    KeyGeracaoDeVenda1.Validação da geração de venda de mais de um pedido
+    Validação da geração de venda de mais de um pedido
 
     utils.Valida tela de transportadora/faturamento nota fiscal
 
@@ -173,7 +147,7 @@ Validação de geração de venda
 
     Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_VENDA}
 
-    KeyGeracaoDeVenda1.Valida baixa de estoque
+    Valida baixa de estoque
 
 Valida baixa de estoque
 
@@ -270,6 +244,6 @@ Validação da geração de venda de mais de um pedido
         
         Sleep    ${SLEEP_BAIXO}
 
-        KeyGeracaoDeVenda1.Validação de geração de venda
+        Validação de geração de venda
         
     END

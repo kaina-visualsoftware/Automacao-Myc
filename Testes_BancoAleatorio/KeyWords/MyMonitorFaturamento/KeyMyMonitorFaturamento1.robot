@@ -8,22 +8,6 @@ Variables    ../../libs/leituraConfig.py
 Resource    ../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                            ./testes_bancoAleatorio/images
-
-# Conexão MySQL
-${DBHost}                             ${config.IpServidor}
-${DBName}                             ${config.Database}
-${DBPass}                             vssql
-${DBPort}                             ${config.Porta}
-${DBUser}                             root
-
-# Sleep's
-${SLEEP_BAIXO}                        0.7
-${SLEEP_MEDIO}                        1.5
-${SLEEP_ALTO}                         3
-${TEMPO_TELA}                         20
-
 # Telas
 ${TELA_MY_MONITOR_FATURAMENTO}        tela_MyMonitorFaturamento.png
 ${TELA_GUIA_CONFIGURACOES}            tela_GuiaConfiguracoes.png
@@ -42,9 +26,6 @@ ${ICONE_MYMONITOR_INATIVO}            icone_MyMonitorInativo.png
 ${ERRO_RUN_TIME_ERROR}                run-timeerror.png
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso o MyMonitorFaturamento
 
     Configurar myMonitorFaturamento inativo

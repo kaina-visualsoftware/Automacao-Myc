@@ -9,46 +9,17 @@ Library    ../../../libs/estoque.py
 Library    OperatingSystem
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
-Resource    ../../../utils/montadorDeCenarios.robot
+Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                         ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                          ${config.IpServidor}
-${DBName}                          ${config.Database}
-${DBPass}                          vssql
-${DBPort}                          ${config.Porta}
-${DBUser}                          root
-  
-# Sleep's
-${SLEEP_BAIXO}                     0.7
-${SLEEP_MEDIO}                     1.5
-${SLEEP_ALTO}                      3
-${TEMPO_TELA}                      20
-
 # Telas
-${TELA_CONTAS_A_PAGAR_AVULSA}      tela_CadastroContasAPagar.png
 ${TELA_CADASTRO_CONTAS_A_PAGAR}    tela_CadastroContasPagar.png
 
 # Botões
 ${BT_CONTAS_A_PAGAR}               bt_ContasAPagar.png
 
-# Outros
-${NomeTerminalExecucao}            ${config.terminal_name}
-
-# Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${Codigo_Cliente}                  None
-${CODIGO_OPERACAO_MOV}             None
-${VALOR_FINAL_OPERAÇÃO}            None
-
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de cadastro avulso de contas a pagar
 
     Recuperando numero documento

@@ -8,26 +8,10 @@ Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                                  ./testes_bancoAleatorio/images
-
-# Conexão com banco de dados
-${DBHost}                                   ${config.IpServidor}
-${DBName}                                   ${config.Database}
-${DBPass}                                   vssql
-${DBPort}                                   ${config.Porta}
-${DBUser}                                   root
-
-# Sleep's
-${SLEEP_BAIXO}                              0.7
-${SLEEP_MEDIO}                              1.7
-${SLEEP_ALTO}                               3
-${TEMPO_TELA}                               20
-
 # Telas
 ${TELA_NOTA_FISCAL_PREENCHIMENTO_MANUAL}    tela_NotaFiscalPreenchimentoManual.png
 ${GUIA_TOTALIZACAO_TRANSPORTADORA}          guia_TotalizacaoETransportadora.png
@@ -37,7 +21,6 @@ ${GUIA_PAGAMENTOS_NFE}                      guia_PagamentosNFe.png
 ${AVISO_INFORMAR_QTDE_VOLUME}               aviso_InformarQtdeVolumeNFe.png
 
 # Inputs
-${INPUT_COD_CLIENTE}                        input_CodCliente.png
 ${INPUT_COD_PRODUTO}                        input_CodProduto.png
 
 # Labels
@@ -49,25 +32,15 @@ ${ROW_PAGAMENTO_INCLUSO}                    row_PagInclusoNFeSaidasManual.png
 ${FORMA_RECEBIMENTO_OUTROS}                 Outros...
 ${Valor_Total_Produtos}                     0
 
-# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
-${Parametro_RealizaVendaSemEstoque}         None
-${Parametro_BaixaAutomatico}               None
-
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
 ${valorTotalNota}                           ${0}
 @{Produtos_NF}
-${Codigo_Cliente}                           None
-${FORMA_PADRAO}                             ${None}
-${FORMA_PRAZO}                              None
 ${DESCONTO_FORMA}                           ${0}
 ${EntradaIgualA_Outros}                     None
 ${VALOR_FINAL_NFE_SAIDA_MANUAL}             None
 ${Valor_Total_ICMS}                         ${0}
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
 
     Verifica formas de recebimento da venda

@@ -7,33 +7,14 @@ Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Variables    ../../../libs/leituraConfig.py
 
+Resource    ../../../utils/utils.robot
 Resource    ../../../utils/validacaoAviso.robot
-Resource    ../../..//utils/utils.robot
-Resource    ../../..//utils/montadorDeCenarios.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                                     ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                                      ${config.IpServidor}
-${DBName}                                      ${config.Database}
-${DBPass}                                      vssql
-${DBPort}                                      ${config.Porta}
-${DBUser}                                      root
-
-# Sleep's
-${SLEEP_BAIXO}                                 0.7
-${SLEEP_MEDIO}                                 1.7
-${SLEEP_ALTO}                                  3
-${TEMPO_TELA}                                  20
-
 # Telas
 ${MENU_EMISSÃO}                                menu_Emissão.png
 ${SUBMENU_ORDEM_DE_ENTREGA_NOVO}               subMenu_OrdemDeEntregaNovo.png
 ${SUBMENU_ORDEM_DE_ENTREGA_NOVO_LANCAMENTO}    subMenu_OrdemDeEntregaNovoLancamento.png
-${TELA_ORDEM_DE_ENTREGA}                       tela_OrdemDeEntrega.png
-${TELA_ENTREGAS}                               tela_Entregas.png
 ${TELA_EDICAO_ENTREGA}                         tela_EdicaoEntrega.png
 ${TELA_VISUALIZACAO_ENTREGA}                   tela_VisualizacaoEntrega.png
 ${TELA_DETALHES_GERACAO_ENTREGA}               tela_DetalhesGeracaoEntrega.png
@@ -60,17 +41,12 @@ ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}         checkbox_ItensEntregaSelecionados
 ${LABEL_VENDA_SELECIONADA_ENTREGA}             lb_VendaSelecionadaEntrega.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${COD_VENDA}                                   None
 ${COD_DOACAO}                                  None
 ${ID_GRUPO_ENTREGA}                            None
 ${Codigos_Vendas}                              ${None}
 ${Quantidade_Vendas_Feitas}                    None
 
 *** Keywords ***
-
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que eu inicio um lançamento de Ordem de Entrega Novo
         
     SikuliLibrary.Click    ${MENU_EMISSÃO}

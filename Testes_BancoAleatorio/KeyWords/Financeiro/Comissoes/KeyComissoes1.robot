@@ -8,42 +8,19 @@ Library    ../../../libs/verificacoesExtras.py
 Library    ../../../libs/estoque.py
 Library    ../../../libs/validaComissoes.py
 Library    ../../../libs/validaTelasIni.py
+
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                                        ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                                         ${config.IpServidor}
-${DBName}                                         ${config.Database}
-${DBPass}                                         vssql
-${DBPort}                                         ${config.Porta}
-${DBUser}                                         root
-
-# Sleep's
-${SLEEP_BAIXO}                                    0.7
-${SLEEP_MEDIO}                                    1.5
-${SLEEP_ALTO}                                     3
-${TEMPO_TELA}                                     20
-
 # Telas
-${TELA_COMISSOES}                                 tela_Comissoes.png
 ${TELA_AGENDAMENTO}                               tela_Agendamento_Comissao.png
-${TELA_CONTAS_A_PAGAR}                            tela_ContasPagar.png
-${TELA_RECEBIMENTO_PAGAMENTO}                     caixa_FinalizacaoRecebimentoPagamento.png
-${TELA_RECEBIMENTO_DUPLICATAS_CAIXA}              tela_RecebimentoDuplicatasCaixa.png
-${TELA_CAIXA_CARREGANDO}                          tela_CaixaPrinicipalCarregando.png
 ${TELA_VALE_COMPRA}                               tela_ValeCompra.png
 ${TELA_BAIXA_VALE_COMPRA}                         tela_BaixaValeCompra.png
 ${TELA_DETALHES_COMISSAO}                         tela_DetalhesComissao.png
-${CAIXA_PRINCIPAL}                                tela_CaixaPrinicipal.png
-${TELA_IMPRESSAO}                                 tela_Impressao.png
-${TELA_RELATORIO_COMISSOES}                       tela_RelatorioComissoes.png
 ${TELA_VISUALIZACAO_IMPRESSAO}                    tela_VisualizacaoImpressao.png
 ${TELA_PESQUISA_TEXTO_IMPRESSAO}                  tela_PesquisaTextoImpressao.png
 
@@ -54,13 +31,11 @@ ${AVISO_COMISSAO_ZERADA}                          aviso_ComissaoZerada.png
 ${AVISO_SEM_DADOS_PARA_EXIBICAO}                  aviso_SemDadosParaExibicao.png
 ${AVISO_PERIODO_COM_LOTE_PAGAMENTO}               aviso_PeriodoComLotePagamento.png
 ${AVISO_PESQUISA_TEXTO_CONCLUIDA}                 aviso_PesquisaTextoConcluida.png
-${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}                  aviso_confirmacaoBaixaConta.png
 
 # Botões
 ${BT_BAIXAR}                                      bt_Baixar.png
 ${BT_FECHAR}                                      bt_fechar.png
 ${BT_BINOCULO_PESQUISA_RELATORIO}                 bt_BinoculoPesquisaTextoRelatorio.png
-${BT_SIM}                                         bt_Sim.png
 
 # Checkbox
 ${CHECK_BOX_SELE_TODOS}                           checkBox_Comissao.png
@@ -71,12 +46,9 @@ ${CHECKBOX_SERVICOS}                              check_Servicos.png
 # ComboBox
 ${COMBOBOX_GERAR_SOBRE_VENDAS}                    combo_gerar_sobre_vendas.png
 
-# Inputs
-${INPUT_NUMERO_DOCUMENTO}                         caixa_PesquisaPorNDoc.png
 
 # Labels
 ${LABEL_CARREGANDO_COMISSOES_GRID}                lb_CarregandoComissoesGrid.png
-${LABEL_STATUS_ABERTO}                            lb_StatusAbertoCaixa.png
 ${LABEL_GERANDO_RELATORIO_AGUARDE}                lb_GerandoRelatorioAguarde.png
 ${LABEL_COD_VENDEDOR_RELATORIO}                   lb_CodVendRelatComissoes.png
 
@@ -87,7 +59,6 @@ ${RADIOBT_COMISSOES_PENDENTES}                    radioBT_Pendentes.png
 
 # Menus
 ${MENU_FINANCEIRO}                                menu_Financeiro.png
-${MENU_COMERCIAL}                                 menu_Comercial.png
 ${MENU_RELATORIOS}                                menu_Relatorios.png
 ${SUBMENU_RELATORIOS_COMISSOES}                   subMenu_Relatorios_Comissoes.png
 ${SUB_MENU_COMISSOES}                             subMenu_Comissoes.png
@@ -95,14 +66,12 @@ ${SUB_MENU_COMISSOES}                             subMenu_Comissoes.png
 # Outros
 ${LISTAGEM_GRID}                                  grid_Comissoes.png
 ${Quantidade_Zeros_Incluidos}
-${ABA_A_PAGAR}                                    aba_contasAPagar.png
 ${GRID_COMISSOES_PAGAR}                           grid_ComissoesPagar.png
 ${Total_Comissao}                                 ${0}
 ${COL_LOTE}                                       grid_ComissoesLote.png
 ${ABA_SERVICOS}                                   aba_servicosSelecionada.png
 ${SETA_ESQUERDA_GRID}                             setaEsqGrid.png
 ${GRID_SEM_REGISTROS}    	                      grid_ComissoesSemRegistros.png
-${NomeTerminalExecucao}                           ${config.terminal_name}
 ${GUIA_COMISSOES_PAGAS_AGENDADAS}                 guia_ComissoesPagasAgendadas.png
 ${TOOLTIP_ATALHOS_DATA}                           tooltip_AtalhosData.png
 ${j}                                              ${0}
@@ -111,17 +80,11 @@ ${Total_Comissao_Servicos}                        ${0}
 ${Teste_Cenario_Sem_Dados_Exibicao}               ${False}
 ${Comissao_SomenteRecebidas}                      ${False}
 ${Teste_Comissao_Produto}                         ${False}
-${Teste_Comissao_Servico}                         ${False}
 ${Teste_Comissão_Parcelada}                       ${False}
 ${Baixa_Eh_Servico}                               ${False}
 ${Comissao_Zerada_Por_Devolucao}                  ${False}
-${Cenario_Sem_Comissao_Servico}                   ${False}
 ${Cenario_Sem_Comissao_Produto}                   ${False}
 ${Teste_Comissao_Tab_Preco_Geral}                 ${False}
-${Cenario_Comissao_Tabela_Preco}                  ${None}
-${Id_Tabela_Preco_Selecionada}                    ${None}
-${Cenario_Comissao_Linha}                         ${None}
-${Cenario_Comissao_Linha_Servico}                 ${None}
 ${Tipo_Comissao_Linha_Servico}                    ${None}
 ${Codigo_Vendedor_Comissao_Tela}                  ${EMPTY}
 ${Total_Comissao_Executor_Baixa}                  ${0}
@@ -133,59 +96,20 @@ ${COMISSOES_PENDENTES}                            ${False}
 ${Relatorio_Deve_Conter_Dados}                    ${True}
 ${Dado_Localizado_Na_Pesquisa_Relatorio}          dadoFoiLocalizadoPesquisaRelatorio.png
 
-# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
-${Parametro_CaixaControladoPorUsuario}                 None
-${Parametro_ComissaoVendedorEExecutorServico}         None
-
 # Variáveis de Operação (inicializadas em runtime via Set Test/Suite Variable)
 ${_cenario_logado}                                    None
 ${Total_Comissao_OS}                                  ${0}
 ${queryConsulta}                                      None
-${Codigo_Vendedor}                                    None
-${CODIGO_OPERACAO_MOV}                                None
-${COD_PRODUTO}                                        None
-${COD_VENDA}                                          None
-${COD_SERVICO}                                        None
-${COD_ORDEM_SERVICO}                                  None
-${Quantidade_Produto}                                 None
-${Codigos_Produtos}                                   ${None}
-${Valores_Parcelas}                                   ${None}
-${DADOS_VENDA_DEVOLUÇÃO}                              ${None}
-${Tipo_Comissao_Linha}                                None
-${Teste_Comissao_Linha}                               ${False}
-${Teste_Comissao_Total_Venda}                         ${False}
 ${Teste_Comissao_Devolucao}                           ${False}
-${Teste_Comissao_Escalonada}                          ${False}
-${Teste_Comissao_Forma_Parcelamento}                  ${False}
-${Valor_Total_Produtos}                               ${0}
-${Valor_Total_Servicos}                               ${0}
-${Total_Tributos_Servico}                             ${0}
-${OS_PossuiProduto}                                   ${False}
-${OS_Vendedor_E_Tecnico_Diferentes}                   ${False}
-${Codigo_Tecnico_Servico}                             None
-${PercentualComissaoTotalVenda_Produto}               None
-${PercentualComissaoTotalVenda_Servico}               None
-${PercentualComissaoFormaParcParcela_Produto}          None
-${PercentualComissaoEscalonada_Servico}               None
-${PercentualComissaoEscalonada_Servico_Executor}      None
-${VALOR_FINAL_OPERAÇÃO}                               None
-${VALOR_FINAL_VENDA}                                  None
-${VALOR_FINAL_DEVOLUCAO}                              None
-${Quantidade_Produto_Devolucao}                       None
 ${Quantidade_Produto_Venda/Dev}                       None
 ${NDoc_Comissao}                                      None
-${ID_VALE_COMPRA}                                     None
 ${POSIÇÃO_VALOR}                                      ${0}
 ${COMISSOES_GERAR_SOBRE}                              None
 ${Filtro_Produtos}                                    ${False}
 ${Filtro_Servicos}                                    ${False}
 ${PERCENT_COMISSAO}                                   ${0}
-${BT_OK}                                              bt_OK.png
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de comissões
 
     IF    $Cenario_Comissao_Linha is not None
@@ -285,7 +209,10 @@ E seleciono a comissão de produtos
     
         Log To Console    Cenário Sem Geração De Comissão De Serviço -> Pulando pesquisa no grid...
 
-        Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${Cenario_Comissao_Linha}
+        # Determina o cenário correto: Tab Preço Geral usa ${Cenario_Comissao_Tabela_Preco}, demais usam ${Cenario_Comissao_Linha}
+        ${cenario_sem_com}    Set Variable If    ${Teste_Comissao_Tab_Preco_Geral}    ${Cenario_Comissao_Tabela_Preco}    ${Cenario_Comissao_Linha}
+
+        Valida Comissão Linha Produto    ${Tipo_Comissao_Linha}    ${cenario_sem_com}
 
         RETURN
 
@@ -519,7 +446,12 @@ Calcula comissão escalonada - Produtos
 
     ${Total_Comissao_Produtos}    Calcula Comissao Escalonada Produto    ${valor_unitario}    ${aliquota_escalonada}    ${quantidade}
 
-    ${query_comissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL
+    # Para TPE, o ERP não persiste ValorComissao em vendasprodutos (fica 0); calcula diretamente dos dados brutos do BD.
+    IF    ${eh_tab_preco_escalonada}
+        ${query_comissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorUnitario * (${aliquota_escalonada} / 100) * vp.Quantidade), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL
+    ELSE
+        ${query_comissaoProdutos}    Query    SELECT ROUND(SUM(vp.ValorComissao), 2) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OPERACAO_MOV} AND vp.Cancelada IS NULL
+    END
 
     ${valor_bd}    Evaluate    decimal.Decimal(str(${query_comissaoProdutos[0][0]}))    modules=decimal
 

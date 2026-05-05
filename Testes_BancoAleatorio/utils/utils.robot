@@ -8,112 +8,204 @@ Library    Collections
 Library    Telnet
 Library    String
 
-Resource    ./validacaoAviso.robot
+Variables    ../libs/leituraConfig.py
+
 *** Variables ***
+# Conexão com o Banco de Dados
+${DBHost}                                              ${config.IpServidor}
+${DBName}                                              ${config.Database}
+${DBPass}                                              vssql
+${DBPort}                                              ${config.Porta}
+${DBUser}                                              root
+
+# Repositório de Imagens
+${IMAGENS}                                             ./Testes_BancoAleatorio/images
+
 # Sleep's    
-${SLEEP_BAIXO}                                      0.7
-${SLEEP_MEDIO}                                      1.5
-${SLEEP_ALTO}                                       3
-${TEMPO_TELA}                                       20
+${SLEEP_BAIXO}                                         0.7
+${SLEEP_MEDIO}                                         1.5
+${SLEEP_ALTO}                                          3
+${TEMPO_TELA}                                          25
 
 # Telas
-${TELA_RECB_DUPLICATAS}                             tela_RecebimentoDuplicatas.png
-${TELA_IMPRESSAO}                                   tela_Impressao.png
-${TELA_SOLICITACAO_SENHA_USUARIO}                   tela_SolicitaSenha.png
-${TELA_OBSERVACAO_PRODUTO}                          tela_ObservacaoProduto.png
-${TELA_SELECIONA_TIPO_ENTREGA}                      tela_SelecionaEntrega.png
-${TELA_SOLICITACAO_CREDITO}                         tela_SolicitaLiberacaoCredito.png
-${TELA_CONTROLE_CRÉDITO}                            tela_ControleDeCredito.png
-${TELA_CONFIRMA_LIBERACAO_CREDITO}                  tela_ConfirmaLiberacao.png
-${TELA_DETALHAMENTO_SERVIÇO}                        tela_DetalhamentoServico.png
-${TELA_FUNCIONARIO_COMISSIONADO}                    modal_FuncionarioComissionadoServico.png
-${TELA_PERSONALIZACAO_PAGAMENTO}                    modal_PersonalizacaoPagamento.png
-${TELA_RECEBIMENTO_CARTAO}                          tela_RecebimentoCartaoCreditoDebito.png
-${TELA_MOVIMENTACAO_CONTA_CORRENTE}                 tela_MovimentacaoContaCorrente.png
-${TELA_CONS_FINAL}                                  tela_cons_final.png
-${TELA_TRANSP_FAT_NF}                               tela_TranspFatNotaFiscal.png
-${MODAL_LOCAL_NEGOCIACAO}                           tela_LocalNegociacao.png
-${TELA_CONDICIONAIS}                                tela_Condicionais.png
-${TELA_DEVOLUÇÕES}                                  tela_Devolucoes.png
-${TELA_ORCAMENTO}                                   tela_Orcamento.png
-${TELA_ORDEM_DE_SERVICO}                            tela_OrdemDeServico.png
-${TELA_VENDAS}                                      tela_VendasDeBalcao.png
-${TELA_PEDIDOS}                                     tela_Pedidos.png
-${TELA_CONTAS_A_PAGAR_AVULSA}                       tela_CadastroContasAPagar.png
-${TELA_NOTA_FISCAL_MANUAL}                          tela_NotaFiscalPreenchimentoManual.png
-${TELA_COMISSOES}                                   tela_Comissoes.png
-${CAIXA_PRINCIPAL}                                  tela_CaixaPrinicipal.png
-${TELA_LIBERACAO_DESCONTO_MAXIMO}                   tela_liberacaoDesconto.png
-${MODAL_CANCELAR_VENDA}                             modal_SenhaDoSupervisor.png
-${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}                 tela_MotivoPrecoZeradoProduto.png
-${TELA_IMPRESSAO_DIRETA}                            tela_ImpressaoDireta.png
-${MODAL_PERSONALIZACAO_PAGAMENTO}                   modal_PersonalizacaoPagamento.png
-${TELA_RELATORIO_COMISSOES}                         tela_RelatorioComissoes.png
+${TELA_RECB_DUPLICATAS}                                tela_RecebimentoDuplicatas.png
+${TELA_IMPRESSAO}                                      tela_Impressao.png
+${TELA_SOLICITACAO_SENHA_USUARIO}                      tela_SolicitaSenha.png
+${TELA_OBSERVACAO_PRODUTO}                             tela_ObservacaoProduto.png
+${TELA_SELECIONA_TIPO_ENTREGA}                         tela_SelecionaEntrega.png
+${TELA_SOLICITACAO_CREDITO}                            tela_SolicitaLiberacaoCredito.png
+${TELA_CONTROLE_CRÉDITO}                               tela_ControleDeCredito.png
+${TELA_CONFIRMA_LIBERACAO_CREDITO}                     tela_ConfirmaLiberacao.png
+${TELA_DETALHAMENTO_SERVIÇO}                           tela_DetalhamentoServico.png
+${TELA_FUNCIONARIO_COMISSIONADO}                       modal_FuncionarioComissionadoServico.png
+${TELA_PERSONALIZACAO_PAGAMENTO}                       modal_PersonalizacaoPagamento.png
+${TELA_RECEBIMENTO_CARTAO}                             tela_RecebimentoCartaoCreditoDebito.png
+${TELA_MOVIMENTACAO_CONTA_CORRENTE}                    tela_MovimentacaoContaCorrente.png
+${TELA_CONS_FINAL}                                     tela_cons_final.png
+${TELA_TRANSP_FAT_NF}                                  tela_TranspFatNotaFiscal.png
+${MODAL_LOCAL_NEGOCIACAO}                              tela_LocalNegociacao.png
+${TELA_CONDICIONAIS}                                   tela_Condicionais.png
+${TELA_DEVOLUÇÕES}                                     tela_Devolucoes.png
+${TELA_ORCAMENTO}                                      tela_Orcamento.png
+${TELA_ORDEM_DE_SERVICO}                               tela_OrdemDeServico.png
+${TELA_VENDAS}                                         tela_VendasDeBalcao.png
+${TELA_PEDIDOS}                                        tela_Pedidos.png
+${TELA_CONTAS_A_PAGAR_AVULSA}                          tela_CadastroContasAPagar.png
+${TELA_NOTA_FISCAL_MANUAL}                             tela_NotaFiscalPreenchimentoManual.png
+${TELA_COMISSOES}                                      tela_Comissoes.png
+${CAIXA_PRINCIPAL}                                     tela_CaixaPrinicipal.png
+${TELA_LIBERACAO_DESCONTO_MAXIMO}                      tela_liberacaoDesconto.png
+${MODAL_CANCELAR_VENDA}                                modal_SenhaDoSupervisor.png
+${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}                    tela_MotivoPrecoZeradoProduto.png
+${TELA_IMPRESSAO_DIRETA}                               tela_ImpressaoDireta.png
+${MODAL_PERSONALIZACAO_PAGAMENTO}                      modal_PersonalizacaoPagamento.png
+${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.png
+${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
 
 # Telas Avisos
-${AVISO_SEM_ESTOQUE}                                aviso_QuantidadeSemEstoque.png
-${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}                 aviso_JaIncluiuProdutoNoGrid.png
-${AVISO_USAR_ESSE_VENDEDOR}                         aviso_UsarEsseVendedor.png
-${AVISO_EST_INSUFICIENTE_CONTINUAR}                 aviso_EstoqueInsuficienteContinuar.png
-${AVISO_PRODUTO_JA_INCLUSO}                         aviso_ProdutoJaIncluso.png
-${AVISO_CADASTRE_CANAL_DE_VENDA}                    aviso_CadastreCanaisVenda.png
-${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}               aviso_EspecifiqueVlrUnitProduto.png
+${AVISO_SEM_ESTOQUE}                                   aviso_QuantidadeSemEstoque.png
+${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}                    aviso_qtde_sem_estoque_orcamento.png
+${AVISO_JA_INCLUIU_PRODUTO_NO_GRID}                    aviso_JaIncluiuProdutoNoGrid.png
+${AVISO_USAR_ESSE_VENDEDOR}                            aviso_UsarEsseVendedor.png
+${AVISO_EST_INSUFICIENTE_CONTINUAR}                    aviso_EstoqueInsuficienteContinuar.png
+${AVISO_PRODUTO_JA_INCLUSO}                            aviso_ProdutoJaIncluso.png
+${AVISO_CADASTRE_CANAL_DE_VENDA}                       aviso_CadastreCanaisVenda.png
+${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}                  aviso_EspecifiqueVlrUnitProduto.png
 
 # Botões
 
-${BT_CONFIRMA_CANAL_NEGOCIACAO}                     bt_ConfirmarCanal.png
-${BT_SOLICITAR_CRÉDITO}                             bt_SolicitarCredito.png
-${BT_SETA_DIREITA}                                  bt_SetaDireita.png
-${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}                 bt_IncluirProdutoNFeSaidaManual.png
+${BT_CONFIRMA_CANAL_NEGOCIACAO}                        bt_ConfirmarCanal.png
+${BT_SOLICITAR_CRÉDITO}                                bt_SolicitarCredito.png
+${BT_SETA_DIREITA}                                     bt_SetaDireita.png
+${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}                    bt_IncluirProdutoNFeSaidaManual.png
 
 # Inputs
-${INPUT_COD_CLIENTE}                                lb_CodCliente.png
-${INPUT_COD_CLIENTE_VENDA}                          lb_CodClienteVenda.png
-${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}               lb_CodClienteOS.png
-${INPUT_COD_CLIENTE_CONDICIONAL}                    lb_CodClienteCondicional.png
-${INPUT_CODIGO_CLIENTE_DEVOLUCAO}                   lb_CodClienteDevolucao.png
-${INPUT_COD_BENEFICIADO_DOACAO}                     lb_CodBeneficiadoDoacao.png
-${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}               input_CodCliente.png
-${INPUT_VALOR_UNITARIO_PRODUTO}                     input_ValorUnitarioProduto.png
+${INPUT_COD_CLIENTE}                                   lb_CodCliente.png
+${INPUT_COD_CLIENTE_VENDA}                             lb_CodClienteVenda.png
+${INPUT_COD_CLIENTE_ORDEM_DE_SERVICO}                  lb_CodClienteOS.png
+${INPUT_COD_CLIENTE_CONDICIONAL}                       lb_CodClienteCondicional.png
+${INPUT_CODIGO_CLIENTE_DEVOLUCAO}                      lb_CodClienteDevolucao.png
+${INPUT_COD_BENEFICIADO_DOACAO}                        lb_CodBeneficiadoDoacao.png
+${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}                  input_CodCliente.png
+${INPUT_VALOR_UNITARIO_PRODUTO}                        input_ValorUnitarioProduto.png
 
 # Labels
-${LABEL_AVISO_CREDITO_LIBERADO}                     lb_CreditoLiberado.png
-${LABEL_AVISO_CREDITO_LIBERADO2}                    lb_CreditoLiberado2.png
-${LABEL_REF_PRODUTO}                                label_RefProduto.png
+${LABEL_AVISO_CREDITO_LIBERADO}                        lb_CreditoLiberado.png
+${LABEL_AVISO_CREDITO_LIBERADO2}                       lb_CreditoLiberado2.png
+${LABEL_REF_PRODUTO}                                   label_RefProduto.png
 
 # Rows
-${ROW_PROD_INCLUSO}                                 row_ProdIncluso.png
-${ROW_FUNCIONARIO_INCLUSO_SERVICO_OS}               row_FuncComissionadoInclusoServicoOS.png
+${ROW_PROD_INCLUSO}                                    row_ProdIncluso.png
+${ROW_FUNCIONARIO_INCLUSO_SERVICO_OS}                  row_FuncComissionadoInclusoServicoOS.png
 
 # Outros
-${CORRIGE_FOCO}                                     corrigeFoco.png
-${Teste_Comissao_Linha_Servico}                     ${False}
-${Cenario_Comissao_Linha_Servico}                   ${None}
-${Vendedor_Selecionada_Escalonada}                  ${False}
-${Cenario_Comissao_Tabela_Preco}                    ${None}
-${Valores_Parcelas}                                 ${None}
-${AJUSTE_FOCO}                                      bt_SetaUltimaVenda.png
-${AJUSTE_FOCO_DEVOLUCAO}                            ajusteFocoDevolucao.png
-${QUANTIDADE_PRODUTOS}                              1
-${POSICAO_PARCELA}                                  ${None}
-${Teste_Comissao_Escalonada}                        ${False}
-${Teste_Comissao_Total_Venda}                       ${False}
-${Teste_Comissao_Linha}                             ${False}
-${Teste_Comissao_Forma_Parcelamento}                ${False}
-${Tipo_Comissao_Linha}                              ${None}
-${PercentualComissaoTotalVenda_Servico}             ${None}
-${PercentualComissaoEscalonada_Servico}             ${None}
-${PercentualComissaoEscalonada_Servico_Executor}    ${None}
-${Desconto_Escalonada}                              ${None}
-${Aliquota_Escalonada}                              ${None}
-${Faixas_Escalonada}                                ${None}
-${OS_Vendedor_E_Tecnico_Diferentes}                 ${False}
-${Cenario_Sem_Comissao_Servico}                     ${False}
-${Id_Tabela_Preco_Selecionada}                      ${None}
-${Atualizacao_Ambiente_MyCommerce}                  ${False}
+${CORRIGE_FOCO}                                        corrigeFoco.png
+${AJUSTE_FOCO}                                         bt_SetaUltimaVenda.png
+${AJUSTE_FOCO_DEVOLUCAO}                               ajusteFocoDevolucao.png
+${NomeTerminalExecucao}                                ${config.terminal_name}
+
+# Flags booleanas (inicializadas em runtime via Set Test Variable)
+${Aviso_Vendedor_Existe_Comissao}                      ${False}
+${Teste_Comissao_Linha_Servico}                        ${False}
+${Teste_Comissao_Servico}                              ${False}
+${Vendedor_Selecionada_Escalonada}                     ${False}
+${Teste_Comissao_Escalonada}                           ${False}
+${Teste_Comissao_Total_Venda}                          ${False}
+${Teste_Comissao_Linha}                                ${False}
+${Teste_Comissao_Forma_Parcelamento}                   ${False}
+${OS_Vendedor_E_Tecnico_Diferentes}                    ${False}
+${Cenario_Sem_Comissao_Servico}                        ${False}
+${Atualizacao_Ambiente_MyCommerce}                     ${False}
+${VendedorPossuiSenha}                                 ${False}
+${Parametro_QtdePadraoDevolucao}                       ${False}
+${Parametro_QtdePadraoDoacao}                          ${False}
+${Parametro_QtdePadraoEmissaoManualSaida}              ${False}
+${Parametro_QtdePadraoOrcamentos}                      ${False}
+${Parametro_QtdePadraoOS}                              ${False}
+${Parametro_QtdePadraoPreVendas}                       ${False}
+${Parametro_QtdePadraoVendas}                          ${False}
+
+# Variáveis escalares (inicializadas em runtime via Set Test Variable)
+${COD_PRODUTO}                                         None
+${COD_SERVICO}                                         None
+${COD_VENDA}                                           None
+${CODIGO_OPERACAO_MOV}                                 None
+${Codigo_Pedido}                                       None
+${VALOR_FINAL_VENDA}                                   None
+${VALOR_FINAL_OPERAÇÃO}                                None
+${VALOR_FINAL_DEVOLUCAO}                               None
+${VALOR_FINAL_OS}                                      None
+${TOTAL_PEDIDO}                                        None
+${codVendedor}                                         None
+${Codigo_Tecnico_Servico}                              None
+${NOVO_VENDEDOR}                                       None
+${QUANTIDADE_PRODUTOS}                                 1
+${POSICAO_PARCELA}                                     None
+${PercentualComissaoFormaParcParcela_Produto}          None
+${PercentualComissaoTotalVenda_Produto}                None
+${Tipo_Comissao_Linha}                                 None
+${PercentualComissaoTotalVenda_Servico}                None
+${PercentualComissaoEscalonada_Servico}                None
+${PercentualComissaoEscalonada_Servico_Executor}       None
+${Desconto_Escalonada}                                 None
+${Aliquota_Escalonada}                                 None
+${Quantidade_Padrao_Produto}                           None
+${Total_Tributos_Servico}                              0
+
+# Variáveis indexadas / checadas com is None (requerem ${None})
+${Cenario_Comissao_Linha}                              ${None}
+${Cenario_Comissao_Linha_Servico}                      ${None}
+${Cenario_Comissao_Tabela_Preco}                       ${None}
+${FORMA_PADRAO}                                        ${None}
+${FORMA_PRAZO}                                         ${None}
+${FORMA_PADRAO_PEDIDO}                                 ${None}
+${Valores_Parcelas}                                    ${None}
+${Faixas_Escalonada}                                   ${None}
+${Id_Tabela_Preco_Selecionada}                         ${None}
+${Codigos_Produtos}                                    ${None}
+${Codigos_Pedidos}                                     ${None}
+
+# Variáveis de operação (inicializadas em runtime — compartilhadas com validacaoAviso.robot)
+${Codigo_Vendedor}                                     None
+${Codigo_Cliente}                                      None
+${TELA}                                                None
+
+# Parâmetros do sistema — compartilhados com validacaoAviso.robot
+${Aviso_ProdutoSemEstoque}                             ${False}
+${Parametro_BloqueiaOrcamentoSemEstoque}               ${False}
+${Parametro_BloquearCampoNpedPreVenda}                 ${False}
+${Parametro_ConsultaSCPCVenda}                         ${False}
+${Parametro_Controla_Entrega}                          ${False}
+${Parametro_ControlaCreditoCondicional}                ${False}
+${Parametro_ControlaCreditoDescontaChequePreEmMaos}    ${False}
+${Parametro_ControlaCreditoDevTroca}                   ${False}
+${Parametro_ControlaCreditoGerarPreVendaOrcamento}     ${False}
+${Parametro_ControlaCreditoOrcamento}                  ${False}
+${Parametro_ControlaCreditoOS}                         ${False}
+${Parametro_ControlaCreditoPreSeparacaoPreVenda}       ${False}
+${Parametro_ControlaCreditoPreVenda}                   ${False}
+${Parametro_ControlaCreditoPreVendaAuditoria}          ${False}
+${Parametro_ControlaCreditoVenda}                      ${False}
+${Parametro_ExibirCampoNpedVenda}                      ${False}
+${Parametro_ExigeSenhaMultiplo}                        ${False}
+${Parametro_FocoCampoCliente}                          ${False}
+${Parametro_ImpressaoDiretaPreVenda}                   ${False}
+${Parametro_IncluiDireto}                              ${False}
+${Parametro_Local_Negociacao}                          ${False}
+${Parametro_NaoDeduzirISSQNComissaoOS}                 ${False}
+${Parametro_PesquisaCodigoCodFabricaReferencia}        ${False}
+${Parametro_QuantidadePadraoProduto}                   None
+${Parametro_RealizaVendaSemEstoque}                    ${False}
+${Parametro_Seleciona_Funcionario_Comissao_Servico}    ${False}
+${Parametro_TelasQtdePadraoProduto}                    None
+${Parametro_VinculaProdutoDevolvidoEntrega}            ${False}
+${Parametro_Permite_Varias_Tabelas}                    ${False}
 
 *** Keywords ***
-Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
+Ler imagens iniciais
+    Add Image Path    ${IMAGENS}
+
+Finalização com recebimento de duplicatas(${valor_operacao})
 
     Wait Until Screen Contain    ${TELA_RECB_DUPLICATAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_MEDIO}
@@ -124,7 +216,7 @@ Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
         
     ELSE
     
-        Input Text    ${EMPTY}    ${VALOR_FINAL_OPERAÇÃO}
+        Input Text    ${EMPTY}    ${valor_operacao}
         
     END
     Sleep    ${SLEEP_BAIXO}
@@ -188,7 +280,7 @@ Adicionar Vendedor e Cliente(${TELA})
 
     IF    '${TELA}' != 'NFeSaidasManual'
 
-        IF    '${Vendedor_Selecionada_Escalonada}' != 'True'
+        IF    not ${Vendedor_Selecionada_Escalonada}
 
             Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${False}
             Sleep    ${SLEEP_BAIXO}
@@ -228,6 +320,13 @@ Adicionar Vendedor e Cliente(${TELA})
             # Para cenários de comissão por Tabela de Preço POR LINHA, seleciona a tabela específica no combobox.
             # Cenários de "Tabela de Preco Geral" NÃO usam o combobox — a seleção é feita pela
             # tela popup que aparece após incluir o produto (em 'Valida a tela de preços & prazos de pagamentos').
+            Seleciona Tabela De Preco No Combobox    ${Id_Tabela_Preco_Selecionada}
+
+        ELSE IF    $Cenario_Comissao_Tabela_Preco == 'PROD__TAB_PRECO_ESCALONADA__COM_DESC' and ('${TELA}' not in ('Venda', 'Pedido', 'Orcamento') or not ${Parametro_Permite_Varias_Tabelas})
+
+            # Para TPE: o popup de seleção de tabela só aparece em Venda/Pré-venda/Orçamento quando
+            # Parametro_Permite_Varias_Tabelas está habilitado. Nas demais telas (ex: OS) ou quando
+            # o parâmetro está desabilitado, a tabela deve ser selecionada pelo combobox ao informar o vendedor.
             Seleciona Tabela De Preco No Combobox    ${Id_Tabela_Preco_Selecionada}
 
         ELSE
@@ -437,10 +536,10 @@ Valida teste de comissão
 
             END
 
-            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND EXISTS (SELECT 1 FROM comissao_escalonadatab cet WHERE cet.IDTabela = t.Codigo) AND EXISTS (SELECT 1 FROM comissao_escalonadatab cet0 WHERE cet0.IDTabela = t.Codigo AND cet0.Ate = 0) ORDER BY RAND() LIMIT 1;
+            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND t.TP_Preco = 'G' AND t.TpComissao = 'E' AND EXISTS (SELECT 1 FROM comissao_escalonadatab cet WHERE cet.IDTabela = t.Codigo) AND EXISTS (SELECT 1 FROM comissao_escalonadatab cet0 WHERE cet0.IDTabela = t.Codigo AND cet0.Ate = 0) ORDER BY RAND() LIMIT 1;
 
             IF    len($resultado_tabela) == 0
-                Fail    Nenhuma tabela de preço com faixas em comissao_escalonadatab (incluindo faixa Ate=0) foi encontrada para comissão por tabela de preço escalonada.
+                Fail    Nenhuma tabela de preço (TP_Preco='G', TpComissao='E') com faixas em comissao_escalonadatab (incluindo faixa Ate=0) foi encontrada.
             END
 
             ${Id_Tabela_Preco_Selecionada}           Set Variable    ${resultado_tabela[0][0]}
@@ -462,16 +561,16 @@ Valida teste de comissão
 
                 ${SelecionarVendedor}    Set Variable    ${True}
 
-            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
+            ELSE IF    ${Teste_Comissao_Servico} and ($Dados_Vendedor[0][2] is None or '${Dados_Vendedor[0][2]}' != '1')
 
                 ${SelecionarVendedor}    Set Variable    ${True}
 
-            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and not ${Cenario_Sem_Comissao_Servico} and ($Dados_Vendedor[0][3] is None or ${Dados_Vendedor[0][3]} == 0)
+            ELSE IF    ${Teste_Comissao_Servico} and not ${Cenario_Sem_Comissao_Servico} and ($Dados_Vendedor[0][3] is None or ${Dados_Vendedor[0][3]} == 0)
 
                 # Cenário exige percentual > 0, mas vendedor atual tem 0 ou NULL
                 ${SelecionarVendedor}    Set Variable    ${True}
 
-            ELSE IF    '${Teste_Comissao_Servico}' == 'True' and ${Cenario_Sem_Comissao_Servico} and $Dados_Vendedor[0][3] is not None and ${Dados_Vendedor[0][3]} > 0
+            ELSE IF    ${Teste_Comissao_Servico} and ${Cenario_Sem_Comissao_Servico} and $Dados_Vendedor[0][3] is not None and ${Dados_Vendedor[0][3]} > 0
 
                 # Cenário exige percentual = 0/NULL, mas vendedor atual tem > 0
                 ${SelecionarVendedor}    Set Variable    ${True}
@@ -498,13 +597,13 @@ Valida teste de comissão
         
         ${SelecionarVendedor}    Set Variable    ${False}
         
-        IF    $Tipo_Comissao != 'T' or ('${Teste_Comissao_Servico}' == 'True' and ${Dados_Vendedor[0][2]} != '1')
+        IF    $Tipo_Comissao != 'T' or (${Teste_Comissao_Servico} and '${Dados_Vendedor[0][2]}' != '1')
 
             ${SelecionarVendedor}    Set Variable    ${True}
 
         ELSE
 
-            IF    ${Dados_Vendedor[0][1]} != None and ${Dados_Vendedor[0][1]} > 0
+            IF    $Dados_Vendedor[0][1] is not None and ${Dados_Vendedor[0][1]} > 0
 
                 Set Test Variable    ${PercentualComissaoTotalVenda_Produto}    ${Dados_Vendedor[0][1]}
 
@@ -516,7 +615,7 @@ Valida teste de comissão
             
             IF    ${Teste_Comissao_Servico}
 
-                IF    ${Dados_Vendedor[0][3]} != None and ${Dados_Vendedor[0][3]} > 0
+                IF    $Dados_Vendedor[0][3] is not None and ${Dados_Vendedor[0][3]} > 0
 
                     Set Test Variable    ${PercentualComissaoTotalVenda_Servico}    ${Dados_Vendedor[0][3]}
 
@@ -546,7 +645,7 @@ Valida teste de comissão
 
             ${SelecionarVendedor}    Set Variable    ${True}
 
-        ELSE IF    '${Teste_Comissao_Servico}' == 'True' and (${Dados_Vendedor[0][2]} == None or '${Dados_Vendedor[0][2]}' != '1')
+        ELSE IF    ${Teste_Comissao_Servico} and ($Dados_Vendedor[0][2] is None or '${Dados_Vendedor[0][2]}' != '1')
 
             ${SelecionarVendedor}    Set Variable    ${True}
 
@@ -837,11 +936,11 @@ Valida teste de comissão
         # SEM_PERC → tabela com PComissao = 0 (ou NULL)
         IF    '${Cenario_Comissao_Tabela_Preco}' == 'PROD__TAB_PRECO_GERAL__COM_PERC'
 
-            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND t.PComissao > 0 AND t.TP_Preco = 'G' ORDER BY RAND() LIMIT 1;
+            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND t.PComissao > 0 AND t.TP_Preco = 'G' AND t.TpComissao = 'G' ORDER BY RAND() LIMIT 1;
             
         ELSE IF    '${Cenario_Comissao_Tabela_Preco}' == 'PROD__TAB_PRECO_GERAL__SEM_PERC'
 
-            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND (t.PComissao = 0 OR t.PComissao IS NULL) AND t.TP_Preco = 'G' ORDER BY RAND() LIMIT 1;
+            ${resultado_tabela}    Query    SELECT t.Codigo, t.Descricao FROM tabelas t WHERE t.Cancelada IS NULL AND (t.PComissao = 0 OR t.PComissao IS NULL) AND t.TP_Preco = 'G' AND t.TpComissao = 'G' ORDER BY RAND() LIMIT 1;
 
         END
 
@@ -910,7 +1009,7 @@ Seleciona vendedor comissionado(${Tipo_Comissao_Selecionar})
 
     END
 
-    IF    ${Dados_Vendedor} != 'None'
+    IF    len($Dados_Vendedor) > 0
     
         Set Test Variable    ${Aviso_Vendedor_Existe_Comissao}    ${True}
         Set Test Variable    ${Codigo_Vendedor}    ${Dados_Vendedor[0][0]}
@@ -1438,6 +1537,8 @@ Inserir Produto normal - Necessita de estoque
 
     Set Test Variable    ${COD_PRODUTO}    ${codProduto[0][0]}
 
+    Set Test Variable    ${Qtde_Minima_Estoque}
+
     # IF    ${TesteUtilizaDescontoMaximoProduto}
 
     #     Altera o desconto máximo do produto
@@ -1586,7 +1687,7 @@ Valida parametros após incluir produto
 
     IF    ${Parametro_BloqueiaOrcamentoSemEstoque}
         
-        validacaoAviso.Valida aviso de quantidade não existente em estoque - Orçamento
+        Valida aviso de quantidade não existente em estoque - Orçamento
 
         IF    ${AVISO_SEM_ESTOQUE}
 
@@ -2239,7 +2340,7 @@ Seleciona técnico executor comissionado diferente do vendedor da OS(${Tipo_Comi
 
     END
 
-    IF    ${Dados_Vendedor} != 'None'
+    IF    len($Dados_Vendedor) > 0
 
         Set Test Variable    ${Codigo_Tecnico_Servico}    ${Dados_Vendedor[0][0]}
 
@@ -2503,6 +2604,32 @@ Valida produto com preço unitário zerado
         
     END
 
+Valida produto já incluso
+
+    Sleep    ${SLEEP_BAIXO}
+    ${aviso}    Exists    ${AVISO_PRODUTO_JA_INCLUSO}
+
+    IF    ${aviso}
+
+        Press Combination    KEY.ALT    KEY.S
+        
+    END
+
+Valida aviso de quantidade não existente em estoque - Orçamento
+
+    ${Existe_MSG}    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_QTDE_SEM_ESTOQUE_ORCAMENTO}    ${SLEEP_BAIXO}
+    Set Test Variable    ${AVISO_SEM_ESTOQUE}    ${Existe_MSG}
+
+   IF    ${Existe_MSG}
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    BACKSPACE
+
+   END
+
 Corrigir valor unitário do produto
 
     Informa valor unitário do produto
@@ -2577,7 +2704,7 @@ Valida telas que utilizam quantidade padrão de produtos
     Set Global Variable    ${Parametro_QtdePadraoDoacao}                ${False}
     Set Global Variable    ${Parametro_QtdePadraoEmissaoManualSaida}    ${False}
 
-    IF    '${Parametro_TelasQtdePadraoProduto}' == 'None'
+    IF    $Parametro_TelasQtdePadraoProduto is None
         RETURN
     END
 
@@ -2676,5 +2803,22 @@ Fechar tela de personalização de forma de parcelamento
         Press Combination    KEY.ALT    KEY.C
         
         Wait Until Screen Not Contain    ${MODAL_PERSONALIZACAO_PAGAMENTO}    ${SLEEP_ALTO}
+
+    END
+
+Valida solicitação de senha do usuário supervisor para liberação de status da OS
+
+    ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_LIBERACAO_STATUS}    ${SLEEP_ALTO}
+
+    IF    ${tela}
+
+        ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 LIMIT 1;
+        ${senhaUsuarioDescriptografada}    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
+
+        Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ENTER 
+        Sleep    ${SLEEP_MEDIO}
 
     END

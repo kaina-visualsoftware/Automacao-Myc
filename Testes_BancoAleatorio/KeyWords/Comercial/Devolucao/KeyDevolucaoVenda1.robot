@@ -7,29 +7,12 @@ Library    Process
 Library    ../../../libs/verificacoesExtras.py
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
+Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                             ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                              ${config.IpServidor}
-${DBName}                              ${config.Database}
-${DBPass}                              vssql
-${DBPort}                              ${config.Porta}
-${DBUser}                              root
-
-# Sleep's
-${SLEEP_BAIXO}                         0.7
-${SLEEP_MEDIO}                         1.5
-${SLEEP_ALTO}                          3
-${TEMPO_TELA}                          20
-
 # Telas
-${TELA_DEVOLUÇÕES}                     tela_Devolucoes.png
 ${TELA_DEVOLUÇÕES_AVULSA_ADICIONAR}    tela_DevolucaoAvulsaAdicionar.png
 ${TELA_DEVOLUÇÕES_ADICIONAR}           tela_DevolucoesAdicionar.png
 
@@ -41,41 +24,14 @@ ${INPUTBOX_OBS}                        inputBox_Observacoes.png
 ${LABEL_MOTIVO_DEVOLUCAO}              lb_motivoDevolucao.png
 ${LABEL_SERA_GERADO_VALE_COMPRA}       lb_SeraGeradoValeCompraValorDev.png
 
-# Outros
-${FORMA_RECEBIMENTO_OUTROS}            Outros...
-
-# Parâmetros de Configuração (inicializados em runtime)
-${Parametro_DevolucaoAvulsa}           None
-${Parametro_DevolucaoExigeOBS}         None
-${Parametro_DevolucaoPermiteAberta}    None
-${Parametro_IncluiDireto}              None
-${Parametro_ObrigaMotivoDevolucao}     None
-${Parametro_RealizaVendaSemEstoque}    None
-${Parametro_ValeCompra_Dev_Menor0}     None
-
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
-${CODIGO_OPERACAO_MOV}                 None
 ${COD_DEVOLUCAO}                       None
-${COD_PRODUTO}                         None
-${COD_VENDA}                           None
-${Codigo_Cliente}                      None
-${Codigo_Vendedor}                     None
-${Codigos_Produtos}                    ${None}
-${DADOS_VENDA_DEVOLUÇÃO}               None
 ${EntradaIgualA_Outros_dev}            None
 ${FORMA_PADRAO_DEV}                    None
 ${ID_VALE_COMPRA}                      None
-${Quantidade_Produto}                  None
 ${Quantidade_Produto_Devolucao}        None
-${QUANTIDADE_PRODUTOS}                 None
-${VALOR_FINAL_DEVOLUCAO}               None
-${VALOR_FINAL_VENDA}                   None
-${Valor_Total_Produtos}                None
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Dado que acesso a tela de devoluções de vendas/OS
 
     ${FORMA_PADRAO_DEV}    Valida Forma Parcelamento    Devolução

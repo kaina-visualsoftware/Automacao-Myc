@@ -8,30 +8,11 @@ Library    ../../../libs/verificacoesExtras.py
 Library    ../../../libs/estoque.py
 Variables    ../../../libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
 Resource    ../../../utils/utils.robot
-Resource     ../../../utils/montadorDeCenarios.robot
+Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
-# Repositório de Imagens
-${IMAGENS}                                    ./testes_bancoAleatorio/images
-
-# Conexão com o Banco de Dados
-${DBHost}                                     ${config.IpServidor}
-${DBName}                                     ${config.Database}
-${DBPass}                                     vssql
-${DBPort}                                     ${config.Porta}
-${DBUser}                                     root
-
-# Sleep's
-${SLEEP_BAIXO}                                0.7
-${SLEEP_MEDIO}                                1.5
-${SLEEP_ALTO}                                 3
-${TEMPO_TELA}                                 20
-${TEMPO_LIMITE_CARREGAMENTO_GRID}             6
-
 # Telas
-${CAIXA_PRINCIPAL}                            tela_CaixaPrinicipal.png
 ${ABA_A_PAGAR}                                aba_contasAPagar.png
 ${ABA_A_RECEBER}                              aba_contasAReceber.png
 ${TELA_CONTAS_A_PAGAR}                        tela_ContasPagar.png
@@ -45,16 +26,13 @@ ${TELA_ADIANTAMENTOS}                         tela_Adiantamenos_Caixa.png
 ${TELA_REC_PAG_RÁPIDO}                        tela_RecPagRápido.png
 
 # Telas Avisos
-# ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_PAGAR}      aviso_confirmacaoBaixaContaPagar.png
 ${AVISO_REALMENTE_EFETUAR_BAIXA}              aviso_PerguntaQualquer.png
-# ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    aviso_confirmacaoBaixaContaReceber.png
 ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}              aviso_confirmacaoBaixaConta.png
 
 # Botões
 ${BT_ESTORNAR}                                bt_Estornar.png
-${BT_SETA_DIREITA}                            bt_SetaDireita.png
-${BT_SETA_DIREITA_DATAS}                      bt_SetaDireitaDatas.png
 ${BT_SIM}                                     bt_Sim.png
+${BT_SETA_DIREITA_DATAS}                      bt_SetaDireitaDatas.png
 
 # Outros
 ${INPUT_NUMERO_DOCUMENTO}                     caixa_PesquisaPorNDoc.png
@@ -64,8 +42,6 @@ ${LABEL_NENHUMA_CONTA_RECEBER}                lb_NenhumaContaPendente.png
 ${LABEL_APENAS_A_RECEBER}                     label_ApenasAReceber.png
 ${CHECK_BOX_MARCADO}                          checkBox_Marcado.png
 ${CHECK_BOX_CONTA_PAGA}                       checkBox_ContaPaga.png
-${NomeTerminalExecucao}                       ${config.terminal_name}
-${INPUT_NUMERO_DOCUMENTO}                     caixa_PesquisaPorNDoc.png
 ${LABEL_APENAS_A_PAGAR}                       label_ApenasAPagar.png
 ${CHECK_BOX_CONTAS_PAGA}                      checkBox_Marcado_Selecionado.png
 ${INPUT_NUMERO_NFS}                           input_NumeroNFS.png
@@ -74,12 +50,8 @@ ${INPUT_DATA_LANCAMENTO_A_RECEBER}            input_DataLancamentoAReceber.png
 ${INPUT_DATA_LANCAMENTO_A_PAGAR}              input_DataLancamentoAPagar.png
 ${CHECKBOX_CONTA_A_PAGAR}                     checkBox_CaixaContaAPagar.png
 ${LABEL_STATUS_ABERTO}                        lb_StatusAbertoCaixa.png
-${POSICAO_PARCELA}                            ${None}
 ${Total_Recebido_Venda}                       ${0}
 ${LABEL_APENAS_A_RECEBER_HABILITADO}          label_ApenasAReceberHabilitado.png
-
-# Parâmetros de Configuração (inicializados em runtime via Set Global Variable)
-${Parametro_CaixaControladoPorUsuario}        None
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
 ${Forma_Recebimento}                          None
@@ -89,19 +61,14 @@ ${CODIGO_OPERACAO_MOV}                        None
 ${VALOR_FINAL_OPERAÇÃO}                       None
 ${CODIGO_CAIXA}                               None
 ${Sequencia_Caixa_Abertura}                   None
-${COD_VENDA}                                  None
 ${COD_DEVOLUCAO}                              None
-${VALOR_FINAL_VENDA}                          None
-${VALOR_FINAL_DEVOLUCAO}                      None
 ${Valor_Pago_Parcela}                         None
-${Valores_Parcelas}                           ${None}
 ${N_Documento_Parcelas}                       ${None}
 ${Controle_Pag_Rec_Diario}                    ${None}
+${valor_adiantamento}                         ${None}
+${VALOR_RECEBIMENTO_ATUAL}                    ${None}
 
 *** Keywords ***
-Ler imagens iniciais
-    Add Image Path    ${IMAGENS}
-
 Carregar dados de formas
     
     ${Forma_Recebimento}    Verifica Forma Recebimento Padrao
@@ -301,54 +268,52 @@ E vou para a aba de contas a receber
     Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER}    ${SLEEP_ALTO}
     Sleep    ${SLEEP_MEDIO}
 
-Então faço o recebimento da conta
+# Então faço o recebimento da conta
     
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.R
-    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+#     Sleep    ${SLEEP_BAIXO}
+#     Press Combination    KEY.ALT    KEY.R
+#     Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
+#     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.C
-    # Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA_A_RECEBER}    ${TEMPO_TELA}
-    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+#     Press Combination    KEY.ALT    KEY.C
+#     Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
+#     Sleep    ${SLEEP_BAIXO}
 
-    ${tela_baixa_conta_visivel}    Exists    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}
+#     ${tela_baixa_conta_visivel}    Exists    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}
     
-    Sleep    ${SLEEP_BAIXO}
+#     Sleep    ${SLEEP_BAIXO}
     
-    ${bt_sim_visivel}    Exists    ${BT_SIM}
+#     ${bt_sim_visivel}    Exists    ${BT_SIM}
 
-    # Press Combination    KEY.ALT    KEY.S
-    SikuliLibrary.Click    ${BT_SIM}
+#     SikuliLibrary.Click    ${BT_SIM}
 
-    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
+#     Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
 
-    Valida tela de confirmação de data
+#     Valida tela de confirmação de data
 
-    IF    '${Forma_Recebimento}' == 'Outros'
+#     IF    '${Forma_Recebimento}' == 'Outros'
 
-        Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
+#         Finalização com recebimento de duplicatas(${VALOR_FINAL_OPERAÇÃO})
     
-    ELSE IF     '${Forma_Recebimento}' == 'Cartão Oper.'
+#     ELSE IF     '${Forma_Recebimento}' == 'Cartão Oper.'
         
-        Finalização com recebimento de cartão de crédito/débito
+#         Finalização com recebimento de cartão de crédito/débito
 
-    ELSE IF     '${Forma_Recebimento}' == 'Moeda'
+#     ELSE IF     '${Forma_Recebimento}' == 'Moeda'
         
-        Log To Console    Tipo moeda não executada novas telas
+#         Log To Console    Tipo moeda não executada novas telas
 
-    ELSE IF     '${Forma_Recebimento}' == 'Bancária'
+#     ELSE IF     '${Forma_Recebimento}' == 'Bancária'
         
-        Finalização com o tipo bancaria
+#         Finalização com o tipo bancaria
 
-    END
+#     END
 
-    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${TEMPO_TELA}
+#     Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${TEMPO_TELA}
 
-    Consulta sequencia caixa(${CODIGO_CAIXA})
+#     Consulta sequencia caixa(${CODIGO_CAIXA})
 
-    Validação movimentou caixa(Crédito)
+#     Validação movimentou caixa(Crédito)
 
 Quando desmarco a opção somente a receber
     
@@ -621,15 +586,22 @@ Validação movimentou caixa(${Tipo_Mov})
     ${DATA_ATUAL}    Get Current Date    result_format=%Y-%m-%d
     Sleep    ${SLEEP_BAIXO}
 
+    # Usa VALOR_RECEBIMENTO_ATUAL se definido, senão usa VALOR_FINAL_OPERAÇÃO
+    ${valor_esperado}    Get Variable Value    \${VALOR_RECEBIMENTO_ATUAL}    ${None}
+
+    IF    $valor_esperado is None
+        ${valor_esperado}    Set Variable    ${VALOR_FINAL_OPERAÇÃO}
+    END
+
+    ${valor_esperado}    Convert To Number    ${valor_esperado}
+
     ${Consulta_CaixaMovimento}    Query    SELECT CodigoCliente, ValorDocumento, ValorPago, Data, TipoMovimento FROM caixamovimentos WHERE CodigoAbertura = ${Sequencia_Caixa_Abertura} AND NDocumento LIKE '%${CODIGO_OPERACAO_MOV}%' ORDER BY Sequencia DESC;
 
     ${Data_Banco}    Convert To String    ${Consulta_CaixaMovimento[0][3]}
 
-    ${Valor_Final_Operação_Convertido}    Convert To Number    ${VALOR_FINAL_OPERAÇÃO}
-
     Should Be Equal    ${Consulta_CaixaMovimento[0][0]}    ${Codigo_Cliente}
-    Should Be Equal    ${Consulta_CaixaMovimento[0][1]}    ${Valor_Final_Operação_Convertido}
-    Should Be Equal    ${Consulta_CaixaMovimento[0][1]}    ${Consulta_CaixaMovimento[0][2]}
+    Should Be Equal As Numbers    ${Consulta_CaixaMovimento[0][1]}    ${valor_esperado}
+    Should Be Equal As Numbers    ${Consulta_CaixaMovimento[0][1]}    ${Consulta_CaixaMovimento[0][2]}
     Should Be Equal    ${Data_Banco}    ${DATA_ATUAL}
     Should Be Equal    ${Consulta_CaixaMovimento[0][4]}    ${Tipo_Mov}
 
@@ -977,3 +949,72 @@ Então faço o recebimento da venda e da devolução
     Consulta sequencia caixa(${CODIGO_CAIXA})
 
     Valida as movimentações no caixa - Venda e Devolução(Crédito)
+
+Calcula valor da OS com adiantamento
+    [Arguments]    ${valor_total_os}
+
+    ${ja_usou_adiantamento}    Get Variable Value    \${_ja_usou_adiantamento}    False
+
+    IF    not ${ja_usou_adiantamento}
+
+        Set Test Variable    ${_ja_usou_adiantamento}    True
+
+        RETURN    ${valor_adiantamento}
+
+    END
+
+    ${valor_restante_os}    Evaluate    round(${valor_total_os} - ${valor_adiantamento}, 2)
+
+    RETURN    ${valor_restante_os}
+
+Então faço o recebimento da conta
+
+    ${valor_os}    Get Variable Value    \${VALOR_RECEBIMENTO_ATUAL}    ${None}
+
+    IF    $valor_os is None
+        ${valor_os}    Set Variable    ${VALOR_FINAL_OPERAÇÃO}
+    END
+
+    Press Combination    KEY.ALT    KEY.R
+    Wait Until Screen Contain    ${TELA_RECEBIMENTO_PAGAMENTO}    ${TEMPO_TELA}
+
+    Press Combination    KEY.ALT    KEY.C
+    Wait Until Screen Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${BT_SIM}
+
+    Wait Until Screen Not Contain    ${AVISO_CONFIRMAÇÃO_BAIXA_CONTA}    ${SLEEP_ALTO}
+
+    Valida tela de confirmação de data
+
+    IF    '${Forma_Recebimento}' == 'Outros'
+
+        Finalização com recebimento de duplicatas(${valor_os})
+
+    ELSE IF     '${Forma_Recebimento}' == 'Cartão Oper.'
+        
+        Finalização com recebimento de cartão de crédito/débito
+
+    ELSE IF     '${Forma_Recebimento}' == 'Moeda'
+        
+        Log To Console    Tipo moeda não executada novas telas
+
+    ELSE IF     '${Forma_Recebimento}' == 'Bancária'
+        
+        Finalização com o tipo bancaria
+
+    END
+
+    Wait Until Screen Contain    ${LABEL_NENHUMA_CONTA_RECEBER}    ${TEMPO_TELA}
+
+    Consulta sequencia caixa(${CODIGO_CAIXA})
+
+    Validação movimentou caixa(Crédito)
+
+    # Limpa o valor customizado para não impactar nas próximas chamadas
+    Set Test Variable    ${VALOR_RECEBIMENTO_ATUAL}    ${None}
+
+E preparo recebimento com adiantamento
+
+    ${valor_recebimento}    Calcula valor da OS com adiantamento    ${VALOR_FINAL_OPERAÇÃO}
+    Set Test Variable    ${VALOR_RECEBIMENTO_ATUAL}    ${valor_recebimento}

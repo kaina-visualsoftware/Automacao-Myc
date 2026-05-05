@@ -6,7 +6,7 @@ Resource    ../../../utils/montadorDeCenarios.robot
 Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords     Start Sikuli Process    AND    KeyGeracaoDeVenda1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Setup    Run Keywords     Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
 
 Test Setup    montadorDeCenarios.Dado que realizo um pedido, com produto normal
