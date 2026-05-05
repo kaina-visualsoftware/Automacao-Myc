@@ -34,7 +34,7 @@ class config:
         porta = dados.get("PortaServidor", "")
         ip_servidor = dados.get("IPServidor", "")
 
-        print(f"Arquivo de configuracao carregado: {config_path}")
+        print(f"Arquivo de configuracao: {config_path}")
         print(f"Nome do banco de dados: {database}")
         print(f"Porta do servidor: {porta}")
         print(f"IP do servidor: {ip_servidor}")

@@ -311,7 +311,7 @@ class validaParametros:
 
         if not formaParcelamentoFetch:
             sqlInsert = "INSERT INTO `formaparcelamento` (`Descricao`, `ComEntrada`, `NPagamentos`, `TaxaJuro`, `PrazoMedio`, `Personalizavel`, `Tipo_Intervalo`, `Comissao_Produtos`, `Comissao_Servicos`, `DataAlteracao`, `EnviaMymobile`, `FormaRecebimento`, `Comissao_Produtos_Ent`, `Comissao_Servicos_Ent`, `Padrao_Venda`, `Padrao_OS`, `Padrao_Pre`, `TPCalculo`, `AtivaIntervalos`, `Digitavel`, `TaxaFlex`, `ListaPreco`, `PrazoFixado`, `DataPrazoFixado`, `PDesconto`, `Padrao_Orc`, `DiaExtra`, `Empresas`, `ValorMinimo`, `CodigoPreOcorrencia`, `DescricaoPreOcorrencia`, `CodigoGrupo`, `DescricaoGrupo`, `CodigoIdentificador`, `Padrao_Devolucao`, `ConsiderarOfertas`, `ParcelamentoPadrao`, `Cancelado`, `ValorMaximo`, `PDescontoMaximo`, `Considera_DescMax_produto`) VALUES ('30 DIAS', 0, 1, 0, 30, 0, 'Dias', 1, 1, '2023-10-26 11:07:42', 1, 'DINHEIRO                       1    ', 1, 1, 0, 0, 0, 'TP', 0, 0, 0, 0, 0, NULL, 0, 1, 999, NULL, 0, NULL, NULL, NULL, NULL, '', 1, 1, 0, NULL, 0, 0, 1);"
-            cursor.execute(sqlInsert)
+            cursor.execute(sql)
 
             print("Realizou o Insert da forma 30 DIAS")
             consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel, Comissao_Produtos FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
