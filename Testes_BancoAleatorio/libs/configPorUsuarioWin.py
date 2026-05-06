@@ -1,19 +1,10 @@
 import os
 
+from usuarios import USUARIO_PARA_NUMERO
+
 
 MYCOMMERCE_DIR = os.path.join(r"C:\Visual Software\MyCommerce")
 EXECUTAVEL = os.path.join(MYCOMMERCE_DIR, "myCommerce.exe")
-
-USUARIO_PARA_NUMERO = {
-    "viniciusjesus": 1,
-    "kaina": 2,
-    "cassio": 3,
-    "viniciusmerlak": 4,
-    "eduarda": 5,
-    "thiagocesar": 6,
-    "gabriel": 7,
-    "felipe dos santos": 8,
-}
 
 
 def get_comando_mycommerce():

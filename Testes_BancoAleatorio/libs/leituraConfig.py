@@ -2,15 +2,17 @@ import os
 import socket
 from pathlib import Path
 
+from usuarios import USUARIO_PARA_NUMERO
+
 
 MYCOMMERCE_DIR = Path(r"C:\Visual Software\MyCommerce")
 
 
 def _resolve_config_path() -> Path:
-    
-    username = os.getenv("USERNAME", "").strip()
-    if username:
-        config_usuario = MYCOMMERCE_DIR / f"Config{username}.ini"
+    username = os.getenv("USERNAME", "").strip().lower()
+    numero = USUARIO_PARA_NUMERO.get(username)
+    if numero is not None:
+        config_usuario = MYCOMMERCE_DIR / f"Config{numero}.ini"
         if config_usuario.exists():
             return config_usuario
     return MYCOMMERCE_DIR / "Config.ini"
