@@ -20,5 +20,6 @@
     "python.envFile": "",
     "python-envs.createEnvironment": false,
     "python.terminal.activateEnvironment": false,
-    "python.terminal.activateEnvInCurrentTerminal": false
+    "python.terminal.activateEnvInCurrentTerminal": false,
+    "robotcode.robot.outputDir": "results/${env:USERNAME}"
 }

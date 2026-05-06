@@ -9,14 +9,20 @@
             "type": "robotcode",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "target": "${file}"
+            "target": "${file}",
+            "env": {
+                "ROBOT_OPTIONS": "--outputdir results/${env:USERNAME}_${env:RANDOM}"
+            }
         },
         {
             "name": "RobotCode: Run All",
             "type": "robotcode",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "target": "."
+            "target": ".",
+            "env": {
+            "ROBOT_OPTIONS": "--outputdir results/${env:USERNAME}_${env:RANDOM}"
+        }
         },
         {
             "name": "RobotCode: Default",
