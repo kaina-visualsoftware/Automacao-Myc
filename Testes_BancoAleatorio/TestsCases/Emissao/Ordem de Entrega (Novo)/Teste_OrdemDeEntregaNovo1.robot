@@ -1,6 +1,7 @@
 *** Settings ***
 Resource    ../../../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
+Resource    ../../../utils/montadorDeCenarios.robot
 
 Suite Setup    Run Keywords    Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
