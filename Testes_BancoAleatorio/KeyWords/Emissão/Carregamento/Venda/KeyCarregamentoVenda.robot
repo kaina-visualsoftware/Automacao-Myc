@@ -15,6 +15,8 @@ ${MENU_EMISSÃO}                         menu_Emissão.png
 ${SUBMENU_CARREGAMENTO}                 subMenu_Carregamento.png
 ${TELA_CARREGAMENTO}                    tela_Carregamentos.png
 ${TELA_CARREGAMENTO_ADICIONAR}          tela_CarregamentoAdicionar.png
+${TELA_CONTAS_A_RECEBER_CARREGAMENTO}   tela_ContasReceberCarregamento.png
+${TELA_GERACAO_LOTE_COBRANCA_CARREGAMENTO}    tela_GeracaoLoteCobrancaCarregamento.png
 
 # BOTÕES
 ${BT_ADICIONAR}                         bt_Adicionar.png
@@ -24,6 +26,11 @@ ${BT_EXCLUIR}                           bt_Excluir.png
 ${BT_SALVAR}                            bt_Salvar.png
 ${BT_LISTAR}                            bt_Listar.png
 ${BT_INCLUIR_VENDA_CARREGAMENTO}        bt_IncluirCarregamentoVenda.png
+${BT_INCLUIR_COBRANÇA_CARREGAMENTO}     bt_IncluirCarregamentoCobranca.png
+
+
+# INPUT
+${INPUT_CODCOBRADOR_CARREGAMENTO}       input_CodCobrador.png
 
 # AVISOS
 ${AVISO_EXCLUIR_CARREGAMENTO}           aviso_ExcluirCarregamento.png
@@ -32,14 +39,17 @@ ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    aviso_ExcluirCarregamentoFechado.png
 
 #CHECKBOX
 ${CHECKBOX_TODOS_ITENS}                 checkbox_SelecionadoTodosCarregamentoVenda.png
+${CHECKBOX_COBRANCA_CARREGAMENTO}      checkbox_ContasaReceberCobrancaCarregamento.png
 
 
 #LABEL
 ${LB_NVENDA_CARREGAMENTO}              lb_NVendaCarregamento.png
+${LB_NDOCUMENTO}                      lb_NDocumento.png
 
 # VARIÁVEIS
 ${COD_CARREGAMENTO}                     NONE
 ${QTD_VENDAS_INCLUIDAS}                 NONE
+@{ULTIMAS_VENDAS}
 
 
 *** Keywords ***
@@ -62,6 +72,8 @@ Quando inicio um novo carregamento
 
     Wait Until Screen Contain    ${TELA_CARREGAMENTO_ADICIONAR}    ${TEMPO_TELA}
 
+    Setar codigo carregamento
+
 
 E informo uma descrição valida
     ${RANDOM}=    Evaluate    random.randint(1000,9999)    modules=random
@@ -71,8 +83,17 @@ E informo uma descrição valida
 
 
 E gravo o carregamento da venda
-    SikuliLibrary.Click    ${BT_GRAVAR}
-    Sleep    ${SLEEP_BAIXO}
+    ${TELA_CARREGAMENTO_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_CARREGAMENTO_ADICIONAR}    15
+    IF    ${TELA_CARREGAMENTO_BOOL}
+        SikuliLibrary.Click    ${TELA_CARREGAMENTO_ADICIONAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    ${BT_GRAVAR_CARREGAMENTO}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_GRAVAR}    15
+    IF    ${BT_GRAVAR_CARREGAMENTO}
+        SikuliLibrary.Click    ${BT_GRAVAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
 
 
 Então o carregamento da venda deve ser salvo com sucesso
@@ -101,6 +122,68 @@ E que existe um carregamento com status
 
     Set Test Variable    ${COD_CARREGAMENTO}    ${resultado[0][0]}
 
+Setar codigo carregamento
+    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Cancelado IS NULL ORDER BY c.Sequencia DESC LIMIT 1;
+    
+    IF    not ${resultado}
+        RETURN    0
+    END
+
+    Set Test Variable    ${COD_CARREGAMENTO}    ${resultado[0][0]}
+
+E incluo uma cobrança para a venda incluída
+    @{ULTIMAS_VENDAS}=   Pegar ultimas vendas do carregamento
+    
+    ${BT_INCLUIR_COBRANCA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR_COBRANÇA_CARREGAMENTO}    5
+    IF    ${BT_INCLUIR_COBRANCA}
+        SikuliLibrary.Click    ${BT_INCLUIR_COBRANÇA_CARREGAMENTO}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    ${TELA_GERACAO_LOTE_COBRANCA_CARREGAMENTO_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_GERACAO_LOTE_COBRANCA_CARREGAMENTO}    15
+    IF    ${TELA_GERACAO_LOTE_COBRANCA_CARREGAMENTO_BOOL}
+        
+        ${INPUT_CODCOBRADOR_CARREGAMENTO_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${INPUT_CODCOBRADOR_CARREGAMENTO}    15
+        IF    ${INPUT_CODCOBRADOR_CARREGAMENTO_BOOL}
+            SikuliLibrary.Click    ${INPUT_CODCOBRADOR_CARREGAMENTO}
+            Sleep    ${SLEEP_BAIXO}
+        END
+
+        Input Text    ${EMPTY}    2
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    FOR    ${COD_VENDA}    IN    @{ULTIMAS_VENDAS}
+        ${DOCUMENTO}=    Pegar documento da venda    ${COD_VENDA}
+
+        ${BT_LISTAR_COBRANCAS}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_LISTAR}    15
+        IF    ${BT_LISTAR_COBRANCAS}
+            SikuliLibrary.Click    ${BT_LISTAR}
+            Sleep    ${SLEEP_BAIXO}
+        END
+        
+        Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER_CARREGAMENTO}    ${TEMPO_TELA}
+
+        Selecionar cobrança pelo documento    ${DOCUMENTO}
+    END
+    
+    ${BT_GRAVAR_COBRANCAS}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_GRAVAR}    15
+    IF    ${BT_GRAVAR_COBRANCAS}
+        SikuliLibrary.Click    ${BT_GRAVAR}
+        Sleep    ${SLEEP_MEDIO}
+    END
+
+
+Pegar ultimas vendas do carregamento
+    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} ORDER BY v.Codigo DESC;
+    IF    not${resultado}
+        RETURN    ${EMPTY}
+    END
+
+    ${VENDAS}=    Evaluate    [item[0] for item in $resultado]
+
+    RETURN    ${VENDAS}
 
 Quando pesquiso o carregamento
     [Arguments]    ${codigo}
@@ -108,8 +191,10 @@ Quando pesquiso o carregamento
     Press Combination    KEY.ALT    KEY.P
 
     Input Text    ${EMPTY}    ${codigo}
+    Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
 
 
 Quando limpo o filtro da pesquisa
@@ -145,14 +230,15 @@ Quando excluo o carregamento
         Press Combination    KEY.ALT    KEY.S
     END
 
-Quando incluo uma venda no carregamento
-    ${QTD_VENDAS_INCLUIDAS}=    Pegar quantidade de vendas incluídas no carregamento
-    Set Test Variable    ${QTD_VENDAS_INCLUIDAS}
-
+E e edito o carregamento cadastrado
     Quando pesquiso o carregamento    ${COD_CARREGAMENTO}
 
     SikuliLibrary.Click    ${BT_EDITAR}
     Sleep    ${SLEEP_BAIXO}
+
+Quando incluo uma venda no carregamento (${QTD_VENDAS})
+    ${QTD_VENDAS_INCLUIDAS}=    Pegar quantidade de vendas incluídas no carregamento
+    Set Test Variable    ${QTD_VENDAS_INCLUIDAS}
     
     ${BT_INCLUIR_VENDA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR_VENDA_CARREGAMENTO}    5
     IF    ${BT_INCLUIR_VENDA}
@@ -166,33 +252,84 @@ Quando incluo uma venda no carregamento
         Sleep    ${SLEEP_BAIXO}
     END
 
-    Seleciono a última venda disponível
+    FOR    ${INDEX}    IN RANGE    ${QTD_VENDAS}
+        Seleciono a próxima venda disponível
+    END
 
     SikuliLibrary.Click    ${BT_SALVAR}
     Sleep    ${SLEEP_BAIXO} 
 
 
 Pegar quantidade de vendas incluídas no carregamento
+    log    message="Consultando quantidade de vendas incluídas no carregamento ${COD_CARREGAMENTO}"
     ${resultado}=    Query    SELECT c.NEntregas FROM cargas c WHERE c.Sequencia = '${COD_CARREGAMENTO}' ORDER BY c.Sequencia DESC LIMIT 1;
+    
+    IF    not ${resultado}
+        RETURN    0
+    END
+
     RETURN    ${resultado[0][0]}
 
-Seleciono a última venda disponível
-    SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}
-    Sleep    ${SLEEP_BAIXO}
+Pegar próxima venda disponível
+    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Cancelada IS NULL AND v.CodigoCarregamento IS NULL ORDER BY v.Codigo DESC LIMIT 1;
 
-    FOR    ${I}    IN RANGE    3 
-        Press Special Key    TAB 
+    RETURN    ${resultado[0][0]}
+
+Pegar documento da venda
+    [Arguments]    ${COD_VENDA}
+    ${resultado}=    Query    SELECT cr.NDocumento FROM vendas v LEFT JOIN contasareceber cr ON v.Codigo = cr.CodigoVenda WHERE v.Codigo = ${COD_VENDA};
+    Log To Console    ${resultado}
+    RETURN    ${resultado[0][0]}
+
+Seleciono a próxima venda disponível
+    ${COD_VENDA}=    Pegar próxima venda disponível
+    
+    ${CHECKBOX_TODOS_ITENS_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_TODOS_ITENS}    15
+    IF    ${CHECKBOX_TODOS_ITENS_BOOL}
+        SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}    2
+        
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
     END
 
     SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
     SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
-
-    Press Combination    KEY.CTRL    KEY.HOME
-
+    
+    Input Text    ${EMPTY}    ${COD_VENDA}
+    Press Special Key    LEFT
     Press Special Key    SPACE
     Sleep    ${SLEEP_BAIXO}
 
     SikuliLibrary.Click    ${BT_ADICIONAR}
+    Sleep    ${SLEEP_MEDIO}
+
+
+Selecionar cobrança pelo documento
+    [Arguments]    ${DOCUMENTO}
+
+    SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}
+
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
+    END
+
+    SikuliLibrary.Click    ${LB_NDOCUMENTO}
+    SikuliLibrary.Click    ${LB_NDOCUMENTO}
+    
+    Input Text    ${EMPTY}    ${DOCUMENTO}
+    Press Special Key    LEFT
+    Sleep    ${SLEEP_BAIXO}
+
+    ${CHECKBOX_COBRANCA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_COBRANCA_CARREGAMENTO}    5
+    IF    ${CHECKBOX_COBRANCA}
+        SikuliLibrary.Click    ${CHECKBOX_COBRANCA_CARREGAMENTO}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+    Press Combination    Key.ALT    KEY.O
     Sleep    ${SLEEP_MEDIO}
 
 
