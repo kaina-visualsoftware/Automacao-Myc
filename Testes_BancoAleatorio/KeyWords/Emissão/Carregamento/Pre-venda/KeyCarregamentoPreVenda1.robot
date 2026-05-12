@@ -38,6 +38,7 @@ ${TELA_IMPRESSAO}                              tela_Impressao.png
 
 # Telas Avisos
 ${AVISO_EXCLUSAO_STATUS_FECHADO}               aviso_ExclusaoStatusFechado.png
+${AVISO_CARGA_MONTADA}                         aviso_CargaMontada.png
 
 # Grids
 ${GRID_ROTA_CARREGAMENTO}                      grid_RotaCarregamento.png
@@ -50,7 +51,7 @@ ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}         bt_SetaIncluirRotasCarregamento.
 ${BT_MONTAR_CARGA}                             bt_MontarCarga.png
 ${BT_FECHAR_CARGA}                             bt_FecharCarga.png
 ${BT_IMPRIMIR_MAPA_ROTA}                       bt_ImprimirMapaRota.png
-
+${BT_OK_SEM_ATALHO}                            bt_OK_sem_atalho.png
 # Outros
 ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}             grid_PedidosOrdemDeEntregaNovo.png
 
@@ -64,6 +65,9 @@ ${COD_DOACAO}                                  None
 ${ID_GRUPO_ENTREGA}                            None
 ${Codigos_Vendas}                              ${None}
 ${Quantidade_Vendas_Feitas}                    None
+${Codigo_Vendedor}                             None
+${Codigo_Cliente}                              None
+${COD_CARREGAMENTO}                            None
 
 *** Keywords ***
 
@@ -74,7 +78,7 @@ Dado que eu crio uma nova pré-venda de um cliente com rota
     
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
-    Quando adiciono um Vendedor e um Cliente com rota
+    Quando adiciono um Vendedor e um Cliente com rota    6
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
@@ -95,7 +99,7 @@ Seleciona vendedor
     RETURN    ${codVendedor[0][0]}
 
 Quando adiciono um Vendedor e um Cliente com rota
-
+    [Arguments]    ${ROTA}
     Set Test Variable    ${TELA}    Pedido
 
     # --- VENDEDOR ---
@@ -107,7 +111,7 @@ Quando adiciono um Vendedor e um Cliente com rota
     Sleep    ${SLEEP_BAIXO}
 
     # --- CLIENTE COM ROTA ---
-    ${codCliente}    Seleciona cliente com rota
+    ${codCliente}    Seleciona cliente com rota    ${ROTA}
     Set Test Variable    ${Codigo_Cliente}    ${codCliente}
 
     SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
@@ -122,8 +126,9 @@ Quando adiciono um Vendedor e um Cliente com rota
     Keypedidos1.Valida avisos após incluir cliente e vendedor - Pré-Venda
 
 Seleciona cliente com rota
-    
-    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) AND Codigo <> 1 AND c.Rota IS NOT NULL ORDER BY RAND() LIMIT 1;
+    [Arguments]    ${ROTA}
+
+    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) AND Codigo <> 1 AND c.Rota = ${ROTA} ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
     
     IF    len($codCliente) == 0
@@ -133,8 +138,6 @@ Seleciona cliente com rota
     END
 
     RETURN    ${codCliente[0][0]}
-
-
 
 Então acesso a tela de geração de vendas 
 
@@ -211,13 +214,18 @@ Quando eu Monto a Carga
 
     SikuliLibrary.Click    ${BT_MONTAR_CARGA}
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
+    Wait Until Screen Contain    ${AVISO_CARGA_MONTADA}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
-E valido que o carregamento pesquisado existe no banco
+E valido que o carregamento está com o status Montando
     ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Montando'
-    Should Be True    ${carregamento_existe}    Carregamento pesquisado não existe no banco.
+    Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
+
+E valido que o carregamento está com o status Fechada
+    ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Fechada'
+    Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
 
 Quando Imprimo o mapa da rota
 
@@ -249,6 +257,25 @@ E fecho a tela de carregamento
     Wait Until Screen Not Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
+Dado que eu crio duas pré-vendas com rotas distintas
+
+    Keypedidos1.Dado que acesso a tela de pedidos
+    Keypedidos1.E clico em adicionar
+    Quando adiciono um Vendedor e um Cliente com rota    6
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+    Quando vou para a aba de pagamentos
+    E audito o pedido
+    Então finalizo o pedido
+    E saio da tela(Pedido)
+     
+    Keypedidos1.Dado que acesso a tela de pedidos
+    Keypedidos1.E clico em adicionar
+    Quando adiciono um Vendedor e um Cliente com rota    7
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+    Quando vou para a aba de pagamentos
+    E audito o pedido
+    Então finalizo o pedido
+    E saio da tela(Pedido)
 
 Valida Carregamento gerado
 
@@ -303,7 +330,38 @@ E adiciono um carregamento com rota
     Então eu Listo as Rotas
     E gravo incluindo a primeira Rota da lista
 
+E adiciono um carregamento com duas rotas
 
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo duas rotas da lista
 
+E gravo incluindo duas rotas da lista
 
+    SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    SPACE
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    SPACE
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.G
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
+E valido que o carregamento contém duas rotas diferentes
+
+    ${rotas}    Query    SELECT * FROM cargas_rotas WHERE CodigoCarregamento = ${COD_CARREGAMENTO};
+
+    ${quantidade_rotas}    Get Length  ${rotas}
+
+    Should Be Equal As Integers
+    ...    ${quantidade_rotas}
+    ...    2
+    ...    Carregamento não contém duas rotas diferentes.
