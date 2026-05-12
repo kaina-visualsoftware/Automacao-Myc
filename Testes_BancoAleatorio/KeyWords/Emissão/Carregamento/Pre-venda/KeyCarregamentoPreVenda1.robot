@@ -2,16 +2,14 @@
 Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
-Library    ../../../libs/validaParametros.py
+Library    ${EXECDIR}/Testes_BancoAleatorio/libs/validaParametros.py
 Library    Process
-Library    ../../../libs/verificacoesExtras.py
-Variables    ../../../libs/leituraConfig.py
+Library    ${EXECDIR}/Testes_BancoAleatorio/libs/verificacoesExtras.py
+Variables    ${EXECDIR}/Testes_BancoAleatorio/libs/leituraConfig.py
 
-Resource    ../../../utils/validacaoAviso.robot
-Resource    ../../..//utils/utils.robot
-Resource    ../../..//utils/montadorDeCenarios.robot
-Resource    ../../../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
-Resource    ../../../KeyWords/Pré-Venda/Geracao Venda/KeyGeracaoDeVenda1.robot
+Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/validacaoAviso.robot
+Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/montadorDeCenarios.robot
+Resource    ${EXECDIR}/Testes_BancoAleatorio/KeyWords/Pré-Venda/Geracao Venda/KeyGeracaoDeVenda1.robot
 
 *** Variables ***
 # Repositório de Imagens

@@ -2,7 +2,7 @@
 Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Pré-Venda/Pedidos/KeyPedidos1.robot
-Resource    ../../../KeyWords/Emissão/Carregamento/Pre-venda/KeyCarregamentoPreVenda1.robot
+Resource    ../../../KeyWords/Emissão/Carregamento/Pre-venda/KeycarregamentoPreVenda1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeycarregamentoPreVenda1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
