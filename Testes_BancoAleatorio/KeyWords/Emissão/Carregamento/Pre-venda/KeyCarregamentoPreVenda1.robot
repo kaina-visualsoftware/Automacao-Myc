@@ -39,6 +39,8 @@ ${TELA_IMPRESSAO}                              tela_Impressao.png
 # Telas Avisos
 ${AVISO_EXCLUSAO_STATUS_FECHADO}               aviso_ExclusaoStatusFechado.png
 ${AVISO_CARGA_MONTADA}                         aviso_CargaMontada.png
+${AVISO_EXCLUIR_CARREGAMENTO}                  aviso_ExcluirCarregamento.png
+${AVISO_CANCELAR_CARREGAMENTO}                 aviso_CancelarCarregamento.png
 
 # Grids
 ${GRID_ROTA_CARREGAMENTO}                      grid_RotaCarregamento.png
@@ -58,6 +60,7 @@ ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}             grid_PedidosOrdemDeEntregaNovo.pn
 # Inputs
 ${INPUT_DESCRICAO_CARREGAMENTO}                input_DescricaoCarregamento.png
 ${INPUT_PESQUISA_CARREGAMENTO}                 input_PesquisaCarregamento.png
+${INPUT_PALETES_CARREGAMENTO}                  input_PaletesCarregamento.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
 ${COD_VENDA}                                   None
@@ -78,7 +81,7 @@ Dado que eu crio uma nova pré-venda de um cliente com rota
     
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
-    Quando adiciono um Vendedor e um Cliente com rota    6
+    Quando adiciono um Vendedor e um Cliente com rota aleatória
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
@@ -154,7 +157,7 @@ Então fecho a tela de geração de vendas
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Not Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
 Então acesso a tela de Carregamento
 
@@ -174,13 +177,11 @@ Quando adiciono uma Descrição qualquer e incluo um palete
 
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    Carregamento autom. prevenda 
+    Informar Descrição
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    TAB
+    SikuliLibrary.click    ${INPUT_PALETES_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    1
     Sleep    ${SLEEP_BAIXO}
@@ -225,6 +226,10 @@ E valido que o carregamento está com o status Montando
 
 E valido que o carregamento está com o status Fechada
     ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Fechada'
+    Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
+
+E valido que o carregamento está com o status Cadastrando
+    ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Cadastrando'
     Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
 
 Quando Imprimo o mapa da rota
@@ -295,10 +300,10 @@ Quando pesquiso o Carregamento gerado
 E excluo o Carregamento parcialmente gerado
 
     Press Combination    KEY.ALT    KEY.X
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}   
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Contain    ${AVISO_CANCELAR_CARREGAMENTO}    ${TEMPO_TELA}  
+    Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado = 1
@@ -309,12 +314,11 @@ E excluo o Carregamento parcialmente gerado
 E excluo o Carregamento totalmente gerado
 
     Press Combination    KEY.ALT    KEY.X
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}  
+    Press Combination    KEY.ALT    KEY.S
     Wait Until Screen Contain    ${AVISO_EXCLUSAO_STATUS_FECHADO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
+    SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado IS NULL
@@ -337,6 +341,11 @@ E adiciono um carregamento com duas rotas
     E clico em Incluir Rotas
     Então eu Listo as Rotas
     E gravo incluindo duas rotas da lista
+
+E adiciono um carregamento sem rota
+
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
 
 E gravo incluindo duas rotas da lista
 
@@ -365,3 +374,82 @@ E valido que o carregamento contém duas rotas diferentes
     ...    ${quantidade_rotas}
     ...    2
     ...    Carregamento não contém duas rotas diferentes.
+
+Quando adiciono um Vendedor e um Cliente com rota aleatória
+
+    Set Test Variable    ${TELA}    Pedido
+
+    # --- VENDEDOR ---
+    ${codVendedor}    Seleciona vendedor
+    Set Test Variable    ${Codigo_Vendedor}    ${codVendedor}
+
+    Input Text    ${EMPTY}    ${Codigo_Vendedor}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+
+    # --- CLIENTE COM ROTA ---
+    ${codCliente}    Seleciona cliente com rota aleatória 
+    Set Test Variable    ${Codigo_Cliente}    ${codCliente}
+
+    SikuliLibrary.Double Click    ${INPUT_COD_CLIENTE_VENDA}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${Codigo_Cliente}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Keypedidos1.Valida avisos após incluir cliente e vendedor - Pré-Venda
+
+Seleciona cliente com rota aleatória
+
+    ${codCliente}    Query    SELECT codigo FROM clientes AS c WHERE (c.Tipo LIKE 'C' OR c.Tipo LIKE 'A') AND (Ativo = -1 AND c.`Status` = 'ATIVA') AND (CreditoCortado = 0) AND Codigo <> 1 AND c.Rota IS NOT NULL ORDER BY RAND() LIMIT 1;
+    Sleep    ${SLEEP_BAIXO}
+    
+    IF    len($codCliente) == 0
+        
+        Fail    Nenhum cliente com rota foi encontrado.
+
+    END
+
+    RETURN    ${codCliente[0][0]}
+
+E excluo o carregamento
+
+    Press Combination    KEY.ALT    KEY.X
+    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}   
+    Press Combination    KEY.ALT    KEY.S
+    Wait Until Screen Contain    ${AVISO_CANCELAR_CARREGAMENTO}    ${TEMPO_TELA}  
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
+    ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado = 1
+    Sleep    ${SLEEP_BAIXO}
+
+    Should Be True    ${carregamento_excluido}    Carregamento não foi excluído corretamente.    
+
+E valido que o carregamento foi excluído com sucesso
+
+    ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado = 1
+    Sleep    ${SLEEP_BAIXO}
+
+    Should Be True    ${carregamento_excluido}    Carregamento foi excluído com sucesso
+
+Dado que acesso a tela de carregamento
+
+    Então acesso a tela de Carregamento
+
+Informar Descrição
+
+    Buscar Código do Carregamento em Edição
+
+    SikuliLibrary.Input Text    ${EMPTY}    AUTOMACAO PREVENDA - ${COD_CARREGAMENTO}
+
+    Sleep    ${SLEEP_BAIXO}
+
+Buscar Código do Carregamento em Edição
+
+    ${Consulta}    Query    SELECT Sequencia FROM cargas ORDER BY Sequencia DESC LIMIT 1;
+
+    Set Test Variable    ${COD_CARREGAMENTO}    ${Consulta[0][0]}
