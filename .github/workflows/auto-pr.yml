@@ -1,12 +1,30 @@
-name: TEST ACTION
+name: AUTO CREATE PR
 
 on:
   push:
+    branches:
+      - 'feature/**'
+      - 'feat/**'
+      - 'fix/**'
+
+permissions:
+  pull-requests: write
+  contents: write
 
 jobs:
-  test:
+  create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: TESTE
-        run: echo "ACTIONS FUNCIONANDO"
+      - uses: actions/checkout@v4
+
+      - name: CREATE PR IF NOT EXISTS
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr view ${{ github.ref_name }} || \
+          gh pr create \
+            --base develop \
+            --head ${{ github.ref_name }} \
+            --title "${{ github.ref_name }}" \
+            --body "PR CRIADO AUTOMATICAMENTE"
