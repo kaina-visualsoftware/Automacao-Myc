@@ -23,7 +23,7 @@ ${BT_EDITAR}                            bt_Editar.png
 ${BT_EXCLUIR}                           bt_Excluir.png
 ${BT_SALVAR}                            bt_Salvar.png
 ${BT_LISTAR}                            bt_Listar.png
-${BT_INCLUIR_VENDA_CARREGAMENTO}         bt_IncluirVendaCarregamento.png
+${BT_INCLUIR_VENDA_CARREGAMENTO}        bt_IncluirCarregamentoVenda.png
 
 # AVISOS
 ${AVISO_EXCLUIR_CARREGAMENTO}           aviso_ExcluirCarregamento.png
@@ -39,6 +39,7 @@ ${LB_NVENDA_CARREGAMENTO}              lb_NVendaCarregamento.png
 
 # VARIÁVEIS
 ${COD_CARREGAMENTO}                     NONE
+${QTD_VENDAS_INCLUIDAS}                 NONE
 
 
 *** Keywords ***
@@ -145,6 +146,9 @@ Quando excluo o carregamento
     END
 
 Quando incluo uma venda no carregamento
+    ${QTD_VENDAS_INCLUIDAS}=    Pegar quantidade de vendas incluídas no carregamento
+    Set Test Variable    ${QTD_VENDAS_INCLUIDAS}
+
     Quando pesquiso o carregamento    ${COD_CARREGAMENTO}
 
     SikuliLibrary.Click    ${BT_EDITAR}
@@ -168,6 +172,10 @@ Quando incluo uma venda no carregamento
     Sleep    ${SLEEP_BAIXO} 
 
 
+Pegar quantidade de vendas incluídas no carregamento
+    ${resultado}=    Query    SELECT c.NEntregas FROM cargas c WHERE c.Sequencia = '${COD_CARREGAMENTO}' ORDER BY c.Sequencia DESC LIMIT 1;
+    RETURN    ${resultado[0][0]}
+
 Seleciono a última venda disponível
     SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}
     Sleep    ${SLEEP_BAIXO}
@@ -185,8 +193,14 @@ Seleciono a última venda disponível
     Sleep    ${SLEEP_BAIXO}
 
     SikuliLibrary.Click    ${BT_ADICIONAR}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
 
+
+Então a venda deve ser incluída com sucesso no carregamento
+    ${QTD_VENDAS_INCLUIDAS_DEPOIS}=    Pegar quantidade de vendas incluídas no carregamento
+    IF    ${QTD_VENDAS_INCLUIDAS_DEPOIS} <= ${QTD_VENDAS_INCLUIDAS}
+        Fail    A venda não foi incluída com sucesso no carregamento. Quantidade antes: ${QTD_VENDAS_INCLUIDAS}, Quantidade depois: ${QTD_VENDAS_INCLUIDAS_DEPOIS}
+    END
 
 Então o carregamento deve ser excluído com sucesso
     ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
