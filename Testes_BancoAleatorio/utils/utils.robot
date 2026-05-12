@@ -61,6 +61,7 @@ ${TELA_IMPRESSAO_DIRETA}                               tela_ImpressaoDireta.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}                      modal_PersonalizacaoPagamento.png
 ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.png
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
+${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                                   aviso_QuantidadeSemEstoque.png

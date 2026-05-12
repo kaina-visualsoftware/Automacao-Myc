@@ -98,6 +98,9 @@ E seleciono o produto
     SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
     Sleep    ${SLEEP_BAIXO}
 
+    SikuliLibrary.Click    ${BT_OK}
+    Sleep    ${SLEEP_BAIXO}
+
     ${entregaComMaisDeUmaVenda}    Valida a geração de entregas com apenas uma venda por entrega
 
     IF    '${entregaComMaisDeUmaVenda}' == 'False'
@@ -171,6 +174,9 @@ E seleciono os produtos
     SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
     Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
 
+    SikuliLibrary.Click    ${BT_OK}
+    Sleep    ${SLEEP_BAIXO}
+
     Valida a geração de entregas com apenas uma venda por entrega
 
 Quando seleciono a última doação gerada
@@ -191,7 +197,7 @@ Quando seleciono a última doação gerada
     FOR    ${i}    IN RANGE    3
         
         Press Special Key    LEFT
-        
+
     END
 
     Press Special Key    SPACE

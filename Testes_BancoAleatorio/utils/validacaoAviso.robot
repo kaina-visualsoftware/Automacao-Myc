@@ -33,6 +33,7 @@ ${TELA_GUIA_CONFIGURACOES}                             tela_GuiaConfiguracoes.pn
 ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
 ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}               tela_ConsultaSCPC_SemConsultaSalva.png
 ${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}               tela_ConsultaSCPC_ComConsultaSalva.png
+${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
 
 # Telas Avisos
 ${AVISO_USAR_ESSE_VENDEDOR}                            aviso_clienteOutroVendedor.png

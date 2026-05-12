@@ -6,5 +6,5 @@ USUARIO_PARA_NUMERO = {
     "eduarda": 5,
     "thiagocesar": 6,
     "gabriel": 7,
-    "felipe dos santos": 8,
+    "felipe": 8,
 }
