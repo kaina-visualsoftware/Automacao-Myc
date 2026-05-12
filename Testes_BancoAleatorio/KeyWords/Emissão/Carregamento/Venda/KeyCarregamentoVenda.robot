@@ -165,7 +165,7 @@ Quando incluo uma venda no carregamento
     Seleciono a última venda disponível
 
     SikuliLibrary.Click    ${BT_SALVAR}
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_BAIXO} 
 
 
 Seleciono a última venda disponível
