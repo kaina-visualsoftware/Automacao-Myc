@@ -1,0 +1,37 @@
+name: AUTO CREATE PR
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+
+      - name: CREATE PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: AUTO PR
+          title: "${{ github.ref_name }}"
+          body: |
+            ## PR CRIADO AUTOMATICAMENTE
+
+            BRANCH:
+            ${{ github.ref_name }}
+
+          branch: "${{ github.ref_name }}"
+          base: develop
+          labels: |
+            automated-pr
+            feature
