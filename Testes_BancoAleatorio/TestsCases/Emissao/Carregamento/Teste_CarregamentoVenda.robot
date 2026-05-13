@@ -8,7 +8,7 @@ Suite Teardown    Stop Remote Server
 
 #Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
-
+Test Setup   Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1   AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário    
 
 *** Test Cases ***
 
@@ -69,8 +69,43 @@ Teste 06 - Incluir uma venda no carregamento
 
     Dado que acesso o lançamento de carregamento de vendas
     E que existe um carregamento com status    Cadastrando
-    Quando incluo uma venda no carregamento
+    E e edito o carregamento cadastrado
+    Quando incluo uma venda no carregamento (1)
     E gravo o carregamento da venda
     Então a venda deve ser incluída com sucesso no carregamento
     Então fecho a tela de carregamento
 
+Teste 07 - Incluir múltiplas vendas no carregamento
+    [Tags]    Teste 07
+
+    Dado que acesso o lançamento de carregamento de vendas
+    E que existe um carregamento com status    Cadastrando
+    E e edito o carregamento cadastrado
+    Quando incluo uma venda no carregamento (3)
+    E gravo o carregamento da venda
+    Então a venda deve ser incluída com sucesso no carregamento
+    Então fecho a tela de carregamento
+
+Teste 08 - Lançamento um carregamento de venda incluindo uma venda e uma cobrança
+    [Tags]    Teste 08
+
+    Dado que acesso o lançamento de carregamento de vendas
+    Quando inicio um novo carregamento
+    E informo uma descrição valida
+    Quando incluo uma venda no carregamento (1)
+    E incluo uma cobrança para a venda incluída
+    E gravo o carregamento da venda
+    Então o carregamento da venda deve ser salvo com sucesso
+    Então fecho a tela de carregamento
+
+Teste 09 - Editar um carregamento de venda incluindo uma venda e uma cobrança
+    [Tags]    Teste 09
+
+    Dado que acesso o lançamento de carregamento de vendas
+    E que existe um carregamento com status    Cadastrando
+    E e edito o carregamento cadastrado
+    Quando incluo uma venda no carregamento (1)
+    E incluo uma cobrança para a venda incluída
+    E gravo o carregamento da venda
+    Então o carregamento da venda deve ser salvo com sucesso
+    Então fecho a tela de carregamento

@@ -46,6 +46,7 @@ ${ID_GRUPO_ENTREGA}                            None
 ${Codigos_Vendas}                              ${None}
 ${Quantidade_Vendas_Feitas}                    None
 
+
 *** Keywords ***
 Dado que eu inicio um lançamento de Ordem de Entrega Novo
         
