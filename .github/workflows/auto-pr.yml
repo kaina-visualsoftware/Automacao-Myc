@@ -24,72 +24,50 @@ jobs:
       - name: INSTALL JQ
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: CHECK FOR COMMITS
-        id: check
+      - name: GET GIT DIFF
+        id: diff
         run: |
           git fetch origin develop
           
-          # Verifica se há commits diferentes entre develop e a branch atual
-          COMMITS_COUNT=$(git rev-list --count origin/develop..HEAD)
-          echo "COMMITS COUNT: $COMMITS_COUNT"
+          # Salvar diff em arquivo temporário
+          git diff origin/develop...HEAD > /tmp/diff.txt
           
-          if [ "$COMMITS_COUNT" -eq "0" ]; then
-            echo "⚠️ Nenhum commit diferente entre develop e HEAD"
-            echo "has_commits=false" >> $GITHUB_OUTPUT
+          # Verificar se há diff
+          if [ ! -s /tmp/diff.txt ]; then
+            echo "has_diff=false" >> $GITHUB_OUTPUT
             echo "diff=" >> $GITHUB_OUTPUT
           else
-            echo "has_commits=true" >> $GITHUB_OUTPUT
-            
-            # Pega o diff apenas dos commits novos
-            DIFF=$(git diff origin/develop...HEAD | head -c 15000)
-            
-            # Escapa para JSON
-            DIFF_ESCAPED=$(printf '%s' "$DIFF" | jq -Rs .)
-            echo "diff=$DIFF_ESCAPED" >> $GITHUB_OUTPUT
+            echo "has_diff=true" >> $GITHUB_OUTPUT
+            # Ler o arquivo e escapar para JSON
+            DIFF=$(cat /tmp/diff.txt | head -c 15000 | jq -Rs .)
+            echo "diff=$DIFF" >> $GITHUB_OUTPUT
           fi
 
       - name: GENERATE AI DESCRIPTION
         id: ai
-        if: steps.check.outputs.has_commits == 'true'
+        if: steps.diff.outputs.has_diff == 'true'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          DIFF_CONTENT="${{ steps.check.outputs.diff }}"
-          
-          # Se diff estiver vazio, usa mensagem padrão
-          if [ -z "$DIFF_CONTENT" ] || [ "$DIFF_CONTENT" = '""' ]; then
-            echo "⚠️ Diff vazio, usando descrição padrão"
-            echo "body=## 📝 Alterações realizadas\n\nPR criado automaticamente para a branch ${{ github.ref_name }}" >> $GITHUB_OUTPUT
-            echo "title=PR Automático: ${{ github.ref_name }}" >> $GITHUB_OUTPUT
-            exit 0
-          fi
+          DIFF_CONTENT="${{ steps.diff.outputs.diff }}"
           
           echo "📊 Enviando diff para IA (tamanho: ${#DIFF_CONTENT} caracteres)"
           
-          # Criar prompt mais estruturado
-          cat > request.json <<EOF
-          {
-            "model": "openai/gpt-4.1-mini",
-            "messages": [
-              {
-                "role": "system",
-                "content": "Você é um engenheiro de software especialista em gerar descrições de Pull Request. Gere uma descrição clara, profissional e em português. Use markdown."
-              },
-              {
-                "role": "user",
-                "content": "Gere uma descrição de Pull Request para as seguintes alterações (diff):"
-              },
-              {
-                "role": "user",
-                "content": ${DIFF_CONTENT}
-              }
-            ],
-            "temperature": 0.3,
-            "max_tokens": 1000
-          }
-          EOF
+          # Criar o JSON usando jq para garantir escaping correto
+          jq -n \
+            --arg model "openai/gpt-4.1-mini" \
+            --arg diff "$DIFF_CONTENT" \
+            '{
+              model: $model,
+              messages: [
+                {role: "system", content: "Você é um engenheiro de software especialista em gerar descrições de Pull Request. Gere uma descrição clara, profissional e em português. Use markdown."},
+                {role: "user", content: "Gere uma descrição de Pull Request para estas alterações:"},
+                {role: "user", content: $diff}
+              ],
+              temperature: 0.3,
+              max_tokens: 1000
+            }' > request.json
           
-          # Log para debug (sem expor a chave)
           echo "🔄 Chamando API OpenRouter..."
           
           RESPONSE=$(curl -s -w "\n%{http_code}" https://openrouter.ai/api/v1/chat/completions \
@@ -132,9 +110,12 @@ jobs:
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Limpar arquivo temporário
+          rm -f request.json
 
       - name: CREATE OR UPDATE PR
-        if: steps.check.outputs.has_commits == 'true'
+        if: steps.diff.outputs.has_diff == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -167,9 +148,12 @@ jobs:
               
             echo "✅ PR atualizado com nova descrição!"
           fi
+          
+          # Limpar arquivo temporário
+          rm -f /tmp/diff.txt
       
       - name: SEM COMMITS - SKIP
-        if: steps.check.outputs.has_commits == 'false'
+        if: steps.diff.outputs.has_diff == 'false'
         run: |
-          echo "⚠️ Nenhum commit novo para criar PR"
+          echo "⚠️ Nenhuma alteração detectada para criar PR"
           echo "Branch ${{ github.ref_name }} está sincronizada com develop"
