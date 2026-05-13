@@ -4,7 +4,7 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    Process
 
-Resource    /teste_demonstracao/Testes_BancoAleatorio/utils/utils.robot
+Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/utils.robot
 Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/validacaoAviso.robot
 
 
@@ -155,7 +155,7 @@ E incluo uma cobrança para a venda incluída
     END
 
     FOR    ${COD_VENDA}    IN    @{ULTIMAS_VENDAS}
-        ${DOCUMENTO}=    Pegar documento da venda    ${COD_VENDA}
+        ${DOCUMENTO}=    Pegar documento da venda sem cobrança    ${COD_VENDA}
 
         ${BT_LISTAR_COBRANCAS}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_LISTAR}    15
         IF    ${BT_LISTAR_COBRANCAS}
@@ -238,8 +238,11 @@ E e edito o carregamento cadastrado
 
 Quando incluo uma venda no carregamento (${QTD_VENDAS})
     ${QTD_VENDAS_INCLUIDAS}=    Pegar quantidade de vendas incluídas no carregamento
-    Set Test Variable    ${QTD_VENDAS_INCLUIDAS}
-    
+    Log    Quantidade atual: ${QTD_VENDAS_INCLUIDAS}
+    ${QTD_VENDAS_INCLUIDAS}=    Evaluate    ${QTD_VENDAS_INCLUIDAS} + ${QTD_VENDAS}
+    Set Suite Variable    ${QTD_VENDAS_INCLUIDAS}    ${QTD_VENDAS_INCLUIDAS}
+    Log    Quantidade esperada após inclusão: ${QTD_VENDAS_INCLUIDAS}
+
     ${BT_INCLUIR_VENDA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR_VENDA_CARREGAMENTO}    5
     IF    ${BT_INCLUIR_VENDA}
         SikuliLibrary.Click    ${BT_INCLUIR_VENDA_CARREGAMENTO}
@@ -261,25 +264,32 @@ Quando incluo uma venda no carregamento (${QTD_VENDAS})
 
 
 Pegar quantidade de vendas incluídas no carregamento
-    log    message="Consultando quantidade de vendas incluídas no carregamento ${COD_CARREGAMENTO}"
-    ${resultado}=    Query    SELECT c.NEntregas FROM cargas c WHERE c.Sequencia = '${COD_CARREGAMENTO}' ORDER BY c.Sequencia DESC LIMIT 1;
-    
-    IF    not ${resultado}
-        RETURN    0
-    END
-
-    RETURN    ${resultado[0][0]}
+     log    message="Consultando quantidade de vendas incluídas no carregamento ${COD_CARREGAMENTO}"
+     ${resultado}=    Query    SELECT COUNT(*) FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} AND v.Cancelada IS NULL;
+     ${tamanho}=    Get Length    ${resultado}
+     IF    ${tamanho} == 0
+         RETURN    0
+     END
+     RETURN    ${resultado[0][0]}
 
 Pegar próxima venda disponível
     ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Cancelada IS NULL AND v.CodigoCarregamento IS NULL ORDER BY v.Codigo DESC LIMIT 1;
 
     RETURN    ${resultado[0][0]}
 
-Pegar documento da venda
+
+Pegar documento da venda sem cobrança
     [Arguments]    ${COD_VENDA}
-    ${resultado}=    Query    SELECT cr.NDocumento FROM vendas v LEFT JOIN contasareceber cr ON v.Codigo = cr.CodigoVenda WHERE v.Codigo = ${COD_VENDA};
-    Log To Console    ${resultado}
+
+    ${resultado}=    Query    SELECT cr.NDocumento FROM contasareceber cr LEFT JOIN cobrancas_detalhes cbd ON cr.Sequencia = cbd.SequenciaCR WHERE cr.CodigoVenda = ${COD_VENDA} AND cbd.SequenciaCR IS NULL;
+
+    IF    not ${resultado}
+        Log To Console    Nenhum documento sem cobrança para venda ${COD_VENDA}
+        RETURN    ${EMPTY}
+    END
+
     RETURN    ${resultado[0][0]}
+    
 
 Seleciono a próxima venda disponível
     ${COD_VENDA}=    Pegar próxima venda disponível
@@ -334,9 +344,10 @@ Selecionar cobrança pelo documento
 
 
 Então a venda deve ser incluída com sucesso no carregamento
-    ${QTD_VENDAS_INCLUIDAS_DEPOIS}=    Pegar quantidade de vendas incluídas no carregamento
-    IF    ${QTD_VENDAS_INCLUIDAS_DEPOIS} <= ${QTD_VENDAS_INCLUIDAS}
-        Fail    A venda não foi incluída com sucesso no carregamento. Quantidade antes: ${QTD_VENDAS_INCLUIDAS}, Quantidade depois: ${QTD_VENDAS_INCLUIDAS_DEPOIS}
+    ${QTD_ATUAL}=    Pegar quantidade de vendas incluídas no carregamento
+    Log    Quantidade esperada: ${QTD_VENDAS_INCLUIDAS} | Quantidade atual: ${QTD_ATUAL}
+    IF    ${QTD_ATUAL} != ${QTD_VENDAS_INCLUIDAS}
+        Fail    A venda não foi incluída com sucesso no carregamento. Esperado: ${QTD_VENDAS_INCLUIDAS}, Obtido: ${QTD_ATUAL}
     END
 
 Então o carregamento deve ser excluído com sucesso

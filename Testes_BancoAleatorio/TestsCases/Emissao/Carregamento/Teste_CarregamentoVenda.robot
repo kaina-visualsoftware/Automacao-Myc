@@ -6,9 +6,8 @@ Resource    ../../../utils/montadorDeCenarios.robot
 Suite Setup    Run Keywords    Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
 
-#Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
+Test Setup    Run Keywords    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega    AND    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1   AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário    
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
-Test Setup   Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1   AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário    
 
 *** Test Cases ***
 
@@ -57,7 +56,6 @@ Teste 04 - Excluir carregamento com status cadastrando
 
 Teste 05 - Não permitir excluir carregamento fechado
     [Tags]    Teste 05
-
     Dado que acesso o lançamento de carregamento de vendas
     E que existe um carregamento com status    Fechada
     Quando excluo o carregamento
@@ -77,6 +75,7 @@ Teste 06 - Incluir uma venda no carregamento
 
 Teste 07 - Incluir múltiplas vendas no carregamento
     [Tags]    Teste 07
+    [Setup]    montadorDeCenarios.Dado que realizo mais de uma venda(3)
 
     Dado que acesso o lançamento de carregamento de vendas
     E que existe um carregamento com status    Cadastrando
@@ -100,11 +99,12 @@ Teste 08 - Lançamento um carregamento de venda incluindo uma venda e uma cobran
 
 Teste 09 - Editar um carregamento de venda incluindo uma venda e uma cobrança
     [Tags]    Teste 09
+    [Setup]    montadorDeCenarios.Dado que realizo mais de uma venda(3)
 
     Dado que acesso o lançamento de carregamento de vendas
     E que existe um carregamento com status    Cadastrando
     E e edito o carregamento cadastrado
-    Quando incluo uma venda no carregamento (1)
+    Quando incluo uma venda no carregamento (3)
     E incluo uma cobrança para a venda incluída
     E gravo o carregamento da venda
     Então o carregamento da venda deve ser salvo com sucesso
