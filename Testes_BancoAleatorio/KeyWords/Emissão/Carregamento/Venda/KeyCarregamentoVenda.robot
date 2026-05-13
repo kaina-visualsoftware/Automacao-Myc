@@ -103,7 +103,7 @@ Então o status deve ser "Cadastrando"
     ${status}=    Query    SELECT c.Status FROM cargas c ORDER BY c.Sequencia DESC LIMIT 1;
 
     Should Be Equal As Strings    ${status[0][0]}    Cadastrando
-    
+    #novo teste
 
 
 E que existe um carregamento cadastrado
