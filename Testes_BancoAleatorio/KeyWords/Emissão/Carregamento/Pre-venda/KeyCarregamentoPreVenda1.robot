@@ -418,13 +418,6 @@ E excluo o carregamento
 
     Should Be True    ${carregamento_excluido}    Carregamento não foi excluído corretamente.    
 
-E valido que o carregamento foi excluído com sucesso
-
-    ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado = 1
-    Sleep    ${SLEEP_BAIXO}
-
-    Should Be True    ${carregamento_excluido}    Carregamento foi excluído com sucesso
-
 Dado que acesso a tela de carregamento
 
     Então acesso a tela de Carregamento
@@ -437,12 +430,6 @@ Informar Descrição
     SikuliLibrary.Input Text    ${EMPTY}    AUTOMACAO PREVENDA - ${COD_CARREGAMENTO}
 
     Sleep    ${SLEEP_BAIXO}
-
-Buscar Código do Carregamento em Edição
-
-    ${Consulta}    Query    SELECT Sequencia FROM cargas ORDER BY Sequencia DESC LIMIT 1;
-
-    Set Test Variable    ${COD_CARREGAMENTO}    ${Consulta[0][0]}
 
 Então tento fechar a carga sem montar e imprimir o mapa
 
@@ -472,7 +459,6 @@ E incluo uma rota ao carregamento
     E clico em Incluir Rotas
     Então eu Listo as Rotas
     E gravo incluindo a primeira Rota da lista
-
 
 E incluo mais uma rota ao carregamento
 
