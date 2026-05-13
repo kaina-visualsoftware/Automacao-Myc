@@ -77,13 +77,19 @@ EOF
               }'
             )")
 
+          echo "$RESPONSE"
+
           BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+
+          if [ "$BODY" = "null" ] || [ -z "$BODY" ]; then
+            BODY="PR CRIADO AUTOMATICAMENTE"
+          fi
 
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: CREATE PR IF NOT EXISTS
+      - name: CREATE PR IF CLOSED
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -97,7 +103,11 @@ EOF
             --json number \
             --jq 'length')
 
+          echo "OPEN PRS: $OPEN_PR"
+
           if [ "$OPEN_PR" -eq "0" ]; then
+
+            echo "CRIANDO NOVO PR..."
 
             TITLE=$(echo "${{ steps.ai.outputs.body }}" | head -n 1 | sed 's/^#* //')
 
@@ -108,5 +118,7 @@ EOF
               --body "${{ steps.ai.outputs.body }}"
 
           else
+
             echo "PR JA EXISTE - APENAS ATUALIZANDO COMMITS"
+
           fi
