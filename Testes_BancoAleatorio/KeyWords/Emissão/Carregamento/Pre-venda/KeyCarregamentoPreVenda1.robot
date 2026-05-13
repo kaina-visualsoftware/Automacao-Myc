@@ -255,6 +255,7 @@ Então Gravo o carregamento
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
+    Valida Carregamento gerado
 
 E fecho a tela de carregamento
 
@@ -430,7 +431,8 @@ Dado que acesso a tela de carregamento
 
 Informar Descrição
 
-    Buscar Código do Carregamento em Edição
+    Valida carregamento gerado
+    Sleep    ${SLEEP_BAIXO}
 
     SikuliLibrary.Input Text    ${EMPTY}    AUTOMACAO PREVENDA - ${COD_CARREGAMENTO}
 
@@ -549,3 +551,8 @@ E valido que o carregamento contém duas rotas diferentes
 
     Should Be Equal    ${rotas_encontradas}    ${rotas_esperadas}
     ...    As rotas do carregamento não correspondem às rotas das pré-vendas criadas.
+
+Valida Carregamento gerado
+
+    ${Consulta}    Query    SELECT Sequencia FROM cargas ORDER BY Sequencia DESC LIMIT 1;
+    Set Test Variable    ${COD_CARREGAMENTO}    ${Consulta[0][0]}
