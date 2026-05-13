@@ -41,9 +41,11 @@ ${AVISO_EXCLUSAO_STATUS_FECHADO}               aviso_ExclusaoStatusFechado.png
 ${AVISO_CARGA_MONTADA}                         aviso_CargaMontada.png
 ${AVISO_EXCLUIR_CARREGAMENTO}                  aviso_ExcluirCarregamento.png
 ${AVISO_CANCELAR_CARREGAMENTO}                 aviso_CancelarCarregamento.png
+${AVISO_FECHAR_SEM_MONTAR_MAPA}                aviso_FecharSemMontarMapa.png
 
 # Grids
 ${GRID_ROTA_CARREGAMENTO}                      grid_RotaCarregamento.png
+${GRID_CARREGAMENTO_INCLUIDO}                  grid_CarregamentoIncluido.png
 
 # Botões
 ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}             bt_SetaIncluirProdutoEntrega.png
@@ -54,6 +56,8 @@ ${BT_MONTAR_CARGA}                             bt_MontarCarga.png
 ${BT_FECHAR_CARGA}                             bt_FecharCarga.png
 ${BT_IMPRIMIR_MAPA_ROTA}                       bt_ImprimirMapaRota.png
 ${BT_OK_SEM_ATALHO}                            bt_OK_sem_atalho.png
+${BT_SETA_REMOÇÃO_ROTAS_CARREGAMENTO}          bt_SetaRemoverRotasCarregamento.png
+
 # Outros
 ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}             grid_PedidosOrdemDeEntregaNovo.png
 
@@ -160,7 +164,7 @@ Então fecho a tela de geração de vendas
     Sleep    ${SLEEP_MEDIO}
 
 Então acesso a tela de Carregamento
-
+    
     Press Combination    KEY.CTRL    KEY.T
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -220,17 +224,14 @@ Quando eu Monto a Carga
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
-E valido que o carregamento está com o status Montando
-    ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Montando'
-    Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
+E valido que o carregamento está com o status
+    [Arguments]    ${STATUS}
 
-E valido que o carregamento está com o status Fechada
-    ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Fechada'
-    Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
+    ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Status = '${STATUS}'
 
-E valido que o carregamento está com o status Cadastrando
-    ${carregamento_existe}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} and Status = 'Cadastrando'
-    Should Be True    ${carregamento_existe}    Carregamento pesquisado não está com o status correto
+    Should Be True
+    ...    ${carregamento_existe}
+    ...    Carregamento pesquisado não está com o status ${STATUS}
 
 Quando Imprimo o mapa da rota
 
@@ -453,3 +454,46 @@ Buscar Código do Carregamento em Edição
     ${Consulta}    Query    SELECT Sequencia FROM cargas ORDER BY Sequencia DESC LIMIT 1;
 
     Set Test Variable    ${COD_CARREGAMENTO}    ${Consulta[0][0]}
+
+Quando tento fechar a carga sem montar e imprimir o mapa
+
+    SikuliLibrary.Click    ${BT_FECHAR_CARGA}
+    Sleep    ${SLEEP_BAIXO}
+
+Então fecho a validação de fechar sem montar e imprimir o mapa
+
+    Wait Until Screen Contain    ${AVISO_FECHAR_SEM_MONTAR_MAPA}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
+
+Então edito o carregamento
+
+    Press Combination    KEY.ALT    KEY.E
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
+
+E incluo mais uma rota ao carregamento
+
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo a primeira Rota da lista
+
+E removo a rota do carregamento
+
+    E clico em Incluir Rotas
+    Quando removo a rota selecionada
+    Press Combination    KEY.ALT    KEY.G
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+Quando removo a rota selecionada
+
+    Wait Until Screen Contain    ${GRID_CARREGAMENTO_INCLUIDO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${GRID_CARREGAMENTO_INCLUIDO}    
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+    SikuliLibrary.Click    ${BT_SETA_REMOÇÃO_ROTAS_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}

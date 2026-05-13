@@ -25,10 +25,10 @@ Teste 01 - Validar criação de carregamento com o status Fechada de uma pré-ve
     Quando imprimo o mapa da rota
     E em seguida fecho a carga
     Então Gravo o carregamento
-    E valido que o carregamento está com o status Fechada
+    E valido que o carregamento está com o status    Fechada
     E fecho a tela de carregamento
 
-Teste 02 - Validar se está sendo possível excluir um carregamento fechado
+Teste 02 - Validar que não é possível excluir um carregamento com status Fechada
     [Tags]    Teste02
 
     Dado que eu crio uma nova pré-venda de um cliente com rota
@@ -43,13 +43,14 @@ Teste 02 - Validar se está sendo possível excluir um carregamento fechado
     E excluo o Carregamento totalmente gerado
     E fecho a tela de carregamento   
 
-Teste 03 - Excluir um carregamento que já foi montado
+Teste 03 - Excluir um carregamento com status Montando
     [Tags]    Teste03
 
     Dado que eu crio uma nova pré-venda de um cliente com rota
     E listo pela tela de Geração de vendas
     Então acesso a tela de Carregamento
     E adiciono um carregamento com rota
+    Quando eu Monto a Carga
     Então Gravo o carregamento
     Quando pesquiso o Carregamento gerado
     E excluo o Carregamento parcialmente gerado
@@ -65,7 +66,7 @@ Teste 04 - Validar criação de carregamento com o status Montando de uma pré-v
     Quando eu monto a carga
     Então Gravo o carregamento
     Quando pesquiso o Carregamento gerado
-    E valido que o carregamento está com o status Montando
+    E valido que o carregamento está com o status    Montando
     E fecho a tela de carregamento
 
 Teste 05 - Carregamento vinculado a duas pré-vendas com rotas distintas
@@ -90,7 +91,7 @@ Teste 06 - Validar Carregamento com Status Cadastrando e sem uma rota vinculada
     E adiciono um carregamento sem rota
     Então Gravo o carregamento
     Quando pesquiso o Carregamento gerado
-    E valido que o carregamento está com o status Cadastrando
+    E valido que o carregamento está com o status    Cadastrando
     E fecho a tela de carregamento
 
 Teste 07 - Validar exclusão de um carregamento com status Cadastrando
@@ -100,6 +101,59 @@ Teste 07 - Validar exclusão de um carregamento com status Cadastrando
     E adiciono um carregamento sem rota
     Então Gravo o carregamento
     Quando pesquiso o Carregamento gerado
-    E valido que o carregamento está com o status Cadastrando
+    E valido que o carregamento está com o status    Cadastrando
     E excluo o carregamento
+    E fecho a tela de carregamento
+
+Teste 08 - Validar que não é possível fechar uma carga sem montar e imprimir o mapa
+    [Tags]    Teste08
+
+    Dado que eu crio uma nova pré-venda de um cliente com rota
+    E listo pela tela de Geração de vendas
+    Então acesso a tela de Carregamento
+    E adiciono um carregamento com rota
+    Quando tento fechar a carga sem montar e imprimir o mapa
+    Então fecho a validação de fechar sem montar e imprimir o mapa
+    Quando eu monto a carga
+    Quando imprimo o mapa da rota
+    E em seguida fecho a carga
+    Então Gravo o carregamento
+    E valido que o carregamento está com o status    Fechada
+    E fecho a tela de carregamento
+
+Teste 09 - Editar um carregamento e em seguida fechar a carga
+    [Tags]    Teste09
+
+    Dado que eu crio duas pré-vendas com rotas distintas
+    E listo pela tela de Geração de vendas
+    Então acesso a tela de Carregamento
+    E adiciono um carregamento com rota
+    Quando eu monto a carga
+    Então Gravo o carregamento
+    Quando pesquiso o Carregamento gerado
+    E valido que o carregamento está com o status    Montando
+    Então edito o carregamento
+    E incluo mais uma rota ao carregamento
+    Quando eu Monto a Carga
+    Quando imprimo o mapa da rota
+    E em seguida fecho a carga
+    Então Gravo o carregamento
+    E valido que o carregamento está com o status    Fechada
+    E fecho a tela de carregamento
+
+Teste 10 - Editar um carregamento removendo a rota e revertendo para status Cadastrando
+    [Tags]    Teste10
+
+    Dado que eu crio uma nova pré-venda de um cliente com rota
+    E listo pela tela de Geração de vendas
+    Então acesso a tela de Carregamento
+    E adiciono um carregamento com rota
+    Quando eu monto a carga
+    Então Gravo o carregamento
+    E valido que o carregamento está com o status    Montando
+    Quando pesquiso o Carregamento gerado
+    Então edito o carregamento
+    E removo a rota do carregamento
+    Então Gravo o carregamento
+    E valido que o carregamento está com o status    Cadastrando
     E fecho a tela de carregamento

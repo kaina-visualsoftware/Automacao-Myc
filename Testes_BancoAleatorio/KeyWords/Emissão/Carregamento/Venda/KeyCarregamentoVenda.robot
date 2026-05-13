@@ -4,7 +4,7 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    Process
 
-Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/utilsteste.robot
+Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/utils.robot
 Resource    ${EXECDIR}/Testes_BancoAleatorio/utils/validacaoAviso.robot
 
 
