@@ -1,30 +1,112 @@
-name: AUTO CREATE PR
+name: AUTO AI PR
 
 on:
   push:
     branches:
-      - 'feature/**'
       - 'feat/**'
+      - 'feature/**'
       - 'fix/**'
 
 permissions:
   pull-requests: write
-  contents: write
+  contents: read
 
 jobs:
-  create-pr:
+  auto-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: INSTALL JQ
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: GET GIT DIFF
+        id: diff
+        run: |
+          git fetch origin develop
+
+          DIFF=$(git diff origin/develop...HEAD | head -c 15000)
+
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: GENERATE AI PR DESCRIPTION
+        id: ai
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+
+          PROMPT=$(cat <<EOF
+Você é um gerador profissional de Pull Requests.
+
+Analise as alterações abaixo e gere:
+
+- Título curto
+- Resumo técnico
+- Lista do que foi alterado
+- Impactos
+- Como testar
+
+RETORNE EM MARKDOWN.
+
+ALTERAÇÕES:
+
+${{ steps.diff.outputs.diff }}
+EOF
+)
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg prompt "$PROMPT" \
+              '{
+                model: "openai/gpt-4.1-mini",
+                messages: [
+                  {
+                    role: "user",
+                    content: $prompt
+                  }
+                ],
+                temperature: 0.3
+              }'
+            )")
+
+          BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: CREATE PR IF NOT EXISTS
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr view ${{ github.ref_name }} || \
-          gh pr create \
+
+          BRANCH="${{ github.ref_name }}"
+
+          OPEN_PR=$(gh pr list \
+            --head "$BRANCH" \
             --base develop \
-            --head ${{ github.ref_name }} \
-            --title "${{ github.ref_name }}" \
-            --body "PR CRIADO AUTOMATICAMENTE"
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [ "$OPEN_PR" -eq "0" ]; then
+
+            TITLE=$(echo "${{ steps.ai.outputs.body }}" | head -n 1 | sed 's/^#* //')
+
+            gh pr create \
+              --base develop \
+              --head "$BRANCH" \
+              --title "$TITLE" \
+              --body "${{ steps.ai.outputs.body }}"
+
+          else
+            echo "PR JA EXISTE - APENAS ATUALIZANDO COMMITS"
+          fi
