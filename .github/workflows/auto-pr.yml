@@ -28,7 +28,7 @@ jobs:
         run: |
           git fetch origin develop
 
-          git diff origin/develop...HEAD | head -c 15000 > diff.txt
+          git diff origin/develop..HEAD | head -c 15000 > diff.txt
 
           if [ ! -s diff.txt ]; then
             echo "HAS_DIFF=false" >> $GITHUB_ENV
