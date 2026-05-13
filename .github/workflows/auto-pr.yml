@@ -93,7 +93,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
       
       - name: CREATE OR UPDATE PR
-        if: steps.diff.outputs.has_diff == 'true'
+        if: env.HAS_DIFF == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -123,5 +123,5 @@ jobs:
           rm -f /tmp/diff.txt
 
       - name: SKIP - NO DIFF
-        if: env.HAS_DIFF == 'true'
+        if: env.HAS_DIFF == 'false'
         run: echo "⚠️ Sem alterações - pulando criação do PR"
