@@ -6,7 +6,7 @@ Resource    ../../../utils/montadorDeCenarios.robot
 Suite Setup    Run Keywords    Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
 
-Test Setup    Run Keywords    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega    AND    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1   AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário    
+Test Setup    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1   AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário    
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
 *** Test Cases ***
