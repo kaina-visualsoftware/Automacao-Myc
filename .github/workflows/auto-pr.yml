@@ -49,11 +49,12 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          # Pega o diff do step anterior (já escapado)
           DIFF_CONTENT="${{ steps.diff.outputs.diff }}"
           
           echo "📊 Enviando diff para IA (tamanho: ${#DIFF_CONTENT} caracteres)"
           
-          # Criar o JSON usando jq para garantir escaping correto
+          # Criar o JSON usando jq
           jq -n \
             --arg model "openai/gpt-4.1-mini" \
             --arg diff "$DIFF_CONTENT" \
@@ -75,43 +76,37 @@ jobs:
             -H "Content-Type: application/json" \
             -d @request.json)
           
-          # Separar resposta do código HTTP
           HTTP_BODY=$(echo "$RESPONSE" | head -n -1)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           
           echo "📡 HTTP Status: $HTTP_CODE"
           
           if [ "$HTTP_CODE" != "200" ]; then
-            echo "❌ Erro na API: $HTTP_BODY"
-            echo "body=## ⚠️ Descrição não gerada automaticamente\n\n**Branch:** ${{ github.ref_name }}\n\n**Alterações:** Verifique os commits para mais detalhes." >> $GITHUB_OUTPUT
+            echo "❌ Erro na API"
+            cat request.json
+            echo "$HTTP_BODY"
+            echo "body=## ⚠️ Descrição não gerada automaticamente\n\n**Branch:** ${{ github.ref_name }}" >> $GITHUB_OUTPUT
             echo "title=PR: ${{ github.ref_name }}" >> $GITHUB_OUTPUT
             exit 0
           fi
           
-          # Extrair resposta
           BODY=$(echo "$HTTP_BODY" | jq -r '.choices[0].message.content // empty')
           
           if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-            echo "⚠️ Resposta vazia da IA"
             BODY="## 📝 Alterações realizadas\n\nPR criado automaticamente para a branch ${{ github.ref_name }}"
             TITLE="PR Automático: ${{ github.ref_name }}"
           else
-            # Extrair título da primeira linha não vazia que não seja header markdown
             TITLE=$(echo "$BODY" | grep -v '^#' | grep -v '^$' | head -n 1 | cut -c1-80)
-            if [ -z "$TITLE" ]; then
-              TITLE="PR: ${{ github.ref_name }}"
-            fi
+            [ -z "$TITLE" ] && TITLE="PR: ${{ github.ref_name }}"
           fi
           
-          echo "✅ Descrição gerada com sucesso"
+          echo "✅ Descrição gerada"
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           
-          # Salvar body com escaping
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           
-          # Limpar arquivo temporário
           rm -f request.json
 
       - name: CREATE OR UPDATE PR
@@ -121,39 +116,29 @@ jobs:
         run: |
           BRANCH="${{ github.ref_name }}"
           
-          # Verificar PR existente
-          OPEN_PR=$(gh pr list \
+          PR_NUMBER=$(gh pr list \
             --head "$BRANCH" \
             --base develop \
             --state open \
             --json number \
             --jq '.[0].number')
           
-          if [ -z "$OPEN_PR" ] || [ "$OPEN_PR" = "null" ]; then
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
             echo "📝 CRIANDO NOVO PR..."
-            
             gh pr create \
               --base develop \
               --head "$BRANCH" \
               --title "${{ steps.ai.outputs.title }}" \
               --body "${{ steps.ai.outputs.body }}"
-              
-            echo "✅ PR criado com sucesso!"
           else
-            echo "🔄 PR #$OPEN_PR já existe - atualizando descrição"
-            
-            gh pr edit "$OPEN_PR" \
+            echo "🔄 ATUALIZANDO PR #$PR_NUMBER"
+            gh pr edit "$PR_NUMBER" \
               --title "${{ steps.ai.outputs.title }}" \
               --body "${{ steps.ai.outputs.body }}"
-              
-            echo "✅ PR atualizado com nova descrição!"
           fi
           
-          # Limpar arquivo temporário
           rm -f /tmp/diff.txt
       
-      - name: SEM COMMITS - SKIP
+      - name: SKIP - NO DIFF
         if: steps.diff.outputs.has_diff == 'false'
-        run: |
-          echo "⚠️ Nenhuma alteração detectada para criar PR"
-          echo "Branch ${{ github.ref_name }} está sincronizada com develop"
+        run: echo "⚠️ Sem alterações - pulando criação do PR"
