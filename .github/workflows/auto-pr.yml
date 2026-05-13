@@ -41,6 +41,8 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
 
+          DIFF_CONTENT=$(printf '%s\n' "${{ steps.diff.outputs.diff }}" | jq -Rs .)
+
           cat > request.json <<EOF
           {
             "model": "openai/gpt-4.1-mini",
@@ -51,7 +53,11 @@ jobs:
               },
               {
                 "role": "user",
-                "content": "Analise estas alterações e gere uma descrição markdown:\n\n${{ steps.diff.outputs.diff }}"
+                "content": "Analise estas alterações e gere uma descrição markdown:"
+              },
+              {
+                "role": "user",
+                "content": $DIFF_CONTENT
               }
             ],
             "temperature": 0.3
