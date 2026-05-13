@@ -3,9 +3,9 @@ name: AUTO AI PR
 on:
   push:
     branches:
-      - 'feat/**'
-      - 'feature/**'
-      - 'fix/**'
+      - "feat/**"
+      - "feature/**"
+      - "fix/**"
 
 permissions:
   pull-requests: write
@@ -29,53 +29,39 @@ jobs:
         run: |
           git fetch origin develop
 
-          DIFF=$(git diff origin/develop...HEAD | head -c 15000)
+          DIFF=$(git diff origin/develop...HEAD | head -c 12000)
 
           echo "diff<<EOF" >> $GITHUB_OUTPUT
           echo "$DIFF" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: GENERATE AI PR DESCRIPTION
+      - name: GENERATE AI DESCRIPTION
         id: ai
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
 
-          PROMPT=$(cat <<EOF
-Você é um gerador profissional de Pull Requests.
-
-Analise as alterações abaixo e gere:
-
-- Título curto
-- Resumo técnico
-- Lista do que foi alterado
-- Impactos
-- Como testar
-
-RETORNE EM MARKDOWN.
-
-ALTERAÇÕES:
-
-${{ steps.diff.outputs.diff }}
-EOF
-)
+          cat > request.json <<EOF
+          {
+            "model": "openai/gpt-4.1-mini",
+            "messages": [
+              {
+                "role": "system",
+                "content": "Você gera descrições profissionais de pull request."
+              },
+              {
+                "role": "user",
+                "content": "Analise estas alterações e gere uma descrição markdown:\n\n${{ steps.diff.outputs.diff }}"
+              }
+            ],
+            "temperature": 0.3
+          }
+          EOF
 
           RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
             -H "Authorization: Bearer $OPENROUTER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n \
-              --arg prompt "$PROMPT" \
-              '{
-                model: "openai/gpt-4.1-mini",
-                messages: [
-                  {
-                    role: "user",
-                    content: $prompt
-                  }
-                ],
-                temperature: 0.3
-              }'
-            )")
+            -d @request.json)
 
           echo "$RESPONSE"
 
