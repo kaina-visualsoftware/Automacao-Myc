@@ -44,6 +44,7 @@ ${TELA_CARREGAMENTOS}                          tela_Carregamentos.png
 ${TELA_CADASTRO_CARREGAMENTO}                  tela_CadastroCarregamento.png
 ${TELA_INCLUSAO_ROTAS}                         tela_InclusaoRotas.png
 ${TELA_IMPRESSAO}                              tela_Impressao.png
+${TELA_PEDIDOS_ROTA}                           tela_Pedidosrota.png
 
 # =============================================================
 # TELAS DE AVISOS
@@ -54,12 +55,15 @@ ${AVISO_EXCLUIR_CARREGAMENTO}                  aviso_ExcluirCarregamento.png
 ${AVISO_CANCELAR_CARREGAMENTO}                 aviso_CancelarCarregamento.png
 ${AVISO_FECHAR_SEM_MONTAR_MAPA}                aviso_FecharSemMontarMapa.png
 ${AVISO_EXCLUSAO_STATUS_MONTANDO}              aviso_ExclusaoStatusMontando.png
+${AVISO_DESCRICAO_OBRIGATORIA}                 aviso_DescricaoObrigatoriaCarga.png
+${AVISO_PERGUNTA_QUALQUER}                     aviso_PerguntaQualquer.png
 
 # =============================================================
 # GRIDS
 # =============================================================
 ${GRID_ROTA_CARREGAMENTO}                      grid_RotaCarregamento.png
 ${GRID_CARREGAMENTO_INCLUIDO}                  grid_CarregamentoIncluido.png
+${GRID_PEDIDO_INCLUIDO}                        grid_Pedidoincluido.png
 
 # =============================================================
 # BOTÕES
@@ -102,8 +106,10 @@ ${Quantidade_Vendas_Feitas}                    None
 ${Codigo_Vendedor}                             None
 ${Codigo_Cliente}                              None
 ${COD_CARREGAMENTO}                            None
+${ROTA}                                        None
 ${ROTA_1}                                      None
 ${ROTA_2}                                      None
+${VOLUME_CARREGAMENTO}                         None
 
 *** Keywords ***
 
@@ -196,6 +202,28 @@ Dado que eu crio duas pré-vendas com rotas distintas
 
     E listo pela tela de Geração de vendas
 
+Dado que eu crio duas pré-vendas com a mesma rota
+
+    Keypedidos1.Dado que acesso a tela de pedidos
+    Keypedidos1.E clico em adicionar
+    Quando adiciono um Vendedor e um Cliente com rota    ${ROTA}
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+    Quando vou para a aba de pagamentos
+    E audito o pedido
+    Então finalizo o pedido
+    E saio da tela(Pedido)
+
+    Keypedidos1.Dado que acesso a tela de pedidos
+    Keypedidos1.E clico em adicionar
+    Quando adiciono um Vendedor e um Cliente com rota    ${ROTA}
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+    Quando vou para a aba de pagamentos
+    E audito o pedido
+    Então finalizo o pedido
+    E saio da tela(Pedido)
+
+    E listo pela tela de Geração de vendas
+
 Quando adiciono um Vendedor e um Cliente com rota
     [Arguments]    ${ROTA}=${EMPTY}
     Set Test Variable    ${TELA}    Pedido
@@ -227,6 +255,39 @@ Quando adiciono um Vendedor e um Cliente com rota
     Sleep    ${SLEEP_MEDIO}
 
     Keypedidos1.Valida avisos após incluir cliente e vendedor - Pré-Venda
+
+# =============================================================
+# PRÉ-VENDA - TELA DE PEDIDOS (DENTRO DO CARREGAMENTO)
+# =============================================================
+
+E abro a tela de pedido
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.A
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_PEDIDOS_ROTA}    ${TEMPO_TELA}
+
+Quando removo uma pré-venda
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}    
+    Press Combination    KEY.ALT    KEY.R
+    Wait Until Screen Contain    ${AVISO_PERGUNTA_QUALQUER}    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_MEDIO}
+
+E fecho a tela de pedido
+    Press Combination    KEY.ALT    KEY.F
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Not Contain    ${TELA_PEDIDOS_ROTA}    ${SLEEP_BAIXO}
+
+E removo um pedido da rota
+
+    E abro a tela de pedido
+    Quando removo uma pré-venda
+    E fecho a tela de pedido
+    Press Combination    KEY.ALT    KEY.G
+    Sleep    ${SLEEP_BAIXO}
+    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}   ${TEMPO_TELA}
 
 # =============================================================
 # TELA DE GERAÇÃO DE VENDAS
@@ -396,6 +457,14 @@ Quando removo a rota selecionada
     SikuliLibrary.Click    ${BT_SETA_REMOÇÃO_ROTAS_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
+Quando seleciono a rota incluída
+
+    Wait Until Screen Contain    ${GRID_CARREGAMENTO_INCLUIDO}    ${TEMPO_TELA}
+    SikuliLibrary.Click    ${GRID_CARREGAMENTO_INCLUIDO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    DOWN
+    Sleep    ${SLEEP_BAIXO}
+
 # =============================================================
 # TELA DE CARREGAMENTO - AÇÕES DE CARGA (MONTAR / FECHAR / GRAVAR)
 # =============================================================
@@ -443,6 +512,17 @@ Então gravo o carregamento com o status
 
     Então Gravo o carregamento
     E valido que o carregamento está com o status    ${STATUS}
+
+Quando eu tento montar a carga sem descrição
+
+    SikuliLibrary.Click    ${BT_MONTAR_CARGA}
+    Sleep    ${SLEEP_BAIXO}
+
+E informo uma descrição
+
+    SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+    Informar Descrição
 
 # =============================================================
 # TELA DE CARREGAMENTO - EXCLUSÃO
@@ -519,3 +599,96 @@ E valido que o carregamento contém apenas uma rota
     ${quantidade}    Get Length    ${rotas}
     Should Be Equal As Integers    ${quantidade}    1
     ...    O carregamento contém ${quantidade} rotas, mas deveria conter apenas uma.
+
+E obtenho o volume atual do carregamento
+    ${volume}    Query    SELECT Volume FROM cargas WHERE Sequencia = ${COD_CARREGAMENTO};
+    IF    len($volume) > 0
+        Set Test Variable    ${VOLUME_CARREGAMENTO}    ${volume[0][0]}
+    ELSE
+        Fail    Carregamento não encontrado no banco de dados.
+    END
+
+E valido o volume inicial do carregamento como cadastrando
+    E obtenho o volume atual do carregamento
+    ${VOLUME_INICIAL}    Set Variable    ${VOLUME_CARREGAMENTO}
+    Set Test Variable    ${VOLUME_INICIAL}    ${VOLUME_INICIAL}
+    Log To Console    *** VALIDAÇÃO 1: Volume inicial (Cadastrando) = ${VOLUME_INICIAL} pré-vendas
+
+E valido que o volume do carregamento é
+    [Arguments]    ${VOLUME_ESPERADO}
+    ${volume}    Query    SELECT Volume FROM cargas WHERE Sequencia = ${COD_CARREGAMENTO};
+    
+    IF    len($volume) == 0
+        Fail    Carregamento não encontrado no banco de dados.
+    END
+    
+    ${volume_atual}    Set Variable    ${volume[0][0]}
+    Should Be Equal As Integers    ${volume_atual}    ${VOLUME_ESPERADO}
+    ...    O volume do carregamento é ${volume_atual}, mas era esperado ${VOLUME_ESPERADO}
+
+E valido o volume após remover uma pré-venda
+    ${VOLUME_ESPERADO}    Evaluate    ${VOLUME_INICIAL} - 1
+    Log To Console    *** VALIDAÇÃO 2: Volume esperado (Montando) = ${VOLUME_ESPERADO} pré-vendas (${VOLUME_INICIAL} - 1)
+    E valido que o volume do carregamento é    ${VOLUME_ESPERADO}
+
+
+E adiciono um carregamento com várias rotas
+    [Arguments]    ${QUANTIDADE_ROTAS}
+
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+
+    SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${index}    IN RANGE    ${QUANTIDADE_ROTAS}
+
+        Press Special Key    SPACE
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${index} < (${QUANTIDADE_ROTAS} - 1)
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+        END
+
+    END
+
+    SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.G
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain
+    ...    ${TELA_CADASTRO_CARREGAMENTO}
+    ...    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_BAIXO}
+    
+E adiciono um carregamento com rota sem informar descrição
+
+    E clico para adicionar um carregamento
+
+    SikuliLibrary.Click    ${INPUT_PALETES_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    1
+    Sleep    ${SLEEP_BAIXO}
+
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo a primeira Rota da lista
+
+Então valido a mensagem de descrição obrigatória
+
+    Wait Until Screen Contain    ${AVISO_DESCRICAO_OBRIGATORIA}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain
+    ...    ${TELA_CADASTRO_CARREGAMENTO}
+    ...    ${TEMPO_TELA}
+
