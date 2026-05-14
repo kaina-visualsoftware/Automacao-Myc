@@ -50,12 +50,11 @@ jobs:
           PROMPT=$(cat <<EOF
           Analise o diff abaixo e gere:
 
-          1. Um TITULO CURTO com no máximo 75 caracteres.
-          - O título deve resumir toda alteração.
-          - Não use markdown no título.
-          - Não use crases.
-          - Não use aspas.
-          - Não use prefixos como feat:, fix:, chore:.
+          1. Um TITULO CURTO com no máximo 60 caracteres (obrigatório).
+          - Resuma a alteração principal.
+          - Não use prefixos (feat:, fix:, chore:, etc).
+          - Não use aspas, crases ou markdown.
+          - Seja objetivo e claro.
 
           2. Uma DESCRIÇÃO COMPLETA em markdown contendo:
           - Resumo técnico
@@ -65,7 +64,7 @@ jobs:
 
           RETORNE EXATAMENTE NESTE FORMATO:
 
-          TITLE: titulo aqui
+          TITLE: Seu título aqui (máximo 60 caracteres)
 
           BODY:
           # Descrição da Pull Request
@@ -134,10 +133,16 @@ jobs:
 
           fi
 
+          # === FORÇA LIMITE DE 75 CARACTERES ===
+          TITLE=$(echo "$TITLE" | sed 's/["`'\'']//g' | tr -d '\n' | cut -c1-75 | sed 's/[[:space:]]*$//')
+
+          # Se após corte ficar vazio, usa fallback
+          if [ -z "$TITLE" ] || [ ${#TITLE} -lt 5 ]; then
+            TITLE="PR: ${{ github.ref_name }}"
+          fi
+
           echo "TITLE FINAL: $TITLE"
-
           echo "title=$TITLE" >> $GITHUB_OUTPUT
-
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
