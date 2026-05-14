@@ -13,6 +13,7 @@ Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 *** Test Cases ***
 
 Teste 01 - Validar criação de carregamento com o status Fechada
+    [Documentation]    Este teste valida a criação de um carregamento com o status Fechada
     [Tags]    Teste01
     [Setup]    Run Keywords
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   2   AND
@@ -27,6 +28,7 @@ Teste 01 - Validar criação de carregamento com o status Fechada
     E fecho a tela de carregamento
 
 Teste 02 - Validar que não é possível excluir um carregamento com status Fechada
+    [Documentation]    Este teste valida que não é possível excluir um carregamento com status Fechada
     [Tags]    Teste02
 
     Dado que eu crio uma nova pré-venda de um cliente com rota
@@ -39,6 +41,7 @@ Teste 02 - Validar que não é possível excluir um carregamento com status Fech
     E fecho a tela de carregamento   
 
 Teste 03 - Validar que não é possível Excluir um carregamento com status Montando
+    [Documentation]    Este teste valida que não é possível excluir um carregamento com status Montando
     [Tags]    Teste03
 
     Dado que eu crio uma nova pré-venda de um cliente com rota
@@ -50,7 +53,8 @@ Teste 03 - Validar que não é possível Excluir um carregamento com status Mont
     E tento excluir o Carregamento montado
     E fecho a tela de carregamento
 
-Teste 04 - Validar criação de carregamento com o status Montando de uma pré-venda
+Teste 04 - Validar criação de carregamento com o status Montando
+    [Documentation]    Este teste valida a criação de um carregamento com o status Montando
     [Tags]    Teste04
 
     Dado que eu crio uma nova pré-venda de um cliente com rota    
@@ -61,6 +65,7 @@ Teste 04 - Validar criação de carregamento com o status Montando de uma pré-v
     E fecho a tela de carregamento
 
 Teste 05 - Carregamento vinculado a duas pré-vendas com rotas distintas
+    [Documentation]    Este teste valida a criação de um carregamento vinculado a duas pré-vendas com rotas distintas
     [Tags]    Teste05
 
     Dado que eu crio duas pré-vendas com rotas distintas
@@ -72,6 +77,7 @@ Teste 05 - Carregamento vinculado a duas pré-vendas com rotas distintas
     E fecho a tela de carregamento
 
 Teste 06 - Validar Carregamento com Status Cadastrando e sem uma rota vinculada
+    [Documentation]    Este teste valida a criação de um carregamento com status Cadastrando e sem uma rota vinculada
     [Tags]    Teste06
 
     Dado que acesso a tela de carregamento
@@ -80,6 +86,7 @@ Teste 06 - Validar Carregamento com Status Cadastrando e sem uma rota vinculada
     E fecho a tela de carregamento
 
 Teste 07 - Validar exclusão de um carregamento com status Cadastrando
+    [Documentation]    Este teste valida a exclusão de um carregamento com status Cadastrando
     [Tags]    Teste07
 
     Dado que acesso a tela de Carregamento
@@ -90,6 +97,7 @@ Teste 07 - Validar exclusão de um carregamento com status Cadastrando
     E fecho a tela de carregamento
 
 Teste 08 - Validar que não é possível fechar uma carga sem montar e imprimir o mapa
+    [Documentation]    Este teste valida que não é possível fechar uma carga sem montar e imprimir o mapa
     [Tags]    Teste08
 
     Dado que eu crio uma nova pré-venda de um cliente com rota
@@ -101,6 +109,7 @@ Teste 08 - Validar que não é possível fechar uma carga sem montar e imprimir 
     E fecho a tela de carregamento
 
 Teste 09 - Editar um carregamento e em seguida fechar a carga
+    [Documentation]    Este teste valida a edição de um carregamento e o posterior fechamento da carga
     [Tags]    Teste09
 
     Dado que eu crio duas pré-vendas com rotas distintas
@@ -115,6 +124,7 @@ Teste 09 - Editar um carregamento e em seguida fechar a carga
     E fecho a tela de carregamento
 
 Teste 10 - Editar um carregamento removendo a rota e revertendo para status Cadastrando
+    [Documentation]    Este teste valida a edição de um carregamento removendo a rota e revertendo para status Cadastrando
     [Tags]    Teste10
 
     Dado que eu crio uma nova pré-venda de um cliente com rota
@@ -129,6 +139,7 @@ Teste 10 - Editar um carregamento removendo a rota e revertendo para status Cada
     E fecho a tela de carregamento
 
 Teste 11 - Validar inclusão de rota em um carregamento com status Cadastrando
+    [Documentation]    Este teste valida a inclusão de rota em um carregamento com status Cadastrando
     [Tags]    Teste11
 
     Dado que acesso a tela de carregamento
@@ -142,3 +153,4 @@ Teste 11 - Validar inclusão de rota em um carregamento com status Cadastrando
     E incluo uma rota ao carregamento
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
+
