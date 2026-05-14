@@ -47,40 +47,48 @@ jobs:
 
           DIFF_CONTENT=$(cat diff.txt)
 
+          PROMPT=$(cat <<EOF
+          Analise o diff abaixo e gere:
+
+          1. Um TITULO CURTO com no máximo 75 caracteres.
+          - O título deve resumir toda alteração.
+          - Não use markdown no título.
+          - Não use crases.
+          - Não use aspas.
+          - Não use prefixos como feat:, fix:, chore:.
+
+          2. Uma DESCRIÇÃO COMPLETA em markdown contendo:
+          - Resumo técnico
+          - O que foi alterado
+          - Impactos
+          - Como testar
+
+          RETORNE EXATAMENTE NESTE FORMATO:
+
+          TITLE: titulo aqui
+
+          BODY:
+          # Descrição da Pull Request
+
+          DIFF:
+
+          $DIFF_CONTENT
+          EOF
+          )
+
           jq -n \
             --arg model "openai/gpt-4.1-mini" \
-            --arg diff "$DIFF_CONTENT" \
+            --arg prompt "$PROMPT" \
             '{
               model: $model,
               messages: [
                 {
                   role: "system",
-                  content: "Você é um engenheiro especialista em gerar Pull Requests profissionais em português usando markdown."
+                  content: "Você é um engenheiro especialista em gerar Pull Requests profissionais em português."
                 },
                 {
                   role: "user",
-                  content:
-                    "Analise o diff e gere:\n\n" +
-                    "1. Um TITULO CURTO com no máximo 75 caracteres.\n" +
-                    "- O título deve resumir toda alteração.\n" +
-                    "- Não use markdown no título.\n" +
-                    "- Não use ```.\n" +
-                    "- Não use aspas.\n" +
-                    "- Não use prefixos como feat:, fix:, chore:.\n\n" +
-
-                    "2. Uma DESCRIÇÃO COMPLETA em markdown contendo:\n" +
-                    "- Resumo técnico\n" +
-                    "- O que foi alterado\n" +
-                    "- Impactos\n" +
-                    "- Como testar\n\n" +
-
-                    "RETORNE EXATAMENTE NESTE FORMATO:\n\n" +
-
-                    "TITLE: titulo aqui\n\n" +
-                    "BODY:\n" +
-                    "# Descrição da Pull Request\n\n" +
-
-                    "DIFF:\n\n" + $diff
+                  content: $prompt
                 }
               ],
               temperature: 0.3,
@@ -133,7 +141,6 @@ jobs:
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
 
       - name: CREATE OR UPDATE PR
         if: env.HAS_DIFF == 'true'
