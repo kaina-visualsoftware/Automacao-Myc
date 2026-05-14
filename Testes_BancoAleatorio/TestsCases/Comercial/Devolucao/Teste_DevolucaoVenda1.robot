@@ -32,6 +32,7 @@ Teste 02 - Visualização de devolução de venda
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
+    E pesquiso pela devolução gerada
     Então visualizo a devolução
     E saio da tela(Devolução)
 
@@ -45,6 +46,7 @@ Teste 03 - Edição de devolução de venda
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Quando finalizo a devolução como aberta
+    E pesquiso pela devolução gerada
     E edito a devolução
     Quando insiro um produto para a troca
     Então finalizo a devolução após a edição
@@ -59,6 +61,7 @@ Teste 04 - Exclusão de devolução de venda
     Quando seleciono um produto para a devolução
     E vou para a aba de pagamentos
     Então finalizo a devolução
+    E pesquiso pela devolução gerada
     Então excluo a devolução
     E saio da tela(Devolução)
 

@@ -47,23 +47,52 @@ jobs:
 
           DIFF_CONTENT=$(cat diff.txt)
 
+          PROMPT=$(cat <<EOF
+          Analise o diff abaixo e gere:
+
+          1. Um TITULO CURTO com no máximo 75 caracteres.
+          - O título deve resumir toda alteração.
+          - Não use markdown no título.
+          - Não use crases.
+          - Não use aspas.
+          - Não use prefixos como feat:, fix:, chore:.
+
+          2. Uma DESCRIÇÃO COMPLETA em markdown contendo:
+          - Resumo técnico
+          - O que foi alterado
+          - Impactos
+          - Como testar
+
+          RETORNE EXATAMENTE NESTE FORMATO:
+
+          TITLE: titulo aqui
+
+          BODY:
+          # Descrição da Pull Request
+
+          DIFF:
+
+          $DIFF_CONTENT
+          EOF
+          )
+
           jq -n \
             --arg model "openai/gpt-4.1-mini" \
-            --arg diff "$DIFF_CONTENT" \
+            --arg prompt "$PROMPT" \
             '{
               model: $model,
               messages: [
                 {
                   role: "system",
-                  content: "Você é um engenheiro especialista em gerar Pull Requests profissionais em português usando markdown."
+                  content: "Você é um engenheiro especialista em gerar Pull Requests profissionais em português."
                 },
                 {
                   role: "user",
-                  content: ("Gere uma descrição profissional para este diff:\n\n" + $diff)
+                  content: $prompt
                 }
               ],
               temperature: 0.3,
-              max_tokens: 1000
+              max_tokens: 1200
             }' > request.json
 
           RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
@@ -73,25 +102,46 @@ jobs:
 
           echo "$RESPONSE"
 
-          BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+          AI_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
-          if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-            BODY="## PR AUTOMATICO\n\nBranch: ${{ github.ref_name }}"
+          if [ -z "$AI_CONTENT" ] || [ "$AI_CONTENT" = "null" ]; then
+
             TITLE="PR: ${{ github.ref_name }}"
+            BODY="## PR AUTOMATICO\n\nBranch: ${{ github.ref_name }}"
+
           else
-            TITLE=$(echo "$BODY" | grep -v '^#' | grep -v '^$' | head -n 1 | cut -c1-80)
+
+            TITLE=$(echo "$AI_CONTENT" \
+              | grep "^TITLE:" \
+              | head -n 1 \
+              | sed 's/^TITLE:[ ]*//')
+
+            BODY=$(echo "$AI_CONTENT" \
+              | sed -n '/^BODY:/,$p' \
+              | sed '1d')
+
+            TITLE=$(echo "$TITLE" \
+              | cut -c1-75 \
+              | sed 's/["`]//g')
 
             if [ -z "$TITLE" ]; then
               TITLE="PR: ${{ github.ref_name }}"
             fi
+
+            if [ -z "$BODY" ]; then
+              BODY="## PR AUTOMATICO\n\nBranch: ${{ github.ref_name }}"
+            fi
+
           fi
+
+          echo "TITLE FINAL: $TITLE"
 
           echo "title=$TITLE" >> $GITHUB_OUTPUT
 
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-      
+
       - name: CREATE OR UPDATE PR
         if: env.HAS_DIFF == 'true'
         env:
