@@ -23,6 +23,8 @@ ${INPUTBOX_OBS}                        inputBox_Observacoes.png
 # Labels
 ${LABEL_MOTIVO_DEVOLUCAO}              lb_motivoDevolucao.png
 ${LABEL_SERA_GERADO_VALE_COMPRA}       lb_SeraGeradoValeCompraValorDev.png
+${LABEL_CRITERIO_CODIGO_DEVOLUCAO}     lb_CriterioCodigo_Devolucao.png
+${LABEL_REGISTRO_ENCONTRADO_DEV}       lb_RegistroEncontradoDevolucao.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
 ${COD_DEVOLUCAO}                       None
@@ -330,10 +332,6 @@ Então finalizo a devolução
 
 Então visualizo a devolução
 
-    Press Special Key    F6
-    Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
     Press Combination    KEY.ALT    KEY.V 
     Wait Until Screen Contain    ${TELA_VISUALIZA_VENDA}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
@@ -406,12 +404,8 @@ Então finalizo a devolução após a edição
     END
 
 Então excluo a devolução
-    
-    Press Special Key    F6
-    Wait Until Screen Contain    ${TELA_DEVOLUÇÕES}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-    
-    Press Combination    KEY.ALT    KEY.x 
+        
+    Press Combination    KEY.ALT    KEY.X
     Sleep    ${SLEEP_BAIXO}
     
     Valida solicitação de senha do usuário supervisor
@@ -478,3 +472,29 @@ Valida cadastro de motivos de devoluções
         END
         
     END
+
+E pesquiso pela devolução gerada
+
+    Sleep    ${SLEEP_BAIXO}
+    ${criterioCodigo}    Exists    ${LABEL_CRITERIO_CODIGO_DEVOLUCAO}
+    
+    IF    not ${criterioCodigo}
+
+        SikuliLibrary.Click    ${LABEL_CODIGO_GRID}
+        
+    END
+
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+    
+    ${codigo_devolucao}    Convert To String    ${COD_DEVOLUCAO}
+
+    Type    ${EMPTY}    ${codigo_devolucao}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    ENTER
+
+    Wait Until Screen Contain    ${LABEL_REGISTRO_ENCONTRADO_DEV}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${LABEL_REGISTRO_ENCONTRADO_DEV}
+    Sleep    ${SLEEP_BAIXO}

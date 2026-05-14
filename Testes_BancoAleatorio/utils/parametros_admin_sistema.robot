@@ -44,7 +44,6 @@
 ...    EXIBE_FOTO_CLIENTE=ExibeFotoCli
 ...    PERMITE_VARIAS_TABELAS=PermiteVariasTabelas
 ...    OS_COMISSAO_VENDEDOR_EXECUTOR=OS_ComVendedorEexecutor
-...    CARGA_VENDAS=Carga_Vendas
 
 &{PARAM_EMP}    
 ...    VENDA_IMPRIME_CUPOM=Venda_ImprimeCupom

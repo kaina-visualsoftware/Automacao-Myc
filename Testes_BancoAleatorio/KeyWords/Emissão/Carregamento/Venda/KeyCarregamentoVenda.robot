@@ -145,6 +145,22 @@ Dado que acesso o lançamento de carregamento de vendas
 Quando inicio um novo carregamento
     Iniciar novo carregamento
 
+Quando pesquiso o carregamento
+    [Arguments]    ${codigo}
+    Pesquisar carregamento por código    ${codigo}
+
+Quando limpo o filtro da pesquisa
+    Limpar filtro de pesquisa
+
+Quando edito o carregamento cadastrado
+    Pesquisar carregamento por código    ${COD_CARREGAMENTO}
+    Clicar no botão Editar
+
+Quando excluo o carregamento
+    Pesquisar carregamento por código    ${COD_CARREGAMENTO}
+    Clicar no botão Excluir
+    Excluir carregamento existente
+
 E informo uma descrição valida
     Preencher descrição com texto aleatório
 
@@ -176,43 +192,8 @@ E que existe um carregamento com status
 
     Set Test Variable    ${COD_CARREGAMENTO}    ${resultado[0][0]}
 
-Setar codigo carregamento
-    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Cancelado IS NULL ORDER BY c.Sequencia DESC LIMIT 1;
-    
-    IF    not ${resultado}
-        RETURN    0
-    END
-
-    Set Test Variable    ${COD_CARREGAMENTO}    ${resultado[0][0]}
-
 E incluo uma cobrança no carregamento
     Incluir cobrança no carregamento
-
-Pegar ultimas vendas do carregamento
-    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} ORDER BY v.Codigo DESC;
-    IF    not${resultado}
-        RETURN    ${EMPTY}
-    END
-
-    ${VENDAS}=    Evaluate    [item[0] for item in $resultado]
-
-    RETURN    ${VENDAS}
-
-Quando pesquiso o carregamento
-    [Arguments]    ${codigo}
-    Pesquisar carregamento por código    ${codigo}
-
-Quando limpo o filtro da pesquisa
-    Limpar filtro de pesquisa
-
-Quando edito o carregamento cadastrado
-    Pesquisar carregamento por código    ${COD_CARREGAMENTO}
-    Clicar no botão Editar
-
-Quando excluo o carregamento
-    Pesquisar carregamento por código    ${COD_CARREGAMENTO}
-    Clicar no botão Excluir
-    Excluir carregamento existente
 
 E incluo vendas no carregamento
     [Arguments]    ${QTD_VENDAS}
@@ -230,71 +211,42 @@ E incluo vendas no carregamento
 
     Clicar no botão Salvar
 
-Incluir cobrança no carregamento
-    @{ULTIMAS_VENDAS}=    Pegar ultimas vendas do carregamento
-
-    Abrir tela de listagem de cobranças
-
-    FOR    ${COD_VENDA}    IN    @{ULTIMAS_VENDAS}
-        ${DOCUMENTO}=    Pegar documento da venda sem cobrança    ${COD_VENDA}
-        Selecionar cobrança pelo documento    ${DOCUMENTO}
+Então a venda deve ser incluída com sucesso no carregamento
+    ${QTD_ATUAL}=    Pegar quantidade de vendas incluídas no carregamento
+    Log    Quantidade esperada: ${QTD_VENDAS_INCLUIDAS} | Quantidade atual: ${QTD_ATUAL}
+    IF    ${QTD_ATUAL} != ${QTD_VENDAS_INCLUIDAS}
+        Fail    A venda não foi incluída com sucesso no carregamento. Esperado: ${QTD_VENDAS_INCLUIDAS}, Obtido: ${QTD_ATUAL}
     END
 
-    Clicar no botão Gravar 
+Então o carregamento deve ser excluído com sucesso
+    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
 
+    Should Be Empty    ${resultado}
 
-Pegar quantidade de vendas incluídas no carregamento
-     log    message="Consultando quantidade de vendas incluídas no carregamento ${COD_CARREGAMENTO}"
-     ${resultado}=    Query    SELECT COUNT(*) FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} AND v.Cancelada IS NULL;
-     ${tamanho}=    Get Length    ${resultado}
-     IF    ${tamanho} == 0
-         RETURN    0
-     END
-     RETURN    ${resultado[0][0]}
+Então o sistema deve impedir a exclusão
+    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
 
-Pegar próxima venda disponível
-    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Cancelada IS NULL AND v.CodigoCarregamento IS NULL ORDER BY v.Codigo DESC LIMIT 1;
-
-    RETURN    ${resultado[0][0]}
-
-
-Pegar documento da venda sem cobrança
-    [Arguments]    ${COD_VENDA}
-
-    ${resultado}=    Query    SELECT cr.NDocumento FROM contasareceber cr LEFT JOIN cobrancas_detalhes cbd ON cr.Sequencia = cbd.SequenciaCR WHERE cr.CodigoVenda = ${COD_VENDA} AND cbd.SequenciaCR IS NULL;
-
-    IF    not ${resultado}
-        Log To Console    Nenhum documento sem cobrança para venda ${COD_VENDA}
-        RETURN    ${EMPTY}
-    END
-
-    RETURN    ${resultado[0][0]}
+    Should Not Be Empty    ${resultado}
     
+    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    3
 
-Selecionar a próxima venda disponível
-    ${COD_VENDA}=    Pegar próxima venda disponível
-    
-    ${CHECKBOX_TODOS_ITENS_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_TODOS_ITENS}    15
-    IF    ${CHECKBOX_TODOS_ITENS_BOOL}
-        SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}    2
-        
+    IF    ${aviso_excluir_carregamento_fechado}
+        Clicar no botão Ok
         Sleep    ${SLEEP_BAIXO}
     END
 
-    FOR    ${I}    IN RANGE    3
-        Press Special Key    TAB
+Então fecho a tela de carregamento
+    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Run Keyword And Ignore Error    Press Special Key    ESC
+
+Setar codigo carregamento
+    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Cancelado IS NULL ORDER BY c.Sequencia DESC LIMIT 1;
+
+    IF    not ${resultado}
+        RETURN    0
     END
 
-    SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
-    SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
-    
-    Input Text    ${EMPTY}    ${COD_VENDA}
-    Press Special Key    LEFT
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
-
-    Clicar no botão Adicionar
-    
+    Set Test Variable    ${COD_CARREGAMENTO}    ${resultado[0][0]}
 
 Selecionar cobrança pelo documento
     [Arguments]    ${DOCUMENTO}
@@ -322,30 +274,75 @@ Selecionar cobrança pelo documento
     Sleep    ${SLEEP_MEDIO}
 
 
-Então a venda deve ser incluída com sucesso no carregamento
-    ${QTD_ATUAL}=    Pegar quantidade de vendas incluídas no carregamento
-    Log    Quantidade esperada: ${QTD_VENDAS_INCLUIDAS} | Quantidade atual: ${QTD_ATUAL}
-    IF    ${QTD_ATUAL} != ${QTD_VENDAS_INCLUIDAS}
-        Fail    A venda não foi incluída com sucesso no carregamento. Esperado: ${QTD_VENDAS_INCLUIDAS}, Obtido: ${QTD_ATUAL}
-    END
-
-Então o carregamento deve ser excluído com sucesso
-    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
-
-    Should Be Empty    ${resultado}
-
-
-Então o sistema deve impedir a exclusão
-    ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
-
-    Should Not Be Empty    ${resultado}
+Selecionar a próxima venda disponível
+    ${COD_VENDA}=    Pegar próxima venda disponível
     
-    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    3
-
-    IF    ${aviso_excluir_carregamento_fechado}
-        Clicar no botão Ok
+    ${CHECKBOX_TODOS_ITENS_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_TODOS_ITENS}    15
+    IF    ${CHECKBOX_TODOS_ITENS_BOOL}
+        SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}    2
+        
         Sleep    ${SLEEP_BAIXO}
     END
 
-Então fecho a tela de carregamento
-    Run Keyword And Ignore Error    Press Special Key    ESC
+    FOR    ${I}    IN RANGE    3
+        Press Special Key    TAB
+    END
+
+    SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
+    SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
+    
+    Input Text    ${EMPTY}    ${COD_VENDA}
+    Press Special Key    LEFT
+    Press Special Key    SPACE
+    Sleep    ${SLEEP_BAIXO}
+
+    Clicar no botão Adicionar
+
+Incluir cobrança no carregamento
+    @{ULTIMAS_VENDAS}=    Pegar ultimas vendas do carregamento
+
+    Abrir tela de listagem de cobranças
+
+    FOR    ${COD_VENDA}    IN    @{ULTIMAS_VENDAS}
+        ${DOCUMENTO}=    Pegar documento da venda sem cobrança    ${COD_VENDA}
+        Selecionar cobrança pelo documento    ${DOCUMENTO}
+    END
+
+    Clicar no botão Gravar 
+
+Pegar quantidade de vendas incluídas no carregamento
+     log    message="Consultando quantidade de vendas incluídas no carregamento ${COD_CARREGAMENTO}"
+     ${resultado}=    Query    SELECT COUNT(*) FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} AND v.Cancelada IS NULL;
+     ${tamanho}=    Get Length    ${resultado}
+     IF    ${tamanho} == 0
+         RETURN    0
+     END
+     RETURN    ${resultado[0][0]}
+
+Pegar próxima venda disponível
+    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Cancelada IS NULL AND v.CodigoCarregamento IS NULL ORDER BY v.Codigo DESC LIMIT 1;
+
+    RETURN    ${resultado[0][0]}
+
+
+Pegar documento da venda sem cobrança
+    [Arguments]    ${COD_VENDA}
+
+    ${resultado}=    Query    SELECT cr.NDocumento FROM contasareceber cr LEFT JOIN cobrancas_detalhes cbd ON cr.Sequencia = cbd.SequenciaCR WHERE cr.CodigoVenda = ${COD_VENDA} AND cbd.SequenciaCR IS NULL;
+
+    IF    not ${resultado}
+        Log To Console    Nenhum documento sem cobrança para venda ${COD_VENDA}
+        RETURN    ${EMPTY}
+    END
+
+    RETURN    ${resultado[0][0]}  
+
+Pegar ultimas vendas do carregamento
+    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} ORDER BY v.Codigo DESC;
+    IF    not${resultado}
+        RETURN    ${EMPTY}
+    END
+
+    ${VENDAS}=    Evaluate    [item[0] for item in $resultado]
+
+    RETURN    ${VENDAS}

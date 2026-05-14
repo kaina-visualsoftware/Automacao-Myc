@@ -7,6 +7,7 @@ Library    Process
 Library    Collections
 Library    Telnet
 Library    String
+Library    ../libs/validaTelasIni.py
 
 Variables    ../libs/leituraConfig.py
 
@@ -61,7 +62,7 @@ ${TELA_IMPRESSAO_DIRETA}                               tela_ImpressaoDireta.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}                      modal_PersonalizacaoPagamento.png
 ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.png
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
-${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
+${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                 tela_Agrupamento.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                                   aviso_QuantidadeSemEstoque.png
@@ -79,13 +80,6 @@ ${BT_CONFIRMA_CANAL_NEGOCIACAO}                        bt_ConfirmarCanal.png
 ${BT_SOLICITAR_CRÉDITO}                                bt_SolicitarCredito.png
 ${BT_SETA_DIREITA}                                     bt_SetaDireita.png
 ${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}                    bt_IncluirProdutoNFeSaidaManual.png
-${BT_ADICIONAR}                                        bt_Adicionar.png
-${BT_GRAVAR}                                           bt_Gravar.png
-${BT_EDITAR}                                           bt_Editar.png
-${BT_EXCLUIR}                                          bt_Excluir.png
-${BT_SALVAR}                                           bt_Salvar.png
-${BT_LISTAR}                                           bt_Listar.png
-${BT_OK}                                               bt_Ok.png
 
 # Inputs
 ${INPUT_COD_CLIENTE}                                   lb_CodCliente.png
@@ -111,6 +105,7 @@ ${CORRIGE_FOCO}                                        corrigeFoco.png
 ${AJUSTE_FOCO}                                         bt_SetaUltimaVenda.png
 ${AJUSTE_FOCO_DEVOLUCAO}                               ajusteFocoDevolucao.png
 ${NomeTerminalExecucao}                                ${config.terminal_name}
+${CHECKBOX_INFORMA_AGRUPAMENTO}                        checkBox_InformaAgrupamento.png
 
 # Flags booleanas (inicializadas em runtime via Set Test Variable)
 ${Aviso_Vendedor_Existe_Comissao}                      ${False}
@@ -132,6 +127,7 @@ ${Parametro_QtdePadraoOrcamentos}                      ${False}
 ${Parametro_QtdePadraoOS}                              ${False}
 ${Parametro_QtdePadraoPreVendas}                       ${False}
 ${Parametro_QtdePadraoVendas}                          ${False}
+${Teste_Orc_Agrup_Prod}                                ${False}
 
 # Variáveis escalares (inicializadas em runtime via Set Test Variable)
 ${COD_PRODUTO}                                         None
@@ -1644,6 +1640,12 @@ Valida parametros após incluir produto
         
     END
 
+    IF    '${TELA}' == 'Orcamento'
+
+        Valida o checkbox informa agrupamento
+
+    END
+
     IF     ${Parametro_ExigeSenhaMultiplo}
     
         Valida solicitação de senha do usuário supervisor
@@ -1666,6 +1668,12 @@ Valida parametros após incluir produto
 
     END
 
+    IF    '${TELA}' == 'Orcamento'
+
+        Valida inserção de produto com agrupamento em orçamentos
+        
+    END
+    
     Valida produto com preço unitário zerado
 
     Valida produto já incluso
@@ -2831,58 +2839,45 @@ Valida solicitação de senha do usuário supervisor para liberação de status 
 
     END
 
+Valida o checkbox informa agrupamento
 
+    ${Teste_Orc_Agrup_Prod}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    agrupamento
 
-
-
-
-#Cliques em botoes genericos
-
-Clicar no botão Adicionar
-    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_ADICIONAR}    ${SLEEP_MEDIO}
-    IF    ${existe}
-        SikuliLibrary.Click    ${BT_ADICIONAR}
+    IF    ${Teste_Orc_Agrup_Prod}
+        
+        ${eh_informa_agrupamento_habilitado}    validaTelasIni.Valida Telas Ini Prefixado    formulario=frmCad_Orcamento    campo=InformaAgrupamento
+        
         Sleep    ${SLEEP_BAIXO}
+
+        IF    ${eh_informa_agrupamento_habilitado} == False
+        
+            SikuliLibrary.Click    ${CHECKBOX_INFORMA_AGRUPAMENTO}
+
+        END
+
+        Set Test Variable    ${Teste_Orc_Agrup_Prod}
+
     END
 
-Clicar no botão Gravar
-    ${botao}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_GRAVAR}    ${SLEEP_MEDIO}
-    IF    ${botao}
-        SikuliLibrary.Click    ${BT_GRAVAR}
-        Sleep    ${SLEEP_BAIXO}
-    END
+Valida inserção de produto com agrupamento em orçamentos
 
-Clicar no botão Salvar
-    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_SALVAR}    ${SLEEP_MEDIO}
-    IF    ${existe}
-        SikuliLibrary.Click    ${BT_SALVAR}
-        Sleep    ${SLEEP_BAIXO}
-    END
+    IF    ${Teste_Orc_Agrup_Prod}
+        
+        Wait Until Screen Contain    ${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}    ${TEMPO_TELA}
 
-Clicar no botão Editar
-    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_EDITAR}    ${SLEEP_MEDIO}
-    IF    ${existe}
-        SikuliLibrary.Click    ${BT_EDITAR}
         Sleep    ${SLEEP_BAIXO}
-    END
+        Type    ${EMPTY}    AUTOMACAO-AGRUPAMENTO
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
 
-Clicar no botão Excluir
-    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_EXCLUIR}    ${SLEEP_MEDIO}
-    IF    ${existe}
-        SikuliLibrary.Click    ${BT_EXCLUIR}
         Sleep    ${SLEEP_BAIXO}
-    END
+        ${consulta}    Query    SELECT op.Agrupamento, op.CodigoProduto FROM orcamentosprodutos op WHERE op.CodigoOrcamento = ${CODIGO_OPERACAO_MOV} AND op.CodigoProduto = ${COD_PRODUTO} AND op.Cancelada IS NULL;
 
-Clicar no botão Listar
-    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_LISTAR}    ${SLEEP_MEDIO}
-    IF    ${existe}
-        SikuliLibrary.Click    ${BT_LISTAR}
-        Sleep    ${SLEEP_BAIXO}
-    END
+        ${agrupamento}       Set Variable    ${consulta[0][0]}
+        ${codigo_produto}    Set Variable    ${consulta[0][1]}
 
-Clicar no botão Ok
-    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_OK}    5
-    IF    ${existe}
-        SikuliLibrary.Click    ${BT_OK}
-        Sleep    ${SLEEP_BAIXO}
+        Should Be Equal As Numbers    ${codigo_produto}    ${COD_PRODUTO}
+        Should Be Equal As Strings    ${agrupamento}    AUTOMACAO-AGRUPAMENTO
+
     END

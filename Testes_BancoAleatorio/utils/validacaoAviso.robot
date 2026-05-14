@@ -33,7 +33,6 @@ ${TELA_GUIA_CONFIGURACOES}                             tela_GuiaConfiguracoes.pn
 ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
 ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}               tela_ConsultaSCPC_SemConsultaSalva.png
 ${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}               tela_ConsultaSCPC_ComConsultaSalva.png
-${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
 
 # Telas Avisos
 ${AVISO_USAR_ESSE_VENDEDOR}                            aviso_clienteOutroVendedor.png
@@ -59,6 +58,7 @@ ${AVISO_EDITAR_OS_FINALIZADA}                          aviso_EditarOSFinalizadaS
 ${AVISO_VENDEDOR_SEM_PERCENT_COMISSAO_VALE_COMPRA}     aviso_VendedorSemPercentualComissaoValeCompra.png
 ${AVISO_CLIENTE_MENOR_DE_IDADE}                        aviso_ClienteMenorDeIdade.png
 ${AVISO_ATUALIZAR_NUMERO_CADASTRO_PRICIPAL}            aviso_AtualizarNumeroCadastroPrincipal.png
+${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}              aviso_QuedaEnergiaOperacaoEmAberto.png
 
 # Botões
 ${BT_NAO}                                              bt_Nao.png
@@ -1185,11 +1185,16 @@ Valida lançamento de devolução em aberto
     IF    ${devolucaoEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_LANC_DEVOLUCAO_EM_ABERTO}
+        # ${aviso}    Exists    ${AVISO_LANC_DEVOLUCAO_EM_ABERTO}
+        ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
+
+        Log To Console    Aviso de devolução em aberto: ${aviso}
 
         IF    ${aviso}
-
-            Press Combination    KEY.ALT    KEY.N
+            
+            Sleep    ${SLEEP_BAIXO}
+            # Press Combination    KEY.ALT    KEY.N
+            SikuliLibrary.Click    ${BT_NAO}
             Sleep    ${SLEEP_BAIXO}
             
         END
@@ -1204,11 +1209,14 @@ Valida lançamento de orçamento em aberto
     IF    ${orcamentoEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_LANC_ORÇAMENTO_EM_ABERTO}
+        # ${aviso}    Exists    ${AVISO_LANC_ORÇAMENTO_EM_ABERTO}
+        ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
             
-            Press Combination    KEY.ALT    KEY.N
+            # Press Combination    KEY.ALT    KEY.N
+            Sleep    ${SLEEP_BAIXO}
+            SikuliLibrary.Click    ${BT_NAO}
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -1223,11 +1231,14 @@ Valida lançamento de ordem de serviço em aberto
     IF    ${OSEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_LANC_OS_EM_ABERTO}
+        # ${aviso}    Exists    ${AVISO_LANC_OS_EM_ABERTO}
+        ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
-
-            Press Combination    KEY.ALT    KEY.N
+            
+            Sleep    ${SLEEP_BAIXO}
+            SikuliLibrary.Click    ${BT_NAO}
+            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             
         END
@@ -1242,11 +1253,14 @@ Valida lançamento de venda em aberto
     IF    ${VendaEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_LANC_VENDA_EM_ABERTO}
+        # ${aviso}    Exists    ${AVISO_LANC_VENDA_EM_ABERTO}
+        ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
-
-            Press Combination    KEY.ALT    KEY.N
+            
+            Sleep    ${SLEEP_BAIXO}
+            SikuliLibrary.Click    ${BT_NAO}
+            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             
         END
@@ -1261,11 +1275,14 @@ Valida lançamento de pré-venda em aberto
     IF    ${PreVendaEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_LANC_PRE_VENDA_EM_ABERTO}
+        # ${aviso}    Exists    ${AVISO_LANC_PRE_VENDA_EM_ABERTO}
+        ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
-
-            Press Combination    KEY.ALT    KEY.N
+            
+            Sleep    ${SLEEP_BAIXO}
+            SikuliLibrary.Click    ${BT_NAO}
+            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             
         END
