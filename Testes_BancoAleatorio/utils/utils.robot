@@ -62,13 +62,10 @@ ${TELA_IMPRESSAO_DIRETA}                               tela_ImpressaoDireta.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}                      modal_PersonalizacaoPagamento.png
 ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.png
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
-<<<<<<< HEAD
 ${TELA_COMPRAS_CONSIGNADAS}                            tela_Compra_consignada.png
 ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}                 tela_LanCompraConsignada.png
-=======
 ${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                 tela_Agrupamento.png
 ${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
->>>>>>> develop
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                                   aviso_QuantidadeSemEstoque.png
