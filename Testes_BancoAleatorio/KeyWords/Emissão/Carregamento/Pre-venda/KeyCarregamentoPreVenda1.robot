@@ -297,7 +297,7 @@ Quando pesquiso o Carregamento gerado
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
-E tento excluir o Carregamento fechado
+E valido a tentativa de exclusão de um carregamento fechado
 
     Press Combination    KEY.ALT    KEY.X
     Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}  
@@ -312,7 +312,7 @@ E tento excluir o Carregamento fechado
 
     Should Be True    ${carregamento_excluido}    Carregamento foi excluído indevidamente
 
-E tento excluir o Carregamento montado
+E valido a tentativa de exclusão de um carregamento montado
 
     Press Combination    KEY.ALT    KEY.X
     Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}  
