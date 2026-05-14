@@ -69,7 +69,7 @@ pip install -r docs/requirements.txt
 
 ```
 mycommerce-automacao/
-├── .github/                    # Configurações do GitHub (AI Assistant)
+├── .opencode/                   # Configurações do OpenCode (AI Assistant)
 │   ├── skills/                   # Skills especializadas
 │   ├── knowledge/               # Base de conhecimento
 │   ├── guides/                  # Guias de desenvolvimento
@@ -134,16 +134,16 @@ python Executar_Automacao.py
 
 ## Como Criar Novos Testes
 
-### Usando o GitHub (Recomendado)
+### Usando o OpenCode (Recomendado)
 
-Basta descrever o que você quer em linguagem natural:
+Basta descrever o que você quer em linguagem natural ao OpenCode:
 
 ```
-"Crie um teste para o módulo de Cadastro de Fornecedores. 
+"Crie um teste para o módulo de Cadastro de Fornecedores.
 O atalho para abrir é F9. Preciso testar: inclusão, edição e exclusão."
 ```
 
-O GitHub automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
+O OpenCode automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
 
 ### Manual (usando a estrutura do projeto)
 
@@ -263,26 +263,26 @@ Teste 02 - Descrição
 
 ### Guias de Desenvolvimento
 
-- `.github/guides/guia-desenvolvimento-manual.md` — Desenvolvimento manual passo a passo
-- `.github/guides/guia-desenvolvimento-com-ia.md` — Desenvolvimento com assistência de IA
+- `.opencode/guides/guia-desenvolvimento-manual.md` — Desenvolvimento manual passo a passo
+- `.opencode/guides/guia-desenvolvimento-com-ia.md` — Desenvolvimento com assistência de IA
 
 ### Cenários de Comissão
 
-- `.github/knowledge/comissao/comissao-produto.md` — Comissão por linha para produto
-- `.github/knowledge/comissao/comissao-servico.md` — Comissão por linha para serviço
-- `.github/knowledge/comissao/comissao-prod-serv.md` — Cenários combinados produto + serviço
-- `.github/knowledge/comissao/comissao-escalonada.md` — Comissão escalonada
-- `.github/knowledge/comissao/comissao-tabpreco.md` — Comissão por tabela de preço
+- `.opencode/knowledge/comissao/comissao-produto.md` — Comissão por linha para produto
+- `.opencode/knowledge/comissao/comissao-servico.md` — Comissão por linha para serviço
+- `.opencode/knowledge/comissao/comissao-prod-serv.md` — Cenários combinados produto + serviço
+- `.opencode/knowledge/comissao/comissao-escalonada.md` — Comissão escalonada
+- `.opencode/knowledge/comissao/comissao-tabpreco.md` — Comissão por tabela de preço
 
 ### Referência de Frameworks
 
-- `.github/knowledge/frameworks/referencia-frameworks.md` — Referência completa de Robot Framework, SikuliLibrary, DatabaseLibrary, etc.
+- `.opencode/knowledge/frameworks/referencia-frameworks.md` — Referência completa de Robot Framework, SikuliLibrary, DatabaseLibrary, etc.
 
 ---
 
-## Skills do GitHub
+## Skills do OpenCode
 
-O projeto possui 4 skills especializadas ativadas automaticamente pelo GitHub:
+O projeto possui 4 skills especializadas ativadas automaticamente pelo OpenCode:
 
 | Skill | Quando Usar |
 |-------|-------------|
@@ -331,10 +331,32 @@ O script `Executar_Automacao.py` automatiza a execução:
 
 ---
 
-## Autor
+## Contribuidores
 
-Projeto desenvolvido por Jaime Junior
+<!-- Contribuidores do GitHub - início -->
+<a href="https://github.com/vs-cqp/mycommerce-automacao/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=vs-cqp/mycommerce-automacao&max=500" width="100%" />
+</a>
+<!-- Contribuidores do GitHub - fim -->
 
 ---
 
-**Obs**: Sempre clique na tela do myCommerce após iniciar a execução para garantir foco!
+## QA & Qualidade de Software
+
+Este projeto faz parte da cultura de **Quality Assurance** da Visual Software. A automação de testes é fundamental para:
+
+- **Garantir qualidade**: Cada release é validada automaticamente antes de ir para produção
+- **Reduzir erros manuais**: Testes repetitivos são executados automaticamente
+- **Documentar comportamento**: Os casos de teste servem como documentação viva do sistema
+- **Detectar regressões**: Bugs conhecidos são evitados automaticamente
+
+_"Qualidade não é um ato, é um hábito."_ — Aristóteles
+
+---
+
+## Autor
+
+Projeto desenvolvido por Jaime Junior
+E mantido por Visual Software
+
+---
