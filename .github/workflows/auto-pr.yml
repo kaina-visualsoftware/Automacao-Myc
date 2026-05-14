@@ -97,6 +97,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+
           BRANCH="${{ github.ref_name }}"
 
           PR_NUMBER=$(gh pr list \
@@ -106,21 +107,42 @@ jobs:
             --json number \
             --jq '.[0].number')
 
+          BODY_FILE="pr_body.md"
+
+          echo '${{ steps.ai.outputs.body }}' \
+            | sed 's/^```markdown//g' \
+            | sed 's/^```//g' \
+            > $BODY_FILE
+
+          TITLE=$(cat $BODY_FILE \
+            | grep -v '^#' \
+            | grep -v '^$' \
+            | head -n 1 \
+            | cut -c1-80)
+
+          if [ -z "$TITLE" ]; then
+            TITLE="PR: $BRANCH"
+          fi
+
           if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
-            echo "📝 CRIANDO NOVO PR..."
+
+            echo "CRIANDO NOVO PR"
+
             gh pr create \
               --base develop \
               --head "$BRANCH" \
-              --title "${{ steps.ai.outputs.title }}" \
-              --body "${{ steps.ai.outputs.body }}"
-          else
-            echo "🔄 ATUALIZANDO PR #$PR_NUMBER"
-            gh pr edit "$PR_NUMBER" \
-              --title "${{ steps.ai.outputs.title }}" \
-              --body "${{ steps.ai.outputs.body }}"
-          fi
+              --title "$TITLE" \
+              --body-file $BODY_FILE
 
-          rm -f /tmp/diff.txt
+          else
+
+            echo "ATUALIZANDO PR #$PR_NUMBER"
+
+            gh pr edit "$PR_NUMBER" \
+              --title "$TITLE" \
+              --body-file $BODY_FILE
+
+          fi
 
       - name: SKIP - NO DIFF
         if: env.HAS_DIFF == 'false'
