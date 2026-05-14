@@ -61,7 +61,8 @@ ${TELA_IMPRESSAO_DIRETA}                               tela_ImpressaoDireta.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}                      modal_PersonalizacaoPagamento.png
 ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.png
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
-${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
+${TELA_COMPRAS_CONSIGNADAS}                            tela_Compra_consignada.png
+${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}                 tela_LanCompraConsignada.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                                   aviso_QuantidadeSemEstoque.png
@@ -74,7 +75,6 @@ ${AVISO_CADASTRE_CANAL_DE_VENDA}                       aviso_CadastreCanaisVenda
 ${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}                  aviso_EspecifiqueVlrUnitProduto.png
 
 # Botões
-
 ${BT_CONFIRMA_CANAL_NEGOCIACAO}                        bt_ConfirmarCanal.png
 ${BT_SOLICITAR_CRÉDITO}                                bt_SolicitarCredito.png
 ${BT_SETA_DIREITA}                                     bt_SetaDireita.png
@@ -89,6 +89,7 @@ ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}                      lb_CodClienteDevolucao.pn
 ${INPUT_COD_BENEFICIADO_DOACAO}                        lb_CodBeneficiadoDoacao.png
 ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}                  input_CodCliente.png
 ${INPUT_VALOR_UNITARIO_PRODUTO}                        input_ValorUnitarioProduto.png
+${INPUT_COD_FORNECEDOR}                                lb_CodFornecedor.png
 
 # Labels
 ${LABEL_AVISO_CREDITO_LIBERADO}                        lb_CreditoLiberado.png
@@ -277,6 +278,21 @@ Personalização de Pagamentos
         
     END
 
+Adicionar Fornecedor(${TELA})
+    ${codCliente}    Seleciona cliente
+    Set Test Variable    ${Codigo_Cliente}    ${codCliente}
+    #Pressioona no campo codigo
+    IF    '${TELA}' == 'tela_Compra_consignada'
+        SikuliLibrary.Double Click    ${INPUT_COD_FORNECEDOR}
+    END
+    #insere o codigo do fornecedor
+    Sleep    ${SLEEP_BAIXO}
+    Input Text    ${EMPTY}    ${Codigo_Cliente}
+    Sleep    ${SLEEP_BAIXO}
+    #Passa para o campo Inclusão de Produtos
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
 Adicionar Vendedor e Cliente(${TELA})
 
     IF    '${TELA}' != 'NFeSaidasManual'
@@ -407,6 +423,7 @@ Seleciona vendedor
     Sleep    ${SLEEP_BAIXO}
 
     RETURN    ${codVendedor[0][0]}
+
 
 Seleciona cliente 
     
@@ -2232,7 +2249,18 @@ E saio da tela(${TELA})
         Press Special Key    ESC
         
         Wait Until Screen Not Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
-
+    ELSE IF    '${TELA}' == 'ComprasConsignada'
+        SikuliLibrary.Click    ${TELA_COMPRAS_CONSIGNADAS}
+        Press Combination    KEY.ALT    KEY.S
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Not Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+    ELSE IF    '${TELA}' == 'LancamentoDeCompraConsignada'
+        SikuliLibrary.Click    ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}
+        Press Combination    KEY.ALT    KEY.S 
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Not Contain    ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+        #Verifica se a tela faz fallback corretamente para tela de compras
+        Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
     END
 
 Valida teste que utiliza o desconto máximo do produto
