@@ -681,7 +681,7 @@ E adiciono um carregamento com rota sem informar descrição
     Então eu Listo as Rotas
     E gravo incluindo a primeira Rota da lista
 
-Então valido a mensagem de descrição obrigatória
+Então valido a mensagem de descrição obrigatória 
 
     Wait Until Screen Contain    ${AVISO_DESCRICAO_OBRIGATORIA}    ${TEMPO_TELA}
 
