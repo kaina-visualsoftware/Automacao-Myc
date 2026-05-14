@@ -109,3 +109,24 @@ Teste 09 - Editar um carregamento de venda incluindo uma venda e uma cobrança
     E gravo o carregamento da venda
     Então o carregamento da venda deve ser salvo com sucesso
     Então fecho a tela de carregamento
+
+
+Teste 10 - Realizar embarque do carregamento com venda e cobrança
+    [Tags]    Teste 10
+
+    Dado que acesso o lançamento de carregamento de vendas
+    Quando inicio um novo carregamento
+    E informo uma descrição valida
+    E incluo vendas no carregamento    1
+    E incluo uma cobrança no carregamento
+    E gravo o carregamento da venda
+    Quando acesso a tela de embarque
+    E informo os dados do veículo    SP    ABC-1234    100    200    50
+    E informo os dados do motorista
+    E informo os dados do entregador
+    E informo os dados do adiantamento
+    E gravo o embarque
+    Então o embarque deve ser salvo com sucesso
+    Então o adiantamento deve estar cadastrado no banco
+    Então fecho a tela de carregamento
+

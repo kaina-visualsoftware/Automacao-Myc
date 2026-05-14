@@ -64,7 +64,7 @@ ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.p
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
 ${TELA_COMPRAS_CONSIGNADAS}                            tela_Compra_consignada.png
 ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}                 tela_LanCompraConsignada.png
-${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                 tela_Agrupamento.png
+${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                  tela_Agrupamento.png
 ${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
 
 # Telas Avisos
@@ -89,6 +89,7 @@ ${BT_EXCLUIR}                                          bt_Excluir.png
 ${BT_SALVAR}                                           bt_Salvar.png
 ${BT_LISTAR}                                           bt_Listar.png
 ${BT_OK}                                               bt_Ok.png
+${BT_INCLUIR}                                          bt_Incluir.png
 
 # Inputs
 ${INPUT_COD_CLIENTE}                                   lb_CodCliente.png
@@ -2971,5 +2972,14 @@ Clicar no botão Ok
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_OK}    5
     IF    ${existe}
         SikuliLibrary.Click    ${BT_OK}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+
+
+Clicar no botão Incluir
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_INCLUIR}
         Sleep    ${SLEEP_BAIXO}
     END
