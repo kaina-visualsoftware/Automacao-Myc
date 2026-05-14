@@ -22,7 +22,7 @@ Teste 01 - Validar que não é possível excluir um carregamento com status Fech
     E adiciono um carregamento com uma rota
     Então gravo o carregamento com o status    Fechada   
     Quando pesquiso o Carregamento gerado
-    E valido que um carregamento fechado não pode ser excluído
+    E valido que um carregamento com status não pode ser excluído    Fechada
     E fecho a tela de carregamento
 
 Teste 02 - Validar que não é possível Excluir um carregamento com status Montando
@@ -34,7 +34,7 @@ Teste 02 - Validar que não é possível Excluir um carregamento com status Mont
     E adiciono um carregamento com uma rota
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
-    E valido que um carregamento montado não pode ser excluído
+    E valido que um carregamento com status não pode ser excluído    Montando
     E fecho a tela de carregamento
 
 Teste 03 - Carregamento vinculado a duas pré-vendas com rotas distintas
@@ -89,7 +89,7 @@ Teste 07 - Editar um carregamento e em seguida fechar a carga
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
-    E incluo mais uma rota ao carregamento
+    E incluo uma rota ao carregamento
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
 
