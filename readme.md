@@ -69,7 +69,7 @@ pip install -r docs/requirements.txt
 
 ```
 mycommerce-automacao/
-├── .opencode/                    # Configurações do OpenCode (AI Assistant)
+├── .github/                    # Configurações do GitHub (AI Assistant)
 │   ├── skills/                   # Skills especializadas
 │   ├── knowledge/               # Base de conhecimento
 │   ├── guides/                  # Guias de desenvolvimento
@@ -134,7 +134,7 @@ python Executar_Automacao.py
 
 ## Como Criar Novos Testes
 
-### Usando o OpenCode (Recomendado)
+### Usando o GitHub (Recomendado)
 
 Basta descrever o que você quer em linguagem natural:
 
@@ -143,7 +143,7 @@ Basta descrever o que você quer em linguagem natural:
 O atalho para abrir é F9. Preciso testar: inclusão, edição e exclusão."
 ```
 
-O OpenCode automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
+O GitHub automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
 
 ### Manual (usando a estrutura do projeto)
 
