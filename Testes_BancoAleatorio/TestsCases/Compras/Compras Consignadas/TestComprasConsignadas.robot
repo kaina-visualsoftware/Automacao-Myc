@@ -113,4 +113,18 @@ Teste 07 - Pagamento de Compra Consignada
     Então desdobro forma de pagamento
     Então finalizo pagamento
     E valido contas a receber em caixa
-    
+    E saio da tela(ComprasConsignada)
+#caso de teste baseado na Tarefa #101167 VALOR DE COMPRA INCORRETO - COMPRA CONSIGNADA
+Teste 08 - Validação do valor da conta a pagar gerada para compra consignada
+    [Documentation]    Valida se o valor da conta a pagar gerada para a compra consignada está correto no banco de dados
+    [Tags]    Teste08    Validacao_Valor_Conta_Pagar
+    Dado que eu acesso a tela de Compras Consignadas
+    Quando eu pressionar em adicionar
+    Quando adiciono Fornecedor
+    E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})  
+    Então troco de guia
+    E insiro o mesmo produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
+    Então excluo o produto da compra consignada
+    Então finalizo a compra consignada
+    E valido valor da compra
+    E saio da tela(ComprasConsignada)

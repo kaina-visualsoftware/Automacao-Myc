@@ -90,7 +90,9 @@ Quando adiciono Fornecedor
 
     utils.Adicionar Fornecedor(TELA)
     Sleep    ${SLEEP_BAIXO}
-
+# ═════════════════════════════════════════════════════════════════════════════
+# Manipulação do produto normal
+# ═════════════════════════════════════════════════════════════════════════════
 E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     [Documentation]    Insere um produto com estoque e informa a quantidade fornecida
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${SLEEP_MEDIO}
@@ -100,8 +102,15 @@ E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     Atualizar Tipo Compra Conforme Aba Ativa
     Set Test Variable    ${CompraConsig_PossuiProduto}    ${True}
 
-#########################################
-#FALTA FINALIZAR
+E insiro o mesmo produto normal informando a quantidade(${Quantidade_Produto})
+    [Documentation]    Insere um produto com estoque e informa a quantidade fornecida
+    Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${SLEEP_MEDIO}
+    utils.Inserir Mesmo Produto normal - Necessita de estoque
+    Informa a quantidade do produto(${Quantidade_Produto})
+    utils.Valida parametros após incluir produto
+    Atualizar Tipo Compra Conforme Aba Ativa
+    Set Test Variable    ${CompraConsig_PossuiProduto}    ${True}
+
 Informa a quantidade do produto devolução(${Quantidade_Produto})
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${SLEEP_MEDIO}
 
@@ -122,7 +131,7 @@ Informa a quantidade do produto devolução(${Quantidade_Produto})
     ${Quantidade_Produto}=    Set Variable    ${query[0][0]}
 
     Set Test Variable    ${Quantidade_Produto}    
-##########################################
+
 
 Informa a quantidade do produto(${Quantidade_Produto})
     [Documentation]    Preenche o campo de quantidade e avança com TAB
@@ -133,6 +142,14 @@ Informa a quantidade do produto(${Quantidade_Produto})
     Set Test Variable    ${Quantidade_Produto}
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
 
+Então excluo o produto da compra consignada
+    [Documentation]    Exclui o produto lançado na compra consignada
+    Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.R
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
 
 # ══════════════════════════════════════════════════════════════════════════════
 # FINALIZAÇÃO
@@ -146,6 +163,8 @@ Então finalizo a compra consignada
     Sleep    ${SLEEP_MEDIO}
     Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+    ${VALOR_COMPRA}    Query    SELECT ValorTotal FROM compraconsignada WHERE Codigo = ${COD_COMPRA} AND Cancelada = 0 LIMIT 1;
+    Set Test Variable    ${VALOR_COMPRA}    ${VALOR_COMPRA[0][0]}
 
 Tratar Impressão De Compra Consignada
     [Documentation]    Verifica se a tela de impressão apareceu e a descarta com ALT+S
@@ -352,17 +371,7 @@ Validar Edição De Produto No Banco
     Should Be True
     ...    ${editado}
     ...    Produto da Compra Consignada ${codigo_compra} não foi editado corretamente.
-# ══════════════════════════════════════════════════════════════════════════════
-# Devolução
-# ══════════════════════════════════════════════════════════════════════════════
-E valido se a devolução foi lançada com sucesso
-    [Documentation]    Verifica se a devolução foi lançada validando a existência do registro no banco de dados
-    #Verifica lançamento da devolução no banco de dados
-    ${devolucao_lancada}    Run Keyword And Return Status
-    ...    Check If Exists In Database
-    ...    SELECT * FROM compraconsignada_produtos WHERE codigocompra = ${COD_COMPRA} AND Tipo = '${TIPO_COMPRA}' AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}';
-    Should Be True    ${devolucao_lancada}    Devolução da Compra Consignada ${COD_COMPRA} não foi lançada corretamente.
-    #Verifica valores
+
 #══════════════════════════════════════════════════════════════════════════════
 #PAGAMENTO
 #══════════════════════════════════════════════════════════════════════════════
@@ -401,7 +410,13 @@ Então finalizo pagamento
     #Captura valor
     ${VALOR_COMPRA}    Query    SELECT ValorTotal FROM compraconsignada WHERE Codigo = ${COD_COMPRA};
     Set Test Variable    ${VALOR_COMPRA}    ${VALOR_COMPRA[0][0]}
+# ══════════════════════════════════════════════════════════════════════════════
+# Validações
+# ══════════════════════════════════════════════════════════════════════════════
 
+# -----------------------------------------
+# A receber
+# -----------------------------------------
 E valido contas a receber em caixa
     [Documentation]    Valida no banco de dados que o contas a receber foi gerado com o código da compra 
     #Verifica geração da conta a pagar no banco de dados
@@ -426,3 +441,34 @@ E valido contas a receber em caixa
 
 
 
+# -----------------------------------------
+# Devolução
+# -----------------------------------------
+E valido se a devolução foi lançada com sucesso
+    [Documentation]    Verifica se a devolução foi lançada validando a existência do registro no banco de dados
+    #Verifica lançamento da devolução no banco de dados
+    ${devolucao_lancada}    Run Keyword And Return Status
+    ...    Check If Exists In Database
+    ...    SELECT * FROM compraconsignada_produtos WHERE codigocompra = ${COD_COMPRA} AND Tipo = '${TIPO_COMPRA}' AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}';
+    Should Be True    ${devolucao_lancada}    Devolução da Compra Consignada ${COD_COMPRA} não foi lançada corretamente.
+    #Verifica valores
+
+#-----------------------------------------
+#Valor da compra
+#-----------------------------------------
+#Preciso analisar melhor essa validação, pois pode ser que valor do produto ainda difere do valor total da compra devido tabela
+E valido valor da compra
+    [Documentation]    Verifica se o valor da compra está correto no banco de dados
+
+    ${valor_compra}    Query    SELECT valorTotal FROM compraconsignada WHERE codigo = ${COD_COMPRA} AND Cancelada = 0 limit 1;
+    Set Test Variable    ${valor_compra}    ${valor_compra[0][0]}
+
+        
+    ${VALOR_PRODUTO_TOTAL}    Query    SELECT ValorTotal FROM compraconsignada_produtos WHERE codigoProduto = '${COD_PRODUTO}' AND cancelado = 0 ORDER BY Sequencia DESC LIMIT 1;
+    Set Test Variable    ${VALOR_PRODUTO_TOTAL}    ${VALOR_PRODUTO_TOTAL[0][0]}
+
+    IF    ${valor_compra} == ${VALOR_PRODUTO_TOTAL}
+        Log    Valor da compra está correto: ${valor_compra}
+    ELSE
+        Fail    Valor da compra está incorreto. Esperado: ${VALOR_COMPRA}, Encontrado: ${valor_compra}
+    END

@@ -1575,6 +1575,61 @@ Inserir Produto normal - Necessita de estoque
         
     # END
 
+
+Inserir Mesmo Produto normal - Necessita de estoque
+
+    ${Qtde_Minima_Estoque}    Set Variable    0
+
+    IF    '${TELA}' == 'NFeSaidasManual'
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT    KEY.P
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Click    ${BT_SETA_DIREITA}
+        Sleep    ${SLEEP_BAIXO}
+        
+        Type With Modifiers    P    SHIFT
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT    KEY.P
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    IF    ${Parametro_QuantidadePadraoProduto} == 0
+
+        ${Qtde_Minima_Estoque}    Set Variable    1
+
+    ELSE
+
+        ${Qtde_Minima_Estoque}    Set Variable    ${Parametro_QuantidadePadraoProduto}
+
+    END
+
+
+    
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    ${COD_PRODUTO} 
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Set Test Variable    ${Qtde_Minima_Estoque}
+
+    # IF    ${TesteUtilizaDescontoMaximoProduto}
+
+    #     Altera o desconto máximo do produto
+        
+    # END
+
+
+
 Inserir Produto sem comissão por linha
     [Arguments]    ${permite_sem_estoque}=${False}
 
