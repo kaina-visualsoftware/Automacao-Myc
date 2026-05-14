@@ -155,3 +155,15 @@ Teste 12 - Lançamento de orçamento com múltiplos serviços e múltiplos produ
     keyOrcamento1.Quando insiro mais de um produto normal(3)
     Então gravo o orçamento
     E saio da tela(Orçamento)
+
+Teste 13 - Lançamento de orçamento com agrupamento de produtos
+    # Tarefa: 184584
+    [Tags]    Teste13
+
+    Dado que acesso a tela de orçamentos
+    keyOrcamento1.Quando pressiono o atalho de adicionar
+    keyOrcamento1.E adiciono vendedor e cliente
+    keyOrcamento1.Quando insiro mais de um produto normal(2)
+    Então gravo o orçamento
+    E saio da tela(Orçamento)
+

@@ -2357,7 +2357,7 @@ E valido os filtros de produtos e serviços
 
     END
     
-    ${is_servicos_habilitado}    validaTelasIni.Valida Telas Ini    FrmRelatorioComissao    chkServico
+    ${is_servicos_habilitado}    validaTelasIni.Valida Telas Ini Padrao Habilitado    FrmRelatorioComissao    chkServico
     
     IF    ${filtrar_servicos}
         
