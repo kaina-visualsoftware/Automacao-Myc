@@ -44,6 +44,8 @@ Quando eu clico em adicionar
     Set Test Variable    ${COD_DOACAO}    ${Consulta[0][0]}
     Sleep    ${SLEEP_BAIXO}
 
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_DOACAO}
+
 E adiciono vendedor e cliente
 
     utils.Adicionar Vendedor e Cliente(Doação)

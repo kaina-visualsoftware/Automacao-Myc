@@ -13,7 +13,8 @@ report.html
 
 
 # Python
-__pycache__/
+*__pycache__/
+**__pycache__**
 *.pyc
 *.pyo
 *.pyd
@@ -21,6 +22,7 @@ __pycache__/
 # venv
 .venv/
 venv/
+env/
 
 # results
 results/
@@ -45,19 +47,6 @@ Sikuli_java_stderr_*
 **/sikuli_captured
 
 sikuli_captured/*
-
-
-
-# PYTHON
-**pycache**/
-*.pyc
-*.pyo
-*.pyd
-
-# Virtualenv
-.venv/
-venv/
-env/
 
 # VS Code
 .vscode/
