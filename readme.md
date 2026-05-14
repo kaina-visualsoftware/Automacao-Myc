@@ -69,10 +69,11 @@ pip install -r docs/requirements.txt
 
 ```
 mycommerce-automacao/
-├── .opencode/                   # Configurações do OpenCode (AI Assistant)
+├── .github/                     # Configurações do GitHub Copilot
 │   ├── skills/                   # Skills especializadas
 │   ├── knowledge/               # Base de conhecimento
 │   ├── guides/                  # Guias de desenvolvimento
+│   ├── prompts/                  # Workflows e prompts
 │   └── instructions/             # Regras globais
 ├── Testes_BancoAleatorio/        # Principal diretório de testes
 │   ├── images/                  # Todas as imagens .png para Sikuli
@@ -134,16 +135,16 @@ python Executar_Automacao.py
 
 ## Como Criar Novos Testes
 
-### Usando o OpenCode (Recomendado)
+### Usando o GitHub Copilot (Recomendado)
 
-Basta descrever o que você quer em linguagem natural ao OpenCode:
+Basta descrever o que você quer em linguagem natural ao Copilot:
 
 ```
 "Crie um teste para o módulo de Cadastro de Fornecedores.
 O atalho para abrir é F9. Preciso testar: inclusão, edição e exclusão."
 ```
 
-O OpenCode automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
+O Copilot automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
 
 ### Manual (usando a estrutura do projeto)
 
@@ -263,26 +264,26 @@ Teste 02 - Descrição
 
 ### Guias de Desenvolvimento
 
-- `.opencode/guides/guia-desenvolvimento-manual.md` — Desenvolvimento manual passo a passo
-- `.opencode/guides/guia-desenvolvimento-com-ia.md` — Desenvolvimento com assistência de IA
+- `.github/guides/guia-desenvolvimento-manual.md` — Desenvolvimento manual passo a passo
+- `.github/guides/guia-desenvolvimento-com-ia.md` — Desenvolvimento com assistência de IA
 
 ### Cenários de Comissão
 
-- `.opencode/knowledge/comissao/comissao-produto.md` — Comissão por linha para produto
-- `.opencode/knowledge/comissao/comissao-servico.md` — Comissão por linha para serviço
-- `.opencode/knowledge/comissao/comissao-prod-serv.md` — Cenários combinados produto + serviço
-- `.opencode/knowledge/comissao/comissao-escalonada.md` — Comissão escalonada
-- `.opencode/knowledge/comissao/comissao-tabpreco.md` — Comissão por tabela de preço
+- `.github/knowledge/comissao/comissao-produto.md` — Comissão por linha para produto
+- `.github/knowledge/comissao/comissao-servico.md` — Comissão por linha para serviço
+- `.github/knowledge/comissao/comissao-prod-serv.md` — Cenários combinados produto + serviço
+- `.github/knowledge/comissao/comissao-escalonada.md` — Comissão escalonada
+- `.github/knowledge/comissao/comissao-tabpreco.md` — Comissão por tabela de preço
 
 ### Referência de Frameworks
 
-- `.opencode/knowledge/frameworks/referencia-frameworks.md` — Referência completa de Robot Framework, SikuliLibrary, DatabaseLibrary, etc.
+- `.github/knowledge/frameworks/referencia-frameworks.md` — Referência completa de Robot Framework, SikuliLibrary, DatabaseLibrary, etc.
 
 ---
 
-## Skills do OpenCode
+## Skills do GitHub Copilot
 
-O projeto possui 4 skills especializadas ativadas automaticamente pelo OpenCode:
+O projeto possui 4 skills especializadas ativadas automaticamente pelo Copilot:
 
 | Skill | Quando Usar |
 |-------|-------------|
