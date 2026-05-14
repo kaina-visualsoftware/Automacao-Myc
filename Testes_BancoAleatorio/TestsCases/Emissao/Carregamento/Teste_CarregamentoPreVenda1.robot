@@ -37,8 +37,8 @@ Teste 02 - Validar que não é possível excluir um carregamento com status Fech
     E adiciono um carregamento com uma rota
     Então gravo o carregamento com o status    Fechada   
     Quando pesquiso o Carregamento gerado
-    E tento excluir o Carregamento Fechado
-    E fecho a tela de carregamento   
+    E valido a tentativa de exclusão de um carregamento fechado
+    E fecho a tela de carregamento
 
 Teste 03 - Validar que não é possível Excluir um carregamento com status Montando
     [Documentation]    Este teste valida que não é possível excluir um carregamento com status Montando
@@ -50,7 +50,7 @@ Teste 03 - Validar que não é possível Excluir um carregamento com status Mont
     E adiciono um carregamento com uma rota
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
-    E tento excluir o Carregamento montado
+    E valido a tentativa de exclusão de um carregamento montado
     E fecho a tela de carregamento
 
 Teste 04 - Validar criação de carregamento com o status Montando
