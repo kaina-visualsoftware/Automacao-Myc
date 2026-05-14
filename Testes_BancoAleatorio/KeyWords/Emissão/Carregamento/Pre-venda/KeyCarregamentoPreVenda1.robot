@@ -87,7 +87,7 @@ ${ROTA_2}                                      None
 Ler imagens iniciais
     Add Image Path    ${IMAGENS}
 
-Dado que eu crio uma nova pré-venda de um cliente com rota
+Dado que eu crio uma pré-venda com rota
     
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
@@ -97,6 +97,8 @@ Dado que eu crio uma nova pré-venda de um cliente com rota
     E audito o pedido
     Então finalizo o pedido
     E saio da tela(Pedido)
+
+    E listo pela tela de Geração de vendas
 
 E listo pela tela de Geração de vendas
 
@@ -160,6 +162,7 @@ E clico em Listar ALT L
 
     Press Combination    KEY.ALT    KEY.L
     Wait Until Screen Not Contain    ${ICONE_LUPA_GERACAO_VENDAS}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
 
 Então fecho a tela de geração de vendas
     Sleep    ${SLEEP_BAIXO}
@@ -288,6 +291,8 @@ Dado que eu crio duas pré-vendas com rotas distintas
     Então finalizo o pedido
     E saio da tela(Pedido)
 
+    E listo pela tela de Geração de vendas  
+
 Quando pesquiso o Carregamento gerado
 
     SikuliLibrary.Click    ${INPUT_PESQUISA_CARREGAMENTO}
@@ -297,7 +302,7 @@ Quando pesquiso o Carregamento gerado
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
-E valido a tentativa de exclusão de um carregamento fechado
+E valido que um carregamento fechado não pode ser excluído
 
     Press Combination    KEY.ALT    KEY.X
     Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}  
@@ -312,7 +317,7 @@ E valido a tentativa de exclusão de um carregamento fechado
 
     Should Be True    ${carregamento_excluido}    Carregamento foi excluído indevidamente
 
-E valido a tentativa de exclusão de um carregamento montado
+E valido que um carregamento montado não pode ser excluído
 
     Press Combination    KEY.ALT    KEY.X
     Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}  
@@ -467,7 +472,7 @@ E incluo mais uma rota ao carregamento
     Então eu Listo as Rotas
     E gravo incluindo a primeira Rota da lista
 
-E removo a rota do carregamento
+E removo uma rota do carregamento
 
     E clico em Incluir Rotas
     Quando removo a rota selecionada
@@ -513,11 +518,6 @@ Então gravo o carregamento com o status
 
     E valido que o carregamento está com o status    ${STATUS}
 
-Então eu crio uma pré-venda de um cliente com rota
-
-    Dado que eu crio uma nova pré-venda de um cliente com rota
-    E listo pela tela de Geração de vendas
-
 Buscar Duas Rotas Distintas Com Clientes
 
     ${rotas}    Query    SELECT DISTINCT Rota FROM clientes WHERE (Tipo LIKE 'C' OR Tipo LIKE 'A') AND Ativo = -1 AND Status = 'ATIVA' AND CreditoCortado = 0 AND Codigo <> 1 AND Rota IS NOT NULL ORDER BY RAND() LIMIT 2;
@@ -543,3 +543,12 @@ Valida Carregamento gerado
 
     ${Consulta}    Query    SELECT Sequencia FROM cargas ORDER BY Sequencia DESC LIMIT 1;
     Set Test Variable    ${COD_CARREGAMENTO}    ${Consulta[0][0]}
+
+E valido que o carregamento contém apenas uma rota
+    ${rotas}    Query    SELECT CodigoRota FROM cargas_rotas WHERE CodigoCarregamento = ${COD_CARREGAMENTO};
+
+    # Extrai o tamanho da lista/tupla para uma nova variável
+    ${quantidade}    Get Length    ${rotas}
+
+    Should Be Equal As Integers    ${quantidade}    1
+    ...    O carregamento contém ${quantidade} rotas, mas deveria conter apenas uma.
