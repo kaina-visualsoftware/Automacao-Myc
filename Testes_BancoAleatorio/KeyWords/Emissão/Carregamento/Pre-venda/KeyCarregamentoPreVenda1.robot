@@ -67,6 +67,9 @@ ${INPUT_DESCRICAO_CARREGAMENTO}                input_DescricaoCarregamento.png
 ${INPUT_PESQUISA_CARREGAMENTO}                 input_PesquisaCarregamento.png
 ${INPUT_PALETES_CARREGAMENTO}                  input_PaletesCarregamento.png
 
+# Icones
+${ICONE_LUPA_GERACAO_VENDAS}                    icone_LupaGeracaoVendas.png
+
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
 ${COD_VENDA}                                   None
 ${COD_DOACAO}                                  None
@@ -156,18 +159,16 @@ Então acesso a tela de geração de vendas
 E clico em Listar ALT L
 
     Press Combination    KEY.ALT    KEY.L
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
+    Wait Until Screen Not Contain    ${ICONE_LUPA_GERACAO_VENDAS}    ${TEMPO_TELA}
 
 Então fecho a tela de geração de vendas
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
-    Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Not Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_MEDIO}
 
 Então acesso a tela de Carregamento
-    
+
+    Sleep    ${SLEEP_BAIXO} 
     Press Combination    KEY.CTRL    KEY.T
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
