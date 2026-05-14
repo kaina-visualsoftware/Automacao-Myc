@@ -44,10 +44,12 @@ ${COD_COMPRA}                           None
 ${QTDE_BAIXA_PRODUTO}                   None
 ${Quantidade_Produto}                   None
 ${CompraConsig_PossuiProduto}           None
-${SELECIONAR_TODOS}                    False
+${SELECIONAR_TODOS}                     False
 ${TIPO_COMPRA}                          CS
 ${COD_COMPRA_ANTIGA}                    None
-
+${VALOR_COMPRA}                         None
+${VALOR_APAGAR}                         None
+${CHECK_BOX_MARCADO_true}               None
 *** Keywords ***
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -80,6 +82,7 @@ Capturar Código Da Última Compra Consignada
     ${consulta}    Query    SELECT c.codigo FROM compraconsignada c ORDER BY c.codigo DESC LIMIT 1;
     Set Test Variable    ${COD_COMPRA}    ${consulta[0][0]}
     Sleep    ${SLEEP_BAIXO}
+
 
 Quando adiciono Fornecedor
     [Documentation]    Adiciona fornecedor na tela de lançamento de compra consignada
@@ -163,7 +166,12 @@ Tratar Impressão De Compra Consignada
 E seleciono compra consignada gerada
     [Documentation]    Localiza e seleciona na grid a compra consignada pelo código gerado
     Sleep    ${SLEEP_BAIXO}
-    Garantir Critério Código Selecionado
+    #Verifica se está na tela de pagamento, se sim ele nao verifica criterio:
+    ${nao_esta_na_tela_pagamento}    Run Keyword And Return Status
+    ...    Wait Until Screen NOT Contain    ${BT_INCLUIR}    ${SLEEP_BAIXO}
+    IF    ${nao_esta_na_tela_pagamento}
+        Garantir Critério Código Selecionado
+    END
     Pesquisar Compra Por Código
     Selecionar Registro Na Grid
     Set Test Variable    ${SELECIONAR_TODOS}    ${False}
@@ -349,8 +357,72 @@ Validar Edição De Produto No Banco
 # ══════════════════════════════════════════════════════════════════════════════
 E valido se a devolução foi lançada com sucesso
     [Documentation]    Verifica se a devolução foi lançada validando a existência do registro no banco de dados
+    #Verifica lançamento da devolução no banco de dados
     ${devolucao_lancada}    Run Keyword And Return Status
     ...    Check If Exists In Database
     ...    SELECT * FROM compraconsignada_produtos WHERE codigocompra = ${COD_COMPRA} AND Tipo = '${TIPO_COMPRA}' AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}';
     Should Be True    ${devolucao_lancada}    Devolução da Compra Consignada ${COD_COMPRA} não foi lançada corretamente.
+    #Verifica valores
+#══════════════════════════════════════════════════════════════════════════════
+#PAGAMENTO
+#══════════════════════════════════════════════════════════════════════════════
+Então pressiono pagar
+    [Documentation]    Pressiona o botão de pagar na compra consignada selecionada
+    Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+    Press Combination    KEY.ALT    KEY.P
+
+
+Então desdobro forma de pagamento
+    [Documentation]    Desdobra a forma de pagamento para selecionar a opção de compra consignada
+    Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+    
+    ${CHECK_BOX_MARCADO_true}    Run Keyword And Return Status
+    ...    Wait Until Screen Contain    ${CHECK_BOX_MARCADO}    ${SLEEP_BAIXO}
+
+    IF    ${CHECK_BOX_MARCADO_true}
+        FOR    ${_}    IN RANGE    4
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    TAB
+        END
+        
+        Press Special Key    DOWN
+        FOR    ${_}    IN RANGE    5  
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    ENTER   
+        END
+    ELSE
+        Fail
+    END
+
+Então finalizo pagamento
+    [Documentation]    Finaliza o pagamento e valida a geração do contas a receber no banco de dados
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.F
+    #Captura valor
+    ${VALOR_COMPRA}    Query    SELECT ValorTotal FROM compraconsignada WHERE Codigo = ${COD_COMPRA};
+    Set Test Variable    ${VALOR_COMPRA}    ${VALOR_COMPRA[0][0]}
+
+E valido contas a receber em caixa
+    [Documentation]    Valida no banco de dados que o contas a receber foi gerado com o código da compra 
+    #Verifica geração da conta a pagar no banco de dados
+    ${contas_geradas}    Run Keyword And Return Status
+    ...    Check If Exists In Database
+    ...    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente}  AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY DESC LIMIT 1;
+
+    #verifica se a conta a pagar foi gerada
+    Should Be True    ${contas_geradas}    Contas a receber da Compra Consignada ${COD_COMPRA} não foram geradas corretamente.
+
+    
+
+    #Verifica valor da conta a pagar
+    ${VALOR_APAGAR}    QUERY    SELECT valor FROM contasapagar WHERE codigo = ${Codigo_Cliente}  AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY DESC LIMIT 1;
+    Set Test Variable    ${VALOR_APAGAR}    ${VALOR_APAGAR[0][0]}
+
+    IF    ${VALOR_APAGAR} == ${VALOR_COMPRA}
+        Log    Valor da conta a pagar está correto: ${VALOR_APAGAR}
+    ELSE
+        Fail    Valor da conta a pagar está incorreto. Esperado: ${VALOR_COMPRA}, Encontrado: ${VALOR_APAGAR}
+    END
+
+
 
