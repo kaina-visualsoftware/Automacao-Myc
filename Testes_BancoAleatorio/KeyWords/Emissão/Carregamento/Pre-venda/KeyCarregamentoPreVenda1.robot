@@ -209,17 +209,28 @@ Então eu Listo as Rotas
     Press Combination    KEY.ALT    KEY.L
     Sleep    ${SLEEP_BAIXO}
 
-E gravo incluindo a primeira Rota da lista
+E seleciono rotas da lista
+    [Arguments]    ${QUANTIDADE_ROTAS}
 
-    SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
+    FOR    ${index}    IN RANGE    ${QUANTIDADE_ROTAS}
+        SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    SPACE
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    DOWN
+        Sleep    ${SLEEP_BAIXO}
+    END
+
     SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
+
+    Wait Until Screen Contain
+    ...    ${TELA_CADASTRO_CARREGAMENTO}
+    ...    ${TEMPO_TELA}
+
     Sleep    ${SLEEP_BAIXO}
 
 Quando eu Monto a Carga
@@ -338,7 +349,7 @@ E adiciono um carregamento com uma rota
     Quando adiciono uma Descrição qualquer e incluo um palete
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo a primeira Rota da lista
+    E seleciono rotas da lista    1
 
 E adiciono um carregamento com duas rotas
 
@@ -346,29 +357,38 @@ E adiciono um carregamento com duas rotas
     Quando adiciono uma Descrição qualquer e incluo um palete
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo duas rotas da lista
+    E seleciono rotas da lista    2
 
 E adiciono um carregamento sem rota
 
     E clico para adicionar um carregamento
     Quando adiciono uma Descrição qualquer e incluo um palete
 
-E gravo incluindo duas rotas da lista
+E incluo rotas ao carregamento
+  
+    [Arguments]    ${QUANTIDADE_ROTAS}=0
 
-    SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    DOWN
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.G
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
+    E clico para adicionar um carregamento
+
+    Quando adiciono uma Descrição qualquer e incluo um palete
+
+    IF    ${QUANTIDADE_ROTAS} > 0
+
+        E clico em Incluir Rotas
+
+        Então eu Listo as Rotas
+
+        E seleciono rotas da lista    ${QUANTIDADE_ROTAS}
+
+    ELSE
+
+        Press Combination    KEY.ALT    KEY.G
+
+        Wait Until Screen Contain
+        ...    ${TELA_CADASTRO_CARREGAMENTO}
+        ...    ${TEMPO_TELA}
+
+    END
 
 Quando adiciono um Vendedor e um Cliente com rota aleatória
 
@@ -464,13 +484,13 @@ E incluo uma rota ao carregamento
 
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo a primeira Rota da lista
+    E seleciono rotas da lista    1
 
 E incluo mais uma rota ao carregamento
 
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo a primeira Rota da lista
+    E seleciono rotas da lista    1
 
 E removo uma rota do carregamento
 
