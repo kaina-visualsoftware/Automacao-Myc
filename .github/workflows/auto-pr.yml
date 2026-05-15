@@ -99,6 +99,7 @@ jobs:
 
           git diff origin/develop...HEAD --no-color | head -2000 >> file_contents_summary.txt
 
+      
       - name: 🤖 GENERATE AI DESCRIPTION
         id: ai
         if: env.HAS_DIFF == 'true'
@@ -112,36 +113,39 @@ jobs:
           FILE_CONTENTS=$(head -c 8000 file_contents_summary.txt)
           DIFF_CONTENT=$(head -c 10000 diff.txt)
 
-          PROMPT=$(cat <<'END_PROMPT'
-          Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
+          # Escape special characters for JSON
+          COMMITS_ESCAPED=$(echo "$COMMITS_CONTENT" | jq -Rs .)
+          FILES_ANALYSIS_ESCAPED=$(echo "$FILES_ANALYSIS" | jq -Rs .)
+          FILE_CONTENTS_ESCAPED=$(echo "$FILE_CONTENTS" | jq -Rs .)
+          DIFF_CONTENT_ESCAPED=$(echo "$DIFF_CONTENT" | jq -Rs .)
 
-          ## COMMITS
-          $COMMITS_CONTENT
+          PROMPT="Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
 
-          ## ANALISE DE ARQUIVOS
-          $FILES_ANALYSIS
+      ## COMMITS
+      $COMMITS_CONTENT
 
-          ## CONTEUDO DOS ARQUIVOS
-          $FILE_CONTENTS
+      ## ANALISE DE ARQUIVOS
+      $FILES_ANALYSIS
 
-          ## DIFF
-          $DIFF_CONTENT
+      ## CONTEUDO DOS ARQUIVOS
+      $FILE_CONTENTS
 
-          INSTRUÇÕES:
+      ## DIFF
+      $DIFF_CONTENT
 
-          - Gere APENAS JSON válido
-          - NÃO use markdown fora do JSON
-          - NÃO use backticks
-          - NÃO explique nada
-          - O título deve ter no máximo 65 caracteres
+      INSTRUÇÕES:
 
-          Formato obrigatório:
-          {
-            "title": "Título curto com no máximo 65 caracteres",
-            "description": "Descrição completa em markdown"
-          }
-          END_PROMPT
-          )
+      - Gere APENAS JSON válido
+      - NÃO use markdown fora do JSON
+      - NÃO use backticks
+      - NÃO explique nada
+      - O título deve ter no máximo 65 caracteres
+
+      Formato obrigatório:
+      {
+        \"title\": \"Título curto com no máximo 65 caracteres\",
+        \"description\": \"Descrição completa em markdown\"
+      }"
 
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
@@ -177,34 +181,28 @@ jobs:
             
             TITLE="Alterações em ${{ github.ref_name }}"
             
-            BODY=$(cat <<'EOF_BODY'
-            ## 📋 PR Automática
+            BODY="## 📋 PR Automática
 
-            Branch: ${{ github.ref_name }}
+      Branch: ${{ github.ref_name }}
 
-            Alterações detectadas automaticamente.
-            EOF_BODY
-            )
-                else
-                  echo "📄 Conteúdo IA:"
-                  echo "$AI_CONTENT"
-                  
-                  AI_JSON=$(echo "$AI_CONTENT" | jq . 2>/dev/null || echo '{}')
-                  
-                  TITLE=$(echo "$AI_JSON" | jq -r '.title // empty')
-                  BODY=$(echo "$AI_JSON" | jq -r '.description // empty')
-                  
-                  if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
-                    TITLE="Alterações em ${{ github.ref_name }}"
-                  fi
-                  
-                  if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-                    BODY=$(cat <<'EOF_BODY'
-            ## 📋 Alterações Detectadas
+      Alterações detectadas automaticamente."
+          else
+            echo "📄 Conteúdo IA:"
+            echo "$AI_CONTENT"
+            
+            AI_JSON=$(echo "$AI_CONTENT" | jq . 2>/dev/null || echo '{}')
+            
+            TITLE=$(echo "$AI_JSON" | jq -r '.title // empty')
+            BODY=$(echo "$AI_JSON" | jq -r '.description // empty')
+            
+            if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
+              TITLE="Alterações em ${{ github.ref_name }}"
+            fi
+            
+            if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
+              BODY="## 📋 Alterações Detectadas
 
-            Branch: ${{ github.ref_name }}
-            EOF_BODY
-            )
+      Branch: ${{ github.ref_name }}"
             fi
           fi
 
@@ -215,12 +213,18 @@ jobs:
           
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           
-          echo "body<<EOF" >> $GITHUB_OUTPUT
+          # Use a different delimiter for the body
+          BODY_ESCAPED="${BODY//'%'/'%25'}"
+          BODY_ESCAPED="${BODY_ESCAPED//$'\n'/'%0A'}"
+          BODY_ESCAPED="${BODY_ESCAPED//$'\r'/'%0D'}"
+          
+          echo "body<<EOF_BODY" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "EOF_BODY" >> $GITHUB_OUTPUT
           
           echo "✅ Título final: $TITLE"
-          
+
+
       - name: 🚀 CREATE OR UPDATE PULL REQUEST
         if: env.HAS_DIFF == 'true'
         env:
