@@ -69,10 +69,11 @@ pip install -r docs/requirements.txt
 
 ```
 mycommerce-automacao/
-├── .opencode/                    # Configurações do OpenCode (AI Assistant)
+├── .github/                     # Configurações do GitHub Copilot
 │   ├── skills/                   # Skills especializadas
 │   ├── knowledge/               # Base de conhecimento
 │   ├── guides/                  # Guias de desenvolvimento
+│   ├── prompts/                  # Workflows e prompts
 │   └── instructions/             # Regras globais
 ├── Testes_BancoAleatorio/        # Principal diretório de testes
 │   ├── images/                  # Todas as imagens .png para Sikuli
@@ -134,16 +135,16 @@ python Executar_Automacao.py
 
 ## Como Criar Novos Testes
 
-### Usando o OpenCode (Recomendado)
+### Usando o GitHub Copilot (Recomendado)
 
-Basta descrever o que você quer em linguagem natural:
+Basta descrever o que você quer em linguagem natural ao Copilot:
 
 ```
-"Crie um teste para o módulo de Cadastro de Fornecedores. 
+"Crie um teste para o módulo de Cadastro de Fornecedores.
 O atalho para abrir é F9. Preciso testar: inclusão, edição e exclusão."
 ```
 
-O OpenCode automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
+O Copilot automaticamente ativa a skill `geracao-testcases` e gera os arquivos automaticamente.
 
 ### Manual (usando a estrutura do projeto)
 
@@ -280,9 +281,9 @@ Teste 02 - Descrição
 
 ---
 
-## Skills do GitHub
+## Skills do GitHub Copilot
 
-O projeto possui 4 skills especializadas ativadas automaticamente pelo GitHub:
+O projeto possui 4 skills especializadas ativadas automaticamente pelo Copilot:
 
 | Skill | Quando Usar |
 |-------|-------------|
@@ -331,10 +332,32 @@ O script `Executar_Automacao.py` automatiza a execução:
 
 ---
 
-## Autor
+## Contribuidores
 
-Projeto desenvolvido por Jaime Junior
+<!-- Contribuidores do GitHub - início -->
+<a href="https://github.com/vs-cqp/mycommerce-automacao/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=vs-cqp/mycommerce-automacao&max=500" width="100%" />
+</a>
+<!-- Contribuidores do GitHub - fim -->
 
 ---
 
-**Obs**: Sempre clique na tela do myCommerce após iniciar a execução para garantir foco!
+## QA & Qualidade de Software
+
+Este projeto faz parte da cultura de **Quality Assurance** da Visual Software. A automação de testes é fundamental para:
+
+- **Garantir qualidade**: Cada release é validada automaticamente antes de ir para produção
+- **Reduzir erros manuais**: Testes repetitivos são executados automaticamente
+- **Documentar comportamento**: Os casos de teste servem como documentação viva do sistema
+- **Detectar regressões**: Bugs conhecidos são evitados automaticamente
+
+_"Qualidade não é um ato, é um hábito."_ — Aristóteles
+
+---
+
+## Autor
+
+Projeto desenvolvido por Jaime Junior
+E mantido por Visual Software
+
+---
