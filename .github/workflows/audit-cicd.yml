@@ -1,0 +1,473 @@
+name: 🚀 CI/CD PIPELINE AUDITOR
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  audit-cicd:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📡 FETCH HISTORY
+        run: git fetch --all
+
+      - name: 📂 SCAN CICD FILES
+        run: |
+          echo "🔍 Escaneando arquivos de CI/CD e configuração..."
+
+          find . \
+            -type f \
+            \( \
+              -name "*.yml" \
+              -o -name "*.yaml" \
+              -o -name "Dockerfile" \
+              -o -name "docker-compose*.yml" \
+              -o -name "Makefile" \
+              -o -name "*.sh" \
+              -o -name "*.env*" \
+              -o -name "*.json" \
+              -o -name "*.toml" \
+              -o -name "*.cfg" \
+              -o -name "*.ini" \
+              -o -name "*.robot" \
+              -o -name "*.resource" \
+            \) \
+            ! -path "*/node_modules/*" \
+            ! -path "*/.git/*" \
+            > cicd_files.txt
+
+          echo "✅ Arquivos CI/CD encontrados:"
+          wc -l cicd_files.txt
+
+      - name: 📄 BUILD CICD CONTEXT
+        run: |
+          > cicd_context.txt
+
+          echo "===== ESTRUTURA CI/CD =====" >> cicd_context.txt
+          cat cicd_files.txt >> cicd_context.txt
+
+          echo "" >> cicd_context.txt
+          echo "===== CONTEÚDO DOS ARQUIVOS =====" >> cicd_context.txt
+
+          while read file; do
+            echo "" >> cicd_context.txt
+            echo "FILE: $file" >> cicd_context.txt
+            echo "----------------------------------------" >> cicd_context.txt
+            cat "$file" >> cicd_context.txt 2>/dev/null || true
+          done < cicd_files.txt
+
+          echo "" >> cicd_context.txt
+          echo "===== HISTÓRICO DE COMMITS =====" >> cicd_context.txt
+          git log -20 --pretty=format:"%h - %an - %s" >> cicd_context.txt
+
+          echo "" >> cicd_context.txt
+          echo "===== BRANCHES =====" >> cicd_context.txt
+          git branch -a >> cicd_context.txt
+
+          echo "✅ Contexto CI/CD gerado"
+
+      - name: 🤖 AI CICD AUDIT
+        id: ai_cicd_audit
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          PROJECT_CONTEXT=$(head -c 120000 cicd_context.txt)
+
+          PROMPT=$(cat <<EOF
+          You are a WORLD-CLASS DEVOPS ENGINEER, CI/CD SPECIALIST, and AUTOMATION PLATFORM ARCHITECT.
+
+          Your sole mission is to perform a DEEP CI/CD AND PIPELINE AUDIT on the project below.
+
+          You have 15+ years of experience with:
+          - GitHub Actions, GitLab CI, Jenkins, CircleCI, Azure DevOps
+          - Pipeline design patterns and best practices
+          - Quality gates and policy enforcement
+          - Automated test orchestration in CI/CD
+          - Docker and container-based test execution
+          - Parallel test execution strategies
+          - Branch protection and PR validation strategies
+          - Secret management and security in pipelines
+          - Pipeline performance optimization
+          - Artifact management and caching strategies
+          - Notification and reporting in CI/CD
+          - DORA metrics and pipeline observability
+
+          ========================
+          YOUR CI/CD AUDIT FRAMEWORK
+          ========================
+
+          LAYER 1 — PIPELINE STRUCTURE
+          - Are there clear pipeline stages? (lint → build → test → deploy)
+          - Is there a proper separation between PR checks and merge checks?
+          - Is the pipeline triggered correctly for all relevant events?
+          - Are there missing pipeline steps for critical operations?
+          - Is there a proper workflow for hotfix branches?
+          - Is the pipeline idempotent? (safe to re-run)
+          - Are there unnecessary sequential steps that could be parallelized?
+          - Is the pipeline fail-fast configured correctly?
+
+          LAYER 2 — QUALITY GATES
+          - Are there mandatory quality gates before merge?
+          - Is there a linting/static analysis step?
+          - Is there a test coverage threshold enforced?
+          - Are there code quality checks (complexity, duplication)?
+          - Is there a security scanning step?
+          - Is there a dependency vulnerability check?
+          - Are quality gate failures blocking deployments?
+          - Are there soft gates vs hard gates properly configured?
+
+          LAYER 3 — TEST EXECUTION IN CI
+          - Are tests run in parallel where possible?
+          - Is there a test splitting strategy for large suites?
+          - Are test results published in a readable format?
+          - Are test artifacts (screenshots, logs, reports) properly saved?
+          - Are flaky tests marked and handled in CI?
+          - Is there a retry strategy for network-related failures?
+          - Are test timeouts configured to prevent hanging jobs?
+          - Is the test environment properly configured before test execution?
+
+          LAYER 4 — CACHING AND PERFORMANCE
+          - Are dependencies cached between runs?
+          - Is Docker layer caching used effectively?
+          - Are build artifacts cached and reused?
+          - Is there unnecessary re-installation of dependencies?
+          - Are there long-running steps that could be optimized?
+          - Is the runner size appropriate for the workload?
+          - Are there redundant steps running in every job?
+
+          LAYER 5 — SECURITY
+          - Are secrets properly stored in GitHub Secrets / Vault?
+          - Are secrets ever echoed in logs? (critical risk)
+          - Are third-party actions pinned to a specific SHA? (supply chain risk)
+          - Are permissions scoped to minimum required?
+          - Is OIDC used instead of long-lived credentials where applicable?
+          - Are pull request workflows protected against injection attacks?
+          - Are environment-specific secrets properly separated?
+
+          LAYER 6 — BRANCH AND MERGE STRATEGY
+          - Is there a branch protection rule on main/master?
+          - Are PRs required to be up-to-date before merge?
+          - Is there a required review count?
+          - Are status checks required before merge?
+          - Is there a proper naming convention for branches?
+          - Is there a stale branch cleanup strategy?
+
+          LAYER 7 — OBSERVABILITY AND REPORTING
+          - Are pipeline failures notified to the team? (Slack, email, etc.)
+          - Are test results published to a dashboard?
+          - Is there pipeline duration tracking?
+          - Are there alerts for pipeline degradation?
+          - Is there a flaky test detection report in CI?
+          - Are DORA metrics being tracked? (deployment frequency, lead time, etc.)
+
+          LAYER 8 — ANTI-PATTERNS
+          - "Mega job" — one job doing everything sequentially
+          - "Hardcoded credentials" — secrets in workflow files
+          - "Unpinned actions" — using @main or @latest for actions
+          - "No quality gate" — merging without any checks
+          - "No artifact retention" — losing test evidence on failure
+          - "No caching" — reinstalling dependencies every run
+          - "No parallelization" — running 100+ tests sequentially
+          - "Missing timeout" — jobs that can run forever
+          - "No notification" — team unaware of pipeline failures
+
+          ========================
+          RETURN FORMAT
+          ========================
+
+          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+
+          {
+            "issues": [
+              {
+                "title": "Clear CI/CD issue title",
+                "priority": "Alta",
+                "severity": "Alta",
+                "category": "CI/CD",
+                "files": ["path/to/workflow.yml"],
+                "pipeline_layer": "Quality Gates / Security / Performance / Structure",
+                "anti_pattern": "Which CI/CD anti-pattern",
+                "problem": "Extremely detailed CI/CD problem description",
+                "technical_impact": "Impact on pipeline reliability and speed",
+                "business_impact": "Impact on delivery and deployment confidence",
+                "security_impact": "Security implications if applicable",
+                "risk": "Risk if not fixed",
+                "reproduction": "How to identify this in the pipeline",
+                "current_config": "The current problematic pipeline configuration",
+                "improved_config": "The improved pipeline configuration",
+                "optimization_strategy": "How to optimize this pipeline step",
+                "security_recommendation": "Security hardening recommendation",
+                "parallelization_opportunity": "How to parallelize if applicable",
+                "caching_strategy": "Caching improvement if applicable",
+                "notification_strategy": "Notification/alerting recommendation",
+                "suggestion": "Detailed fix",
+                "benefits": "Expected pipeline improvements",
+                "time_savings_estimate": "Estimated time savings per run",
+                "complexity": "Média",
+                "improvement_type": "CI/CD"
+              }
+            ]
+          }
+
+          PROJECT CONTEXT:
+          $PROJECT_CONTEXT
+          EOF
+          )
+
+          REQUEST_BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            '{
+              model: "openai/gpt-4o-mini",
+              messages: [{ role: "user", content: $prompt }],
+              temperature: 0.1,
+              max_tokens: 4000,
+              response_format: { "type": "json_object" }
+            }')
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")
+
+          echo "$RESPONSE" > response.json
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ IA não retornou conteúdo"
+            cat response.json
+            exit 1
+          fi
+
+          echo "$AI_CONTENT" > ai_raw.txt
+
+          cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
+          python3 -c '
+          import sys, json, re
+          text = sys.stdin.read()
+          match = re.search(r"\{[\s\S]*\}", text)
+          if match:
+              try:
+                  data = json.loads(match.group(0))
+                  print(json.dumps(data, ensure_ascii=False))
+              except:
+                  print("{\"issues\": []}")
+          else:
+              print("{\"issues\": []}")
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
+          echo '{"issues": []}' > ai_issues.json
+
+          jq . ai_issues.json
+
+      - name: 🐞 CREATE CICD ISSUES
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
+          [ "$TOTAL" -eq 0 ] && echo "⚠️ Nenhuma issue CI/CD encontrada" && exit 0
+
+          sanitize() { echo "$1" | sed 's/\r//g'; }
+
+          create_label_if_not_exists() {
+            local NAME="$1" COLOR="$2"
+            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
+            [ -z "$EXISTS" ] && gh label create "$NAME" --color "$COLOR" --description "AI CI/CD Audit" 2>/dev/null || true
+          }
+
+          create_label_if_not_exists "ai-cicd-audit"     "FF6600"
+          create_label_if_not_exists "priority-critical" "B60205"
+          create_label_if_not_exists "priority-high"     "D93F0B"
+          create_label_if_not_exists "priority-medium"   "FBCA04"
+          create_label_if_not_exists "priority-low"      "0E8A16"
+          create_label_if_not_exists "category-cicd"     "1D76DB"
+
+          jq -c '.issues[]' ai_issues.json | while read -r row; do
+
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue CI/CD"')")
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "CI/CD"')")
+            PIPELINE_LAYER=$(sanitize "$(echo "$row" | jq -r '.pipeline_layer // "Não identificado"')")
+            ANTI_PATTERN=$(sanitize "$(echo "$row" | jq -r '.anti_pattern // "Não identificado"')")
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            SECURITY_IMPACT=$(sanitize "$(echo "$row" | jq -r '.security_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            CURRENT_CONFIG=$(sanitize "$(echo "$row" | jq -r '.current_config // "Não informado"')")
+            IMPROVED_CONFIG=$(sanitize "$(echo "$row" | jq -r '.improved_config // "Não informado"')")
+            OPTIMIZATION_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.optimization_strategy // "Não informado"')")
+            SECURITY_RECOMMENDATION=$(sanitize "$(echo "$row" | jq -r '.security_recommendation // "Não informado"')")
+            PARALLELIZATION=$(sanitize "$(echo "$row" | jq -r '.parallelization_opportunity // "Não informado"')")
+            CACHING_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.caching_strategy // "Não informado"')")
+            NOTIFICATION_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.notification_strategy // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            TIME_SAVINGS=$(sanitize "$(echo "$row" | jq -r '.time_savings_estimate // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "CI/CD"')")
+
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
+
+            BODY="
+            ## 🚀 Categoria CI/CD
+            $CATEGORY — $IMPROVEMENT_TYPE
+
+            ## 🔥 Prioridade | 🚨 Severidade
+            $PRIORITY | $SEVERITY
+
+            ---
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ---
+
+            ## 🔧 Camada de Pipeline
+            $PIPELINE_LAYER
+
+            ---
+
+            ## ⚠️ Anti-Pattern Detectado
+            $ANTI_PATTERN
+
+            ---
+
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ---
+
+            ## 🔴 Configuração Atual (Problemática)
+            \`\`\`yaml
+            $CURRENT_CONFIG
+            \`\`\`
+
+            ---
+
+            ## ✅ Configuração Melhorada (Ideal)
+            \`\`\`yaml
+            $IMPROVED_CONFIG
+            \`\`\`
+
+            ---
+
+            ## ⚡ Estratégia de Otimização
+            $OPTIMIZATION_STRATEGY
+
+            ---
+
+            ## 🔀 Oportunidade de Paralelização
+            $PARALLELIZATION
+
+            ---
+
+            ## 💾 Estratégia de Cache
+            $CACHING_STRATEGY
+
+            ---
+
+            ## 🔒 Recomendação de Segurança
+            $SECURITY_RECOMMENDATION
+
+            ---
+
+            ## 🔔 Estratégia de Notificação
+            $NOTIFICATION_STRATEGY
+
+            ---
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ---
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ---
+
+            ## 🔐 Impacto de Segurança
+            $SECURITY_IMPACT
+
+            ---
+
+            ## ⚠️ Risco Atual
+            $RISK
+
+            ---
+
+            ## 🧪 Como Identificar
+            $REPRODUCTION
+
+            ---
+
+            ## 💡 Sugestão Detalhada
+            $SUGGESTION
+
+            ---
+
+            ## 🎯 Benefícios Esperados
+            $BENEFITS
+
+            ---
+
+            ## ⏱️ Estimativa de Economia de Tempo por Execução
+            $TIME_SAVINGS
+
+            ---
+
+            ## 📈 Complexidade da Correção
+            $COMPLEXITY
+
+            ---
+            > 🤖 Issue gerada automaticamente pelo **CI/CD Pipeline Auditor**
+            "
+
+            EXISTING=$(gh issue list \
+              --search "$TITLE in:title" \
+              --state all \
+              --json title \
+              --jq '.[0].title // empty' 2>/dev/null || echo "")
+
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            LABELS="ai-cicd-audit,category-cicd"
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
+              alta|high)                LABELS="$LABELS,priority-high" ;;
+              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
+              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            esac
+
+            echo "🚀 Criando issue CI/CD: $TITLE"
+            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
+            echo "✅ Issue criada: $TITLE"
+            sleep 1
+
+          done
+
+          echo "✅ Auditoria CI/CD finalizada"

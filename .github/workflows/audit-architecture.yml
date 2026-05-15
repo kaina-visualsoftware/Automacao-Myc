@@ -1,0 +1,417 @@
+name: 🏗️ TEST ARCHITECTURE AUDITOR
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  audit-architecture:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📡 FETCH HISTORY
+        run: git fetch --all
+
+      - name: 📂 SCAN ALL FILES
+        run: |
+          find . \
+            -type f \
+            \( -name "*.robot" -o -name "*.resource" -o -name "*.py" \
+               -o -name "*.json" -o -name "*.yml" -o -name "*.yaml" \
+               -o -name "*.md" \) \
+            ! -path "*/node_modules/*" \
+            ! -path "*/.git/*" \
+            > all_files.txt
+
+          echo "✅ Total de arquivos:"
+          wc -l all_files.txt
+
+      - name: 📄 BUILD ARCHITECTURE CONTEXT
+        run: |
+          > arch_context.txt
+
+          echo "===== ESTRUTURA COMPLETA DO PROJETO =====" >> arch_context.txt
+          cat all_files.txt >> arch_context.txt
+
+          echo "" >> arch_context.txt
+          echo "===== CONTEÚDO DOS ARQUIVOS CHAVE =====" >> arch_context.txt
+
+          while read file; do
+            echo "" >> arch_context.txt
+            echo "FILE: $file" >> arch_context.txt
+            echo "----------------------------------------" >> arch_context.txt
+            cat "$file" >> arch_context.txt 2>/dev/null || true
+          done < all_files.txt
+
+          echo "" >> arch_context.txt
+          echo "===== HISTÓRICO GIT =====" >> arch_context.txt
+          git log -20 --pretty=format:"%h - %an - %s" >> arch_context.txt
+
+          echo "✅ Contexto de arquitetura gerado"
+
+      - name: 🤖 AI ARCHITECTURE AUDIT
+        id: ai_arch_audit
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          PROJECT_CONTEXT=$(head -c 120000 arch_context.txt)
+
+          PROMPT=$(cat <<EOF
+          You are a WORLD-CLASS TEST AUTOMATION ARCHITECT and ENTERPRISE QUALITY ENGINEER.
+
+          Your sole mission is to perform a DEEP ARCHITECTURAL AUDIT of the test project below.
+
+          You have 20+ years of experience with:
+          - Enterprise test automation architecture
+          - Test pyramid design and implementation
+          - Scalable automation framework design
+          - Domain-Driven test organization
+          - SOLID principles applied to test automation
+          - Design patterns in test automation (Page Object, Factory, Strategy, Builder)
+          - Multi-team and multi-project automation governance
+          - Test platform engineering
+          - Microservices testing strategies
+          - Contract testing architecture
+          - Test data management architecture
+          - Observability and monitoring in test automation
+
+          ========================
+          YOUR ARCHITECTURE AUDIT FRAMEWORK
+          ========================
+
+          LAYER 1 — PROJECT STRUCTURE
+          - Does the folder structure reflect domain/feature separation?
+          - Is there a clear separation between: tests / keywords / resources / data / config?
+          - Is there a logical grouping strategy? (by feature, by domain, by layer)
+          - Are there orphan files with no clear ownership?
+          - Is the naming convention for folders consistent?
+          - Is the project structure scalable for 10x more tests?
+          - Is there a clear entry point / test runner configuration?
+
+          LAYER 2 — LAYER SEPARATION
+          - Is there a clear separation of: Test Layer / Business Layer / Technical Layer?
+          - Are UI interactions leaking into business logic keywords?
+          - Are API calls mixed with UI steps?
+          - Is there a proper abstraction between test steps and implementation?
+          - Are locators isolated in a dedicated layer?
+          - Is configuration management isolated?
+          - Is test data management isolated from test logic?
+
+          LAYER 3 — REUSABILITY AND COMPONENTIZATION
+          - Are common flows properly extracted as reusable components?
+          - Are there duplicated flows across different test files?
+          - Is there a shared utilities layer?
+          - Are authentication flows reused or duplicated?
+          - Are there reusable data builders / factories?
+          - Is there a proper shared library strategy?
+
+          LAYER 4 — SCALABILITY
+          - Can the suite run in parallel without conflicts?
+          - Is there shared state that would prevent parallel execution?
+          - Are resources thread-safe?
+          - Is the architecture ready for multi-browser testing?
+          - Is the architecture ready for multi-environment execution?
+          - Is there a proper tagging strategy for selective execution?
+          - Can new features be added without touching existing tests?
+
+          LAYER 5 — MAINTAINABILITY
+          - How many files need to change when a UI element changes?
+          - How many files need to change when a URL changes?
+          - How many files need to change when a flow changes?
+          - Are there architectural bottlenecks that cause cascading failures?
+          - Is there a single point of failure in the architecture?
+          - Is configuration centralized or scattered?
+
+          LAYER 6 — TEST DATA STRATEGY
+          - Is test data hardcoded in test files?
+          - Is there a test data factory or builder pattern?
+          - Is test data environment-aware?
+          - Is sensitive data properly managed? (not hardcoded)
+          - Is there a data cleanup strategy?
+          - Are there data dependencies between tests?
+
+          LAYER 7 — ANTI-PATTERNS
+          - "Flat structure" — everything in one folder
+          - "God resource" — one file doing everything
+          - "Coupled tests" — tests that depend on each other
+          - "Environment leakage" — env-specific config in test files
+          - "Missing abstraction layers" — tests directly using locators
+          - "Data hardcoding" — test data embedded in test logic
+          - "Shared mutable state" — suite variables modified by tests
+          - "No separation of concerns" — tests mixing UI + API + DB
+
+          ========================
+          RETURN FORMAT
+          ========================
+
+          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+
+          {
+            "issues": [
+              {
+                "title": "Clear architectural issue title",
+                "priority": "Alta",
+                "severity": "Alta",
+                "category": "Arquitetura",
+                "files": ["path/to/file"],
+                "architectural_layer": "Which layer is affected",
+                "anti_pattern": "Which architectural anti-pattern",
+                "problem": "Extremely detailed architectural problem description",
+                "technical_impact": "Impact on scalability and maintainability",
+                "business_impact": "Impact on delivery and team velocity",
+                "scalability_impact": "How this blocks future scaling",
+                "maintenance_impact": "How many files need to change per fix",
+                "risk": "Architectural risk if not fixed",
+                "reproduction": "How to identify this in the codebase",
+                "current_structure": "Description of current problematic structure",
+                "suggested_structure": "Ideal folder and file organization",
+                "suggested_layers": "Recommended layer separation",
+                "migration_strategy": "How to migrate from current to ideal",
+                "suggestion": "Detailed architectural fix",
+                "benefits": "Expected architectural benefits",
+                "complexity": "Alta",
+                "improvement_type": "Arquitetura"
+              }
+            ]
+          }
+
+          PROJECT CONTEXT:
+          $PROJECT_CONTEXT
+          EOF
+          )
+
+          REQUEST_BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            '{
+              model: "openai/gpt-4o-mini",
+              messages: [{ role: "user", content: $prompt }],
+              temperature: 0.1,
+              max_tokens: 4000,
+              response_format: { "type": "json_object" }
+            }')
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")
+
+          echo "$RESPONSE" > response.json
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ IA não retornou conteúdo"
+            cat response.json
+            exit 1
+          fi
+
+          echo "$AI_CONTENT" > ai_raw.txt
+
+          cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
+          python3 -c '
+          import sys, json, re
+          text = sys.stdin.read()
+          match = re.search(r"\{[\s\S]*\}", text)
+          if match:
+              try:
+                  data = json.loads(match.group(0))
+                  print(json.dumps(data, ensure_ascii=False))
+              except:
+                  print("{\"issues\": []}")
+          else:
+              print("{\"issues\": []}")
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
+          echo '{"issues": []}' > ai_issues.json
+
+          jq . ai_issues.json
+
+      - name: 🐞 CREATE ARCHITECTURE ISSUES
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
+          [ "$TOTAL" -eq 0 ] && echo "⚠️ Nenhuma issue de arquitetura encontrada" && exit 0
+
+          sanitize() { echo "$1" | sed 's/\r//g'; }
+
+          create_label_if_not_exists() {
+            local NAME="$1" COLOR="$2"
+            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
+            [ -z "$EXISTS" ] && gh label create "$NAME" --color "$COLOR" --description "AI Architecture Audit" 2>/dev/null || true
+          }
+
+          create_label_if_not_exists "ai-arch-audit"      "8B00FF"
+          create_label_if_not_exists "priority-critical"  "B60205"
+          create_label_if_not_exists "priority-high"      "D93F0B"
+          create_label_if_not_exists "priority-medium"    "FBCA04"
+          create_label_if_not_exists "priority-low"       "0E8A16"
+          create_label_if_not_exists "category-architecture" "1D76DB"
+
+          jq -c '.issues[]' ai_issues.json | while read -r row; do
+
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Arquitetura"')")
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "Arquitetura"')")
+            ARCH_LAYER=$(sanitize "$(echo "$row" | jq -r '.architectural_layer // "Não identificado"')")
+            ANTI_PATTERN=$(sanitize "$(echo "$row" | jq -r '.anti_pattern // "Não identificado"')")
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            SCALABILITY_IMPACT=$(sanitize "$(echo "$row" | jq -r '.scalability_impact // "Não informado"')")
+            MAINTENANCE_IMPACT=$(sanitize "$(echo "$row" | jq -r '.maintenance_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            CURRENT_STRUCTURE=$(sanitize "$(echo "$row" | jq -r '.current_structure // "Não informado"')")
+            SUGGESTED_STRUCTURE=$(sanitize "$(echo "$row" | jq -r '.suggested_structure // "Não informado"')")
+            SUGGESTED_LAYERS=$(sanitize "$(echo "$row" | jq -r '.suggested_layers // "Não informado"')")
+            MIGRATION_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.migration_strategy // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Arquitetura"')")
+
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
+
+            BODY="
+            ## 🏗️ Categoria Arquitetural
+            $CATEGORY — $IMPROVEMENT_TYPE
+
+            ## 🔥 Prioridade | 🚨 Severidade
+            $PRIORITY | $SEVERITY
+
+            ---
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ---
+
+            ## 🗂️ Camada Arquitetural Afetada
+            $ARCH_LAYER
+
+            ---
+
+            ## ⚠️ Anti-Pattern Detectado
+            $ANTI_PATTERN
+
+            ---
+
+            ## 📝 Problema Arquitetural
+            $PROBLEM
+
+            ---
+
+            ## 🔴 Estrutura Atual (Problemática)
+            \`\`\`
+            $CURRENT_STRUCTURE
+            \`\`\`
+
+            ---
+
+            ## ✅ Estrutura Sugerida (Ideal)
+            \`\`\`
+            $SUGGESTED_STRUCTURE
+            \`\`\`
+
+            ---
+
+            ## 🧱 Separação de Camadas Recomendada
+            \`\`\`
+            $SUGGESTED_LAYERS
+            \`\`\`
+
+            ---
+
+            ## 🔄 Estratégia de Migração
+            $MIGRATION_STRATEGY
+
+            ---
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ---
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ---
+
+            ## 📈 Impacto de Escalabilidade
+            $SCALABILITY_IMPACT
+
+            ---
+
+            ## 🛠️ Impacto de Manutenção
+            $MAINTENANCE_IMPACT
+
+            ---
+
+            ## ⚠️ Risco Arquitetural
+            $RISK
+
+            ---
+
+            ## 🧪 Como Identificar
+            $REPRODUCTION
+
+            ---
+
+            ## 💡 Solução Detalhada
+            $SUGGESTION
+
+            ---
+
+            ## 🎯 Benefícios Esperados
+            $BENEFITS
+
+            ---
+
+            ## 📈 Complexidade da Correção
+            $COMPLEXITY
+
+            ---
+            > 🤖 Issue gerada automaticamente pelo **Test Architecture Auditor**
+            "
+
+            EXISTING=$(gh issue list --search "$TITLE in:title" --state all --json title --jq '.[0].title // empty' 2>/dev/null || echo "")
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            LABELS="ai-arch-audit,category-architecture"
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
+              alta|high)                LABELS="$LABELS,priority-high" ;;
+              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
+              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            esac
+
+            echo "🚀 Criando issue Arquitetura: $TITLE"
+            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
+            echo "✅ Issue criada: $TITLE"
+            sleep 1
+
+          done
+
+          echo "✅ Auditoria de Arquitetura finalizada"

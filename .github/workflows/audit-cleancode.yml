@@ -1,0 +1,487 @@
+name: 🧹 CLEAN CODE & TECH DEBT AUDITOR
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  audit-cleancode:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📡 FETCH HISTORY
+        run: git fetch --all
+
+      - name: 📂 SCAN ALL CODE FILES
+        run: |
+          echo "🔍 Escaneando arquivos de código..."
+
+          find . \
+            -type f \
+            \( \
+              -name "*.robot" \
+              -o -name "*.resource" \
+              -o -name "*.py" \
+              -o -name "*.js" \
+              -o -name "*.ts" \
+            \) \
+            ! -path "*/node_modules/*" \
+            ! -path "*/.git/*" \
+            > code_files.txt
+
+          echo "✅ Arquivos de código encontrados:"
+          wc -l code_files.txt
+
+      - name: 📄 BUILD CLEANCODE CONTEXT
+        run: |
+          > cleancode_context.txt
+
+          echo "===== ESTRUTURA DE CÓDIGO =====" >> cleancode_context.txt
+          cat code_files.txt >> cleancode_context.txt
+
+          echo "" >> cleancode_context.txt
+          echo "===== CONTEÚDO COMPLETO =====" >> cleancode_context.txt
+
+          while read file; do
+            echo "" >> cleancode_context.txt
+            echo "FILE: $file" >> cleancode_context.txt
+            echo "----------------------------------------" >> cleancode_context.txt
+            cat "$file" >> cleancode_context.txt 2>/dev/null || true
+          done < code_files.txt
+
+          echo "" >> cleancode_context.txt
+          echo "===== HISTÓRICO DE COMMITS =====" >> cleancode_context.txt
+          git log -20 --pretty=format:"%h - %an - %s" >> cleancode_context.txt
+
+          echo "✅ Contexto Clean Code gerado"
+
+      - name: 🤖 AI CLEANCODE AUDIT
+        id: ai_cleancode_audit
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          PROJECT_CONTEXT=$(head -c 120000 cleancode_context.txt)
+
+          PROMPT=$(cat <<EOF
+          You are a WORLD-CLASS CLEAN CODE ADVOCATE, TECH DEBT SPECIALIST, and SENIOR CODE REVIEWER.
+
+          Your sole mission is to perform a DEEP CLEAN CODE AND TECHNICAL DEBT AUDIT on the project below.
+
+          You have 20+ years of experience with:
+          - Clean Code principles (Robert C. Martin)
+          - SOLID principles
+          - DRY, KISS, YAGNI principles
+          - Refactoring patterns (Martin Fowler)
+          - Code smell identification and elimination
+          - Technical debt quantification and prioritization
+          - Naming conventions and code readability
+          - Cognitive complexity reduction
+          - Code maintainability metrics
+          - Design patterns applied to test automation
+          - Code review best practices at enterprise scale
+
+          ========================
+          YOUR CLEAN CODE AUDIT FRAMEWORK
+          ========================
+
+          LAYER 1 — NAMING
+          - Are function/keyword names intention-revealing?
+          - Are names pronounceable and searchable?
+          - Do names avoid mental mapping? (i vs index)
+          - Are boolean names using is/has/should/can prefixes?
+          - Are names consistent across the entire codebase?
+          - Are abbreviations avoided?
+          - Do class/resource names use nouns?
+          - Do keyword/function names use strong verbs?
+          - Are there misleading names? (a name that suggests wrong behavior)
+          - Are there names that are too generic? (data, info, manager, handler, util)
+
+          LAYER 2 — FUNCTIONS AND KEYWORDS
+          - Does each function/keyword do ONE thing only?
+          - Is the function small enough? (>20 lines is a warning, >50 is critical)
+          - Does the function operate at ONE level of abstraction?
+          - Are there too many parameters? (>3 is a warning, >5 is critical)
+          - Are there output parameters? (anti-pattern — use return values)
+          - Are there flag/boolean parameters that split behavior?
+          - Is there dead code? (code that is never executed)
+          - Are there commented-out code blocks?
+          - Are there TODO/FIXME/HACK comments that became permanent?
+          - Is the function side-effect free where it should be?
+
+          LAYER 3 — DRY VIOLATIONS (Don't Repeat Yourself)
+          - Are there duplicated code blocks? (exact or near-duplicate)
+          - Are there duplicated logic patterns with different variable names?
+          - Are there duplicated setup/teardown sequences?
+          - Are there copy-pasted keyword implementations?
+          - Are there magic numbers repeated across files?
+          - Are there repeated string literals that should be constants?
+          - Are there repeated conditional patterns that should be extracted?
+
+          LAYER 4 — CODE COMPLEXITY
+          - Are there deeply nested conditionals? (>3 levels is critical)
+          - Are there long conditional chains that should use patterns?
+          - Are there complex boolean expressions that should be extracted?
+          - Are there switch/case blocks that should use polymorphism?
+          - Is cyclomatic complexity too high?
+          - Are there functions with too many responsibilities?
+
+          LAYER 5 — COMMENTS AND DOCUMENTATION
+          - Are there comments explaining WHAT instead of WHY?
+          - Are there obsolete comments that no longer match the code?
+          - Are there commented-out code blocks?
+          - Are there misleading comments?
+          - Are there functions with no documentation that need it?
+          - Is there a missing [Documentation] section in Robot keywords?
+          - Are complex algorithms properly explained?
+
+          LAYER 6 — ERROR HANDLING
+          - Are errors silently swallowed? (empty except/catch blocks)
+          - Are error messages meaningful and actionable?
+          - Are there missing error scenarios?
+          - Is error handling consistent across the codebase?
+          - Are there generic exception catches hiding real errors?
+
+          LAYER 7 — TECHNICAL DEBT INDICATORS
+          - Code that has not been touched in >6 months but is critical
+          - Workarounds marked as temporary that became permanent
+          - Missing abstractions that cause tight coupling
+          - Overengineered solutions for simple problems (YAGNI violation)
+          - Underengineered solutions creating fragility (KISS violation)
+          - Missing tests for critical paths
+          - Code that requires 10+ files to change for one feature
+
+          LAYER 8 — CODE SMELLS (Martin Fowler catalog applied to test code)
+          - "Bloater" — code that has grown too large
+          - "Feature Envy" — code using another file's data more than its own
+          - "Data Clumps" — groups of data that always appear together
+          - "Primitive Obsession" — using primitives instead of abstractions
+          - "Switch Statements" — repeated conditionals that should be polymorphic
+          - "Parallel Inheritance Hierarchies" — parallel structures
+          - "Lazy Class" — a class/resource that does too little to justify existence
+          - "Speculative Generality" — over-abstraction for future that never comes
+          - "Temporary Field" — variables only set in certain conditions
+          - "Message Chains" — long chains of method calls
+          - "Middle Man" — a function that only delegates to another
+          - "Inappropriate Intimacy" — two files knowing too much about each other
+          - "Data Class" — resource with only data and no behavior
+          - "Refused Bequest" — inheriting things that are not needed
+
+          ========================
+          TECHNICAL DEBT SCORING
+          ========================
+
+          For each issue, estimate:
+          - Debt Type: Code Smell / Design Debt / Test Debt / Documentation Debt
+          - Debt Age: New / Established / Legacy
+          - Debt Cost (time to fix): Minutes / Hours / Days / Weeks
+          - Interest Rate: How much worse this gets over time
+
+          ========================
+          RETURN FORMAT
+          ========================
+
+          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+
+          {
+            "issues": [
+              {
+                "title": "Clear clean code issue title",
+                "priority": "Alta",
+                "severity": "Alta",
+                "category": "Clean Code",
+                "files": ["path/to/file.robot"],
+                "code_smell": "Which code smell or clean code violation",
+                "solid_principle_violated": "Which SOLID principle if applicable",
+                "clean_code_rule": "Which Clean Code rule is violated",
+                "debt_type": "Code Smell / Design Debt / Test Debt",
+                "debt_cost": "Hours/Days to fix",
+                "debt_interest": "How this worsens over time",
+                "problem": "Extremely detailed clean code problem description",
+                "technical_impact": "Impact on code maintainability and readability",
+                "business_impact": "Impact on team velocity and onboarding",
+                "risk": "Risk if technical debt is not paid",
+                "reproduction": "How to identify this in the codebase",
+                "current_code": "The exact current problematic code",
+                "refactored_code": "The clean refactored version",
+                "refactoring_pattern": "Which refactoring pattern to apply",
+                "naming_improvements": "Specific naming improvements",
+                "extraction_suggestions": "What should be extracted as functions/keywords",
+                "suggestion": "Detailed fix",
+                "benefits": "Expected code quality improvements",
+                "readability_gain": "Estimated readability improvement",
+                "maintainability_gain": "Estimated maintainability improvement",
+                "complexity": "Baixa",
+                "improvement_type": "Clean Code"
+              }
+            ]
+          }
+
+          PROJECT CONTEXT:
+          $PROJECT_CONTEXT
+          EOF
+          )
+
+          REQUEST_BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            '{
+              model: "openai/gpt-4o-mini",
+              messages: [{ role: "user", content: $prompt }],
+              temperature: 0.1,
+              max_tokens: 4000,
+              response_format: { "type": "json_object" }
+            }')
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")
+
+          echo "$RESPONSE" > response.json
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ IA não retornou conteúdo"
+            cat response.json
+            exit 1
+          fi
+
+          echo "$AI_CONTENT" > ai_raw.txt
+
+          cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
+          python3 -c '
+          import sys, json, re
+          text = sys.stdin.read()
+          match = re.search(r"\{[\s\S]*\}", text)
+          if match:
+              try:
+                  data = json.loads(match.group(0))
+                  print(json.dumps(data, ensure_ascii=False))
+              except:
+                  print("{\"issues\": []}")
+          else:
+              print("{\"issues\": []}")
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
+          echo '{"issues": []}' > ai_issues.json
+
+          jq . ai_issues.json
+
+      - name: 🐞 CREATE CLEANCODE ISSUES
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
+          [ "$TOTAL" -eq 0 ] && echo "⚠️ Nenhuma issue de Clean Code encontrada" && exit 0
+
+          sanitize() { echo "$1" | sed 's/\r//g'; }
+
+          create_label_if_not_exists() {
+            local NAME="$1" COLOR="$2"
+            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
+            [ -z "$EXISTS" ] && gh label create "$NAME" --color "$COLOR" --description "AI Clean Code Audit" 2>/dev/null || true
+          }
+
+          create_label_if_not_exists "ai-cleancode-audit" "006B75"
+          create_label_if_not_exists "tech-debt"          "E4E669"
+          create_label_if_not_exists "clean-code"         "C2E0C6"
+          create_label_if_not_exists "priority-critical"  "B60205"
+          create_label_if_not_exists "priority-high"      "D93F0B"
+          create_label_if_not_exists "priority-medium"    "FBCA04"
+          create_label_if_not_exists "priority-low"       "0E8A16"
+
+          jq -c '.issues[]' ai_issues.json | while read -r row; do
+
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Clean Code"')")
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "Clean Code"')")
+            CODE_SMELL=$(sanitize "$(echo "$row" | jq -r '.code_smell // "Não identificado"')")
+            SOLID_VIOLATED=$(sanitize "$(echo "$row" | jq -r '.solid_principle_violated // "Não aplicável"')")
+            CLEAN_CODE_RULE=$(sanitize "$(echo "$row" | jq -r '.clean_code_rule // "Não informado"')")
+            DEBT_TYPE=$(sanitize "$(echo "$row" | jq -r '.debt_type // "Não informado"')")
+            DEBT_COST=$(sanitize "$(echo "$row" | jq -r '.debt_cost // "Não informado"')")
+            DEBT_INTEREST=$(sanitize "$(echo "$row" | jq -r '.debt_interest // "Não informado"')")
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            CURRENT_CODE=$(sanitize "$(echo "$row" | jq -r '.current_code // "Não informado"')")
+            REFACTORED_CODE=$(sanitize "$(echo "$row" | jq -r '.refactored_code // "Não informado"')")
+            REFACTORING_PATTERN=$(sanitize "$(echo "$row" | jq -r '.refactoring_pattern // "Não informado"')")
+            NAMING_IMPROVEMENTS=$(sanitize "$(echo "$row" | jq -r '.naming_improvements // "Não informado"')")
+            EXTRACTION_SUGGESTIONS=$(sanitize "$(echo "$row" | jq -r '.extraction_suggestions // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            READABILITY_GAIN=$(sanitize "$(echo "$row" | jq -r '.readability_gain // "Não informado"')")
+            MAINTAINABILITY_GAIN=$(sanitize "$(echo "$row" | jq -r '.maintainability_gain // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Clean Code"')")
+
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
+
+            BODY="
+            ## 🧹 Categoria Clean Code
+            $CATEGORY — $IMPROVEMENT_TYPE
+
+            ## 🔥 Prioridade | 🚨 Severidade
+            $PRIORITY | $SEVERITY
+
+            ---
+
+            ## 📊 Indicadores de Dívida Técnica
+
+            | Indicador            | Valor          |
+            |----------------------|----------------|
+            | Tipo de Dívida       | $DEBT_TYPE     |
+            | Custo Estimado       | $DEBT_COST     |
+            | Taxa de Juros        | $DEBT_INTEREST |
+
+            ---
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ---
+
+            ## 🦨 Code Smell Detectado
+            $CODE_SMELL
+
+            ---
+
+            ## 📐 Princípio SOLID Violado
+            $SOLID_VIOLATED
+
+            ---
+
+            ## 📖 Regra Clean Code Violada
+            $CLEAN_CODE_RULE
+
+            ---
+
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ---
+
+            ## 🔴 Código Atual (Problemático)
+            \`\`\`robot
+            $CURRENT_CODE
+            \`\`\`
+
+            ---
+
+            ## ✅ Código Refatorado (Ideal)
+            \`\`\`robot
+            $REFACTORED_CODE
+            \`\`\`
+
+            ---
+
+            ## 🔧 Padrão de Refatoração Aplicável
+            $REFACTORING_PATTERN
+
+            ---
+
+            ## 📝 Melhorias de Nomenclatura
+            $NAMING_IMPROVEMENTS
+
+            ---
+
+            ## ✂️ Sugestões de Extração
+            $EXTRACTION_SUGGESTIONS
+
+            ---
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ---
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ---
+
+            ## ⚠️ Risco da Dívida Técnica
+            $RISK
+
+            ---
+
+            ## 🧪 Como Identificar
+            $REPRODUCTION
+
+            ---
+
+            ## 💡 Sugestão Detalhada
+            $SUGGESTION
+
+            ---
+
+            ## 🎯 Benefícios Esperados
+            $BENEFITS
+
+            ---
+
+            ## 👁️ Ganho de Legibilidade
+            $READABILITY_GAIN
+
+            ---
+
+            ## 🛠️ Ganho de Manutenibilidade
+            $MAINTAINABILITY_GAIN
+
+            ---
+
+            ## 📈 Complexidade da Correção
+            $COMPLEXITY
+
+            ---
+            > 🤖 Issue gerada automaticamente pelo **Clean Code & Tech Debt Auditor**
+            "
+
+            EXISTING=$(gh issue list \
+              --search "$TITLE in:title" \
+              --state all \
+              --json title \
+              --jq '.[0].title // empty' 2>/dev/null || echo "")
+
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            LABELS="ai-cleancode-audit,clean-code,tech-debt"
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
+              alta|high)                LABELS="$LABELS,priority-high" ;;
+              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
+              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            esac
+
+            echo "🚀 Criando issue Clean Code: $TITLE"
+            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
+            echo "✅ Issue criada: $TITLE"
+            sleep 1
+
+          done
+
+          echo "✅ Auditoria Clean Code finalizada"

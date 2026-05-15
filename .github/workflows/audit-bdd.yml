@@ -1,0 +1,431 @@
+name: 🧠 BDD QUALITY AUDITOR
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  audit-bdd:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📡 FETCH HISTORY
+        run: git fetch --all
+
+      - name: 📂 SCAN BDD FILES
+        run: |
+          echo "🔍 Escaneando arquivos BDD..."
+
+          find . \
+            -type f \
+            \( \
+              -name "*.robot" -o \
+              -name "*.feature" -o \
+              -name "*.resource" \
+            \) \
+            ! -path "*/node_modules/*" \
+            ! -path "*/.git/*" \
+            > bdd_files.txt
+
+          echo "✅ Arquivos BDD encontrados:"
+          wc -l bdd_files.txt
+
+      - name: 📄 BUILD BDD CONTEXT
+        run: |
+          echo "📄 Gerando contexto BDD..."
+
+          > bdd_context.txt
+
+          echo "===== ESTRUTURA BDD =====" >> bdd_context.txt
+          cat bdd_files.txt >> bdd_context.txt
+
+          echo "" >> bdd_context.txt
+          echo "===== CONTEÚDO COMPLETO DOS ARQUIVOS BDD =====" >> bdd_context.txt
+
+          while read file; do
+            echo "" >> bdd_context.txt
+            echo "FILE: $file" >> bdd_context.txt
+            echo "----------------------------------------" >> bdd_context.txt
+            cat "$file" >> bdd_context.txt 2>/dev/null || true
+          done < bdd_files.txt
+
+          echo "" >> bdd_context.txt
+          echo "===== ÚLTIMOS COMMITS =====" >> bdd_context.txt
+          git log -10 --pretty=format:"%h - %s" >> bdd_context.txt
+
+          echo "✅ Contexto BDD gerado"
+
+      - name: 🤖 AI BDD AUDIT
+        id: ai_bdd_audit
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          echo "🤖 Executando auditoria BDD..."
+
+          PROJECT_CONTEXT=$(head -c 120000 bdd_context.txt)
+
+          PROMPT=$(cat <<EOF
+          You are a WORLD-CLASS BDD SPECIALIST and BEHAVIOR-DRIVEN DEVELOPMENT EXPERT.
+
+          Your sole mission is to perform a DEEP, SURGICAL BDD AUDIT on the project below.
+
+          You have 15+ years of experience with:
+          - Gherkin language design
+          - Behavior-Driven Development methodology
+          - Acceptance Test-Driven Development (ATDD)
+          - Living documentation practices
+          - Domain-Driven Design applied to test scenarios
+          - Specification by Example
+          - Three Amigos methodology
+          - Business-readable test suites
+
+          ========================
+          YOUR BDD AUDIT FRAMEWORK
+          ========================
+
+          LAYER 1 — SCENARIO QUALITY
+          - Is the scenario written from a BUSINESS perspective or a TECHNICAL one?
+          - Does the scenario represent ONE behavior only?
+          - Is the scenario name descriptive of the OUTCOME, not the steps?
+          - Are there multiple WHEN steps (multi-action anti-pattern)?
+          - Are the THEN steps asserting OBSERVABLE business outcomes?
+          - Is the scenario testing implementation details instead of behavior?
+          - Would a non-technical Product Owner understand this scenario?
+          - Is there hidden technical jargon that leaks into the Gherkin?
+
+          LAYER 2 — GIVEN / WHEN / THEN STRUCTURE
+          - GIVEN: Is it setting up context or performing actions? (anti-pattern)
+          - GIVEN: Is there too much setup complexity hiding in a single step?
+          - WHEN: Is it a single, clear user action or event?
+          - WHEN: Are there multiple WHEN steps? (scenario decomposition needed)
+          - THEN: Is it validating real business outcomes or UI artifacts?
+          - THEN: Are there missing THEN assertions?
+          - THEN: Are the assertions too granular or too vague?
+          - AND / BUT: Are they overused or misused?
+
+          LAYER 3 — SCENARIO COVERAGE
+          - Is there a Happy Path scenario?
+          - Is there at least ONE negative scenario per feature?
+          - Are edge cases covered (empty input, max length, null values)?
+          - Are boundary conditions tested?
+          - Are permission/authorization scenarios covered?
+          - Are error state scenarios covered?
+          - Are async/wait behaviors considered?
+          - Are data validation scenarios present?
+
+          LAYER 4 — FEATURE FILE STRUCTURE
+          - Is the Feature description meaningful and business-oriented?
+          - Are scenarios grouped logically?
+          - Is Background overloaded? (too many shared steps)
+          - Are Scenario Outlines used when they should be simple scenarios?
+          - Are Examples tables well-structured and meaningful?
+          - Is there a clear business context in the Feature header?
+          - Are tags used effectively for filtering and reporting?
+
+          LAYER 5 — LANGUAGE AND READABILITY
+          - Is the language consistent across all scenarios?
+          - Are step definitions reused properly?
+          - Are there inconsistent step phrasings for the same action?
+          - Is there passive vs active voice inconsistency?
+          - Are step descriptions too long or too vague?
+          - Are actors clearly identified (user, admin, system)?
+
+          LAYER 6 — ANTI-PATTERNS TO DETECT
+          - "God scenarios" — one scenario doing too much
+          - "Implementation-coupled scenarios" — testing HOW, not WHAT
+          - "Invisible actors" — no clear subject performing actions
+          - "Result-free scenarios" — no meaningful THEN
+          - "Data-heavy scenarios" — hardcoded irrelevant data in steps
+          - "Flaky preconditions" — GIVENs that depend on system state
+          - "Duplicate scenarios" — same behavior tested multiple times
+          - "Scenario explosion" — too many similar scenarios instead of Outline
+          - "Missing business rule" — scenario has no traceable requirement
+          - "Orphan scenarios" — scenarios not linked to any acceptance criteria
+
+          ========================
+          AUDIT OUTPUT RULES
+          ========================
+
+          - ONLY report REAL issues found in the provided files
+          - DO NOT invent file names or scenarios
+          - DO NOT generate generic advice
+          - ALWAYS cite the EXACT file and scenario name
+          - ALWAYS show the CURRENT problematic code
+          - ALWAYS show the IDEAL rewritten version
+          - Generate at most 10 issues
+          - Focus on HIGH-IMPACT issues first
+
+          ========================
+          RETURN FORMAT
+          ========================
+
+          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+
+          {
+            "issues": [
+              {
+                "title": "Clear technical title",
+                "priority": "Alta",
+                "severity": "Alta",
+                "category": "BDD",
+                "files": ["path/to/file.robot"],
+                "problem": "Extremely detailed description of the BDD problem found",
+                "scenario_name": "Exact name of the problematic scenario",
+                "anti_pattern": "Which BDD anti-pattern this represents",
+                "technical_impact": "Impact on automation reliability and maintenance",
+                "business_impact": "Impact on requirements traceability and communication",
+                "risk": "What risk this introduces if not fixed",
+                "reproduction": "How to identify this problem in the codebase",
+                "current_code": "The exact current problematic Gherkin code",
+                "suggested_rewrite": "The ideal rewritten Gherkin version",
+                "bdd_principle_violated": "Which BDD principle is being violated",
+                "missing_scenarios": "List of missing scenarios that should exist",
+                "suggestion": "Detailed fix suggestion",
+                "benefits": "Expected benefits after fixing",
+                "complexity": "Baixa",
+                "improvement_type": "BDD"
+              }
+            ]
+          }
+
+          PROJECT CONTEXT:
+          $PROJECT_CONTEXT
+          EOF
+          )
+
+          REQUEST_BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            '{
+              model: "openai/gpt-4o-mini",
+              messages: [{ role: "user", content: $prompt }],
+              temperature: 0.1,
+              max_tokens: 4000,
+              response_format: { "type": "json_object" }
+            }')
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")
+
+          echo "$RESPONSE" > response.json
+
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ IA não retornou conteúdo"
+            cat response.json
+            exit 1
+          fi
+
+          echo "$AI_CONTENT" > ai_raw.txt
+
+          cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
+          python3 -c '
+          import sys, json, re
+          text = sys.stdin.read()
+          match = re.search(r"\{[\s\S]*\}", text)
+          if match:
+              try:
+                  data = json.loads(match.group(0))
+                  print(json.dumps(data, ensure_ascii=False))
+              except:
+                  print("{\"issues\": []}")
+          else:
+              print("{\"issues\": []}")
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
+          echo '{"issues": []}' > ai_issues.json
+
+          echo "✅ JSON BDD validado"
+          jq . ai_issues.json
+
+      - name: 🐞 CREATE BDD ISSUES
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🐞 Criando issues BDD..."
+
+          TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "⚠️ Nenhuma issue BDD encontrada"
+            exit 0
+          fi
+
+          sanitize() { echo "$1" | sed 's/\r//g'; }
+
+          create_label_if_not_exists() {
+            local NAME="$1" COLOR="$2"
+            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
+            if [ -z "$EXISTS" ]; then
+              gh label create "$NAME" --color "$COLOR" --description "AI BDD Audit" 2>/dev/null || true
+            fi
+          }
+
+          create_label_if_not_exists "ai-bdd-audit"       "5319E7"
+          create_label_if_not_exists "priority-critical"  "B60205"
+          create_label_if_not_exists "priority-high"      "D93F0B"
+          create_label_if_not_exists "priority-medium"    "FBCA04"
+          create_label_if_not_exists "priority-low"       "0E8A16"
+          create_label_if_not_exists "category-bdd"       "1D76DB"
+
+          jq -c '.issues[]' ai_issues.json | while read -r row; do
+
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue BDD"')")
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "BDD"')")
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            SCENARIO_NAME=$(sanitize "$(echo "$row" | jq -r '.scenario_name // "Não identificado"')")
+            ANTI_PATTERN=$(sanitize "$(echo "$row" | jq -r '.anti_pattern // "Não identificado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            CURRENT_CODE=$(sanitize "$(echo "$row" | jq -r '.current_code // "Não informado"')")
+            SUGGESTED_REWRITE=$(sanitize "$(echo "$row" | jq -r '.suggested_rewrite // "Não informado"')")
+            PRINCIPLE_VIOLATED=$(sanitize "$(echo "$row" | jq -r '.bdd_principle_violated // "Não informado"')")
+            MISSING_SCENARIOS=$(sanitize "$(echo "$row" | jq -r '.missing_scenarios // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "BDD"')")
+
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
+
+            BODY="
+            ## 🧠 Categoria BDD
+            $CATEGORY — $IMPROVEMENT_TYPE
+
+            ## 🔥 Prioridade | 🚨 Severidade
+            $PRIORITY | $SEVERITY
+
+            ---
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ---
+
+            ## 🎭 Cenário Problemático
+            \`$SCENARIO_NAME\`
+
+            ---
+
+            ## ⚠️ Anti-Pattern Detectado
+            $ANTI_PATTERN
+
+            ---
+
+            ## 📋 Princípio BDD Violado
+            $PRINCIPLE_VIOLATED
+
+            ---
+
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ---
+
+            ## 🔴 Código Atual (Problemático)
+            \`\`\`gherkin
+            $CURRENT_CODE
+            \`\`\`
+
+            ---
+
+            ## ✅ Reescrita Sugerida (Ideal)
+            \`\`\`gherkin
+            $SUGGESTED_REWRITE
+            \`\`\`
+
+            ---
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ---
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ---
+
+            ## ⚠️ Risco Atual
+            $RISK
+
+            ---
+
+            ## 🧪 Como Identificar
+            $REPRODUCTION
+
+            ---
+
+            ## 📌 Cenários Ausentes
+            $MISSING_SCENARIOS
+
+            ---
+
+            ## 💡 Sugestão Detalhada
+            $SUGGESTION
+
+            ---
+
+            ## 🎯 Benefícios Esperados
+            $BENEFITS
+
+            ---
+
+            ## 📈 Complexidade da Correção
+            $COMPLEXITY
+
+            ---
+            > 🤖 Issue gerada automaticamente pelo **BDD Quality Auditor**
+            "
+
+            EXISTING=$(gh issue list \
+              --search "$TITLE in:title" \
+              --state all \
+              --json title \
+              --jq '.[0].title // empty' 2>/dev/null || echo "")
+
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            LABELS="ai-bdd-audit,category-bdd"
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
+              alta|high)                LABELS="$LABELS,priority-high" ;;
+              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
+              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            esac
+
+            echo "🚀 Criando issue BDD: $TITLE"
+            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
+            echo "✅ Issue criada: $TITLE"
+            sleep 1
+
+          done
+
+          echo "✅ Auditoria BDD finalizada"

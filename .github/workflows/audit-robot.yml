@@ -1,0 +1,427 @@
+name: 🤖 ROBOT FRAMEWORK AUDITOR
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  audit-robot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📡 FETCH HISTORY
+        run: git fetch --all
+
+      - name: 📂 SCAN ROBOT FILES
+        run: |
+          echo "🔍 Escaneando arquivos Robot Framework..."
+
+          find . \
+            -type f \
+            \( -name "*.robot" -o -name "*.resource" \) \
+            ! -path "*/node_modules/*" \
+            ! -path "*/.git/*" \
+            > robot_files.txt
+
+          echo "✅ Arquivos Robot encontrados:"
+          wc -l robot_files.txt
+
+      - name: 📄 BUILD ROBOT CONTEXT
+        run: |
+          echo "📄 Gerando contexto Robot Framework..."
+
+          > robot_context.txt
+
+          echo "===== ESTRUTURA ROBOT =====" >> robot_context.txt
+          cat robot_files.txt >> robot_context.txt
+
+          echo "" >> robot_context.txt
+          echo "===== CONTEÚDO COMPLETO =====" >> robot_context.txt
+
+          while read file; do
+            echo "" >> robot_context.txt
+            echo "FILE: $file" >> robot_context.txt
+            echo "----------------------------------------" >> robot_context.txt
+            cat "$file" >> robot_context.txt 2>/dev/null || true
+          done < robot_files.txt
+
+          echo "" >> robot_context.txt
+          echo "===== ÚLTIMOS COMMITS =====" >> robot_context.txt
+          git log -10 --pretty=format:"%h - %s" >> robot_context.txt
+
+          echo "✅ Contexto Robot gerado"
+
+      - name: 🤖 AI ROBOT AUDIT
+        id: ai_robot_audit
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          echo "🤖 Executando auditoria Robot Framework..."
+
+          PROJECT_CONTEXT=$(head -c 120000 robot_context.txt)
+
+          PROMPT=$(cat <<EOF
+          You are a WORLD-CLASS ROBOT FRAMEWORK EXPERT and AUTOMATION ARCHITECT.
+
+          Your sole mission is to perform a DEEP, SURGICAL Robot Framework code audit.
+
+          You have 15+ years of experience with:
+          - Robot Framework internals and best practices
+          - SeleniumLibrary, Playwright, RequestsLibrary, AppiumLibrary
+          - Keyword-Driven Testing architecture
+          - Data-Driven Testing design
+          - Resource file design and organization
+          - Robot Framework variable scoping and lifecycle
+          - Custom Library development (Python + Robot)
+          - Page Object Model applied to Robot Framework
+          - Robot Framework reporting and logging
+          - RPA with Robot Framework
+
+          ========================
+          YOUR ROBOT AUDIT FRAMEWORK
+          ========================
+
+          LAYER 1 — KEYWORD DESIGN
+          - Does the keyword do ONE thing only? (Single Responsibility)
+          - Is the keyword name a clear, business-readable action?
+          - Does the keyword name use the correct verb form? (e.g., "Login As Admin User")
+          - Is the keyword too long? (>15 steps is a red flag)
+          - Does the keyword have too many parameters? (>5 is a red flag)
+          - Are parameters documented? (Documentation section)
+          - Are default parameter values used correctly?
+          - Are there keywords that are never called? (dead keywords)
+          - Are there duplicated keywords across different resource files?
+          - Are there keywords that should be broken into sub-keywords?
+          - Is the keyword abstraction level consistent? (mixing high/low level)
+          - Are there Setup/Teardown keywords that are too complex?
+
+          LAYER 2 — VARIABLE USAGE
+          - Are there hardcoded strings that should be variables?
+          - Are variables named using SCREAMING_SNAKE_CASE? (${MY_VAR})
+          - Are suite-level variables leaking into test scope?
+          - Are there variables set in one test that affect another? (state pollution)
+          - Is Set Global Variable / Set Suite Variable overused?
+          - Are locators hardcoded in test files instead of resource files?
+          - Are environment-specific values properly externalized?
+          - Are secrets/credentials hardcoded in test files?
+
+          LAYER 3 — WAIT AND SYNCHRONIZATION
+          - Is Sleep used anywhere? (always a red flag)
+          - Are waits properly using Wait Until... keywords?
+          - Are wait timeouts hardcoded instead of using variables?
+          - Are there missing waits before critical interactions?
+          - Are there race conditions in async scenarios?
+          - Is Wait Until Keyword Succeeds used correctly?
+          - Are implicit vs explicit waits conflicting?
+
+          LAYER 4 — RESOURCE ORGANIZATION
+          - Are resources logically organized by domain/feature?
+          - Are there resources that do too many things? (God resource)
+          - Are locators stored in dedicated resource files?
+          - Are test data / variables separated from logic?
+          - Is there a clear naming convention for resource files?
+          - Are imports organized consistently? (Library → Resource → Variables)
+          - Are there circular resource imports?
+          - Are there duplicate Library imports across files?
+
+          LAYER 5 — TEST STRUCTURE
+          - Do tests have proper Setup and Teardown?
+          - Are tests properly isolated? (no shared state between tests)
+          - Is test data reset between tests?
+          - Are there test dependencies? (test A must run before test B)
+          - Are tags used for proper test filtering?
+          - Are there tests without any assertions?
+          - Are assertions using meaningful messages?
+          - Is there excessive UI interaction that could be replaced by API calls?
+
+          LAYER 6 — ANTI-PATTERNS
+          - "God keyword" — keyword doing too many things
+          - "Hardcoded locator" — XPath/CSS directly in test steps
+          - "Sleep-driven testing" — using Sleep instead of proper waits
+          - "State pollution" — tests depending on previous test state
+          - "Dead keyword" — keyword defined but never used
+          - "Copy-paste keyword" — duplicated logic in multiple keywords
+          - "Magic string" — unexplained hardcoded values
+          - "Implicit assertions" — no explicit Should Be / Should Contain
+          - "God resource" — one resource file doing everything
+          - "Test without cleanup" — no teardown to reset state
+
+          ========================
+          AUDIT OUTPUT RULES
+          ========================
+
+          - ONLY report REAL issues found in provided files
+          - DO NOT invent file names or keywords
+          - ALWAYS cite the EXACT file and keyword name
+          - ALWAYS show the CURRENT problematic code
+          - ALWAYS show the IDEAL refactored version
+          - Generate at most 10 issues
+          - Focus on HIGH-IMPACT issues first
+
+          ========================
+          RETURN FORMAT
+          ========================
+
+          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+
+          {
+            "issues": [
+              {
+                "title": "Clear technical title",
+                "priority": "Alta",
+                "severity": "Alta",
+                "category": "Keyword Design",
+                "files": ["path/to/file.robot"],
+                "keyword_name": "Exact keyword name with the problem",
+                "anti_pattern": "Which Robot anti-pattern this represents",
+                "problem": "Extremely detailed description of the Robot Framework problem",
+                "technical_impact": "Impact on test reliability and maintenance",
+                "business_impact": "Impact on delivery speed and confidence",
+                "risk": "What risk this introduces",
+                "reproduction": "How to identify this in the codebase",
+                "current_code": "The exact current problematic Robot code",
+                "refactored_code": "The ideal refactored Robot code",
+                "variable_improvements": "Suggested variable refactoring",
+                "keyword_strategy": "Suggested keyword decomposition strategy",
+                "resource_strategy": "Suggested resource reorganization",
+                "suggestion": "Detailed fix suggestion",
+                "benefits": "Expected benefits",
+                "complexity": "Baixa",
+                "improvement_type": "Refatoração"
+              }
+            ]
+          }
+
+          PROJECT CONTEXT:
+          $PROJECT_CONTEXT
+          EOF
+          )
+
+          REQUEST_BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            '{
+              model: "openai/gpt-4o-mini",
+              messages: [{ role: "user", content: $prompt }],
+              temperature: 0.1,
+              max_tokens: 4000,
+              response_format: { "type": "json_object" }
+            }')
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")
+
+          echo "$RESPONSE" > response.json
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ IA não retornou conteúdo"
+            cat response.json
+            exit 1
+          fi
+
+          echo "$AI_CONTENT" > ai_raw.txt
+
+          cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
+          python3 -c '
+          import sys, json, re
+          text = sys.stdin.read()
+          match = re.search(r"\{[\s\S]*\}", text)
+          if match:
+              try:
+                  data = json.loads(match.group(0))
+                  print(json.dumps(data, ensure_ascii=False))
+              except:
+                  print("{\"issues\": []}")
+          else:
+              print("{\"issues\": []}")
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
+          echo '{"issues": []}' > ai_issues.json
+
+          echo "✅ JSON Robot validado"
+          jq . ai_issues.json
+
+      - name: 🐞 CREATE ROBOT ISSUES
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
+          [ "$TOTAL" -eq 0 ] && echo "⚠️ Nenhuma issue Robot encontrada" && exit 0
+
+          sanitize() { echo "$1" | sed 's/\r//g'; }
+
+          create_label_if_not_exists() {
+            local NAME="$1" COLOR="$2"
+            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
+            [ -z "$EXISTS" ] && gh label create "$NAME" --color "$COLOR" --description "AI Robot Audit" 2>/dev/null || true
+          }
+
+          create_label_if_not_exists "ai-robot-audit"    "0075CA"
+          create_label_if_not_exists "priority-critical" "B60205"
+          create_label_if_not_exists "priority-high"     "D93F0B"
+          create_label_if_not_exists "priority-medium"   "FBCA04"
+          create_label_if_not_exists "priority-low"      "0E8A16"
+          create_label_if_not_exists "category-robot"    "1D76DB"
+
+          jq -c '.issues[]' ai_issues.json | while read -r row; do
+
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Robot"')")
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "Robot"')")
+            KEYWORD_NAME=$(sanitize "$(echo "$row" | jq -r '.keyword_name // "Não identificado"')")
+            ANTI_PATTERN=$(sanitize "$(echo "$row" | jq -r '.anti_pattern // "Não identificado"')")
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            CURRENT_CODE=$(sanitize "$(echo "$row" | jq -r '.current_code // "Não informado"')")
+            REFACTORED_CODE=$(sanitize "$(echo "$row" | jq -r '.refactored_code // "Não informado"')")
+            VARIABLE_IMPROVEMENTS=$(sanitize "$(echo "$row" | jq -r '.variable_improvements // "Não informado"')")
+            KEYWORD_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.keyword_strategy // "Não informado"')")
+            RESOURCE_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.resource_strategy // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Refatoração"')")
+
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
+
+            BODY="
+            ## 🤖 Categoria Robot Framework
+            $CATEGORY — $IMPROVEMENT_TYPE
+
+            ## 🔥 Prioridade | 🚨 Severidade
+            $PRIORITY | $SEVERITY
+
+            ---
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ---
+
+            ## 🔑 Keyword Problemática
+            \`$KEYWORD_NAME\`
+
+            ---
+
+            ## ⚠️ Anti-Pattern Detectado
+            $ANTI_PATTERN
+
+            ---
+
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ---
+
+            ## 🔴 Código Atual (Problemático)
+            \`\`\`robot
+            $CURRENT_CODE
+            \`\`\`
+
+            ---
+
+            ## ✅ Código Refatorado (Ideal)
+            \`\`\`robot
+            $REFACTORED_CODE
+            \`\`\`
+
+            ---
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ---
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ---
+
+            ## ⚠️ Risco Atual
+            $RISK
+
+            ---
+
+            ## 🧪 Como Identificar
+            $REPRODUCTION
+
+            ---
+
+            ## 🧩 Estratégia de Keyword
+            $KEYWORD_STRATEGY
+
+            ---
+
+            ## ♻️ Melhorias de Variáveis
+            $VARIABLE_IMPROVEMENTS
+
+            ---
+
+            ## 📁 Estratégia de Resource
+            $RESOURCE_STRATEGY
+
+            ---
+
+            ## 💡 Sugestão Detalhada
+            $SUGGESTION
+
+            ---
+
+            ## 🎯 Benefícios Esperados
+            $BENEFITS
+
+            ---
+
+            ## 📈 Complexidade da Correção
+            $COMPLEXITY
+
+            ---
+            > 🤖 Issue gerada automaticamente pelo **Robot Framework Auditor**
+            "
+
+            EXISTING=$(gh issue list --search "$TITLE in:title" --state all --json title --jq '.[0].title // empty' 2>/dev/null || echo "")
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            LABELS="ai-robot-audit,category-robot"
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
+              alta|high)                LABELS="$LABELS,priority-high" ;;
+              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
+              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            esac
+
+            echo "🚀 Criando issue Robot: $TITLE"
+            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
+            echo "✅ Issue criada: $TITLE"
+            sleep 1
+
+          done
+
+          echo "✅ Auditoria Robot finalizada"
