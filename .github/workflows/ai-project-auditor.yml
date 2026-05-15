@@ -348,7 +348,7 @@ jobs:
               FILES_FORMATTED="- Não identificado"
             fi
 
-            BODY=$(cat <<EOF
+            BODY="
             ## 📌 Categoria
             $CATEGORY
 
@@ -386,10 +386,7 @@ jobs:
             $BENEFITS
 
             ## 📈 Complexidade Estimada
-            $COMPLEXITY
-            
-            EOF
-            )
+            $COMPLEXITY"
 
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
