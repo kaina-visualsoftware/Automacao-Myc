@@ -63,7 +63,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          PROJECT_CONTEXT=$(tail -c 18000 flaky_context.txt)
+          PROJECT_CONTEXT=$(tail -c 8000 flaky_context.txt)
 
           PROMPT=$(cat <<EOF
           Você é um ESPECIALISTA MUNDIAL EM FLAKY TESTS e ENGENHEIRO DE CONFIABILIDADE DE TESTES.
@@ -201,11 +201,10 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
             '{
-              model: "google/gemini-2.0-flash-001"
+              model: "google/gemini-2.0-flash-001",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
               max_tokens: 2500,
-              response_format: { "type": "json_object" }
             }')
 
           RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
@@ -215,7 +214,7 @@ jobs:
 
           echo "$RESPONSE" > response.json
 
-          AI_CONTENT=$(jq -r '.choices[0].message.content // .choices[0].delta.content // empty ' response.json)
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
