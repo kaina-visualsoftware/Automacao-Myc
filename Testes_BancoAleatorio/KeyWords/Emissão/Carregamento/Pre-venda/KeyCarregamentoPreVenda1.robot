@@ -110,6 +110,7 @@ ${ROTA}                                        None
 ${ROTA_1}                                      None
 ${ROTA_2}                                      None
 ${VOLUME_CARREGAMENTO}                         None
+${VOLUME_INICIAL}                              None
 
 *** Keywords ***
 
@@ -184,6 +185,7 @@ Dado que eu crio duas pré-vendas com rotas distintas
 
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
+    Buscar Duas Rotas Distintas Com Clientes
     Quando adiciono um Vendedor e um Cliente com rota    ${ROTA_1}
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
@@ -206,7 +208,8 @@ Dado que eu crio duas pré-vendas com a mesma rota
 
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
-    Quando adiciono um Vendedor e um Cliente com rota    ${ROTA}
+    Buscar Duas Rotas Distintas Com Clientes
+    Quando adiciono um Vendedor e um Cliente com rota    ${ROTA_1}
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
@@ -215,7 +218,7 @@ Dado que eu crio duas pré-vendas com a mesma rota
 
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
-    Quando adiciono um Vendedor e um Cliente com rota    ${ROTA}
+    Quando adiciono um Vendedor e um Cliente com rota    ${ROTA_1}
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido
