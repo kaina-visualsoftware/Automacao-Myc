@@ -50,7 +50,7 @@ jobs:
             echo "" >> bdd_context.txt
             echo "FILE: $file" >> bdd_context.txt
             echo "----------------------------------------" >> bdd_context.txt
-            head -100 "$file" >> bdd_context.txt 2>/dev/null || true
+            head -45 "$file" >> bdd_context.txt 2>/dev/null || true
             echo "... (truncado)" >> bdd_context.txt
           done
           
@@ -66,7 +66,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           echo "🤖 Executando auditoria BDD..."
-          PROJECT_CONTEXT=$(head -c 55000 bdd_context.txt)
+          PROJECT_CONTEXT=$(tail -c 18000 bdd_context.txt)
 
           PROMPT=$(cat <<EOF
           Você é um ESPECIALISTA MUNDIAL EM BDD e EXPERT EM BEHAVIOR-DRIVEN DEVELOPMENT.
@@ -196,7 +196,7 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT$PROJECT_CONTEXT" \
+            --arg prompt "$PROMPT" \
             '{
               model: "google/gemini-2.0-flash-001",
               messages: [{ role: "user", content: $prompt }],
