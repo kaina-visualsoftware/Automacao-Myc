@@ -112,7 +112,7 @@ jobs:
           FILE_CONTENTS=$(head -c 8000 file_contents_summary.txt)
           DIFF_CONTENT=$(head -c 10000 diff.txt)
 
-          PROMPT=$(cat <<EOF
+          PROMPT=$(cat <<'END_PROMPT'
           Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
 
           ## COMMITS
@@ -140,7 +140,7 @@ jobs:
             "title": "Título curto com no máximo 65 caracteres",
             "description": "Descrição completa em markdown"
           }
-          EOF
+          END_PROMPT
           )
 
           REQUEST_BODY=$(jq -n \
@@ -173,57 +173,54 @@ jobs:
           AI_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
           if [ -z "$AI_CONTENT" ]; then
-
             echo "❌ IA falhou. Usando fallback."
-
+            
             TITLE="Alterações em ${{ github.ref_name }}"
-
-            BODY=$(cat <<EOF
+            
+            BODY=$(cat <<'EOF_BODY'
             ## 📋 PR Automática
 
             Branch: ${{ github.ref_name }}
 
             Alterações detectadas automaticamente.
-            EOF
+            EOF_BODY
             )
-
-          else
-            echo "📄 Conteúdo IA:"
-            echo "$AI_CONTENT"
-
-            AI_JSON=$(echo "$AI_CONTENT" | jq . 2>/dev/null || echo '{}')
-
-            TITLE=$(echo "$AI_JSON" | jq -r '.title // empty')
-            BODY=$(echo "$AI_JSON" | jq -r '.description // empty')
-
-            if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
-              TITLE="Alterações em ${{ github.ref_name }}"
-            fi
-
-            if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-              BODY=$(cat <<EOF
+                else
+                  echo "📄 Conteúdo IA:"
+                  echo "$AI_CONTENT"
+                  
+                  AI_JSON=$(echo "$AI_CONTENT" | jq . 2>/dev/null || echo '{}')
+                  
+                  TITLE=$(echo "$AI_JSON" | jq -r '.title // empty')
+                  BODY=$(echo "$AI_JSON" | jq -r '.description // empty')
+                  
+                  if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
+                    TITLE="Alterações em ${{ github.ref_name }}"
+                  fi
+                  
+                  if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
+                    BODY=$(cat <<'EOF_BODY'
             ## 📋 Alterações Detectadas
 
             Branch: ${{ github.ref_name }}
-            EOF
+            EOF_BODY
             )
             fi
-
           fi
 
           TITLE=$(echo "$TITLE" \
             | sed 's/["'"'"']//g' \
             | cut -c1-65 \
             | sed 's/[[:space:]]*$//')
-
+          
           echo "title=$TITLE" >> $GITHUB_OUTPUT
-
+          
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
+          
           echo "✅ Título final: $TITLE"
-
+          
       - name: 🚀 CREATE OR UPDATE PULL REQUEST
         if: env.HAS_DIFF == 'true'
         env:
