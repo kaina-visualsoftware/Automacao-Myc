@@ -63,7 +63,7 @@ jobs:
       - name: 🤖 AI BDD AUDIT
         id: ai_bdd_audit
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: |
           echo "🤖 Executando auditoria BDD..."
           PROJECT_CONTEXT=$(tail -c 18000 bdd_context.txt)
@@ -196,23 +196,35 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
-            '{
-              model: "google/gemini-2.0-flash-001",
-              messages: [{ role: "user", content: $prompt }],
-              temperature: 0.1,
-              max_tokens: 2500,
-              response_format: { "type": "json_object" }
-            }')
+          --arg prompt "$PROMPT" \
+          '{
+            "model": "stepfun-ai/step-3.5-flash",
+            "messages": [
+              {
+                "role": "user",
+                "content": $prompt
+              }
+            ],
+            "temperature": 0.1,
+            "top_p": 0.9,
+            "max_tokens": 4000,
+            "stream": false
+          }')
 
-          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
-            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$REQUEST_BODY")
+          RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
+          -H "Authorization: Bearer $NVIDIA_API_KEY" \
+          -H "Content-Type: application/json" \
+          -d "$REQUEST_BODY")
 
           echo "$RESPONSE" > response.json
 
-          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+          AI_CONTENT=$(jq -r '
+            .choices[0].message.content //
+            .choices[0].message.reasoning //
+            .choices[0].delta.content //
+            .choices[0].text //
+            empty
+          ' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
