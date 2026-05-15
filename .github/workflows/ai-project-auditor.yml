@@ -357,10 +357,10 @@ jobs:
               FILES_FORMATTED="- Não identificado"
             fi
 
-            BODY=$(cat <<'BODY_EOF'
-            ## 📌 Categoria
-            BODY_EOF
-            )
+BODY=$(cat <<'BODY_EOF'
+## 📌 Categoria
+BODY_EOF
+)
             BODY="${BODY}"$'\n'"${CATEGORY}"$'\n\n'
             
             BODY="${BODY}## 🔥 Prioridade"$'\n'"${PRIORITY}"$'\n\n'
