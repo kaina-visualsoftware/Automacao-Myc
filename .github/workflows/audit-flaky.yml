@@ -63,7 +63,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          PROJECT_CONTEXT=$(tail -c 18000 bdd_context.txt)
+          PROJECT_CONTEXT=$(tail -c 18000 flaky_context.txt)
 
           PROMPT=$(cat <<EOF
           Você é um ESPECIALISTA MUNDIAL EM FLAKY TESTS e ENGENHEIRO DE CONFIABILIDADE DE TESTES.
