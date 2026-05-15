@@ -66,7 +66,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           echo "🤖 Executando auditoria Robot Framework..."
-          PROJECT_CONTEXT=$(tail -c 18000 robot_context.txt)
+          PROJECT_CONTEXT=$(tail -c 8000 robot_context.txt)
 
           PROMPT=$(cat <<EOF
           Você é um ESPECIALISTA MUNDIAL EM ROBOT FRAMEWORK e ARQUITETO DE AUTOMAÇÃO.
@@ -208,7 +208,7 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
             '{
-              model: "qwen/qwen3-coder",
+              model: "openai/gpt-4o-mini",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
               max_tokens: 2500,
