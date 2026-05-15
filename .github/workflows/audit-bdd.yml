@@ -198,7 +198,7 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT$PROJECT_CONTEXT" \
             '{
-              model: "openrouter/free",
+              model: "anthropic/claude-3.7-sonnet",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
               max_tokens: 2500,
