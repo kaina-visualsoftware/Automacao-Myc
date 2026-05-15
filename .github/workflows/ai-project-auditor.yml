@@ -325,7 +325,18 @@ jobs:
             PRIORITY=$(echo "$row" | jq -r '.priority // "Média"')
             CATEGORY=$(echo "$row" | jq -r '.category // "Geral"')
 
-            FILES=$(echo "$row" | jq -r '.files[]?' 2>/dev/null)
+            # Handle files array properly
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              # Build file list with proper line breaks
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r file; do
+                echo "- \`$file\`"
+              done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
 
             PROBLEM=$(echo "$row" | jq -r '.problem // "Não informado"')
             TECHNICAL_IMPACT=$(echo "$row" | jq -r '.technical_impact // "Não informado"')
@@ -338,60 +349,71 @@ jobs:
             COMPLEXITY=$(echo "$row" | jq -r '.complexity // "Não informado"')
             IMPROVEMENT_TYPE=$(echo "$row" | jq -r '.improvement_type // "Melhoria Técnica"')
 
-            FILES_FORMATTED=""
-
-            if [ -n "$FILES" ]; then
-              while read -r file; do
-                FILES_FORMATTED="${FILES_FORMATTED}- ${file}\n"
-              done <<< "$FILES"
-            else
-              FILES_FORMATTED="- Não identificado"
-            fi
-
-            BODY="
+            # Build body without leading spaces
+            BODY=$(cat <<'EOF'
             ## 📌 Categoria
-            $CATEGORY
+            __CATEGORY__
 
             ## 🔥 Prioridade
-            $PRIORITY
+            __PRIORITY__
 
             ## 🏷️ Tipo da Melhoria
-            $IMPROVEMENT_TYPE
+            __IMPROVEMENT_TYPE__
 
             ## 📂 Arquivos Afetados
-            $FILES_FORMATTED
+            __FILES_FORMATTED__
 
             ## 📝 Problema Identificado
-            $PROBLEM
+            __PROBLEM__
 
             ## 📊 Impacto Técnico
-            $TECHNICAL_IMPACT
+            __TECHNICAL_IMPACT__
 
             ## 💼 Impacto no Negócio
-            $BUSINESS_IMPACT
+            __BUSINESS_IMPACT__
 
             ## ⚠️ Risco Atual
-            $RISK
+            __RISK__
 
             ## 🧪 Como Reproduzir
-            $REPRODUCTION
+            __REPRODUCTION__
 
             ## 💡 Sugestão Técnica
-            $SUGGESTION
+            __SUGGESTION__
 
             ## 🛠️ Exemplo Técnico
-            $EXAMPLE
+            __EXAMPLE__
 
             ## ✅ Benefícios Esperados
-            $BENEFITS
+            __BENEFITS__
 
             ## 📈 Complexidade Estimada
-            $COMPLEXITY"
+            __COMPLEXITY__
+            EOF
+            )
 
+            # Replace placeholders with actual values
+            BODY=$(echo "$BODY" | \
+              sed "s|__CATEGORY__|$CATEGORY|g" | \
+              sed "s|__PRIORITY__|$PRIORITY|g" | \
+              sed "s|__IMPROVEMENT_TYPE__|$IMPROVEMENT_TYPE|g" | \
+              sed "s|__FILES_FORMATTED__|$FILES_FORMATTED|g" | \
+              sed "s|__PROBLEM__|$PROBLEM|g" | \
+              sed "s|__TECHNICAL_IMPACT__|$TECHNICAL_IMPACT|g" | \
+              sed "s|__BUSINESS_IMPACT__|$BUSINESS_IMPACT|g" | \
+              sed "s|__RISK__|$RISK|g" | \
+              sed "s|__REPRODUCTION__|$REPRODUCTION|g" | \
+              sed "s|__SUGGESTION__|$SUGGESTION|g" | \
+              sed "s|__EXAMPLE__|$EXAMPLE|g" | \
+              sed "s|__BENEFITS__|$BENEFITS|g" | \
+              sed "s|__COMPLEXITY__|$COMPLEXITY|g")
+
+            # Check if issue already exists
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
+              --state all \
               --json title \
-              --jq '.[0].title // empty')
+              --jq '.[0].title // empty' 2>/dev/null || echo "")
 
             if [ -n "$EXISTING" ]; then
               echo "⚠️ Issue já existe: $TITLE"
@@ -400,11 +422,58 @@ jobs:
 
             echo "🚀 Criando issue: $TITLE"
 
-            gh issue create \
-              --title "$TITLE" \
-              --body "$BODY"
+            # Create issue with label based on priority
+            LABEL=""
+            case "$PRIORITY" in
+              "Alta"|"alta"|"High"|"high")
+                LABEL="--label priority-high"
+                ;;
+              "Média"|"média"|"Medium"|"medium")
+                LABEL="--label priority-medium"
+                ;;
+              "Baixa"|"baixa"|"Low"|"low")
+                LABEL="--label priority-low"
+                ;;
+              *)
+                LABEL=""
+                ;;
+            esac
+
+            # Add category label
+            CATEGORY_LABEL=""
+            if [ -n "$CATEGORY" ] && [ "$CATEGORY" != "Geral" ]; then
+              # Convert category to lowercase and replace spaces with hyphens
+              CATEGORY_SLUG=$(echo "$CATEGORY" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+              CATEGORY_LABEL="--label category-$CATEGORY_SLUG"
+            fi
+
+            # Create the issue with proper labels
+            if [ -n "$LABEL" ] || [ -n "$CATEGORY_LABEL" ]; then
+              gh issue create \
+                --title "$TITLE" \
+                --body "$BODY" \
+                $LABEL \
+                $CATEGORY_LABEL 2>/dev/null || {
+                  # Fallback without labels if label doesn't exist
+                  gh issue create \
+                    --title "$TITLE" \
+                    --body "$BODY" 2>/dev/null
+                }
+            else
+              gh issue create \
+                --title "$TITLE" \
+                --body "$BODY" 2>/dev/null
+            fi
+
+            if [ $? -eq 0 ]; then
+              echo "✅ Issue criada: $TITLE"
+            else
+              echo "❌ Erro ao criar issue: $TITLE"
+            fi
+
+            # Small delay to avoid rate limiting
+            sleep 1
 
           done
 
           echo "✅ Auditoria finalizada"
-
