@@ -66,7 +66,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          PROJECT_CONTEXT=$(head -c 65000 arch_context.txt)
+          PROJECT_CONTEXT=$(tail -c 18000 bdd_context.txt)
 
           PROMPT=$(cat <<'EOF'
           Você é um ARQUITETO DE AUTOMAÇÃO DE TESTES DE NÍVEL MUNDIAL e ENGENHEIRO DE QUALIDADE ENTERPRISE.
@@ -191,9 +191,9 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT$PROJECT_CONTEXT" \
+            --arg prompt "$PROMPT" \
             '{
-              model: "openrouter/free",
+              model: "openai/gpt-4o-mini",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
               max_tokens: 2500,
