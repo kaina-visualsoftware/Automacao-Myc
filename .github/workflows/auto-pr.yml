@@ -121,71 +121,71 @@ jobs:
 
           PROMPT="Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
 
-      ## COMMITS
-      $COMMITS_CONTENT
+          ## COMMITS
+          $COMMITS_CONTENT
 
-      ## ANALISE DE ARQUIVOS
-      $FILES_ANALYSIS
+          ## ANALISE DE ARQUIVOS
+          $FILES_ANALYSIS
 
-      ## CONTEUDO DOS ARQUIVOS
-      $FILE_CONTENTS
+          ## CONTEUDO DOS ARQUIVOS
+          $FILE_CONTENTS
 
-      ## DIFF
-      $DIFF_CONTENT
+          ## DIFF
+          $DIFF_CONTENT
 
-      INSTRUÇÕES:
+          INSTRUÇÕES:
 
-      - Gere APENAS JSON válido
-      - NÃO use markdown fora do JSON
-      - NÃO use backticks
-      - NÃO explique nada
-      - O título deve ter no máximo 65 caracteres
+          - Gere APENAS JSON válido
+          - NÃO use markdown fora do JSON
+          - NÃO use backticks
+          - NÃO explique nada
+          - O título deve ter no máximo 65 caracteres
 
-      Formato obrigatório:
-      {
-        \"title\": \"Título curto com no máximo 65 caracteres\",
-        \"description\": \"Descrição completa em markdown\"
-      }"
+          Formato obrigatório:
+          {
+            \"title\": \"Título curto com no máximo 65 caracteres\",
+            \"description\": \"Descrição completa em markdown\"
+          }"
 
-          REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
-            '{
-              model: "openai/gpt-4o-mini",
-              messages: [
-                {
-                  role: "system",
-                  content: "Você é um especialista em Pull Requests. Retorne apenas JSON válido."
-                },
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-              temperature: 0.3,
-              max_tokens: 2000
-            }')
+              REQUEST_BODY=$(jq -n \
+                --arg prompt "$PROMPT" \
+                '{
+                  model: "openai/gpt-4o-mini",
+                  messages: [
+                    {
+                      role: "system",
+                      content: "Você é um especialista em Pull Requests. Retorne apenas JSON válido."
+                    },
+                    {
+                      role: "user",
+                      content: $prompt
+                    }
+                  ],
+                  temperature: 0.3,
+                  max_tokens: 2000
+                }')
 
-          echo "📤 Enviando requisição..."
+              echo "📤 Enviando requisição..."
 
-          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
-            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$REQUEST_BODY")
+              RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+                -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$REQUEST_BODY")
 
-          echo "$RESPONSE" | jq . >&2
+              echo "$RESPONSE" | jq . >&2
 
-          AI_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+              AI_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
-          if [ -z "$AI_CONTENT" ]; then
-            echo "❌ IA falhou. Usando fallback."
-            
-            TITLE="Alterações em ${{ github.ref_name }}"
-            
-            BODY="## 📋 PR Automática
+              if [ -z "$AI_CONTENT" ]; then
+                echo "❌ IA falhou. Usando fallback."
+                
+                TITLE="Alterações em ${{ github.ref_name }}"
+                
+                BODY="## 📋 PR Automática
 
-      Branch: ${{ github.ref_name }}
+          Branch: ${{ github.ref_name }}
 
-      Alterações detectadas automaticamente."
+          Alterações detectadas automaticamente."
           else
             echo "📄 Conteúdo IA:"
             echo "$AI_CONTENT"
@@ -202,9 +202,9 @@ jobs:
             if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
               BODY="## 📋 Alterações Detectadas
 
-      Branch: ${{ github.ref_name }}"
-            fi
-          fi
+          Branch: ${{ github.ref_name }}"
+                fi
+              fi
 
           TITLE=$(echo "$TITLE" \
             | sed 's/["'"'"']//g' \
