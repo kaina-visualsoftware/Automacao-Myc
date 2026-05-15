@@ -187,7 +187,6 @@ jobs:
             )
 
           else
-
             echo "📄 Conteúdo IA:"
             echo "$AI_CONTENT"
 
@@ -212,7 +211,7 @@ jobs:
           fi
 
           TITLE=$(echo "$TITLE" \
-            | sed 's/["'"'"'`]//g' \
+            | sed 's/["'"'"']//g' \
             | cut -c1-65 \
             | sed 's/[[:space:]]*$//')
 
