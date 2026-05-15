@@ -87,8 +87,7 @@ jobs:
 
           PROJECT_CONTEXT=$(head -c 120000 project_context.txt)
 
-          # Cria arquivo com o prompt para evitar problemas com heredoc
-          cat > prompt.txt << 'PROMPT_EOF'
+          PROMPT=$(cat <<EOF
           Você é um especialista SÊNIOR em:
 
           - Robot Framework
@@ -247,20 +246,13 @@ jobs:
               }
             ]
           }
-          PROMPT_EOF
 
-          # Lê o prompt do arquivo
-          PROMPT=$(cat prompt.txt)
-          
-          # Combina prompt + contexto
-          FULL_PROMPT="${PROMPT}
-
-          CONTEXTO DO PROJETO:
-
-          ${PROJECT_CONTEXT}"
+          $PROJECT_CONTEXT
+          EOF
+          )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$FULL_PROMPT" \
+            --arg prompt "$PROMPT" \
             '{
               model: "openai/gpt-4o-mini",
               messages: [
@@ -293,7 +285,6 @@ jobs:
 
           echo "$AI_CONTENT" > ai_raw.txt
 
-          # Tenta validar JSON
           cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
           python3 -c '
           import sys, json, re
@@ -351,27 +342,54 @@ jobs:
 
             if [ -n "$FILES" ]; then
               while read -r file; do
-                FILES_FORMATTED="${FILES_FORMATTED}- ${file}"$'\n'
+                FILES_FORMATTED="${FILES_FORMATTED}- ${file}\n"
               done <<< "$FILES"
             else
               FILES_FORMATTED="- Não identificado"
             fi
 
-            BODY=$(cat <<'BODY_EOF' BODY_EOF)
-            BODY="${BODY}"$'\n'"${CATEGORY}"$'\n\n'
+            BODY=$(cat <<EOF
+            ## 📌 Categoria
+            $CATEGORY
+
+            ## 🔥 Prioridade
+            $PRIORITY
+
+            ## 🏷️ Tipo da Melhoria
+            $IMPROVEMENT_TYPE
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ## ⚠️ Risco Atual
+            $RISK
+
+            ## 🧪 Como Reproduzir
+            $REPRODUCTION
+
+            ## 💡 Sugestão Técnica
+            $SUGGESTION
+
+            ## 🛠️ Exemplo Técnico
+            $EXAMPLE
+
+            ## ✅ Benefícios Esperados
+            $BENEFITS
+
+            ## 📈 Complexidade Estimada
+            $COMPLEXITY
             
-            BODY="${BODY}## 🔥 Prioridade"$'\n'"${PRIORITY}"$'\n\n'
-            BODY="${BODY}## 🏷️ Tipo da Melhoria"$'\n'"${IMPROVEMENT_TYPE}"$'\n\n'
-            BODY="${BODY}## 📂 Arquivos Afetados"$'\n'"${FILES_FORMATTED}"$'\n\n'
-            BODY="${BODY}## 📝 Problema Identificado"$'\n'"${PROBLEM}"$'\n\n'
-            BODY="${BODY}## 📊 Impacto Técnico"$'\n'"${TECHNICAL_IMPACT}"$'\n\n'
-            BODY="${BODY}## 💼 Impacto no Negócio"$'\n'"${BUSINESS_IMPACT}"$'\n\n'
-            BODY="${BODY}## ⚠️ Risco Atual"$'\n'"${RISK}"$'\n\n'
-            BODY="${BODY}## 🧪 Como Reproduzir"$'\n'"${REPRODUCTION}"$'\n\n'
-            BODY="${BODY}## 💡 Sugestão Técnica"$'\n'"${SUGGESTION}"$'\n\n'
-            BODY="${BODY}## 🛠️ Exemplo Técnico"$'\n'"${EXAMPLE}"$'\n\n'
-            BODY="${BODY}## ✅ Benefícios Esperados"$'\n'"${BENEFITS}"$'\n\n'
-            BODY="${BODY}## 📈 Complexidade Estimada"$'\n'"${COMPLEXITY}"
+            EOF
+            )
 
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
@@ -392,3 +410,4 @@ jobs:
           done
 
           echo "✅ Auditoria finalizada"
+
