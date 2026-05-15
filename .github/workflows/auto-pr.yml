@@ -152,11 +152,11 @@ jobs:
           IMPORTANTE:\n- Seja ESPECÍFICO sobre quais arquivos foram criados/modificados\n- Explique o PROPÓSITO de cada arquivo novo\n- Descreva EXATAMENTE o que mudou em cada arquivo\n- Inclua TODOS os impactos potenciais\n- Explique COMO TESTAR a mudança\n- Retorne APENAS JSON válido, sem formatação adicional
           EOF
 
-                    # Substitui as variáveis no prompt
-                    PROMPT=$(eval "echo \"$PROMPT\"")
+          # Substitui as variáveis no prompt
+          PROMPT=$(eval "echo \"$PROMPT\"")
 
-                    # Cria o request JSON de forma segura
-                    REQUEST_BODY=$(cat <<'JSONEOF'
+          # Cria o request JSON de forma segura
+          REQUEST_BODY=$(cat <<'JSONEOF'
           {
             "model": "openai/gpt-4o-mini",
             "messages": [
