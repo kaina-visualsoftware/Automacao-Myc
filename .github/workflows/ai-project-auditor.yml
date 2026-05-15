@@ -210,7 +210,7 @@ jobs:
             exit 0
           fi
 
-          for row in $(jq -c '.issues[]' ai_issues.json); do
+          jq -c '.issues[]' ai_issues.json | while read -r row; do
             TITLE=$(echo "$row" | jq -r '.title')
             PRIORITY=$(echo "$row" | jq -r '.priority')
             CATEGORY=$(echo "$row" | jq -r '.category')
@@ -218,24 +218,20 @@ jobs:
             IMPACT=$(echo "$row" | jq -r '.impact')
             SUGGESTION=$(echo "$row" | jq -r '.suggestion')
 
-            # === BODY CORRIGIDO ===
-            BODY=$(cat <<'HEREDOC'
-            ## 📌 Categoria
-            $CATEGORY
+            BODY="## 📌 Categoria
+          $CATEGORY
 
-            ## 🔥 Prioridade
-            $PRIORITY
+          ## 🔥 Prioridade
+          $PRIORITY
 
-            ## 📝 Descrição
-            $DESCRIPTION
+          ## 📝 Descrição
+          $DESCRIPTION
 
-            ## 📊 Impacto
-            $IMPACT
+          ## 📊 Impacto
+          $IMPACT
 
-            ## 💡 Sugestão Técnica
-            $SUGGESTION
-            HEREDOC
-            )
+          ## 💡 Sugestão Técnica
+          $SUGGESTION"
 
             # Evita criar issue duplicada
             EXISTING=$(gh issue list \
@@ -249,9 +245,11 @@ jobs:
             fi
 
             echo "🚀 Criando issue: $TITLE"
+
             gh issue create \
               --title "$TITLE" \
               --body "$BODY"
+
           done
 
           echo "✅ Auditoria finalizada"
