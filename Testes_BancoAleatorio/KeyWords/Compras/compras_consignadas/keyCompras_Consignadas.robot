@@ -39,6 +39,7 @@ ${CHECK_BOX_TODOS}                      checkBox_SelecionarTudoComprasConsig.png
 ${CHECK_BOX_TODOS_MARCADO}              checkBox_SelecionarTudoComprasConsigMarcado.png
 ${GRID_CODIGO_LANC_COMPRA_CONSIG}       grid_CodigoLancCompraConsig.png
 ${AVISO_CONFIRMAR_EXCLUSAO_BLOQUEADA}   aviso_ConfirmarExclusaoBloqueadaCompraConsig.png
+${AVISO_DEVOLVIDO_SUPERIOR_A_COMPRADO}  alertaCliente.png
 # ── Variáveis de Runtime ───────────────────────────────────────────────────
 ${COD_COMPRA}                           None
 ${QTDE_BAIXA_PRODUTO}                   None
@@ -99,6 +100,12 @@ E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     utils.Inserir Produto normal - Necessita de estoque
     Informa a quantidade do produto(${Quantidade_Produto})
     utils.Valida parametros após incluir produto
+       ${GUIA_DEVOLUCAO}    Run Keyword And Return Status
+    ...    Wait Until Screen Contain    ${ABA_DEVOLUCAO}    ${SLEEP_BAIXO}
+
+    IF    ${GUIA_DEVOLUCAO}
+        Validar aviso de devolução maior que comprado
+    END
     Atualizar Tipo Compra Conforme Aba Ativa
     Set Test Variable    ${CompraConsig_PossuiProduto}    ${True}
 
@@ -165,6 +172,7 @@ Então finalizo a compra consignada
     Sleep    ${SLEEP_BAIXO}
     ${VALOR_COMPRA}    Query    SELECT ValorTotal FROM compraconsignada WHERE Codigo = ${COD_COMPRA} AND Cancelada = 0 LIMIT 1;
     Set Test Variable    ${VALOR_COMPRA}    ${VALOR_COMPRA[0][0]}
+
 
 Tratar Impressão De Compra Consignada
     [Documentation]    Verifica se a tela de impressão apareceu e a descarta com ALT+S
@@ -451,8 +459,16 @@ E valido se a devolução foi lançada com sucesso
     ...    Check If Exists In Database
     ...    SELECT * FROM compraconsignada_produtos WHERE codigocompra = ${COD_COMPRA} AND Tipo = '${TIPO_COMPRA}' AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}';
     Should Be True    ${devolucao_lancada}    Devolução da Compra Consignada ${COD_COMPRA} não foi lançada corretamente.
-    #Verifica valores
 
+
+Validar aviso de devolução maior que comprado
+    [Documentation]    Verifica se o aviso de devolução maior que comprado é exibido ao tentar finalizar a compra consignada
+    Wait Until Screen Contain    ${AVISO_DEVOLVIDO_SUPERIOR_A_COMPRADO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    TAB
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    
 #-----------------------------------------
 #Valor da compra
 #-----------------------------------------

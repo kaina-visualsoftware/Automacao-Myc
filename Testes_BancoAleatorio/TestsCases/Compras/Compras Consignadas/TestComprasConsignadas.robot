@@ -103,6 +103,7 @@ Teste 06 - Lançamento de Devolução de Compra Consignada
     E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E valido se a devolução foi lançada com sucesso
+    E saio da tela(ComprasConsignada)
 
 Teste 07 - Pagamento de Compra Consignada 
     [Documentation]    Valida o pagamento de uma compra consignada no caixa
