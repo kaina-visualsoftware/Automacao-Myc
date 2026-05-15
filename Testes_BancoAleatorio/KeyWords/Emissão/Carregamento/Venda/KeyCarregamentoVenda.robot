@@ -263,9 +263,18 @@ Então o carregamento da venda deve ser salvo com sucesso
     Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
 
 Então o status deve ser "Cadastrando"
-    ${status}=    Query    SELECT c.Status FROM cargas c ORDER BY c.Sequencia DESC LIMIT 1;
+    ${status}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
 
+    Should Not Be Empty    ${status}
     Should Be Equal As Strings    ${status[0][0]}    Cadastrando
+    Log    message="Status do carregamento: ${status[0][0]}"
+
+Então o status do carregamento deve ser
+    [Arguments]    ${STATUS_ESPERADO}
+    ${status}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL;
+
+    Should Not Be Empty    ${status}
+    Should Be Equal As Strings    ${status[0][0]}    ${STATUS_ESPERADO}
     Log    message="Status do carregamento: ${status[0][0]}"
 
 E que existe um carregamento cadastrado

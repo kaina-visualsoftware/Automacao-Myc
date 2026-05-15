@@ -146,10 +146,10 @@ jobs:
 
           {
             "title": "Título com máximo 65 caracteres, claro e objetivo",
-            "description": "#Descrição da Pull Request\n\n##Resumo Técnico\nDescreva em 2-3 linhas o que foi feito e por que.\n\n##Arquivos Alterados\n\n### Arquivos Criados:\n- caminho/arquivo.ts: Descrição do que o arquivo faz\n- caminho/outro.ts: Descrição detalhada\n\n### Arquivos Modificados:\n- caminho/existente.ts: O que foi alterado e por quê\n- src/types/index.ts: Que tipos foram adicionados\n\n### Arquivos Deletados:\n- old/arquivo.ts: Por que foi deletado\n\n##O Que Foi Alterado\n\n### Recurso/Componente 1\nDescreva o que mudou, qual era o problema, como foi resolvido.\n\n### Recurso/Componente 2\nDescreva mudanças específicas com contexto.\n\n##Impactos\n\n### Performance\n- Se teve algum impacto em performance\n\n### Segurança\n- Se tem impactos de segurança\n\n### Breaking Changes\n- Liste TODAS as breaking changes se houver\n- Se não tiver, remova esta seção\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n##Como Testar\n\n1. Passo 1 para testar\n2. Passo 2 para testar\n3. Passo 3 esperado resultado\n\nOu descreva:\n- Quais arquivos de teste foram adicionados\n- Como rodar os testes: npm test ou equivalente\n- Casos de teste cobertos\n\n##Recursos Adicionais\n- Links relevantes se houver\n- Referências a issues\n- Documentação relacionada"
+            "description": "# Descrição da Pull Request\n\n## Resumo Técnico\nDescreva em 2-3 linhas o que foi feito e por que.\n\n## Arquivos Alterados\n\n### Arquivos Criados:\n- `caminho/arquivo.ts`: Descrição do que o arquivo faz\n- `caminho/outro.ts`: Descrição detalhada\n\n### Arquivos Modificados:\n- `caminho/existente.ts`: O que foi alterado e por quê\n- `src/types/index.ts`: Que tipos foram adicionados\n\n### Arquivos Deletados:\n- `old/arquivo.ts`: Por que foi deletado\n\n## O Que Foi Alterado\n\n### Recurso/Componente 1\nDescreva o que mudou, qual era o problema, como foi resolvido.\n\n### Recurso/Componente 2\nDescreva mudanças específicas com contexto.\n\n## Impactos\n\n### Performance\n- Se teve algum impacto em performance\n\n### Segurança\n- Se tem impactos de segurança\n\n### Breaking Changes\n- Liste TODAS as breaking changes se houver\n- Se não tiver, remova esta seção\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n\n1. Passo 1 para testar\n2. Passo 2 para testar\n3. Passo 3 esperado resultado\n\nOu descreva:\n- Quais arquivos de teste foram adicionados\n- Como rodar os testes: `npm test` ou equivalente\n- Casos de teste cobertos\n\n## Recursos Adicionais\n- Links relevantes se houver\n- Referências a issues\n- Documentação relacionada"
           }
 
-          IMPORTANTE:\n- Seja ESPECÍFICO sobre quais arquivos foram criados/modificados\n- Explique o PROPÓSITO de cada arquivo novo\n- Descreva EXATAMENTE o que mudou em cada arquivo\n- Inclua TODOS os impactos potenciais\n- Explique COMO TESTAR a mudança\n- Retorne APENAS JSON válido, sem formatação adicional
+          IMPORTANTE:\n- Seja ESPECÍFICO sobre quais arquivos foram criados/modificados\n- Explique o PROPÓSITO de cada arquivo novo\n- Descreva EXATAMENTE o que mudou em cada arquivo\n- Inclua TODOS os impactos potenciais\n- Explique COMO TESTAR a mudança\n- Retorne APENAS JSON válido, sem formatação adicional. TODOS os headers markdown DEVEM conter espaço após # : Exemplo correto: # Titulo ## Subtitulo ### Sessao. - NÃO use emojis, NÃO use texto fora do JSON, NÃO use blocos markdown
           EOF
 
           # Substitui as variáveis no prompt
@@ -176,7 +176,7 @@ jobs:
           )
 
           # Adiciona o prompt ao request de forma segura
-          REQUEST_BODY=$(echo "$REQUEST_BODY" | jq --arg prompt "$PROMPT" '.messages[0].content = $prompt')
+          REQUEST_BODY=$(echo "$REQUEST_BODY" | jq --arg prompt "$PROMPT" '.messages[1].content = $prompt')
 
           echo "📤 Enviando requisição para IA..."
           
