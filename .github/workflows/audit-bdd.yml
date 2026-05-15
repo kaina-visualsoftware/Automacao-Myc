@@ -66,7 +66,7 @@ jobs:
            NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: |
           echo "🤖 Executando auditoria BDD..."
-          PROJECT_CONTEXT=$(tail -c 18000 bdd_context.txt)
+          PROJECT_CONTEXT=$(tail -c 8000 bdd_context.txt)
 
           PROMPT=$(cat <<EOF
           Você é um ESPECIALISTA MUNDIAL EM BDD e EXPERT EM BEHAVIOR-DRIVEN DEVELOPMENT.
@@ -198,8 +198,12 @@ jobs:
           REQUEST_BODY=$(jq -n \
           --arg prompt "$PROMPT" \
           '{
-            "model": "stepfun-ai/step-3.5-flash",
+            "model": "qwen/qwen3-235b-a22b",
             "messages": [
+              {
+                "role": "system",
+                "content": "Você responde SOMENTE JSON válido."
+              },
               {
                 "role": "user",
                 "content": $prompt
@@ -207,8 +211,11 @@ jobs:
             ],
             "temperature": 0.1,
             "top_p": 0.9,
-            "max_tokens": 4000,
-            "stream": false
+            "max_tokens": 2500,
+            "stream": false,
+            "response_format": {
+              "type": "json_object"
+            }
           }')
 
           RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
@@ -218,37 +225,9 @@ jobs:
 
           echo "$RESPONSE" > response.json
 
-          AI_CONTENT=$(python3 - <<'PY'
-          import json
-          import re
-
-          with open("response.json", "r", encoding="utf-8") as f:
-              data = json.load(f)
-
-          text = ""
-
-          try:
-              choice = data["choices"][0]
-
-              text = (
-                  choice.get("message", {}).get("content")
-                  or choice.get("message", {}).get("reasoning")
-                  or choice.get("delta", {}).get("content")
-                  or choice.get("text")
-                  or ""
-              )
-
-          except Exception:
-              pass
-
-          if text:
-              match = re.search(r'\{[\s\S]*\}', text)
-              if match:
-                  print(match.group(0))
-              else:
-                  print(text)
-          PY
-          )
+          AI_CONTENT=$(jq -r '
+          .choices[0].message.content // empty
+          ' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
