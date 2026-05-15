@@ -63,7 +63,7 @@ jobs:
       - name: 🤖 AI ROBOT AUDIT
         id: ai_robot_audit
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: |
           echo "🤖 Executando auditoria Robot Framework..."
           PROJECT_CONTEXT=$(head -c 55000 robot_context.txt)
@@ -208,15 +208,15 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT$PROJECT_CONTEXT" \
             '{
-              model: "openrouter/free",
+              model: "qwen/qwen3-coder-480b-a35b-instruct",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
               max_tokens: 2500,
               response_format: { "type": "json_object" }
             }')
 
-          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
-            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+          RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
+            -H "Authorization: Bearer $NVIDIA_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$REQUEST_BODY")
 
