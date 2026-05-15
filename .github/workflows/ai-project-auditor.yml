@@ -349,64 +349,45 @@ jobs:
             COMPLEXITY=$(echo "$row" | jq -r '.complexity // "Não informado"')
             IMPROVEMENT_TYPE=$(echo "$row" | jq -r '.improvement_type // "Melhoria Técnica"')
 
-            # Build body without leading spaces
-            BODY=$(cat <<'EOF'
-            ## 📌 Categoria
-            __CATEGORY__
+            # Build body as a simple string
+            BODY="## 📌 Categoria
+            $CATEGORY
 
             ## 🔥 Prioridade
-            __PRIORITY__
+            $PRIORITY
 
             ## 🏷️ Tipo da Melhoria
-            __IMPROVEMENT_TYPE__
+            $IMPROVEMENT_TYPE
 
             ## 📂 Arquivos Afetados
-            __FILES_FORMATTED__
+            $FILES_FORMATTED
 
             ## 📝 Problema Identificado
-            __PROBLEM__
+            $PROBLEM
 
             ## 📊 Impacto Técnico
-            __TECHNICAL_IMPACT__
+            $TECHNICAL_IMPACT
 
             ## 💼 Impacto no Negócio
-            __BUSINESS_IMPACT__
+            $BUSINESS_IMPACT
 
             ## ⚠️ Risco Atual
-            __RISK__
+            $RISK
 
             ## 🧪 Como Reproduzir
-            __REPRODUCTION__
+            $REPRODUCTION
 
             ## 💡 Sugestão Técnica
-            __SUGGESTION__
+            $SUGGESTION
 
             ## 🛠️ Exemplo Técnico
-            __EXAMPLE__
+            $EXAMPLE
 
             ## ✅ Benefícios Esperados
-            __BENEFITS__
+            $BENEFITS
 
             ## 📈 Complexidade Estimada
-            __COMPLEXITY__
-            EOF
-            )
-
-            # Replace placeholders with actual values
-            BODY=$(echo "$BODY" | \
-              sed "s|__CATEGORY__|$CATEGORY|g" | \
-              sed "s|__PRIORITY__|$PRIORITY|g" | \
-              sed "s|__IMPROVEMENT_TYPE__|$IMPROVEMENT_TYPE|g" | \
-              sed "s|__FILES_FORMATTED__|$FILES_FORMATTED|g" | \
-              sed "s|__PROBLEM__|$PROBLEM|g" | \
-              sed "s|__TECHNICAL_IMPACT__|$TECHNICAL_IMPACT|g" | \
-              sed "s|__BUSINESS_IMPACT__|$BUSINESS_IMPACT|g" | \
-              sed "s|__RISK__|$RISK|g" | \
-              sed "s|__REPRODUCTION__|$REPRODUCTION|g" | \
-              sed "s|__SUGGESTION__|$SUGGESTION|g" | \
-              sed "s|__EXAMPLE__|$EXAMPLE|g" | \
-              sed "s|__BENEFITS__|$BENEFITS|g" | \
-              sed "s|__COMPLEXITY__|$COMPLEXITY|g")
+            $COMPLEXITY"
 
             # Check if issue already exists
             EXISTING=$(gh issue list \
@@ -442,7 +423,6 @@ jobs:
             # Add category label
             CATEGORY_LABEL=""
             if [ -n "$CATEGORY" ] && [ "$CATEGORY" != "Geral" ]; then
-              # Convert category to lowercase and replace spaces with hyphens
               CATEGORY_SLUG=$(echo "$CATEGORY" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
               CATEGORY_LABEL="--label category-$CATEGORY_SLUG"
             fi
