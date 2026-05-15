@@ -348,47 +348,47 @@ jobs:
               FILES_FORMATTED="- Não identificado"
             fi
 
-            BODY=$(cat <<EOF
-            ## 📌 Categoria
-            $CATEGORY
+              BODY=$(cat <<EOF
+              ## 📌 Categoria
+              $CATEGORY
 
-            ## 🔥 Prioridade
-            $PRIORITY
+              ## 🔥 Prioridade
+              $PRIORITY
 
-            ## 🏷️ Tipo da Melhoria
-            $IMPROVEMENT_TYPE
+              ## 🏷️ Tipo da Melhoria
+              $IMPROVEMENT_TYPE
 
-            ## 📂 Arquivos Afetados
-            $FILES_FORMATTED
+              ## 📂 Arquivos Afetados
+              $FILES_FORMATTED
 
-            ## 📝 Problema Identificado
-            $PROBLEM
+              ## 📝 Problema Identificado
+              $PROBLEM
 
-            ## 📊 Impacto Técnico
-            $TECHNICAL_IMPACT
+              ## 📊 Impacto Técnico
+              $TECHNICAL_IMPACT
 
-            ## 💼 Impacto no Negócio
-            $BUSINESS_IMPACT
+              ## 💼 Impacto no Negócio
+              $BUSINESS_IMPACT
 
-            ## ⚠️ Risco Atual
-            $RISK
+              ## ⚠️ Risco Atual
+              $RISK
 
-            ## 🧪 Como Reproduzir
-            $REPRODUCTION
+              ## 🧪 Como Reproduzir
+              $REPRODUCTION
 
-            ## 💡 Sugestão Técnica
-            $SUGGESTION
+              ## 💡 Sugestão Técnica
+              $SUGGESTION
 
-            ## 🛠️ Exemplo Técnico
-            $EXAMPLE
+              ## 🛠️ Exemplo Técnico
+              $EXAMPLE
 
-            ## ✅ Benefícios Esperados
-            $BENEFITS
+              ## ✅ Benefícios Esperados
+              $BENEFITS
 
-            ## 📈 Complexidade Estimada
-            $COMPLEXITY
-            EOF
-            )
+              ## 📈 Complexidade Estimada
+              $COMPLEXITY
+              EOF
+              )
 
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
