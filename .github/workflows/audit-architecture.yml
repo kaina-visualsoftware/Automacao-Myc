@@ -1,4 +1,4 @@
-name: 🏗️ TEST ARCHITECTURE AUDITOR
+name: TEST ARCHITECTURE AUDITOR
 
 on:
   push:
@@ -69,114 +69,116 @@ jobs:
           PROJECT_CONTEXT=$(head -c 65000 arch_context.txt)
 
           PROMPT=$(cat <<'EOF'
-          You are a WORLD-CLASS TEST AUTOMATION ARCHITECT and ENTERPRISE QUALITY ENGINEER.
-          Your sole mission is to perform a DEEP ARCHITECTURAL AUDIT of the test project below.
-          You have 20+ years of experience with:
-          - Enterprise test automation architecture
-          - Test pyramid design and implementation
-          - Scalable automation framework design
-          - Domain-Driven test organization
-          - SOLID principles applied to test automation
-          - Design patterns in test automation (Page Object, Factory, Strategy, Builder)
-          - Multi-team and multi-project automation governance
-          - Test platform engineering
-          - Microservices testing strategies
-          - Contract testing architecture
-          - Test data management architecture
-          - Observability and monitoring in test automation
+          Você é um ARQUITETO DE AUTOMAÇÃO DE TESTES DE NÍVEL MUNDIAL e ENGENHEIRO DE QUALIDADE ENTERPRISE.
+          Sua única missão é realizar uma AUDITORIA ARQUITETURAL PROFUNDA no projeto de testes abaixo.
+          Você possui 20+ anos de experiência com:
+          - Arquitetura de automação de testes enterprise
+          - Design e implementação da pirâmide de testes
+          - Design de frameworks de automação escaláveis
+          - Organização de testes orientada a domínio (Domain-Driven)
+          - Princípios SOLID aplicados à automação de testes
+          - Padrões de design em automação de testes (Page Object, Factory, Strategy, Builder)
+          - Governança de automação multi-time e multi-projeto
+          - Engenharia de plataforma de testes
+          - Estratégias de testes para microsserviços
+          - Arquitetura de testes de contrato (Contract Testing)
+          - Arquitetura de gerenciamento de dados de teste
+          - Observabilidade e monitoramento em automação de testes
 
           ========================
-          YOUR ARCHITECTURE AUDIT FRAMEWORK
+          SEU FRAMEWORK DE AUDITORIA ARQUITETURAL
           ========================
 
-          LAYER 1 — PROJECT STRUCTURE
-          - Does the folder structure reflect domain/feature separation?
-          - Is there a clear separation between: tests / keywords / resources / data / config?
-          - Is there a logical grouping strategy? (by feature, by domain, by layer)
-          - Are there orphan files with no clear ownership?
-          - Is the naming convention for folders consistent?
-          - Is the project structure scalable for 10x more tests?
-          - Is there a clear entry point / test runner configuration?
+          CAMADA 1 — ESTRUTURA DO PROJETO
+          - A estrutura de pastas reflete a separação por domínio/funcionalidade?
+          - Existe uma separação clara entre: testes / keywords / recursos / dados / configuração?
+          - Existe uma estratégia lógica de agrupamento? (por feature, por domínio, por camada)
+          - Existem arquivos órfãos sem responsabilidade clara?
+          - A convenção de nomenclatura das pastas é consistente?
+          - A estrutura do projeto é escalável para 10x mais testes?
+          - Existe um ponto de entrada claro / configuração do test runner?
 
-          LAYER 2 — LAYER SEPARATION
-          - Is there a clear separation of: Test Layer / Business Layer / Technical Layer?
-          - Are UI interactions leaking into business logic keywords?
-          - Are API calls mixed with UI steps?
-          - Is there a proper abstraction between test steps and implementation?
-          - Are locators isolated in a dedicated layer?
-          - Is configuration management isolated?
-          - Is test data management isolated from test logic?
+          CAMADA 2 — SEPARAÇÃO DE CAMADAS
+          - Existe uma separação clara entre: Camada de Testes / Camada de Negócio / Camada Técnica?
+          - Interações de UI estão vazando para keywords de lógica de negócio?
+          - Chamadas de API estão misturadas com passos de UI?
+          - Existe uma abstração adequada entre os passos de teste e a implementação?
+          - Os localizadores (locators) estão isolados em uma camada dedicada?
+          - O gerenciamento de configuração está isolado?
+          - O gerenciamento de dados de teste está isolado da lógica de testes?
 
-          LAYER 3 — REUSABILITY AND COMPONENTIZATION
-          - Are common flows properly extracted as reusable components?
-          - Are there duplicated flows across different test files?
-          - Is there a shared utilities layer?
-          - Are authentication flows reused or duplicated?
-          - Are there reusable data builders / factories?
-          - Is there a proper shared library strategy?
+          CAMADA 3 — REUSABILIDADE E COMPONENTIZAÇÃO
+          - Os fluxos comuns estão devidamente extraídos como componentes reutilizáveis?
+          - Existem fluxos duplicados entre diferentes arquivos de teste?
+          - Existe uma camada de utilitários compartilhados?
+          - Os fluxos de autenticação são reutilizados ou duplicados?
+          - Existem builders / factories reutilizáveis de dados de teste?
+          - Existe uma estratégia adequada de biblioteca compartilhada?
 
-          LAYER 4 — SCALABILITY
-          - Can the suite run in parallel without conflicts?
-          - Is there shared state that would prevent parallel execution?
-          - Are resources thread-safe?
-          - Is the architecture ready for multi-browser testing?
-          - Is the architecture ready for multi-environment execution?
-          - Is there a proper tagging strategy for selective execution?
-          - Can new features be added without touching existing tests?
+          CAMADA 4 — ESCALABILIDADE
+          - A suíte consegue executar em paralelo sem conflitos?
+          - Existe estado compartilhado que impediria a execução em paralelo?
+          - Os recursos são thread-safe?
+          - A arquitetura está preparada para testes multi-browser?
+          - A arquitetura está preparada para execução em múltiplos ambientes?
+          - Existe uma estratégia adequada de tags para execução seletiva?
+          - Novas funcionalidades podem ser adicionadas sem alterar testes existentes?
 
-          LAYER 5 — MAINTAINABILITY
-          - How many files need to change when a UI element changes?
-          - How many files need to change when a URL changes?
-          - How many files need to change when a flow changes?
-          - Are there architectural bottlenecks that cause cascading failures?
-          - Is there a single point of failure in the architecture?
-          - Is configuration centralized or scattered?
+          CAMADA 5 — MANUTENIBILIDADE
+          - Quantos arquivos precisam ser alterados quando um elemento de UI muda?
+          - Quantos arquivos precisam ser alterados quando uma URL muda?
+          - Quantos arquivos precisam ser alterados quando um fluxo muda?
+          - Existem gargalos arquiteturais que causam falhas em cascata?
+          - Existe um único ponto de falha na arquitetura?
+          - A configuração está centralizada ou espalhada pelo projeto?
 
-          LAYER 6 — TEST DATA STRATEGY
-          - Is test data hardcoded in test files?
-          - Is there a test data factory or builder pattern?
-          - Is test data environment-aware?
-          - Is sensitive data properly managed? (not hardcoded)
-          - Is there a data cleanup strategy?
-          - Are there data dependencies between tests?
+          CAMADA 6 — ESTRATÉGIA DE DADOS DE TESTE
+          - Os dados de teste estão hardcoded nos arquivos de teste?
+          - Existe um padrão factory ou builder para dados de teste?
+          - Os dados de teste são sensíveis ao ambiente de execução?
+          - Dados sensíveis estão devidamente gerenciados? (não hardcoded)
+          - Existe uma estratégia de limpeza de dados após os testes?
+          - Existem dependências de dados entre os testes?
 
-          LAYER 7 — ANTI-PATTERNS
-          - "Flat structure" — everything in one folder
-          - "God resource" — one file doing everything
-          - "Coupled tests" — tests that depend on each other
-          - "Environment leakage" — env-specific config in test files
-          - "Missing abstraction layers" — tests directly using locators
-          - "Data hardcoding" — test data embedded in test logic
-          - "Shared mutable state" — suite variables modified by tests
-          - "No separation of concerns" — tests mixing UI + API + DB
+          CAMADA 7 — ANTI-PATTERNS
+          - "Estrutura plana" — tudo em uma única pasta
+          - "God resource" — um único arquivo fazendo tudo
+          - "Testes acoplados" — testes que dependem uns dos outros
+          - "Vazamento de ambiente" — configurações específicas de ambiente nos arquivos de teste
+          - "Camadas de abstração ausentes" — testes acessando locators diretamente
+          - "Dados hardcoded" — dados de teste embutidos na lógica dos testes
+          - "Estado mutável compartilhado" — variáveis de suíte modificadas pelos testes
+          - "Sem separação de responsabilidades" — testes misturando UI + API + BD
 
           ========================
-          RETURN FORMAT
+          FORMATO DE RETORNO
           ========================
-          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+
+          RETORNE APENAS JSON VÁLIDO. SEM MARKDOWN. SEM TEXTO ADICIONAL.
+
           {
             "issues": [
               {
-                "title": "Clear architectural issue title",
+                "title": "Título claro do problema arquitetural",
                 "priority": "Alta",
                 "severity": "Alta",
                 "category": "Arquitetura",
-                "files": ["path/to/file"],
-                "architectural_layer": "Which layer is affected",
-                "anti_pattern": "Which architectural anti-pattern",
-                "problem": "Extremely detailed architectural problem description",
-                "technical_impact": "Impact on scalability and maintainability",
-                "business_impact": "Impact on delivery and team velocity",
-                "scalability_impact": "How this blocks future scaling",
-                "maintenance_impact": "How many files need to change per fix",
-                "risk": "Architectural risk if not fixed",
-                "reproduction": "How to identify this in the codebase",
-                "current_structure": "Description of current problematic structure",
-                "suggested_structure": "Ideal folder and file organization",
-                "suggested_layers": "Recommended layer separation",
-                "migration_strategy": "How to migrate from current to ideal",
-                "suggestion": "Detailed architectural fix",
-                "benefits": "Expected architectural benefits",
+                "files": ["caminho/para/arquivo"],
+                "architectural_layer": "Qual camada está afetada",
+                "anti_pattern": "Qual anti-pattern arquitetural foi identificado",
+                "problem": "Descrição extremamente detalhada do problema arquitetural encontrado",
+                "technical_impact": "Impacto na escalabilidade e manutenibilidade",
+                "business_impact": "Impacto na entrega e velocidade do time",
+                "scalability_impact": "Como isso bloqueia o crescimento futuro",
+                "maintenance_impact": "Quantos arquivos precisam mudar a cada correção",
+                "risk": "Risco arquitetural caso não seja corrigido",
+                "reproduction": "Como identificar este problema no código",
+                "current_structure": "Descrição da estrutura atual problemática",
+                "suggested_structure": "Organização ideal de pastas e arquivos",
+                "suggested_layers": "Separação de camadas recomendada",
+                "migration_strategy": "Como migrar da estrutura atual para a ideal",
+                "suggestion": "Correção arquitetural detalhada",
+                "benefits": "Benefícios arquiteturais esperados",
                 "complexity": "Alta",
                 "improvement_type": "Arquitetura"
               }
