@@ -15,29 +15,44 @@ jobs:
   auto-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: CHECKOUT
+      - name: 📥 CHECKOUT
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref }}
 
-      - name: FETCH DEVELOP
-        run: git fetch origin develop:develop --update-head-ok
-
-      - name: GET GIT DIFF
+      - name: 📡 FETCH DEVELOP
         run: |
-          echo "🔍 Branch atual: ${{ github.ref_name }}"
-          git diff develop..HEAD --no-color | head -c 20000 > diff.txt
+          git fetch origin develop --update-head-ok
+          git fetch origin ${{ github.ref_name }}
+
+      - name: 🔍 GET GIT DIFF
+        run: |
+          echo "Branch atual: ${{ github.ref_name }}"
           
-          if [ ! -s diff.txt ]; then
+          # Pega o diff entre develop e a branch atual
+          git diff origin/develop...HEAD --no-color > diff.txt
+          
+          # Conta linhas para verificar se tem alterações
+          DIFF_LINES=$(wc -l < diff.txt)
+          
+          if [ "$DIFF_LINES" -eq 0 ]; then
             echo "HAS_DIFF=false" >> $GITHUB_ENV
             echo "⚠️ Nenhuma alteração detectada."
           else
             echo "HAS_DIFF=true" >> $GITHUB_ENV
-            echo "✅ Alterações encontradas ($(wc -l < diff.txt) linhas)"
+            echo "✅ Alterações encontradas ($DIFF_LINES linhas)"
           fi
 
-      - name: GENERATE AI DESCRIPTION
+      - name: 📝 GET GIT LOG
+        if: env.HAS_DIFF == 'true'
+        run: |
+          # Pega todos os commits da branch em relação ao develop
+          git log origin/develop...HEAD --pretty=format:"%h - %s" > commits.txt
+          
+          echo "📋 Commits encontrados:"
+          cat commits.txt
+
+      - name: 🤖 GENERATE AI DESCRIPTION
         id: ai
         if: env.HAS_DIFF == 'true'
         env:
@@ -45,70 +60,115 @@ jobs:
         run: |
           echo "🤖 Gerando descrição com IA..."
 
-          DIFF_CONTENT=$(cat diff.txt)
+          # Limita o diff a 15000 caracteres para não estourar token
+          DIFF_CONTENT=$(head -c 15000 diff.txt)
+          COMMITS_CONTENT=$(cat commits.txt)
 
-          PROMPT=$(cat <<EOF
-          Analise o diff abaixo e gere:
+          # Cria um prompt mais detalhado e estruturado
+          read -r -d '' PROMPT << 'EOF' || true
+          Você é um engenheiro especialista em Pull Requests profissionais em português.
 
-          1. Um TITULO CURTO com no máximo 60 caracteres.
-          2. Uma DESCRIÇÃO COMPLETA em markdown.
+          Analise o diff e os commits abaixo e gere uma descrição profissional para uma Pull Request.
 
-          RETORNE EXATAMENTE neste formato:
+          ## COMMITS:
+          ${COMMITS_CONTENT}
 
-          TITLE: Título claro e objetivo
-          BODY:
-          # Descrição da Pull Request
+          ## DIFF (primeiros 15000 caracteres):
+          ${DIFF_CONTENT}
+
+          Retorne EXATAMENTE neste formato JSON:
+          {
+            "title": "Título com no máximo 65 caracteres, claro e objetivo",
+            "description": "Descrição em markdown com:\n- O que foi feito\n- Por que foi feito\n- Como foi implementado\n- Se houver breaking changes, mencionar\n\nSeja específico e profissional."
+          }
+
+          IMPORTANTE: Retorne APENAS o JSON, sem markdown backticks, sem explicações adicionais.
           EOF
+
+                    # Substitui as variáveis no prompt
+                    PROMPT=$(eval "echo \"$PROMPT\"")
+
+                    # Cria o request JSON de forma segura
+                    REQUEST_BODY=$(cat <<'JSONEOF'
+          {
+            "model": "openai/gpt-4o-mini",
+            "messages": [
+              {
+                "role": "system",
+                "content": "Você é um engenheiro especialista em Pull Requests profissionais em português. Retorne APENAS JSON válido."
+              },
+              {
+                "role": "user",
+                "content": ""
+              }
+            ],
+            "temperature": 0.3,
+            "max_tokens": 1500
+          }
+          JSONEOF
           )
 
-          # Chamada da API (mantida limpa)
-          jq -n --arg model "openai/gpt-4.1-mini" --arg prompt "$PROMPT" '{
-            model: $model,
-            messages: [{role: "system", content: "Você é um engenheiro especialista em Pull Requests profissionais em português."},
-                       {role: "user", content: $prompt}],
-            temperature: 0.3,
-            max_tokens: 1200
-          }' > request.json
+          # Adiciona o prompt ao request de forma segura
+          REQUEST_BODY=$(echo "$REQUEST_BODY" | jq --arg prompt "$PROMPT" '.messages[0].content = $prompt')
 
+          echo "📤 Enviando requisição para IA..."
+          
           RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
             -H "Authorization: Bearer $OPENROUTER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d @request.json)
+            -d "$REQUEST_BODY")
 
+          echo "Response da API:" >&2
+          echo "$RESPONSE" | jq . >&2
+
+          # Extrai o conteúdo da resposta
           AI_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
-          if [ -z "$AI_CONTENT" ] || [ "$AI_CONTENT" = "null" ]; then
-            TITLE="Atualização em ${{ github.ref_name }}"
-            BODY="## PR Automática\n\nBranch: ${{ github.ref_name }}"
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ Erro ao chamar a IA. Usando título padrão."
+            TITLE="feat: Atualização em ${{ github.ref_name }}"
+            BODY="## 📝 PR Automática\n\nBranch: \`${{ github.ref_name }}\`\n\nAlterações detectadas. Descrição não disponível."
           else
-            TITLE=$(echo "$AI_CONTENT" | grep "^TITLE:" | head -n1 | sed 's/^TITLE:[[:space:]]*//')
-            BODY=$(echo "$AI_CONTENT" | sed -n '/^BODY:/,$p' | sed '1d')
+            # Tenta extrair JSON da resposta
+            AI_JSON=$(echo "$AI_CONTENT" | jq . 2>/dev/null || echo '{}')
+            
+            TITLE=$(echo "$AI_JSON" | jq -r '.title // empty')
+            BODY=$(echo "$AI_JSON" | jq -r '.description // empty')
+
+            # Se não conseguiu extrair, usa padrão
+            if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
+              TITLE="feat: Atualização em ${{ github.ref_name }}"
+            fi
+            if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
+              BODY="## 📝 Alterações\n\nBranch: \`${{ github.ref_name }}\`"
+            fi
           fi
 
-          # Força limite rigoroso de caracteres
-          TITLE=$(echo "$TITLE" | sed 's/["`'\'']//g' | tr -d '\n' | cut -c1-75 | sed 's/[[:space:]]*$//')
+          # Limpa o título (remove caracteres problemáticos e limita tamanho)
+          TITLE=$(echo "$TITLE" | sed 's/["`'\'']//g' | cut -c1-65 | sed 's/[[:space:]]*$//')
 
+          # Garante um título mínimo válido
           if [ -z "$TITLE" ] || [ ${#TITLE} -lt 5 ]; then
-            TITLE="PR: ${{ github.ref_name }}"
+            TITLE="feat: ${{ github.ref_name }}"
           fi
 
+          # Salva outputs
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
           echo "✅ Título gerado: $TITLE"
+          echo "✅ Descrição gerada com sucesso"
 
-      - name: CREATE OR UPDATE PULL REQUEST
+      - name: 🚀 CREATE OR UPDATE PULL REQUEST
         if: env.HAS_DIFF == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="${{ github.ref_name }}"
           TITLE="${{ steps.ai.outputs.title }}"
-          BODY_FILE="pr_body.md"
-
-          echo '${{ steps.ai.outputs.body }}' > "$BODY_FILE"
+          BODY="${{ steps.ai.outputs.body }}"
 
           # Busca PR existente
           PR_NUMBER=$(gh pr list --head "$BRANCH" --base develop --state open --json number --jq '.[0].number // empty')
@@ -119,14 +179,16 @@ jobs:
               --base develop \
               --head "$BRANCH" \
               --title "$TITLE" \
-              --body-file "$BODY_FILE"
+              --body "$BODY"
+            echo "✅ PR criada com sucesso!"
           else
             echo "🔄 Atualizando Pull Request #$PR_NUMBER..."
             gh pr edit "$PR_NUMBER" \
               --title "$TITLE" \
-              --body-file "$BODY_FILE"
+              --body "$BODY"
+            echo "✅ PR atualizada com sucesso!"
           fi
 
-      - name: SKIP - NO DIFF
+      - name: ⏭️ SKIP - NO DIFF
         if: env.HAS_DIFF == 'false'
-        run: echo "⏭️ Sem alterações para gerar PR."
+        run: echo "⏭️ Sem alterações para gerar PR. Nenhuma ação realizada."
