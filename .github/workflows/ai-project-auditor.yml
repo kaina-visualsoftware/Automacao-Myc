@@ -90,6 +90,175 @@ jobs:
           PROMPT=$(cat <<EOF
           Você é um especialista SÊNIOR em:
 
+          SHOW ME EVERYTHING YOU CAN DELIVER IN THIS PROJECT AUDIT.
+          ACT AS:
+          - QA ARCHITECT
+          - QA SENIOR
+          - SOFTWARE ARCHITECT
+          - TECH LEAD
+          - BDD SPECIALIST
+          - AUTOMATION SPECIALIST
+          - SENIOR REVIEWER
+          - ENTERPRISE QUALITY ENGINEER
+
+          PERFORM A COMPLETE TECHNICAL AUDIT OF THE PROJECT.
+
+          ANALYZE DEEPLY:
+
+          ========================
+          BDD / GHERKIN
+          ========================
+          - GIVEN / WHEN / THEN misuse
+          - Weak THEN validations
+          - Non-behavior-oriented scenarios
+          - Technical instead of business language
+          - Poor readability
+          - Missing business context
+          - Multi-responsibility scenarios
+          - Missing negative scenarios
+          - Missing edge cases
+          - Duplicate scenarios
+          - Repeated steps
+          - Generic steps
+          - Flaky scenarios
+          - Coupled scenarios
+          - Missing assertions
+          - Bad naming patterns
+          - Poor acceptance criteria representation
+
+          ========================
+          ROBOT FRAMEWORK
+          ========================
+          - Giant keywords
+          - Multiple responsibilities in keywords
+          - Duplicated keywords
+          - Weak abstraction
+          - Hardcoded values
+          - Bad variable usage
+          - Incorrect waits
+          - Synchronization problems
+          - Bad resource organization
+          - Lack of modularization
+          - Poor reuse strategy
+          - Low maintainability
+          - Lack of standardization
+          - Poor keyword naming
+          - High coupling
+          - Low cohesion
+
+          ========================
+          TEST ARCHITECTURE
+          ========================
+          - Folder structure problems
+          - Scalability issues
+          - Maintainability risks
+          - Weak separation of concerns
+          - Poor organization
+          - Missing layers
+          - Weak componentization
+          - Lack of reusable flows
+          - Shared state risks
+          - Poor test isolation
+          - Weak data strategy
+          - Fragile test design
+
+          ========================
+          QUALITY ENGINEERING
+          ========================
+          - Missing validations
+          - Missing logs
+          - Weak traceability
+          - Poor observability
+          - Weak debugging capability
+          - Weak error handling
+          - Poor failure diagnostics
+          - Missing screenshots/evidences
+          - Weak reporting strategy
+          - Missing retry strategy
+          - Weak flaky test mitigation
+
+          ========================
+          CI/CD
+          ========================
+          - Weak pipeline structure
+          - Missing quality gates
+          - Missing static validations
+          - Weak PR validation
+          - Weak branch strategy
+          - Poor automation governance
+          - Missing parallelization opportunities
+          - Missing optimization opportunities
+
+          ========================
+          PERFORMANCE / STABILITY
+          ========================
+          - Slow execution risks
+          - Repeated unnecessary flows
+          - Overuse of UI interactions
+          - Weak caching strategy
+          - Synchronization bottlenecks
+          - Potential flaky behaviors
+          - Unstable waits
+          - Timing dependencies
+
+          ========================
+          CLEAN CODE
+          ========================
+          - Poor naming
+          - Duplicate logic
+          - Dead code
+          - Overengineering
+          - Lack of standards
+          - Poor readability
+          - Excessive complexity
+          - Technical debt indicators
+
+          ========================
+          FOR EACH ISSUE FOUND
+          ========================
+
+          RETURN:
+          - Title
+          - Priority
+          - Severity
+          - Category
+          - Affected files
+          - Exact technical problem
+          - Exact business problem
+          - Real risk
+          - Technical impact
+          - Business impact
+          - Scalability impact
+          - Maintenance impact
+          - Why this is dangerous
+          - Real examples found
+          - Root cause
+          - Recommended refactor
+          - Suggested architecture
+          - Example of ideal implementation
+          - Example of ideal BDD rewrite
+          - Suggested reusable keyword strategy
+          - Suggested modularization strategy
+          - Suggested folder organization
+          - Suggested validation improvements
+          - Suggested CI/CD improvements
+          - Estimated complexity
+          - Estimated technical debt reduction
+          - Estimated flaky reduction
+          - Estimated maintainability gain
+
+          ONLY REPORT REAL PROBLEMS FOUND.
+          DO NOT INVENT FILES.
+          DO NOT GENERATE GENERIC FEEDBACK.
+
+          THINK LIKE:
+          - A SENIOR QA AUDITING AN ENTERPRISE PROJECT
+          - A TECH LEAD REVIEWING A CRITICAL AUTOMATION PLATFORM
+          - A BDD SPECIALIST ENFORCING BEST PRACTICES
+          - AN ARCHITECT TRYING TO REDUCE TECHNICAL DEBT
+
+          BE EXTREMELY DETAILED, CRITICAL, TECHNICAL, AND ACTIONABLE.
+
           - Robot Framework
           - QA Automation
           - Arquitetura de testes
@@ -319,18 +488,73 @@ jobs:
             exit 0
           fi
 
+          sanitize() {
+            echo "$1" | sed 's/\r//g'
+          }
+
+          create_label_if_not_exists() {
+            local LABEL_NAME="$1"
+            local LABEL_COLOR="$2"
+
+            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$LABEL_NAME\") | .name" 2>/dev/null)
+
+            if [ -z "$EXISTS" ]; then
+              echo "🏷️ Criando label: $LABEL_NAME"
+              gh label create "$LABEL_NAME" \
+                --color "$LABEL_COLOR" \
+                --description "Criada automaticamente pela auditoria IA" \
+                2>/dev/null || true
+            fi
+          }
+
+          # Labels padrão
+          create_label_if_not_exists "ai-audit" "5319E7"
+          create_label_if_not_exists "priority-critical" "B60205"
+          create_label_if_not_exists "priority-high" "D93F0B"
+          create_label_if_not_exists "priority-medium" "FBCA04"
+          create_label_if_not_exists "priority-low" "0E8A16"
+
           jq -c '.issues[]' ai_issues.json | while read -r row; do
 
-            TITLE=$(echo "$row" | jq -r '.title // "Issue sem título"')
-            PRIORITY=$(echo "$row" | jq -r '.priority // "Média"')
-            CATEGORY=$(echo "$row" | jq -r '.category // "Geral"')
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue sem título"')")
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "Geral"')")
 
-            # Handle files array properly
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            SCALABILITY_IMPACT=$(sanitize "$(echo "$row" | jq -r '.scalability_impact // "Não informado"')")
+            MAINTENANCE_IMPACT=$(sanitize "$(echo "$row" | jq -r '.maintenance_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            ROOT_CAUSE=$(sanitize "$(echo "$row" | jq -r '.root_cause // "Não identificado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            ARCHITECTURE=$(sanitize "$(echo "$row" | jq -r '.suggested_architecture // "Não informado"')")
+            REFACTOR=$(sanitize "$(echo "$row" | jq -r '.recommended_refactor // "Não informado"')")
+            EXAMPLE=$(sanitize "$(echo "$row" | jq -r '.example // "Não informado"')")
+            BDD_REWRITE=$(sanitize "$(echo "$row" | jq -r '.bdd_rewrite // "Não informado"')")
+            KEYWORD_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.keyword_strategy // "Não informado"')")
+            MODULARIZATION=$(sanitize "$(echo "$row" | jq -r '.modularization_strategy // "Não informado"')")
+            FOLDER_ORGANIZATION=$(sanitize "$(echo "$row" | jq -r '.folder_organization // "Não informado"')")
+            VALIDATION_IMPROVEMENTS=$(sanitize "$(echo "$row" | jq -r '.validation_improvements // "Não informado"')")
+            CICD_IMPROVEMENTS=$(sanitize "$(echo "$row" | jq -r '.cicd_improvements // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            DEBT_REDUCTION=$(sanitize "$(echo "$row" | jq -r '.technical_debt_reduction // "Não informado"')")
+            FLAKY_REDUCTION=$(sanitize "$(echo "$row" | jq -r '.flaky_reduction // "Não informado"')")
+            MAINTAINABILITY_GAIN=$(sanitize "$(echo "$row" | jq -r '.maintainability_gain // "Não informado"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Melhoria Técnica"')")
+
+            # ================================
+            # FILES
+            # ================================
+
             FILES_FORMATTED=""
+
             FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
-            
+
             if [ "$FILES_COUNT" -gt 0 ]; then
-              # Build file list with proper line breaks
               FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r file; do
                 echo "- \`$file\`"
               done)
@@ -338,58 +562,172 @@ jobs:
               FILES_FORMATTED="- Não identificado"
             fi
 
-            PROBLEM=$(echo "$row" | jq -r '.problem // "Não informado"')
-            TECHNICAL_IMPACT=$(echo "$row" | jq -r '.technical_impact // "Não informado"')
-            BUSINESS_IMPACT=$(echo "$row" | jq -r '.business_impact // "Não informado"')
-            RISK=$(echo "$row" | jq -r '.risk // "Não informado"')
-            REPRODUCTION=$(echo "$row" | jq -r '.reproduction // "Não informado"')
-            SUGGESTION=$(echo "$row" | jq -r '.suggestion // "Não informado"')
-            EXAMPLE=$(echo "$row" | jq -r '.example // "Não informado"')
-            BENEFITS=$(echo "$row" | jq -r '.benefits // "Não informado"')
-            COMPLEXITY=$(echo "$row" | jq -r '.complexity // "Não informado"')
-            IMPROVEMENT_TYPE=$(echo "$row" | jq -r '.improvement_type // "Melhoria Técnica"')
+            # ================================
+            # BODY
+            # ================================
 
-            # Build body as a simple string
-            BODY="## 📌 Categoria
+            BODY="
+            ## 📌 Categoria
             $CATEGORY
 
             ## 🔥 Prioridade
             $PRIORITY
 
+            ## 🚨 Severidade
+            $SEVERITY
+
             ## 🏷️ Tipo da Melhoria
             $IMPROVEMENT_TYPE
 
-            ## 📂 Arquivos Afetados
+            ---
+
+            # 📂 Arquivos Afetados
+
             $FILES_FORMATTED
 
-            ## 📝 Problema Identificado
+            ---
+
+            # 📝 Problema Identificado
+
             $PROBLEM
 
-            ## 📊 Impacto Técnico
+            ---
+
+            # 📊 Impacto Técnico
+
             $TECHNICAL_IMPACT
 
-            ## 💼 Impacto no Negócio
+            ---
+
+            # 💼 Impacto no Negócio
+
             $BUSINESS_IMPACT
 
-            ## ⚠️ Risco Atual
+            ---
+
+            # 📈 Impacto de Escalabilidade
+
+            $SCALABILITY_IMPACT
+
+            ---
+
+            # 🛠️ Impacto de Manutenção
+
+            $MAINTENANCE_IMPACT
+
+            ---
+
+            # ⚠️ Risco Atual
+
             $RISK
 
-            ## 🧪 Como Reproduzir
+            ---
+
+            # 🔎 Causa Raiz
+
+            $ROOT_CAUSE
+
+            ---
+
+            # 🧪 Como Reproduzir
+
             $REPRODUCTION
 
-            ## 💡 Sugestão Técnica
+            ---
+
+            # 💡 Sugestão Técnica
+
             $SUGGESTION
 
-            ## 🛠️ Exemplo Técnico
+            ---
+
+            # 🧱 Refatoração Recomendada
+
+            $REFACTOR
+
+            ---
+
+            # 🏗️ Arquitetura Sugerida
+
+            $ARCHITECTURE
+
+            ---
+
+            # 🛠️ Exemplo Técnico
+
             $EXAMPLE
 
-            ## ✅ Benefícios Esperados
+            ---
+
+            # 🧠 Exemplo Ideal BDD
+
+            $BDD_REWRITE
+
+            ---
+
+            # ♻️ Estratégia de Reutilização
+
+            $KEYWORD_STRATEGY
+
+            ---
+
+            # 🧩 Estratégia de Modularização
+
+            $MODULARIZATION
+
+            ---
+
+            # 📁 Organização Recomendada
+
+            $FOLDER_ORGANIZATION
+
+            ---
+
+            # ✅ Melhorias de Validação
+
+            $VALIDATION_IMPROVEMENTS
+
+            ---
+
+            # 🚀 Melhorias CI/CD
+
+            $CICD_IMPROVEMENTS
+
+            ---
+
+            # 🎯 Benefícios Esperados
+
             $BENEFITS
 
-            ## 📈 Complexidade Estimada
-            $COMPLEXITY"
+            ---
 
-            # Check if issue already exists
+            # 📈 Complexidade Estimada
+
+            $COMPLEXITY
+
+            ---
+
+            # 🧹 Redução de Dívida Técnica
+
+            $DEBT_REDUCTION
+
+            ---
+
+            # 🧪 Redução de Flaky Tests
+
+            $FLAKY_REDUCTION
+
+            ---
+
+            # 📚 Ganho de Manutenibilidade
+
+            $MAINTAINABILITY_GAIN
+            "
+
+            # ================================
+            # AVOID DUPLICATES
+            # ================================
+
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
               --state all \
@@ -403,47 +741,50 @@ jobs:
 
             echo "🚀 Criando issue: $TITLE"
 
-            # Create issue with label based on priority
-            LABEL=""
-            case "$PRIORITY" in
-              "Alta"|"alta"|"High"|"high")
-                LABEL="--label priority-high"
+            # ================================
+            # LABELS
+            # ================================
+
+            LABELS="ai-audit"
+
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical)
+                LABELS="$LABELS,priority-critical"
                 ;;
-              "Média"|"média"|"Medium"|"medium")
-                LABEL="--label priority-medium"
+              alta|high)
+                LABELS="$LABELS,priority-high"
                 ;;
-              "Baixa"|"baixa"|"Low"|"low")
-                LABEL="--label priority-low"
+              média|media|medium)
+                LABELS="$LABELS,priority-medium"
                 ;;
-              *)
-                LABEL=""
+              baixa|low)
+                LABELS="$LABELS,priority-low"
                 ;;
             esac
 
-            # Add category label
-            CATEGORY_LABEL=""
-            if [ -n "$CATEGORY" ] && [ "$CATEGORY" != "Geral" ]; then
-              CATEGORY_SLUG=$(echo "$CATEGORY" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
-              CATEGORY_LABEL="--label category-$CATEGORY_SLUG"
+            CATEGORY_SLUG=$(echo "$CATEGORY" \
+              | tr '[:upper:]' '[:lower:]' \
+              | sed 's/ /-/g' \
+              | sed 's/[^a-z0-9_-]//g')
+
+            if [ -n "$CATEGORY_SLUG" ]; then
+              CATEGORY_LABEL="category-$CATEGORY_SLUG"
+
+              create_label_if_not_exists "$CATEGORY_LABEL" "1D76DB"
+
+              LABELS="$LABELS,$CATEGORY_LABEL"
             fi
 
-            # Create the issue with proper labels
-            if [ -n "$LABEL" ] || [ -n "$CATEGORY_LABEL" ]; then
-              gh issue create \
-                --title "$TITLE" \
-                --body "$BODY" \
-                $LABEL \
-                $CATEGORY_LABEL 2>/dev/null || {
-                  # Fallback without labels if label doesn't exist
-                  gh issue create \
-                    --title "$TITLE" \
-                    --body "$BODY" 2>/dev/null
-                }
-            else
-              gh issue create \
-                --title "$TITLE" \
-                --body "$BODY" 2>/dev/null
-            fi
+            # ================================
+            # CREATE ISSUE
+            # ================================
+
+            gh issue create \
+              --title "$TITLE" \
+              --body "$BODY" \
+              --label "$LABELS"
 
             if [ $? -eq 0 ]; then
               echo "✅ Issue criada: $TITLE"
@@ -451,7 +792,6 @@ jobs:
               echo "❌ Erro ao criar issue: $TITLE"
             fi
 
-            # Small delay to avoid rate limiting
             sleep 1
 
           done
