@@ -218,13 +218,37 @@ jobs:
 
           echo "$RESPONSE" > response.json
 
-          AI_CONTENT=$(jq -r '
-            .choices[0].message.content //
-            .choices[0].message.reasoning //
-            .choices[0].delta.content //
-            .choices[0].text //
-            empty
-          ' response.json)
+          AI_CONTENT=$(python3 - <<'PY'
+          import json
+          import re
+
+          with open("response.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          text = ""
+
+          try:
+              choice = data["choices"][0]
+
+              text = (
+                  choice.get("message", {}).get("content")
+                  or choice.get("message", {}).get("reasoning")
+                  or choice.get("delta", {}).get("content")
+                  or choice.get("text")
+                  or ""
+              )
+
+          except Exception:
+              pass
+
+          if text:
+              match = re.search(r'\{[\s\S]*\}', text)
+              if match:
+                  print(match.group(0))
+              else:
+                  print(text)
+          PY
+          )
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
