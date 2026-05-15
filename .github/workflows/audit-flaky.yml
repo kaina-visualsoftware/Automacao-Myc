@@ -201,7 +201,7 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
             '{
-              model: "deepseek/deepseek-r1:free",
+              model: "deepseek/deepseek-r1",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
               max_tokens: 2500,
@@ -215,7 +215,7 @@ jobs:
 
           echo "$RESPONSE" > response.json
 
-          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+          AI_CONTENT=$(jq -r '.choices[0].message.content // .choices[0].delta.content // empty ' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
