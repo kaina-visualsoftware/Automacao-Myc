@@ -64,7 +64,7 @@ ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.p
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
 ${TELA_COMPRAS_CONSIGNADAS}                            tela_Compra_consignada.png
 ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}                 tela_LanCompraConsignada.png
-${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                 tela_Agrupamento.png
+${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                  tela_Agrupamento.png
 ${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
 
 # Telas Avisos
@@ -89,6 +89,7 @@ ${BT_EXCLUIR}                                          bt_Excluir.png
 ${BT_SALVAR}                                           bt_Salvar.png
 ${BT_LISTAR}                                           bt_Listar.png
 ${BT_OK}                                               bt_Ok.png
+${BT_INCLUIR}                                          bt_Incluir.png
 
 # Inputs
 ${INPUT_COD_CLIENTE}                                   lb_CodCliente.png
@@ -1575,6 +1576,61 @@ Inserir Produto normal - Necessita de estoque
         
     # END
 
+
+Inserir Mesmo Produto normal - Necessita de estoque
+
+    ${Qtde_Minima_Estoque}    Set Variable    0
+
+    IF    '${TELA}' == 'NFeSaidasManual'
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT    KEY.P
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Click    ${BT_SETA_DIREITA}
+        Sleep    ${SLEEP_BAIXO}
+        
+        Type With Modifiers    P    SHIFT
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT    KEY.P
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    IF    ${Parametro_QuantidadePadraoProduto} == 0
+
+        ${Qtde_Minima_Estoque}    Set Variable    1
+
+    ELSE
+
+        ${Qtde_Minima_Estoque}    Set Variable    ${Parametro_QuantidadePadraoProduto}
+
+    END
+
+
+    
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    ${COD_PRODUTO} 
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Set Test Variable    ${Qtde_Minima_Estoque}
+
+    # IF    ${TesteUtilizaDescontoMaximoProduto}
+
+    #     Altera o desconto máximo do produto
+        
+    # END
+
+
+
 Inserir Produto sem comissão por linha
     [Arguments]    ${permite_sem_estoque}=${False}
 
@@ -2971,5 +3027,14 @@ Clicar no botão Ok
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_OK}    5
     IF    ${existe}
         SikuliLibrary.Click    ${BT_OK}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+
+
+Clicar no botão Incluir
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_INCLUIR}
         Sleep    ${SLEEP_BAIXO}
     END
