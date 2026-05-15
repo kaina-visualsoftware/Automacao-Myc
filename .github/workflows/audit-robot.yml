@@ -215,10 +215,13 @@ jobs:
               response_format: { "type": "json_object" }
             }')
 
-          RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-            -H "Authorization: Bearer $NVIDIA_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$REQUEST_BODY")
+          RESPONSE=$(curl -s \
+          --request POST \
+          --url "https://integrate.api.nvidia.com/v1/chat/completions" \
+          --header "Authorization: Bearer $NVIDIA_API_KEY" \
+          --header "Accept: application/json" \
+          --header "Content-Type: application/json" \
+          --data "$REQUEST_BODY")
 
           echo "$RESPONSE" > response.json
 
