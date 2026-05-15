@@ -14,191 +14,260 @@ permissions:
 jobs:
   auto-pr:
     runs-on: ubuntu-latest
-
     steps:
-      - name: CHECKOUT
+      - name: 📥 CHECKOUT
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: INSTALL JQ
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: GET GIT DIFF
+      - name: 📡 FETCH DEVELOP
         run: |
-          git fetch origin develop
+          git fetch origin develop --update-head-ok
+          git fetch origin ${{ github.ref_name }}
 
-          git diff origin/develop..HEAD | head -c 15000 > diff.txt
-
-          if [ ! -s diff.txt ]; then
+      - name: 🔍 GET GIT DIFF
+        run: |
+          echo "Branch atual: ${{ github.ref_name }}"
+          
+          # Pega o diff entre develop e a branch atual
+          git diff origin/develop...HEAD --no-color > diff.txt
+          
+          # Conta linhas para verificar se tem alterações
+          DIFF_LINES=$(wc -l < diff.txt)
+          
+          if [ "$DIFF_LINES" -eq 0 ]; then
             echo "HAS_DIFF=false" >> $GITHUB_ENV
+            echo "⚠️ Nenhuma alteração detectada."
           else
             echo "HAS_DIFF=true" >> $GITHUB_ENV
+            echo "✅ Alterações encontradas ($DIFF_LINES linhas)"
           fi
 
-      - name: GENERATE AI DESCRIPTION
+      - name: 📝 GET GIT LOG
+        if: env.HAS_DIFF == 'true'
+        run: |
+          # Pega todos os commits da branch em relação ao develop
+          git log origin/develop...HEAD --pretty=format:"%h - %s" > commits.txt
+          
+          echo "📋 Commits encontrados:"
+          cat commits.txt
+
+      - name: 📂 ANALYZE FILES CHANGED
+        if: env.HAS_DIFF == 'true'
+        run: |
+          echo "🔍 Analisando arquivos alterados..."
+          
+          # Lista de arquivos criados, modificados e deletados
+          git diff --name-status origin/develop...HEAD > files_status.txt
+          
+          # Separar por tipo
+          echo "=== ARQUIVOS CRIADOS ===" > files_analysis.txt
+          git diff --name-status origin/develop...HEAD | grep "^A" | cut -f2 >> files_analysis.txt
+          
+          echo -e "\n=== ARQUIVOS MODIFICADOS ===" >> files_analysis.txt
+          git diff --name-status origin/develop...HEAD | grep "^M" | cut -f2 >> files_analysis.txt
+          
+          echo -e "\n=== ARQUIVOS DELETADOS ===" >> files_analysis.txt
+          git diff --name-status origin/develop...HEAD | grep "^D" | cut -f2 >> files_analysis.txt
+          
+          # Conta alterações por arquivo
+          echo -e "\n=== ESTATÍSTICAS ===" >> files_analysis.txt
+          echo "Total de arquivos criados: $(git diff --name-status origin/develop...HEAD | grep "^A" | wc -l)" >> files_analysis.txt
+          echo "Total de arquivos modificados: $(git diff --name-status origin/develop...HEAD | grep "^M" | wc -l)" >> files_analysis.txt
+          echo "Total de arquivos deletados: $(git diff --name-status origin/develop...HEAD | grep "^D" | wc -l)" >> files_analysis.txt
+          
+          # Diff de linhas por arquivo
+          echo -e "\n=== ALTERAÇÕES POR ARQUIVO ===" >> files_analysis.txt
+          git diff --stat origin/develop...HEAD >> files_analysis.txt
+          
+          echo "✅ Análise de arquivos concluída"
+          cat files_analysis.txt
+
+      - name: 📊 GET FILE CONTENT SUMMARY
+        if: env.HAS_DIFF == 'true'
+        run: |
+          echo "📄 Gerando resumo de conteúdo dos arquivos..."
+          
+          # Para cada arquivo criado, pega as primeiras 500 linhas
+          > file_contents_summary.txt
+          
+          echo "=== RESUMO DE ARQUIVOS CRIADOS ===" >> file_contents_summary.txt
+          git diff --name-status origin/develop...HEAD | grep "^A" | cut -f2 | while read file; do
+            echo "" >> file_contents_summary.txt
+            echo "FILE: $file" >> file_contents_summary.txt
+            echo "---" >> file_contents_summary.txt
+            git show HEAD:"$file" 2>/dev/null | head -100 >> file_contents_summary.txt
+            echo "" >> file_contents_summary.txt
+          done
+          
+          # Para arquivos modificados, pega o diff
+          echo -e "\n=== RESUMO DE DIFF DOS ARQUIVOS PRINCIPAIS ===" >> file_contents_summary.txt
+          git diff origin/develop...HEAD --no-color | head -2000 >> file_contents_summary.txt
+          
+          wc -l < file_contents_summary.txt
+
+      - name: 🤖 GENERATE AI DESCRIPTION
         id: ai
         if: env.HAS_DIFF == 'true'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          echo "🤖 Gerando descrição detalhada com IA..."
 
-          echo "GERANDO DESCRICAO IA..."
+          # Combina todas as informações
+          COMMITS_CONTENT=$(cat commits.txt)
+          FILES_ANALYSIS=$(cat files_analysis.txt)
+          FILE_CONTENTS=$(head -c 8000 file_contents_summary.txt)
+          DIFF_CONTENT=$(head -c 10000 diff.txt)
 
-          DIFF_CONTENT=$(cat diff.txt)
+          # Cria um prompt muito mais detalhado
+          read -r -d '' PROMPT << 'EOF' || true
+          Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
 
-          PROMPT=$(cat <<EOF
-          Analise o diff abaixo e gere:
+          ## INFORMAÇÕES DA PULL REQUEST
 
-          1. Um TITULO CURTO com no máximo 60 caracteres (obrigatório).
-          - Resuma a alteração principal.
-          - Não use prefixos (feat:, fix:, chore:, etc).
-          - Não use aspas, crases ou markdown.
-          - Seja objetivo e claro.
+          ### COMMITS REALIZADOS:
+          ${COMMITS_CONTENT}
 
-          2. Uma DESCRIÇÃO COMPLETA em markdown contendo:
-          - Resumo técnico
-          - O que foi alterado
-          - Impactos
-          - Como testar
+          ### ANÁLISE DE ARQUIVOS:
+          ${FILES_ANALYSIS}
 
-          RETORNE EXATAMENTE NESTE FORMATO:
+          ### AMOSTRA DE CONTEÚDO DOS ARQUIVOS:
+          ${FILE_CONTENTS}
 
-          TITLE: Seu título aqui (máximo 60 caracteres)
+          ### DIFF DO CÓDIGO:
+          ${DIFF_CONTENT}
 
-          BODY:
-          # Descrição da Pull Request
+          ## INSTRUÇÃO
 
-          DIFF:
+          Analise TUDO acima e gere uma descrição profissional de Pull Request em JSON.
 
-          $DIFF_CONTENT
+          Retorne EXATAMENTE neste formato JSON (sem markdown, sem backticks, apenas JSON puro):
+
+          {
+            "title": "Título com máximo 65 caracteres, claro e objetivo",
+            "description": "#Descrição da Pull Request\n\n##Resumo Técnico\nDescreva em 2-3 linhas o que foi feito e por que.\n\n##Arquivos Alterados\n\n### Arquivos Criados:\n- caminho/arquivo.ts: Descrição do que o arquivo faz\n- caminho/outro.ts: Descrição detalhada\n\n### Arquivos Modificados:\n- caminho/existente.ts: O que foi alterado e por quê\n- src/types/index.ts: Que tipos foram adicionados\n\n### Arquivos Deletados:\n- old/arquivo.ts: Por que foi deletado\n\n##O Que Foi Alterado\n\n### Recurso/Componente 1\nDescreva o que mudou, qual era o problema, como foi resolvido.\n\n### Recurso/Componente 2\nDescreva mudanças específicas com contexto.\n\n##Impactos\n\n### Performance\n- Se teve algum impacto em performance\n\n### Segurança\n- Se tem impactos de segurança\n\n### Breaking Changes\n- Liste TODAS as breaking changes se houver\n- Se não tiver, remova esta seção\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n##Como Testar\n\n1. Passo 1 para testar\n2. Passo 2 para testar\n3. Passo 3 esperado resultado\n\nOu descreva:\n- Quais arquivos de teste foram adicionados\n- Como rodar os testes: npm test ou equivalente\n- Casos de teste cobertos\n\n##Recursos Adicionais\n- Links relevantes se houver\n- Referências a issues\n- Documentação relacionada"
+          }
+
+          IMPORTANTE:\n- Seja ESPECÍFICO sobre quais arquivos foram criados/modificados\n- Explique o PROPÓSITO de cada arquivo novo\n- Descreva EXATAMENTE o que mudou em cada arquivo\n- Inclua TODOS os impactos potenciais\n- Explique COMO TESTAR a mudança\n- Retorne APENAS JSON válido, sem formatação adicional
           EOF
+
+          # Substitui as variáveis no prompt
+          PROMPT=$(eval "echo \"$PROMPT\"")
+
+          # Cria o request JSON de forma segura
+          REQUEST_BODY=$(cat <<'JSONEOF'
+          {
+            "model": "openai/gpt-4o-mini",
+            "messages": [
+              {
+                "role": "system",
+                "content": "Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português. Retorne APENAS JSON válido, sem backticks ou Markdown."
+              },
+              {
+                "role": "user",
+                "content": ""
+              }
+            ],
+            "temperature": 0.3,
+            "max_tokens": 2000
+          }
+          JSONEOF
           )
 
-          jq -n \
-            --arg model "openai/gpt-4.1-mini" \
-            --arg prompt "$PROMPT" \
-            '{
-              model: $model,
-              messages: [
-                {
-                  role: "system",
-                  content: "Você é um engenheiro especialista em gerar Pull Requests profissionais em português."
-                },
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-              temperature: 0.3,
-              max_tokens: 1200
-            }' > request.json
+          # Adiciona o prompt ao request de forma segura
+          REQUEST_BODY=$(echo "$REQUEST_BODY" | jq --arg prompt "$PROMPT" '.messages[0].content = $prompt')
 
+          echo "📤 Enviando requisição para IA..."
+          
           RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
             -H "Authorization: Bearer $OPENROUTER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d @request.json)
+            -d "$REQUEST_BODY")
 
-          echo "$RESPONSE"
+          echo "🔍 Debug - Response recebia:" >&2
+          echo "$RESPONSE" | jq . >&2
 
+          # Extrai o conteúdo da resposta
           AI_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
-          if [ -z "$AI_CONTENT" ] || [ "$AI_CONTENT" = "null" ]; then
-
-            TITLE="PR: ${{ github.ref_name }}"
-            BODY="## PR AUTOMATICO\n\nBranch: ${{ github.ref_name }}"
-
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ Erro ao chamar a IA. Usando fallback."
+            TITLE="feat: Alterações em ${{ github.ref_name }}"
+            BODY="## 📋 PR Automática\n\nBranch: \`${{ github.ref_name }}\`\n\nAlterações detectadas. Descrição gerada automaticamente."
           else
-
-            TITLE=$(echo "$AI_CONTENT" \
-              | grep "^TITLE:" \
-              | head -n 1 \
-              | sed 's/^TITLE:[ ]*//')
-
-            BODY=$(echo "$AI_CONTENT" \
-              | sed -n '/^BODY:/,$p' \
-              | sed '1d')
-
-            TITLE=$(echo "$TITLE" \
-              | cut -c1-75 \
-              | sed 's/["`]//g')
-
-            if [ -z "$TITLE" ]; then
-              TITLE="PR: ${{ github.ref_name }}"
+            # Debug: mostra o conteúdo bruto
+            echo "AI_CONTENT bruto:" >&2
+            echo "$AI_CONTENT" >&2
+            
+            # Tenta extrair JSON da resposta
+            AI_JSON=$(echo "$AI_CONTENT" | jq . 2>/dev/null)
+            
+            if [ $? -ne 0 ]; then
+              echo "⚠️ Tentando limpar JSON malformado..." >&2
+              # Tenta extrair o JSON mesmo que tenha lixo antes/depois
+              AI_JSON=$(echo "$AI_CONTENT" | sed -n '/{/,$p' | sed -n '/}/q;p' | jq . 2>/dev/null || echo '{}')
             fi
+            
+            TITLE=$(echo "$AI_JSON" | jq -r '.title // empty' 2>/dev/null)
+            BODY=$(echo "$AI_JSON" | jq -r '.description // empty' 2>/dev/null)
 
-            if [ -z "$BODY" ]; then
-              BODY="## PR AUTOMATICO\n\nBranch: ${{ github.ref_name }}"
+            # Se não conseguiu extrair, usa fallback
+            if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
+              echo "⚠️ Não conseguiu extrair título, usando fallback"
+              TITLE="feat: ${{ github.ref_name }}"
             fi
-
+            if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
+              echo "⚠️ Não conseguiu extrair body, usando fallback"
+              BODY="## 📋 Alterações Detectadas\n\nBranch: \`${{ github.ref_name }}\`"
+            fi
           fi
 
-          # === FORÇA LIMITE DE 75 CARACTERES ===
-          TITLE=$(echo "$TITLE" | sed 's/["`'\'']//g' | tr -d '\n' | cut -c1-75 | sed 's/[[:space:]]*$//')
+          # Limpa o título (remove caracteres problemáticos e limita tamanho)
+          TITLE=$(echo "$TITLE" | sed 's/["`'\'']//g' | cut -c1-65 | sed 's/[[:space:]]*$//')
 
-          # Se após corte ficar vazio, usa fallback
+          # Garante um título mínimo válido
           if [ -z "$TITLE" ] || [ ${#TITLE} -lt 5 ]; then
-            TITLE="PR: ${{ github.ref_name }}"
+            TITLE="feat: ${{ github.ref_name }}"
           fi
 
-          echo "TITLE FINAL: $TITLE"
+          # Salva outputs
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: CREATE OR UPDATE PR
+          echo "✅ Título gerado: $TITLE"
+          echo "✅ Descrição gerada com sucesso"
+
+      - name: 🚀 CREATE OR UPDATE PULL REQUEST
         if: env.HAS_DIFF == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-
           BRANCH="${{ github.ref_name }}"
+          TITLE="${{ steps.ai.outputs.title }}"
+          BODY="${{ steps.ai.outputs.body }}"
 
-          PR_NUMBER=$(gh pr list \
-            --head "$BRANCH" \
-            --base develop \
-            --state open \
-            --json number \
-            --jq '.[0].number')
-
-          BODY_FILE="pr_body.md"
-
-          echo '${{ steps.ai.outputs.body }}' \
-            | sed 's/^```markdown//g' \
-            | sed 's/^```//g' \
-            > $BODY_FILE
-
-          TITLE=$(cat $BODY_FILE \
-            | grep -v '^#' \
-            | grep -v '^$' \
-            | head -n 1 \
-            | cut -c1-80)
-
-          if [ -z "$TITLE" ]; then
-            TITLE="PR: $BRANCH"
-          fi
+          # Busca PR existente
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --base develop --state open --json number --jq '.[0].number // empty')
 
           if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
-
-            echo "CRIANDO NOVO PR"
-
+            echo "🚀 Criando nova Pull Request..."
             gh pr create \
               --base develop \
               --head "$BRANCH" \
               --title "$TITLE" \
-              --body-file $BODY_FILE
-
+              --body "$BODY"
+            echo "✅ PR criada com sucesso!"
           else
-
-            echo "ATUALIZANDO PR #$PR_NUMBER"
-
+            echo "🔄 Atualizando Pull Request #$PR_NUMBER..."
             gh pr edit "$PR_NUMBER" \
               --title "$TITLE" \
-              --body-file $BODY_FILE
-
+              --body "$BODY"
+            echo "✅ PR atualizada com sucesso!"
           fi
 
-      - name: SKIP - NO DIFF
+      - name: ⏭️ SKIP - NO DIFF
         if: env.HAS_DIFF == 'false'
-        run: echo "⚠️ Sem alterações - pulando criação do PR"
+        run: echo "⏭️ Sem alterações para gerar PR. Nenhuma ação realizada."
