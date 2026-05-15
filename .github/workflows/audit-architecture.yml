@@ -40,38 +40,37 @@ jobs:
       - name: 📄 BUILD ARCHITECTURE CONTEXT
         run: |
           > arch_context.txt
-          echo "===== ESTRUTURA DO PROJETO =====" >> arch_context.txt
-          cat all_files.txt >> arch_context.txt
+          echo "===== ESTRUTURA DO PROJETO (Resumida) =====" >> arch_context.txt
+          cat all_files.txt | head -40 >> arch_context.txt
           
           echo "" >> arch_context.txt
-          echo "===== ARQUIVOS PRINCIPAIS (amostra) =====" >> arch_context.txt
+          echo "===== AMOSTRA DE ARQUIVOS IMPORTANTES =====" >> arch_context.txt
           
-          # Pegamos apenas os 25 arquivos mais importantes (evita estourar limite)
-          head -25 all_files.txt | while read file; do
+          # Apenas 15 arquivos + apenas primeiras linhas
+          head -15 all_files.txt | while read file; do
             echo "" >> arch_context.txt
             echo "FILE: $file" >> arch_context.txt
             echo "----------------------------------------" >> arch_context.txt
-            head -120 "$file" >> arch_context.txt 2>/dev/null || true
+            head -60 "$file" >> arch_context.txt 2>/dev/null || true
+            echo "... (truncado)" >> arch_context.txt
           done
           
           echo "" >> arch_context.txt
-          echo "===== HISTÓRICO GIT =====" >> arch_context.txt
-          git log -15 --pretty=format:"%h - %an - %s" >> arch_context.txt
+          echo "===== ÚLTIMOS COMMITS =====" >> arch_context.txt
+          git log -10 --pretty=format:"%h - %an - %s" >> arch_context.txt
           
-          echo "✅ Contexto de arquitetura gerado ($(wc -c < arch_context.txt) bytes)"
+          echo "✅ Contexto gerado ($(wc -c < arch_context.txt) bytes)"
 
       - name: 🤖 AI ARCHITECTURE AUDIT
         id: ai_arch_audit
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          PROJECT_CONTEXT=$(head -c 90000 arch_context.txt)
+          PROJECT_CONTEXT=$(head -c 65000 arch_context.txt)
 
           PROMPT=$(cat <<'EOF'
           You are a WORLD-CLASS TEST AUTOMATION ARCHITECT and ENTERPRISE QUALITY ENGINEER.
-
           Your sole mission is to perform a DEEP ARCHITECTURAL AUDIT of the test project below.
-
           You have 20+ years of experience with:
           - Enterprise test automation architecture
           - Test pyramid design and implementation
@@ -154,9 +153,7 @@ jobs:
           ========================
           RETURN FORMAT
           ========================
-
           RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
-
           {
             "issues": [
               {
