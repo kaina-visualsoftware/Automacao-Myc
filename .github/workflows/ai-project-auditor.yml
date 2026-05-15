@@ -6,7 +6,7 @@ on:
       - develop
 
   workflow_dispatch:
-
+  
 permissions:
   contents: read
   issues: write
@@ -127,10 +127,7 @@ jobs:
           - sugestão técnica
           - exemplo prático
 
-          RETORNE APENAS JSON VÁLIDO.
-
-          FORMATO:
-
+          **RETORNE APENAS JSON VÁLIDO**, sem explicação, sem markdown, sem \`\`\`json, sem texto adicional.
           {
             "issues": [
               {
@@ -145,7 +142,6 @@ jobs:
           }
 
           PROJETO:
-
           $PROJECT_CONTEXT
           EOF
           )
@@ -161,7 +157,8 @@ jobs:
                 }
               ],
               temperature: 0.2,
-              max_tokens: 4000
+              max_tokens: 4000,
+              response_format: { "type": "json_object" }
             }')
 
           RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
@@ -170,21 +167,34 @@ jobs:
             -d "$REQUEST_BODY")
 
           echo "$RESPONSE" > response.json
-
           echo "📥 Resposta recebida"
 
           AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
+            cat response.json
             exit 1
           fi
 
           echo "$AI_CONTENT" > ai_raw.txt
 
-          # Tenta converter para JSON válido
+          # === CORREÇÃO DO ERRO DE PARSE ===
           cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
-          cat ai_raw.txt | sed -n '/{/,$p' | sed -n '/}/q;p' | jq . > ai_issues.json
+          python3 -c '
+          import sys, json, re
+          text = sys.stdin.read()
+          match = re.search(r"\{[\s\S]*\}", text)
+          if match:
+              try:
+                  data = json.loads(match.group(0))
+                  print(json.dumps(data, ensure_ascii=False))
+              except:
+                  print("{\"issues\": []}")
+          else:
+              print("{\"issues\": []}")
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
+                    echo '{"issues": []}' > ai_issues.json
 
           echo "✅ JSON validado"
 
