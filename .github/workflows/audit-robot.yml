@@ -1,4 +1,4 @@
-name: 🤖 ROBOT FRAMEWORK AUDITOR
+name: ROBOT FRAMEWORK AUDITOR
 
 on:
   push:
@@ -14,7 +14,6 @@ permissions:
 jobs:
   audit-robot:
     runs-on: ubuntu-latest
-
     steps:
       - name: 📥 CHECKOUT
         uses: actions/checkout@v4
@@ -27,41 +26,39 @@ jobs:
       - name: 📂 SCAN ROBOT FILES
         run: |
           echo "🔍 Escaneando arquivos Robot Framework..."
-
           find . \
             -type f \
             \( -name "*.robot" -o -name "*.resource" \) \
             ! -path "*/node_modules/*" \
             ! -path "*/.git/*" \
             > robot_files.txt
-
+          
           echo "✅ Arquivos Robot encontrados:"
           wc -l robot_files.txt
 
       - name: 📄 BUILD ROBOT CONTEXT
         run: |
           echo "📄 Gerando contexto Robot Framework..."
-
           > robot_context.txt
-
           echo "===== ESTRUTURA ROBOT =====" >> robot_context.txt
-          cat robot_files.txt >> robot_context.txt
-
+          cat robot_files.txt | head -40 >> robot_context.txt
+          
           echo "" >> robot_context.txt
-          echo "===== CONTEÚDO COMPLETO =====" >> robot_context.txt
-
-          while read file; do
+          echo "===== AMOSTRA DE ARQUIVOS IMPORTANTES =====" >> robot_context.txt
+          
+          head -15 robot_files.txt | while read file; do
             echo "" >> robot_context.txt
             echo "FILE: $file" >> robot_context.txt
             echo "----------------------------------------" >> robot_context.txt
-            cat "$file" >> robot_context.txt 2>/dev/null || true
-          done < robot_files.txt
-
+            head -90 "$file" >> robot_context.txt 2>/dev/null || true
+            echo "... (truncado)" >> robot_context.txt
+          done
+          
           echo "" >> robot_context.txt
           echo "===== ÚLTIMOS COMMITS =====" >> robot_context.txt
-          git log -10 --pretty=format:"%h - %s" >> robot_context.txt
-
-          echo "✅ Contexto Robot gerado"
+          git log -12 --pretty=format:"%h - %an - %s" >> robot_context.txt
+          
+          echo "✅ Contexto Robot gerado ($(wc -c < robot_context.txt) bytes)"
 
       - name: 🤖 AI ROBOT AUDIT
         id: ai_robot_audit
@@ -69,135 +66,134 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           echo "🤖 Executando auditoria Robot Framework..."
-
-          PROJECT_CONTEXT=$(head -c 120000 robot_context.txt)
+          PROJECT_CONTEXT=$(head -c 55000 robot_context.txt)
 
           PROMPT=$(cat <<EOF
-          You are a WORLD-CLASS ROBOT FRAMEWORK EXPERT and AUTOMATION ARCHITECT.
+          Você é um ESPECIALISTA MUNDIAL EM ROBOT FRAMEWORK e ARQUITETO DE AUTOMAÇÃO.
 
-          Your sole mission is to perform a DEEP, SURGICAL Robot Framework code audit.
+          Sua única missão é realizar uma AUDITORIA PROFUNDA E CIRÚRGICA no código Robot Framework do projeto abaixo.
 
-          You have 15+ years of experience with:
-          - Robot Framework internals and best practices
+          Você possui 15+ anos de experiência com:
+          - Internals e boas práticas do Robot Framework
           - SeleniumLibrary, Playwright, RequestsLibrary, AppiumLibrary
-          - Keyword-Driven Testing architecture
-          - Data-Driven Testing design
-          - Resource file design and organization
-          - Robot Framework variable scoping and lifecycle
-          - Custom Library development (Python + Robot)
-          - Page Object Model applied to Robot Framework
-          - Robot Framework reporting and logging
-          - RPA with Robot Framework
+          - Arquitetura de testes orientada a keywords (Keyword-Driven Testing)
+          - Design de testes orientados a dados (Data-Driven Testing)
+          - Design e organização de arquivos resource
+          - Escopo e ciclo de vida de variáveis no Robot Framework
+          - Desenvolvimento de bibliotecas customizadas (Python + Robot)
+          - Page Object Model aplicado ao Robot Framework
+          - Relatórios e logging no Robot Framework
+          - RPA com Robot Framework
 
           ========================
-          YOUR ROBOT AUDIT FRAMEWORK
+          SEU FRAMEWORK DE AUDITORIA ROBOT
           ========================
 
-          LAYER 1 — KEYWORD DESIGN
-          - Does the keyword do ONE thing only? (Single Responsibility)
-          - Is the keyword name a clear, business-readable action?
-          - Does the keyword name use the correct verb form? (e.g., "Login As Admin User")
-          - Is the keyword too long? (>15 steps is a red flag)
-          - Does the keyword have too many parameters? (>5 is a red flag)
-          - Are parameters documented? (Documentation section)
-          - Are default parameter values used correctly?
-          - Are there keywords that are never called? (dead keywords)
-          - Are there duplicated keywords across different resource files?
-          - Are there keywords that should be broken into sub-keywords?
-          - Is the keyword abstraction level consistent? (mixing high/low level)
-          - Are there Setup/Teardown keywords that are too complex?
+          CAMADA 1 — DESIGN DE KEYWORDS
+          - A keyword faz UMA única coisa? (Responsabilidade Única)
+          - O nome da keyword é uma ação clara e legível para o negócio?
+          - O nome da keyword usa a forma verbal correta? (ex.: "Realizar Login Como Usuário Administrador")
+          - A keyword é longa demais? (mais de 15 passos é um sinal de alerta)
+          - A keyword possui parâmetros em excesso? (mais de 5 é um sinal de alerta)
+          - Os parâmetros estão documentados? (seção Documentation)
+          - Os valores padrão de parâmetros estão sendo usados corretamente?
+          - Existem keywords que nunca são chamadas? (keywords mortas)
+          - Existem keywords duplicadas em diferentes arquivos resource?
+          - Existem keywords que deveriam ser decompostas em sub-keywords?
+          - O nível de abstração da keyword é consistente? (mistura de alto e baixo nível)
+          - Existem keywords de Setup/Teardown excessivamente complexas?
 
-          LAYER 2 — VARIABLE USAGE
-          - Are there hardcoded strings that should be variables?
-          - Are variables named using SCREAMING_SNAKE_CASE? (${MY_VAR})
-          - Are suite-level variables leaking into test scope?
-          - Are there variables set in one test that affect another? (state pollution)
-          - Is Set Global Variable / Set Suite Variable overused?
-          - Are locators hardcoded in test files instead of resource files?
-          - Are environment-specific values properly externalized?
-          - Are secrets/credentials hardcoded in test files?
+          CAMADA 2 — USO DE VARIÁVEIS
+          - Existem strings hardcoded que deveriam ser variáveis?
+          - As variáveis estão nomeadas usando SCREAMING_SNAKE_CASE? (${MINHA_VAR})
+          - Variáveis de nível de suíte estão vazando para o escopo dos testes?
+          - Existem variáveis definidas em um teste que afetam outro? (poluição de estado)
+          - Set Global Variable / Set Suite Variable estão sendo usados em excesso?
+          - Locators estão hardcoded nos arquivos de teste em vez de nos arquivos resource?
+          - Valores específicos de ambiente estão devidamente externalizados?
+          - Credenciais/segredos estão hardcoded nos arquivos de teste?
 
-          LAYER 3 — WAIT AND SYNCHRONIZATION
-          - Is Sleep used anywhere? (always a red flag)
-          - Are waits properly using Wait Until... keywords?
-          - Are wait timeouts hardcoded instead of using variables?
-          - Are there missing waits before critical interactions?
-          - Are there race conditions in async scenarios?
-          - Is Wait Until Keyword Succeeds used correctly?
-          - Are implicit vs explicit waits conflicting?
+          CAMADA 3 — WAITS E SINCRONIZAÇÃO
+          - Sleep está sendo usado em algum lugar? (sempre um sinal de alerta)
+          - Os waits estão usando corretamente as keywords Wait Until...?
+          - Os timeouts de wait estão hardcoded em vez de usar variáveis?
+          - Existem waits ausentes antes de interações críticas?
+          - Existem race conditions em cenários assíncronos?
+          - Wait Until Keyword Succeeds está sendo usado corretamente?
+          - Waits implícitos e explícitos estão em conflito?
 
-          LAYER 4 — RESOURCE ORGANIZATION
-          - Are resources logically organized by domain/feature?
-          - Are there resources that do too many things? (God resource)
-          - Are locators stored in dedicated resource files?
-          - Are test data / variables separated from logic?
-          - Is there a clear naming convention for resource files?
-          - Are imports organized consistently? (Library → Resource → Variables)
-          - Are there circular resource imports?
-          - Are there duplicate Library imports across files?
+          CAMADA 4 — ORGANIZAÇÃO DE RESOURCES
+          - Os resources estão organizados logicamente por domínio/funcionalidade?
+          - Existem resources que fazem coisas demais? (God resource)
+          - Os locators estão armazenados em arquivos resource dedicados?
+          - Os dados de teste / variáveis estão separados da lógica?
+          - Existe uma convenção de nomenclatura clara para os arquivos resource?
+          - Os imports estão organizados de forma consistente? (Library → Resource → Variables)
+          - Existem imports circulares entre resources?
+          - Existem imports duplicados de Library em múltiplos arquivos?
 
-          LAYER 5 — TEST STRUCTURE
-          - Do tests have proper Setup and Teardown?
-          - Are tests properly isolated? (no shared state between tests)
-          - Is test data reset between tests?
-          - Are there test dependencies? (test A must run before test B)
-          - Are tags used for proper test filtering?
-          - Are there tests without any assertions?
-          - Are assertions using meaningful messages?
-          - Is there excessive UI interaction that could be replaced by API calls?
+          CAMADA 5 — ESTRUTURA DOS TESTES
+          - Os testes possuem Setup e Teardown adequados?
+          - Os testes estão devidamente isolados? (sem estado compartilhado entre testes)
+          - Os dados de teste são resetados entre os testes?
+          - Existem dependências entre testes? (teste A precisa rodar antes do teste B)
+          - As tags estão sendo usadas para filtrar os testes corretamente?
+          - Existem testes sem nenhuma asserção?
+          - As asserções estão usando mensagens significativas?
+          - Existe interação excessiva com UI que poderia ser substituída por chamadas de API?
 
-          LAYER 6 — ANTI-PATTERNS
-          - "God keyword" — keyword doing too many things
-          - "Hardcoded locator" — XPath/CSS directly in test steps
-          - "Sleep-driven testing" — using Sleep instead of proper waits
-          - "State pollution" — tests depending on previous test state
-          - "Dead keyword" — keyword defined but never used
-          - "Copy-paste keyword" — duplicated logic in multiple keywords
-          - "Magic string" — unexplained hardcoded values
-          - "Implicit assertions" — no explicit Should Be / Should Contain
-          - "God resource" — one resource file doing everything
-          - "Test without cleanup" — no teardown to reset state
-
-          ========================
-          AUDIT OUTPUT RULES
-          ========================
-
-          - ONLY report REAL issues found in provided files
-          - DO NOT invent file names or keywords
-          - ALWAYS cite the EXACT file and keyword name
-          - ALWAYS show the CURRENT problematic code
-          - ALWAYS show the IDEAL refactored version
-          - Generate at most 10 issues
-          - Focus on HIGH-IMPACT issues first
+          CAMADA 6 — ANTI-PATTERNS
+          - "God keyword" — keyword fazendo coisas demais
+          - "Locator hardcoded" — XPath/CSS diretamente nos passos do teste
+          - "Sleep-driven testing" — uso de Sleep em vez de waits adequados
+          - "Poluição de estado" — testes dependendo do estado de testes anteriores
+          - "Keyword morta" — keyword definida mas nunca utilizada
+          - "Keyword copy-paste" — lógica duplicada em múltiplas keywords
+          - "Magic string" — valores hardcoded sem explicação
+          - "Asserções implícitas" — ausência de Should Be / Should Contain explícitos
+          - "God resource" — um único arquivo resource fazendo tudo
+          - "Teste sem limpeza" — ausência de teardown para resetar o estado
 
           ========================
-          RETURN FORMAT
+          REGRAS DE SAÍDA DA AUDITORIA
           ========================
 
-          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+          - Reporte APENAS problemas REAIS encontrados nos arquivos fornecidos
+          - NÃO invente nomes de arquivos ou keywords
+          - SEMPRE cite o arquivo EXATO e o nome da keyword
+          - SEMPRE mostre o código atual problemático
+          - SEMPRE mostre a versão ideal refatorada
+          - Gere no máximo 10 issues
+          - Priorize os problemas de MAIOR IMPACTO
+
+          ========================
+          FORMATO DE RETORNO
+          ========================
+
+          RETORNE APENAS JSON VÁLIDO. SEM MARKDOWN. SEM TEXTO ADICIONAL.
 
           {
             "issues": [
               {
-                "title": "Clear technical title",
+                "title": "Título técnico claro",
                 "priority": "Alta",
                 "severity": "Alta",
-                "category": "Keyword Design",
-                "files": ["path/to/file.robot"],
-                "keyword_name": "Exact keyword name with the problem",
-                "anti_pattern": "Which Robot anti-pattern this represents",
-                "problem": "Extremely detailed description of the Robot Framework problem",
-                "technical_impact": "Impact on test reliability and maintenance",
-                "business_impact": "Impact on delivery speed and confidence",
-                "risk": "What risk this introduces",
-                "reproduction": "How to identify this in the codebase",
-                "current_code": "The exact current problematic Robot code",
-                "refactored_code": "The ideal refactored Robot code",
-                "variable_improvements": "Suggested variable refactoring",
-                "keyword_strategy": "Suggested keyword decomposition strategy",
-                "resource_strategy": "Suggested resource reorganization",
-                "suggestion": "Detailed fix suggestion",
-                "benefits": "Expected benefits",
+                "category": "Design de Keyword",
+                "files": ["caminho/para/arquivo.robot"],
+                "keyword_name": "Nome exato da keyword com o problema",
+                "anti_pattern": "Qual anti-pattern do Robot Framework este representa",
+                "problem": "Descrição extremamente detalhada do problema encontrado no Robot Framework",
+                "technical_impact": "Impacto na confiabilidade dos testes e manutenção",
+                "business_impact": "Impacto na velocidade de entrega e confiança",
+                "risk": "Qual risco isso introduz",
+                "reproduction": "Como identificar este problema no código",
+                "current_code": "O código Robot atual problemático exato",
+                "refactored_code": "O código Robot ideal refatorado",
+                "variable_improvements": "Sugestões de refatoração de variáveis",
+                "keyword_strategy": "Estratégia sugerida de decomposição de keywords",
+                "resource_strategy": "Reorganização sugerida dos resources",
+                "suggestion": "Sugestão detalhada de correção",
+                "benefits": "Benefícios esperados",
                 "complexity": "Baixa",
                 "improvement_type": "Refatoração"
               }
@@ -210,12 +206,12 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
+            --arg prompt "$PROMPT$PROJECT_CONTEXT" \
             '{
-              model: "openai/gpt-4o-mini",
+              model: "openrouter/free",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
-              max_tokens: 4000,
+              max_tokens: 2500,
               response_format: { "type": "json_object" }
             }')
 
@@ -225,6 +221,7 @@ jobs:
             -d "$REQUEST_BODY")
 
           echo "$RESPONSE" > response.json
+
           AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
@@ -248,11 +245,9 @@ jobs:
                   print("{\"issues\": []}")
           else:
               print("{\"issues\": []}")
-          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
-          echo '{"issues": []}' > ai_issues.json
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || echo '{"issues": []}' > ai_issues.json
 
-          echo "✅ JSON Robot validado"
-          jq . ai_issues.json
+          echo "✅ JSON Robot gerado com $(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0) issues"
 
       - name: 🐞 CREATE ROBOT ISSUES
         env:
@@ -269,19 +264,18 @@ jobs:
             [ -z "$EXISTS" ] && gh label create "$NAME" --color "$COLOR" --description "AI Robot Audit" 2>/dev/null || true
           }
 
-          create_label_if_not_exists "ai-robot-audit"    "0075CA"
+          create_label_if_not_exists "ai-robot-audit" "0075CA"
           create_label_if_not_exists "priority-critical" "B60205"
-          create_label_if_not_exists "priority-high"     "D93F0B"
-          create_label_if_not_exists "priority-medium"   "FBCA04"
-          create_label_if_not_exists "priority-low"      "0E8A16"
-          create_label_if_not_exists "category-robot"    "1D76DB"
+          create_label_if_not_exists "priority-high" "D93F0B"
+          create_label_if_not_exists "priority-medium" "FBCA04"
+          create_label_if_not_exists "priority-low" "0E8A16"
+          create_label_if_not_exists "category-robot" "1D76DB"
 
           jq -c '.issues[]' ai_issues.json | while read -r row; do
-
-            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Robot"')")
+            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Robot Framework"')")
             PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
             SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
-            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "Robot"')")
+            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "Robot Framework"')")
             KEYWORD_NAME=$(sanitize "$(echo "$row" | jq -r '.keyword_name // "Não identificado"')")
             ANTI_PATTERN=$(sanitize "$(echo "$row" | jq -r '.anti_pattern // "Não identificado"')")
             PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
@@ -296,7 +290,7 @@ jobs:
             RESOURCE_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.resource_strategy // "Não informado"')")
             SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
             BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
-            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Média"')")
             IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Refatoração"')")
 
             FILES_FORMATTED=""
@@ -315,94 +309,58 @@ jobs:
             $PRIORITY | $SEVERITY
 
             ---
-
             ## 📂 Arquivos Afetados
             $FILES_FORMATTED
 
             ---
-
             ## 🔑 Keyword Problemática
             \`$KEYWORD_NAME\`
 
             ---
-
             ## ⚠️ Anti-Pattern Detectado
             $ANTI_PATTERN
 
             ---
-
             ## 📝 Problema Identificado
             $PROBLEM
 
             ---
-
-            ## 🔴 Código Atual (Problemático)
+            ## 🔴 Código Atual
             \`\`\`robot
             $CURRENT_CODE
             \`\`\`
 
             ---
-
-            ## ✅ Código Refatorado (Ideal)
+            ## ✅ Código Refatorado
             \`\`\`robot
             $REFACTORED_CODE
             \`\`\`
 
             ---
-
             ## 📊 Impacto Técnico
             $TECHNICAL_IMPACT
 
             ---
-
             ## 💼 Impacto no Negócio
             $BUSINESS_IMPACT
 
             ---
-
-            ## ⚠️ Risco Atual
+            ## ⚠️ Risco
             $RISK
 
             ---
-
-            ## 🧪 Como Identificar
-            $REPRODUCTION
-
-            ---
-
-            ## 🧩 Estratégia de Keyword
-            $KEYWORD_STRATEGY
-
-            ---
-
-            ## ♻️ Melhorias de Variáveis
-            $VARIABLE_IMPROVEMENTS
-
-            ---
-
-            ## 📁 Estratégia de Resource
-            $RESOURCE_STRATEGY
-
-            ---
-
-            ## 💡 Sugestão Detalhada
+            ## 💡 Sugestão
             $SUGGESTION
 
             ---
-
-            ## 🎯 Benefícios Esperados
+            ## 🎯 Benefícios
             $BENEFITS
 
-            ---
-
-            ## 📈 Complexidade da Correção
-            $COMPLEXITY
-
-            ---
             > 🤖 Issue gerada automaticamente pelo **Robot Framework Auditor**
             "
 
             EXISTING=$(gh issue list --search "$TITLE in:title" --state all --json title --jq '.[0].title // empty' 2>/dev/null || echo "")
+
             if [ -n "$EXISTING" ]; then
               echo "⚠️ Issue já existe: $TITLE"
               continue
@@ -421,7 +379,6 @@ jobs:
             gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
             echo "✅ Issue criada: $TITLE"
             sleep 1
-
           done
 
-          echo "✅ Auditoria Robot finalizada"
+          echo "✅ Auditoria Robot Framework finalizada"

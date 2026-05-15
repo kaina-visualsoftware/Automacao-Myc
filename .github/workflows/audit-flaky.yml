@@ -1,4 +1,4 @@
-name: 🎲 FLAKY TEST & STABILITY AUDITOR
+name: FLAKY TEST & STABILITY AUDITOR
 
 on:
   push:
@@ -38,158 +38,159 @@ jobs:
       - name: 📄 BUILD FLAKY CONTEXT
         run: |
           > flaky_context.txt
-          echo "===== ESTRUTURA =====" >> flaky_context.txt
-          cat test_files.txt >> flaky_context.txt
-          echo "" >> flaky_context.txt
-          echo "===== CONTEÚDO DOS ARQUIVOS =====" >> flaky_context.txt
+          echo "===== ESTRUTURA DOS ARQUIVOS DE TESTE =====" >> flaky_context.txt
+          cat test_files.txt | head -40 >> flaky_context.txt
           
-          while read file; do
+          echo "" >> flaky_context.txt
+          echo "===== AMOSTRA DE CONTEÚDO (Arquivos Principais) =====" >> flaky_context.txt
+          
+          head -15 test_files.txt | while read file; do
             echo "" >> flaky_context.txt
             echo "FILE: $file" >> flaky_context.txt
             echo "----------------------------------------" >> flaky_context.txt
-            cat "$file" >> flaky_context.txt 2>/dev/null || true
-          done < test_files.txt
+            head -80 "$file" >> flaky_context.txt 2>/dev/null || true
+            echo "... (truncado)" >> flaky_context.txt
+          done
           
           echo "" >> flaky_context.txt
           echo "===== HISTÓRICO DE COMMITS =====" >> flaky_context.txt
-          git log -20 --pretty=format:"%h - %s" >> flaky_context.txt
-          echo "✅ Contexto Flaky gerado"
+          git log -15 --pretty=format:"%h - %an - %s" >> flaky_context.txt
+          
+          echo "✅ Contexto Flaky gerado ($(wc -c < flaky_context.txt) bytes)"
 
       - name: 🤖 AI FLAKY AUDIT
         id: ai_flaky_audit
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          PROJECT_CONTEXT=$(head -c 120000 flaky_context.txt)
+          PROJECT_CONTEXT=$(head -c 55000 flaky_context.txt)
 
           PROMPT=$(cat <<EOF
-         You are a WORLD-CLASS FLAKY TEST SPECIALIST and TEST RELIABILITY ENGINEER.
-
-          Your sole mission is to identify ALL potential sources of test instability in the project.
-
-          You have 15+ years of experience with:
-          - Flaky test root cause analysis
-          - Test stabilization strategies
-          - Synchronization and timing issues in UI automation
-          - Race conditions in async testing
-          - Network and infrastructure-dependent test failures
-          - Data-dependent test instability
-          - Browser and driver-related flakiness
-          - CI/CD environment instability
-          - Test isolation failures
-          - Retry strategies and their correct application
+          Você é um ESPECIALISTA MUNDIAL EM FLAKY TESTS e ENGENHEIRO DE CONFIABILIDADE DE TESTES.
+          Sua única missão é identificar TODAS as fontes potenciais de instabilidade de testes no projeto.
+          Você possui 15+ anos de experiência com:
+          - Análise de causa raiz de flaky tests
+          - Estratégias de estabilização de testes
+          - Problemas de sincronização e temporização em automação de UI
+          - Race conditions em testes assíncronos
+          - Falhas de testes dependentes de rede e infraestrutura
+          - Instabilidade de testes dependente de dados
+          - Flakiness relacionada a browser e driver
+          - Instabilidade de ambiente CI/CD
+          - Falhas de isolamento de testes
+          - Estratégias de retry e sua aplicação correta
 
           ========================
-          YOUR FLAKY AUDIT FRAMEWORK
+          SEU FRAMEWORK DE AUDITORIA DE FLAKY TESTS
           ========================
 
-          LAYER 1 — SYNCHRONIZATION ISSUES (Highest Flaky Risk)
-          - Sleep() usage — fixed waits cause timing-dependent failures
-          - Missing Wait Until Element Is Visible before interactions
-          - Missing Wait Until Element Is Enabled before clicks
-          - Missing Wait Until Page Contains before assertions
-          - Missing Wait Until Network Is Idle (if applicable)
-          - Using element presence check instead of visibility check
-          - Implicit vs explicit wait conflicts
-          - Race conditions between page loads and assertions
-          - Animation/transition not waited before interaction
-          - AJAX calls not completed before assertions
-          - WebSocket events not awaited
+          CAMADA 1 — PROBLEMAS DE SINCRONIZAÇÃO (Maior Risco de Flakiness)
+          - Uso de Sleep() — waits fixos causam falhas dependentes de temporização
+          - Wait Until Element Is Visible ausente antes de interações
+          - Wait Until Element Is Enabled ausente antes de cliques
+          - Wait Until Page Contains ausente antes de asserções
+          - Wait Until Network Is Idle ausente (quando aplicável)
+          - Uso de verificação de presença do elemento em vez de visibilidade
+          - Conflitos entre waits implícitos e explícitos
+          - Race conditions entre carregamentos de página e asserções
+          - Animações/transições não aguardadas antes da interação
+          - Chamadas AJAX não concluídas antes das asserções
+          - Eventos WebSocket não aguardados
 
-          LAYER 2 — STATE AND ISOLATION ISSUES
-          - Tests that depend on execution order
-          - Tests that share mutable state (global variables)
-          - Tests that do not clean up after themselves
-          - Tests that depend on data created by previous tests
-          - Database state not reset between tests
-          - Session/cookie state leaking between tests
-          - Cache state affecting test results
-          - Test using same user account (parallel conflict risk)
+          CAMADA 2 — PROBLEMAS DE ESTADO E ISOLAMENTO
+          - Testes que dependem da ordem de execução
+          - Testes que compartilham estado mutável (variáveis globais)
+          - Testes que não realizam limpeza após a execução
+          - Testes que dependem de dados criados por testes anteriores
+          - Estado do banco de dados não resetado entre os testes
+          - Estado de sessão/cookie vazando entre os testes
+          - Estado de cache afetando os resultados dos testes
+          - Testes usando a mesma conta de usuário (risco de conflito em execução paralela)
 
-          LAYER 3 — LOCATOR INSTABILITY
-          - Dynamic XPaths that change on every page load
-          - XPaths based on element position (//div[3]) — breaks on UI change
-          - XPaths with generated IDs (id="button-1234567890")
-          - CSS selectors dependent on styling classes
-          - Text-based locators sensitive to i18n/copy changes
-          - Locators not unique on the page (returns multiple elements)
-          - Shadow DOM locators without proper handling
-          - iFrame locators without proper frame switching
+          CAMADA 3 — INSTABILIDADE DE LOCATORS
+          - XPaths dinâmicos que mudam a cada carregamento de página
+          - XPaths baseados em posição de elemento (//div[3]) — quebra com mudanças na UI
+          - XPaths com IDs gerados dinamicamente (id="button-1234567890")
+          - Seletores CSS dependentes de classes de estilização
+          - Locators baseados em texto sensíveis a mudanças de i18n/copy
+          - Locators não únicos na página (retornam múltiplos elementos)
+          - Locators de Shadow DOM sem tratamento adequado
+          - Locators de iFrame sem a devida troca de frame
 
-          LAYER 4 — ENVIRONMENT AND INFRASTRUCTURE DEPENDENCY
-          - Tests that depend on external services (APIs, email, SMS)
-          - Tests without timeout configuration for external calls
-          - Tests sensitive to network latency
-          - Tests with hardcoded localhost / dev environment URLs
-          - Tests that depend on specific system time
-          - Tests that depend on specific data already in the database
-          - Tests that fail in headless mode but pass in headed mode
-          - Tests sensitive to screen resolution/viewport
+          CAMADA 4 — DEPENDÊNCIA DE AMBIENTE E INFRAESTRUTURA
+          - Testes que dependem de serviços externos (APIs, e-mail, SMS)
+          - Testes sem configuração de timeout para chamadas externas
+          - Testes sensíveis à latência de rede
+          - Testes com URLs hardcoded de localhost / ambiente de desenvolvimento
+          - Testes que dependem de horário específico do sistema
+          - Testes que dependem de dados específicos já existentes no banco de dados
+          - Testes que falham em modo headless mas passam em modo headed
+          - Testes sensíveis à resolução de tela / viewport
 
-          LAYER 5 — RETRY AND RECOVERY ANTI-PATTERNS
-          - Using retry to mask instability instead of fixing root cause
-          - Retry without logging which attempts failed
-          - Retry with wrong retry count (too few or too many)
-          - Missing teardown in failure scenario (state not cleaned)
-          - Missing screenshot on failure
-          - Missing DOM dump on failure
-          - Missing network log on failure
+          CAMADA 5 — ANTI-PATTERNS DE RETRY E RECUPERAÇÃO
+          - Uso de retry para mascarar instabilidade em vez de corrigir a causa raiz
+          - Retry sem registro de quais tentativas falharam
+          - Retry com contagem incorreta (tentativas insuficientes ou excessivas)
+          - Teardown ausente em cenário de falha (estado não limpo)
+          - Screenshot ausente em caso de falha
+          - Dump do DOM ausente em caso de falha
+          - Log de rede ausente em caso de falha
 
-          LAYER 6 — DATA INSTABILITY
-          - Tests using real/production data that can change
-          - Tests depending on records that may be deleted
-          - Tests with hardcoded IDs that may not exist
-          - Tests creating data without cleanup
-          - Parallel tests competing for the same data records
-
-          ========================
-          FLAKY RISK SCORING (use in your analysis)
-          ========================
-
-          For each issue, assess:
-          - Flaky Probability: Low / Medium / High / Critical
-          - Flaky Frequency: Rare / Occasional / Frequent / Always
-          - Detection Difficulty: Easy / Medium / Hard
-          - Fix Complexity: Low / Medium / High
+          CAMADA 6 — INSTABILIDADE DE DADOS
+          - Testes usando dados reais/de produção que podem mudar
+          - Testes dependendo de registros que podem ser excluídos
+          - Testes com IDs hardcoded que podem não existir
+          - Testes que criam dados sem realizar limpeza posterior
+          - Testes paralelos competindo pelos mesmos registros de dados
 
           ========================
-          RETURN FORMAT
+          PONTUAÇÃO DE RISCO DE FLAKINESS (use em sua análise)
           ========================
 
-          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+          Para cada problema encontrado, avalie:
+          - Probabilidade de Flakiness: Baixa / Média / Alta / Crítica
+          - Frequência de Flakiness: Rara / Ocasional / Frequente / Sempre
+          - Dificuldade de Detecção: Fácil / Média / Difícil
+          - Complexidade do Fix: Baixa / Média / Alta
+
+          ========================
+          FORMATO DE RETORNO
+          ========================
+
+          RETORNE APENAS JSON VÁLIDO. SEM MARKDOWN. SEM TEXTO ADICIONAL.
 
           {
-          "issues": [
-          {
-          "title": "Clear flaky issue title",
-          "priority": "Alta",
-          "severity": "Alta",
-          "category": "Flaky Test",
-          "files": ["path/to/file.robot"],
-          "flaky_type": "Synchronization / State / Locator / Environment / Data",
-          "flaky_probability": "High",
-          "flaky_frequency": "Frequent",
-          "detection_difficulty": "Hard",
-          "fix_complexity": "Medium",
-          "problem": "Exact description of what causes flakiness",
-          "trigger_conditions": "Under what conditions this flakiness occurs",
-          "technical_impact": "Impact on test reliability and CI pipeline",
-          "business_impact": "Impact on confidence in test results",
-          "risk": "What happens if this is not fixed",
-          "reproduction": "How to reproduce or identify this flakiness",
-          "current_code": "The exact problematic code",
-          "stable_code": "The stabilized version of the code",
-          "root_cause": "Root cause of the flakiness",
-          "stabilization_strategy": "Strategy to eliminate the flakiness",
-          "retry_strategy": "Appropriate retry strategy if needed",
-          "monitoring_suggestion": "How to monitor and detect this in CI",
-          "suggestion": "Detailed fix",
-          "benefits": "Expected stability improvement",
-          "flaky_reduction_estimate": "Estimated % reduction in flaky failures",
-          "complexity": "Média",
-          "improvement_type": "Estabilidade"
-          }
-          ]
+            "issues": [
+              {
+                "title": "Título claro do problema de flakiness",
+                "priority": "Alta",
+                "severity": "Alta",
+                "category": "Flaky Test",
+                "files": ["caminho/para/arquivo.robot"],
+                "flaky_type": "Sincronização / Estado / Locator / Ambiente / Dados",
+                "flaky_probability": "Alta",
+                "flaky_frequency": "Frequente",
+                "detection_difficulty": "Difícil",
+                "fix_complexity": "Média",
+                "problem": "Descrição exata do que causa a flakiness",
+                "trigger_conditions": "Em quais condições essa flakiness ocorre",
+                "technical_impact": "Impacto na confiabilidade dos testes e no pipeline de CI",
+                "business_impact": "Impacto na confiança nos resultados dos testes",
+                "risk": "O que acontece se isso não for corrigido",
+                "reproduction": "Como reproduzir ou identificar essa flakiness",
+                "current_code": "O código problemático exato",
+                "stable_code": "A versão estabilizada do código",
+                "root_cause": "Causa raiz da flakiness",
+                "stabilization_strategy": "Estratégia para eliminar a flakiness",
+                "retry_strategy": "Estratégia de retry adequada, se necessário",
+                "monitoring_suggestion": "Como monitorar e detectar isso no CI",
+                "suggestion": "Correção detalhada",
+                "benefits": "Melhoria de estabilidade esperada",
+                "flaky_reduction_estimate": "Estimativa de % de redução nas falhas por flakiness",
+                "complexity": "Média",
+                "improvement_type": "Estabilidade"
+              }
+            ]
           }
 
           PROJECT CONTEXT:
@@ -198,12 +199,12 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
+            --arg prompt "$PROMPT$PROJECT_CONTEXT" \
             '{
-              model: "openai/gpt-4o-mini",
+              model: "openrouter/free",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
-              max_tokens: 4000,
+              max_tokens: 2500,
               response_format: { "type": "json_object" }
             }')
 
@@ -237,10 +238,9 @@ jobs:
                   print("{\"issues\": []}")
           else:
               print("{\"issues\": []}")
-          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
-                    echo '{"issues": []}' > ai_issues.json
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || echo '{"issues": []}' > ai_issues.json
 
-          jq . ai_issues.json
+          echo "✅ JSON gerado com $(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0) issues"
 
       - name: 🐞 CREATE FLAKY ISSUES
         env:
@@ -265,10 +265,115 @@ jobs:
           create_label_if_not_exists "priority-low" "0E8A16"
 
           jq -c '.issues[]' ai_issues.json | while read -r row; do
-            # ... (seu código de criação de issues continua aqui)
-            # Mantive sua lógica completa, só corrigi a indentação
             TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Flaky"')")
-            # ... resto do seu código ...
+            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
+            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
+            FLAKY_TYPE=$(sanitize "$(echo "$row" | jq -r '.flaky_type // "Geral"')")
+            FLAKY_PROBABILITY=$(sanitize "$(echo "$row" | jq -r '.flaky_probability // "Média"')")
+            FLAKY_FREQUENCY=$(sanitize "$(echo "$row" | jq -r '.flaky_frequency // "Ocasional"')")
+            DETECTION_DIFFICULTY=$(sanitize "$(echo "$row" | jq -r '.detection_difficulty // "Média"')")
+            FIX_COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.fix_complexity // "Média"')")
+            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
+            TRIGGER_CONDITIONS=$(sanitize "$(echo "$row" | jq -r '.trigger_conditions // "Não informado"')")
+            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
+            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
+            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
+            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
+            CURRENT_CODE=$(sanitize "$(echo "$row" | jq -r '.current_code // "Não informado"')")
+            STABLE_CODE=$(sanitize "$(echo "$row" | jq -r '.stable_code // "Não informado"')")
+            ROOT_CAUSE=$(sanitize "$(echo "$row" | jq -r '.root_cause // "Não informado"')")
+            STABILIZATION_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.stabilization_strategy // "Não informado"')")
+            RETRY_STRATEGY=$(sanitize "$(echo "$row" | jq -r '.retry_strategy // "Não informado"')")
+            MONITORING_SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.monitoring_suggestion // "Não informado"')")
+            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
+            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
+            FLAKY_REDUCTION=$(sanitize "$(echo "$row" | jq -r '.flaky_reduction_estimate // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Média"')")
+            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Estabilidade"')")
+
+            FILES_FORMATTED=""
+            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
+            if [ "$FILES_COUNT" -gt 0 ]; then
+              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
+
+            BODY="
+            ## 🎲 Categoria
+            $FLAKY_TYPE — $IMPROVEMENT_TYPE
+
+            ## 🔥 Prioridade | 🚨 Severidade
+            $PRIORITY | $SEVERITY
+
+            ---
+            ## 📊 Indicadores de Flakiness
+            | Indicador              | Valor                     |
+            |------------------------|---------------------------|
+            | Probabilidade Flaky    | $FLAKY_PROBABILITY        |
+            | Frequência Estimada    | $FLAKY_FREQUENCY          |
+            | Dificuldade Detecção   | $DETECTION_DIFFICULTY     |
+            | Complexidade do Fix    | $FIX_COMPLEXITY           |
+
+            ---
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ---
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ---
+            ## 🔎 Causa Raiz
+            $ROOT_CAUSE
+
+            ---
+            ## ⚡ Condições que Disparam
+            $TRIGGER_CONDITIONS
+
+            ---
+            ## 🔴 Código Atual (Instável)
+            \`\`\`robot
+            $CURRENT_CODE
+            \`\`\`
+
+            ---
+            ## ✅ Código Estabilizado
+            \`\`\`robot
+            $STABLE_CODE
+            \`\`\`
+
+            ---
+            ## 💡 Sugestão de Correção
+            $SUGGESTION
+
+            ---
+            ## 🎯 Benefícios Esperados
+            $BENEFITS
+
+            > 🤖 Issue gerada automaticamente pelo **Flaky Test & Stability Auditor**
+            "
+
+            EXISTING=$(gh issue list --search "$TITLE in:title" --state all --json title --jq '.[0].title // empty' 2>/dev/null || echo "")
+
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            LABELS="ai-flaky-audit,flaky-test"
+            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
+            case "$PRIORITY_SLUG" in
+              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
+              alta|high)                LABELS="$LABELS,priority-high" ;;
+              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
+              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            esac
+
+            echo "🚀 Criando issue Flaky: $TITLE"
+            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
+            echo "✅ Issue criada: $TITLE"
+            sleep 1
           done
 
           echo "✅ Auditoria de Flaky Tests finalizada"

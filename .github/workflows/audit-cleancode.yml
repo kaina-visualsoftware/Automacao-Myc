@@ -1,4 +1,4 @@
-name: 🧹 CLEAN CODE & TECH DEBT AUDITOR
+name: CLEAN CODE & TECH DEBT AUDITOR
 
 on:
   push:
@@ -14,7 +14,6 @@ permissions:
 jobs:
   audit-cleancode:
     runs-on: ubuntu-latest
-
     steps:
       - name: 📥 CHECKOUT
         uses: actions/checkout@v4
@@ -27,201 +26,194 @@ jobs:
       - name: 📂 SCAN ALL CODE FILES
         run: |
           echo "🔍 Escaneando arquivos de código..."
-
           find . \
             -type f \
-            \( \
-              -name "*.robot" \
-              -o -name "*.resource" \
-              -o -name "*.py" \
-              -o -name "*.js" \
-              -o -name "*.ts" \
-            \) \
+            \( -name "*.robot" -o -name "*.resource" -o -name "*.py" \
+               -o -name "*.js" -o -name "*.ts" \) \
             ! -path "*/node_modules/*" \
             ! -path "*/.git/*" \
             > code_files.txt
-
+          
           echo "✅ Arquivos de código encontrados:"
           wc -l code_files.txt
 
       - name: 📄 BUILD CLEANCODE CONTEXT
         run: |
           > cleancode_context.txt
-
           echo "===== ESTRUTURA DE CÓDIGO =====" >> cleancode_context.txt
-          cat code_files.txt >> cleancode_context.txt
-
+          cat code_files.txt | head -40 >> cleancode_context.txt
+          
           echo "" >> cleancode_context.txt
-          echo "===== CONTEÚDO COMPLETO =====" >> cleancode_context.txt
-
-          while read file; do
+          echo "===== AMOSTRA DE ARQUIVOS IMPORTANTES =====" >> cleancode_context.txt
+          
+          head -15 code_files.txt | while read file; do
             echo "" >> cleancode_context.txt
             echo "FILE: $file" >> cleancode_context.txt
             echo "----------------------------------------" >> cleancode_context.txt
-            cat "$file" >> cleancode_context.txt 2>/dev/null || true
-          done < code_files.txt
-
+            head -90 "$file" >> cleancode_context.txt 2>/dev/null || true
+            echo "... (truncado)" >> cleancode_context.txt
+          done
+          
           echo "" >> cleancode_context.txt
-          echo "===== HISTÓRICO DE COMMITS =====" >> cleancode_context.txt
-          git log -20 --pretty=format:"%h - %an - %s" >> cleancode_context.txt
-
-          echo "✅ Contexto Clean Code gerado"
+          echo "===== ÚLTIMOS COMMITS =====" >> cleancode_context.txt
+          git log -12 --pretty=format:"%h - %an - %s" >> cleancode_context.txt
+          
+          echo "✅ Contexto Clean Code gerado ($(wc -c < cleancode_context.txt) bytes)"
 
       - name: 🤖 AI CLEANCODE AUDIT
         id: ai_cleancode_audit
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          PROJECT_CONTEXT=$(head -c 120000 cleancode_context.txt)
+          echo "🤖 Executando auditoria Clean Code..."
+          PROJECT_CONTEXT=$(head -c 55000 cleancode_context.txt)
 
           PROMPT=$(cat <<EOF
-          You are a WORLD-CLASS CLEAN CODE ADVOCATE, TECH DEBT SPECIALIST, and SENIOR CODE REVIEWER.
-
-          Your sole mission is to perform a DEEP CLEAN CODE AND TECHNICAL DEBT AUDIT on the project below.
-
-          You have 20+ years of experience with:
-          - Clean Code principles (Robert C. Martin)
-          - SOLID principles
-          - DRY, KISS, YAGNI principles
-          - Refactoring patterns (Martin Fowler)
-          - Code smell identification and elimination
-          - Technical debt quantification and prioritization
-          - Naming conventions and code readability
-          - Cognitive complexity reduction
-          - Code maintainability metrics
-          - Design patterns applied to test automation
-          - Code review best practices at enterprise scale
+          Você é um DEFENSOR MUNDIAL DE CLEAN CODE, ESPECIALISTA EM DÍVIDA TÉCNICA e REVISOR DE CÓDIGO SÊNIOR.
+          Sua única missão é realizar uma AUDITORIA PROFUNDA DE CLEAN CODE E DÍVIDA TÉCNICA no projeto abaixo.
+          Você possui 20+ anos de experiência com:
+          - Princípios de Clean Code (Robert C. Martin)
+          - Princípios SOLID
+          - Princípios DRY, KISS e YAGNI
+          - Padrões de refatoração (Martin Fowler)
+          - Identificação e eliminação de code smells
+          - Quantificação e priorização de dívida técnica
+          - Convenções de nomenclatura e legibilidade de código
+          - Redução de complexidade cognitiva
+          - Métricas de manutenibilidade de código
+          - Padrões de design aplicados à automação de testes
+          - Boas práticas de revisão de código em escala enterprise
 
           ========================
-          YOUR CLEAN CODE AUDIT FRAMEWORK
+          SEU FRAMEWORK DE AUDITORIA DE CLEAN CODE
           ========================
 
-          LAYER 1 — NAMING
-          - Are function/keyword names intention-revealing?
-          - Are names pronounceable and searchable?
-          - Do names avoid mental mapping? (i vs index)
-          - Are boolean names using is/has/should/can prefixes?
-          - Are names consistent across the entire codebase?
-          - Are abbreviations avoided?
-          - Do class/resource names use nouns?
-          - Do keyword/function names use strong verbs?
-          - Are there misleading names? (a name that suggests wrong behavior)
-          - Are there names that are too generic? (data, info, manager, handler, util)
+          CAMADA 1 — NOMENCLATURA
+          - Os nomes de funções/keywords revelam a intenção?
+          - Os nomes são pronunciáveis e pesquisáveis?
+          - Os nomes evitam mapeamento mental? (i vs index)
+          - Nomes booleanos usam prefixos is/has/should/can?
+          - Os nomes são consistentes em todo o código?
+          - Abreviações são evitadas?
+          - Nomes de classes/resources usam substantivos?
+          - Nomes de keywords/funções usam verbos fortes?
+          - Existem nomes enganosos? (um nome que sugere comportamento errado)
+          - Existem nomes genéricos demais? (data, info, manager, handler, util)
 
-          LAYER 2 — FUNCTIONS AND KEYWORDS
-          - Does each function/keyword do ONE thing only?
-          - Is the function small enough? (>20 lines is a warning, >50 is critical)
-          - Does the function operate at ONE level of abstraction?
-          - Are there too many parameters? (>3 is a warning, >5 is critical)
-          - Are there output parameters? (anti-pattern — use return values)
-          - Are there flag/boolean parameters that split behavior?
-          - Is there dead code? (code that is never executed)
-          - Are there commented-out code blocks?
-          - Are there TODO/FIXME/HACK comments that became permanent?
-          - Is the function side-effect free where it should be?
+          CAMADA 2 — FUNÇÕES E KEYWORDS
+          - Cada função/keyword faz UMA única coisa?
+          - A função é pequena o suficiente? (mais de 20 linhas é alerta, mais de 50 é crítico)
+          - A função opera em UM único nível de abstração?
+          - Existem parâmetros em excesso? (mais de 3 é alerta, mais de 5 é crítico)
+          - Existem parâmetros de saída? (anti-pattern — use valores de retorno)
+          - Existem parâmetros flag/booleanos que dividem o comportamento?
+          - Existe código morto? (código que nunca é executado)
+          - Existem blocos de código comentados?
+          - Existem comentários TODO/FIXME/HACK que se tornaram permanentes?
+          - A função é livre de efeitos colaterais onde deveria ser?
 
-          LAYER 3 — DRY VIOLATIONS (Don't Repeat Yourself)
-          - Are there duplicated code blocks? (exact or near-duplicate)
-          - Are there duplicated logic patterns with different variable names?
-          - Are there duplicated setup/teardown sequences?
-          - Are there copy-pasted keyword implementations?
-          - Are there magic numbers repeated across files?
-          - Are there repeated string literals that should be constants?
-          - Are there repeated conditional patterns that should be extracted?
+          CAMADA 3 — VIOLAÇÕES DE DRY (Don't Repeat Yourself)
+          - Existem blocos de código duplicados? (exatos ou quase idênticos)
+          - Existem padrões de lógica duplicados com nomes de variáveis diferentes?
+          - Existem sequências de setup/teardown duplicadas?
+          - Existem implementações de keywords copiadas e coladas?
+          - Existem números mágicos repetidos entre arquivos?
+          - Existem literais de string repetidas que deveriam ser constantes?
+          - Existem padrões condicionais repetidos que deveriam ser extraídos?
 
-          LAYER 4 — CODE COMPLEXITY
-          - Are there deeply nested conditionals? (>3 levels is critical)
-          - Are there long conditional chains that should use patterns?
-          - Are there complex boolean expressions that should be extracted?
-          - Are there switch/case blocks that should use polymorphism?
-          - Is cyclomatic complexity too high?
-          - Are there functions with too many responsibilities?
+          CAMADA 4 — COMPLEXIDADE DO CÓDIGO
+          - Existem condicionais profundamente aninhados? (mais de 3 níveis é crítico)
+          - Existem longas cadeias condicionais que deveriam usar padrões de design?
+          - Existem expressões booleanas complexas que deveriam ser extraídas?
+          - Existem blocos switch/case que deveriam usar polimorfismo?
+          - A complexidade ciclomática está alta demais?
+          - Existem funções com responsabilidades demais?
 
-          LAYER 5 — COMMENTS AND DOCUMENTATION
-          - Are there comments explaining WHAT instead of WHY?
-          - Are there obsolete comments that no longer match the code?
-          - Are there commented-out code blocks?
-          - Are there misleading comments?
-          - Are there functions with no documentation that need it?
-          - Is there a missing [Documentation] section in Robot keywords?
-          - Are complex algorithms properly explained?
+          CAMADA 5 — COMENTÁRIOS E DOCUMENTAÇÃO
+          - Existem comentários explicando O QUÊ em vez do PORQUÊ?
+          - Existem comentários obsoletos que não correspondem mais ao código?
+          - Existem blocos de código comentados?
+          - Existem comentários enganosos?
+          - Existem funções sem documentação que precisam dela?
+          - Está faltando a seção [Documentation] em keywords do Robot Framework?
+          - Algoritmos complexos estão devidamente explicados?
 
-          LAYER 6 — ERROR HANDLING
-          - Are errors silently swallowed? (empty except/catch blocks)
-          - Are error messages meaningful and actionable?
-          - Are there missing error scenarios?
-          - Is error handling consistent across the codebase?
-          - Are there generic exception catches hiding real errors?
+          CAMADA 6 — TRATAMENTO DE ERROS
+          - Os erros estão sendo silenciosamente ignorados? (blocos except/catch vazios)
+          - As mensagens de erro são significativas e orientadas à ação?
+          - Existem cenários de erro ausentes?
+          - O tratamento de erros é consistente em todo o código?
+          - Existem capturas genéricas de exceção ocultando erros reais?
 
-          LAYER 7 — TECHNICAL DEBT INDICATORS
-          - Code that has not been touched in >6 months but is critical
-          - Workarounds marked as temporary that became permanent
-          - Missing abstractions that cause tight coupling
-          - Overengineered solutions for simple problems (YAGNI violation)
-          - Underengineered solutions creating fragility (KISS violation)
-          - Missing tests for critical paths
-          - Code that requires 10+ files to change for one feature
+          CAMADA 7 — INDICADORES DE DÍVIDA TÉCNICA
+          - Código que não foi alterado há mais de 6 meses mas é crítico
+          - Workarounds marcados como temporários que se tornaram permanentes
+          - Abstrações ausentes que causam acoplamento excessivo
+          - Soluções superengenheiradas para problemas simples (violação de YAGNI)
+          - Soluções subengenheiradas criando fragilidade (violação de KISS)
+          - Testes ausentes para caminhos críticos
+          - Código que exige alteração em 10+ arquivos para uma única funcionalidade
 
-          LAYER 8 — CODE SMELLS (Martin Fowler catalog applied to test code)
-          - "Bloater" — code that has grown too large
-          - "Feature Envy" — code using another file's data more than its own
-          - "Data Clumps" — groups of data that always appear together
-          - "Primitive Obsession" — using primitives instead of abstractions
-          - "Switch Statements" — repeated conditionals that should be polymorphic
-          - "Parallel Inheritance Hierarchies" — parallel structures
-          - "Lazy Class" — a class/resource that does too little to justify existence
-          - "Speculative Generality" — over-abstraction for future that never comes
-          - "Temporary Field" — variables only set in certain conditions
-          - "Message Chains" — long chains of method calls
-          - "Middle Man" — a function that only delegates to another
-          - "Inappropriate Intimacy" — two files knowing too much about each other
-          - "Data Class" — resource with only data and no behavior
-          - "Refused Bequest" — inheriting things that are not needed
-
-          ========================
-          TECHNICAL DEBT SCORING
-          ========================
-
-          For each issue, estimate:
-          - Debt Type: Code Smell / Design Debt / Test Debt / Documentation Debt
-          - Debt Age: New / Established / Legacy
-          - Debt Cost (time to fix): Minutes / Hours / Days / Weeks
-          - Interest Rate: How much worse this gets over time
+          CAMADA 8 — CODE SMELLS (Catálogo de Martin Fowler aplicado ao código de testes)
+          - "Bloater" — código que cresceu além do razoável
+          - "Feature Envy" — código que usa dados de outro arquivo mais do que os próprios
+          - "Data Clumps" — grupos de dados que sempre aparecem juntos
+          - "Primitive Obsession" — uso de primitivos em vez de abstrações
+          - "Switch Statements" — condicionais repetidos que deveriam ser polimórficos
+          - "Parallel Inheritance Hierarchies" — estruturas paralelas redundantes
+          - "Lazy Class" — classe/resource que faz pouco demais para justificar sua existência
+          - "Speculative Generality" — sobre-abstração para um futuro que nunca chega
+          - "Temporary Field" — variáveis definidas apenas em certas condições
+          - "Message Chains" — longas cadeias de chamadas de métodos
+          - "Middle Man" — função que apenas delega para outra
+          - "Inappropriate Intimacy" — dois arquivos que sabem demais um sobre o outro
+          - "Data Class" — resource com apenas dados e sem comportamento
+          - "Refused Bequest" — herança de coisas que não são necessárias
 
           ========================
-          RETURN FORMAT
+          PONTUAÇÃO DE DÍVIDA TÉCNICA
           ========================
 
-          RETURN ONLY VALID JSON. NO MARKDOWN. NO EXTRA TEXT.
+          Para cada problema encontrado, estime:
+          - Tipo de Dívida: Code Smell / Dívida de Design / Dívida de Testes / Dívida de Documentação
+          - Idade da Dívida: Nova / Estabelecida / Legada
+          - Custo da Dívida (tempo para corrigir): Minutos / Horas / Dias / Semanas
+          - Taxa de Juros: O quanto piora com o tempo se não for corrigida
+
+          ========================
+          FORMATO DE RETORNO
+          ========================
+
+          RETORNE APENAS JSON VÁLIDO. SEM MARKDOWN. SEM TEXTO ADICIONAL.
 
           {
             "issues": [
               {
-                "title": "Clear clean code issue title",
+                "title": "Título claro do problema de Clean Code",
                 "priority": "Alta",
                 "severity": "Alta",
                 "category": "Clean Code",
-                "files": ["path/to/file.robot"],
-                "code_smell": "Which code smell or clean code violation",
-                "solid_principle_violated": "Which SOLID principle if applicable",
-                "clean_code_rule": "Which Clean Code rule is violated",
-                "debt_type": "Code Smell / Design Debt / Test Debt",
-                "debt_cost": "Hours/Days to fix",
-                "debt_interest": "How this worsens over time",
-                "problem": "Extremely detailed clean code problem description",
-                "technical_impact": "Impact on code maintainability and readability",
-                "business_impact": "Impact on team velocity and onboarding",
-                "risk": "Risk if technical debt is not paid",
-                "reproduction": "How to identify this in the codebase",
-                "current_code": "The exact current problematic code",
-                "refactored_code": "The clean refactored version",
-                "refactoring_pattern": "Which refactoring pattern to apply",
-                "naming_improvements": "Specific naming improvements",
-                "extraction_suggestions": "What should be extracted as functions/keywords",
-                "suggestion": "Detailed fix",
-                "benefits": "Expected code quality improvements",
-                "readability_gain": "Estimated readability improvement",
-                "maintainability_gain": "Estimated maintainability improvement",
+                "files": ["caminho/para/arquivo.robot"],
+                "code_smell": "Qual code smell ou violação de Clean Code foi identificado",
+                "solid_principle_violated": "Qual princípio SOLID foi violado, se aplicável",
+                "clean_code_rule": "Qual regra de Clean Code está sendo violada",
+                "debt_type": "Code Smell / Dívida de Design / Dívida de Testes",
+                "debt_cost": "Horas/Dias para corrigir",
+                "debt_interest": "Como piora com o tempo se não for corrigida",
+                "problem": "Descrição extremamente detalhada do problema de Clean Code",
+                "technical_impact": "Impacto na manutenibilidade e legibilidade do código",
+                "business_impact": "Impacto na velocidade do time e no onboarding",
+                "risk": "Risco caso a dívida técnica não seja paga",
+                "reproduction": "Como identificar este problema no código",
+                "current_code": "O código atual problemático exato",
+                "refactored_code": "A versão limpa e refatorada do código",
+                "refactoring_pattern": "Qual padrão de refatoração aplicar",
+                "naming_improvements": "Melhorias específicas de nomenclatura",
+                "extraction_suggestions": "O que deve ser extraído como funções/keywords",
+                "suggestion": "Correção detalhada",
+                "benefits": "Melhorias esperadas na qualidade do código",
+                "readability_gain": "Estimativa de melhoria de legibilidade",
+                "maintainability_gain": "Estimativa de melhoria de manutenibilidade",
                 "complexity": "Baixa",
                 "improvement_type": "Clean Code"
               }
@@ -234,12 +226,12 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
+            --arg prompt "$PROMPT$PROJECT_CONTEXT" \
             '{
-              model: "openai/gpt-4o-mini",
+              model: "openrouter/free",
               messages: [{ role: "user", content: $prompt }],
               temperature: 0.1,
-              max_tokens: 4000,
+              max_tokens: 2500,
               response_format: { "type": "json_object" }
             }')
 
@@ -249,6 +241,7 @@ jobs:
             -d "$REQUEST_BODY")
 
           echo "$RESPONSE" > response.json
+
           AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
@@ -272,10 +265,9 @@ jobs:
                   print("{\"issues\": []}")
           else:
               print("{\"issues\": []}")
-          ' < ai_raw.txt > ai_issues.json 2>/dev/null || \
-          echo '{"issues": []}' > ai_issues.json
+          ' < ai_raw.txt > ai_issues.json 2>/dev/null || echo '{"issues": []}' > ai_issues.json
 
-          jq . ai_issues.json
+          echo "✅ JSON gerado com $(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0) issues"
 
       - name: 🐞 CREATE CLEANCODE ISSUES
         env:
@@ -293,15 +285,14 @@ jobs:
           }
 
           create_label_if_not_exists "ai-cleancode-audit" "006B75"
-          create_label_if_not_exists "tech-debt"          "E4E669"
-          create_label_if_not_exists "clean-code"         "C2E0C6"
-          create_label_if_not_exists "priority-critical"  "B60205"
-          create_label_if_not_exists "priority-high"      "D93F0B"
-          create_label_if_not_exists "priority-medium"    "FBCA04"
-          create_label_if_not_exists "priority-low"       "0E8A16"
+          create_label_if_not_exists "tech-debt" "E4E669"
+          create_label_if_not_exists "clean-code" "C2E0C6"
+          create_label_if_not_exists "priority-critical" "B60205"
+          create_label_if_not_exists "priority-high" "D93F0B"
+          create_label_if_not_exists "priority-medium" "FBCA04"
+          create_label_if_not_exists "priority-low" "0E8A16"
 
           jq -c '.issues[]' ai_issues.json | while read -r row; do
-
             TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue Clean Code"')")
             PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
             SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
@@ -326,7 +317,7 @@ jobs:
             BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
             READABILITY_GAIN=$(sanitize "$(echo "$row" | jq -r '.readability_gain // "Não informado"')")
             MAINTAINABILITY_GAIN=$(sanitize "$(echo "$row" | jq -r '.maintainability_gain // "Não informado"')")
-            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Não informado"')")
+            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Média"')")
             IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "Clean Code"')")
 
             FILES_FORMATTED=""
@@ -338,130 +329,60 @@ jobs:
             fi
 
             BODY="
-            ## 🧹 Categoria Clean Code
+            ## 🧹 Categoria Clean Code & Tech Debt
             $CATEGORY — $IMPROVEMENT_TYPE
 
             ## 🔥 Prioridade | 🚨 Severidade
             $PRIORITY | $SEVERITY
 
             ---
-
-            ## 📊 Indicadores de Dívida Técnica
-
-            | Indicador            | Valor          |
-            |----------------------|----------------|
-            | Tipo de Dívida       | $DEBT_TYPE     |
-            | Custo Estimado       | $DEBT_COST     |
-            | Taxa de Juros        | $DEBT_INTEREST |
+            ## 📊 Dívida Técnica
+            | Item                 | Valor                  |
+            |----------------------|------------------------|
+            | Tipo de Dívida       | $DEBT_TYPE             |
+            | Custo Estimado       | $DEBT_COST             |
+            | Taxa de Juros        | $DEBT_INTEREST         |
 
             ---
-
             ## 📂 Arquivos Afetados
             $FILES_FORMATTED
 
             ---
-
-            ## 🦨 Code Smell Detectado
+            ## 🦨 Code Smell / Violação
             $CODE_SMELL
 
             ---
-
-            ## 📐 Princípio SOLID Violado
+            ## 📐 Princípio Violado
             $SOLID_VIOLATED
 
             ---
-
-            ## 📖 Regra Clean Code Violada
-            $CLEAN_CODE_RULE
-
-            ---
-
             ## 📝 Problema Identificado
             $PROBLEM
 
             ---
-
-            ## 🔴 Código Atual (Problemático)
+            ## 🔴 Código Atual
             \`\`\`robot
             $CURRENT_CODE
             \`\`\`
 
             ---
-
-            ## ✅ Código Refatorado (Ideal)
+            ## ✅ Código Refatorado
             \`\`\`robot
             $REFACTORED_CODE
             \`\`\`
 
             ---
-
-            ## 🔧 Padrão de Refatoração Aplicável
-            $REFACTORING_PATTERN
-
-            ---
-
-            ## 📝 Melhorias de Nomenclatura
-            $NAMING_IMPROVEMENTS
-
-            ---
-
-            ## ✂️ Sugestões de Extração
-            $EXTRACTION_SUGGESTIONS
-
-            ---
-
-            ## 📊 Impacto Técnico
-            $TECHNICAL_IMPACT
-
-            ---
-
-            ## 💼 Impacto no Negócio
-            $BUSINESS_IMPACT
-
-            ---
-
-            ## ⚠️ Risco da Dívida Técnica
-            $RISK
-
-            ---
-
-            ## 🧪 Como Identificar
-            $REPRODUCTION
-
-            ---
-
-            ## 💡 Sugestão Detalhada
+            ## 💡 Sugestão de Correção
             $SUGGESTION
 
             ---
-
-            ## 🎯 Benefícios Esperados
+            ## 🎯 Benefícios
             $BENEFITS
 
-            ---
-
-            ## 👁️ Ganho de Legibilidade
-            $READABILITY_GAIN
-
-            ---
-
-            ## 🛠️ Ganho de Manutenibilidade
-            $MAINTAINABILITY_GAIN
-
-            ---
-
-            ## 📈 Complexidade da Correção
-            $COMPLEXITY
-
-            ---
             > 🤖 Issue gerada automaticamente pelo **Clean Code & Tech Debt Auditor**
             "
 
-            EXISTING=$(gh issue list \
-              --search "$TITLE in:title" \
-              --state all \
-              --json title \
-              --jq '.[0].title // empty' 2>/dev/null || echo "")
+            EXISTING=$(gh issue list --search "$TITLE in:title" --state all --json title --jq '.[0].title // empty' 2>/dev/null || echo "")
 
             if [ -n "$EXISTING" ]; then
               echo "⚠️ Issue já existe: $TITLE"
@@ -481,7 +402,6 @@ jobs:
             gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
             echo "✅ Issue criada: $TITLE"
             sleep 1
-
           done
 
-          echo "✅ Auditoria Clean Code finalizada"
+          echo "✅ Auditoria Clean Code & Tech Debt finalizada"
