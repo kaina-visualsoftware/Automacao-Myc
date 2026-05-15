@@ -113,35 +113,35 @@ jobs:
           DIFF_CONTENT=$(head -c 10000 diff.txt)
 
           PROMPT=$(cat <<EOF
-Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
+          Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
 
-## COMMITS
-$COMMITS_CONTENT
+          ## COMMITS
+          $COMMITS_CONTENT
 
-## ANALISE DE ARQUIVOS
-$FILES_ANALYSIS
+          ## ANALISE DE ARQUIVOS
+          $FILES_ANALYSIS
 
-## CONTEUDO DOS ARQUIVOS
-$FILE_CONTENTS
+          ## CONTEUDO DOS ARQUIVOS
+          $FILE_CONTENTS
 
-## DIFF
-$DIFF_CONTENT
+          ## DIFF
+          $DIFF_CONTENT
 
-INSTRUÇÕES:
+          INSTRUÇÕES:
 
-- Gere APENAS JSON válido
-- NÃO use markdown fora do JSON
-- NÃO use backticks
-- NÃO explique nada
-- O título deve ter no máximo 65 caracteres
+          - Gere APENAS JSON válido
+          - NÃO use markdown fora do JSON
+          - NÃO use backticks
+          - NÃO explique nada
+          - O título deve ter no máximo 65 caracteres
 
-Formato obrigatório:
-{
-  "title": "Título curto com no máximo 65 caracteres",
-  "description": "Descrição completa em markdown"
-}
-EOF
-)
+          Formato obrigatório:
+          {
+            "title": "Título curto com no máximo 65 caracteres",
+            "description": "Descrição completa em markdown"
+          }
+          EOF
+          )
 
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
@@ -179,13 +179,13 @@ EOF
             TITLE="Alterações em ${{ github.ref_name }}"
 
             BODY=$(cat <<EOF
-## 📋 PR Automática
+            ## 📋 PR Automática
 
-Branch: ${{ github.ref_name }}
+            Branch: ${{ github.ref_name }}
 
-Alterações detectadas automaticamente.
-EOF
-)
+            Alterações detectadas automaticamente.
+            EOF
+            )
 
           else
             echo "📄 Conteúdo IA:"
@@ -202,11 +202,11 @@ EOF
 
             if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
               BODY=$(cat <<EOF
-## 📋 Alterações Detectadas
+            ## 📋 Alterações Detectadas
 
-Branch: ${{ github.ref_name }}
-EOF
-)
+            Branch: ${{ github.ref_name }}
+            EOF
+            )
             fi
 
           fi
