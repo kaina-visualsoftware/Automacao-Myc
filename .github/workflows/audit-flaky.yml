@@ -221,7 +221,13 @@ jobs:
 
           echo "$RESPONSE" > response.json
 
-          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+          AI_CONTENT=$(jq -r '
+            .choices[0].message.content //
+            .choices[0].message.reasoning //
+            .choices[0].delta.content //
+            .choices[0].text //
+            empty
+          ' response.json)
 
           if [ -z "$AI_CONTENT" ]; then
             echo "❌ IA não retornou conteúdo"
