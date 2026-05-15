@@ -311,37 +311,87 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🐞 Criando issues..."
+
           TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
-          
+
           if [ "$TOTAL" -eq 0 ]; then
             echo "⚠️ Nenhuma issue encontrada"
             exit 0
           fi
 
           jq -c '.issues[]' ai_issues.json | while read -r row; do
-            TITLE=$(echo "$row" | jq -r '.title')
-            PRIORITY=$(echo "$row" | jq -r '.priority')
-            CATEGORY=$(echo "$row" | jq -r '.category')
-            DESCRIPTION=$(echo "$row" | jq -r '.description')
-            IMPACT=$(echo "$row" | jq -r '.impact')
-            SUGGESTION=$(echo "$row" | jq -r '.suggestion')
 
-            BODY="## 📌 Categoria
-          $CATEGORY
+            TITLE=$(echo "$row" | jq -r '.title // "Issue sem título"')
+            PRIORITY=$(echo "$row" | jq -r '.priority // "Média"')
+            CATEGORY=$(echo "$row" | jq -r '.category // "Geral"')
 
-          ## 🔥 Prioridade
-          $PRIORITY
+            FILES=$(echo "$row" | jq -r '.files[]?' 2>/dev/null)
 
-          ## 📝 Descrição
-          $DESCRIPTION
+            PROBLEM=$(echo "$row" | jq -r '.problem // "Não informado"')
+            TECHNICAL_IMPACT=$(echo "$row" | jq -r '.technical_impact // "Não informado"')
+            BUSINESS_IMPACT=$(echo "$row" | jq -r '.business_impact // "Não informado"')
+            RISK=$(echo "$row" | jq -r '.risk // "Não informado"')
+            REPRODUCTION=$(echo "$row" | jq -r '.reproduction // "Não informado"')
+            SUGGESTION=$(echo "$row" | jq -r '.suggestion // "Não informado"')
+            EXAMPLE=$(echo "$row" | jq -r '.example // "Não informado"')
+            BENEFITS=$(echo "$row" | jq -r '.benefits // "Não informado"')
+            COMPLEXITY=$(echo "$row" | jq -r '.complexity // "Não informado"')
+            IMPROVEMENT_TYPE=$(echo "$row" | jq -r '.improvement_type // "Melhoria Técnica"')
 
-          ## 📊 Impacto
-          $IMPACT
+            # FORMATA LISTA DE ARQUIVOS
+            FILES_FORMATTED=""
 
-          ## 💡 Sugestão Técnica
-          $SUGGESTION"
+            if [ -n "$FILES" ]; then
+              while read -r file; do
+                FILES_FORMATTED="${FILES_FORMATTED}- ${file}\n"
+              done <<< "$FILES"
+            else
+              FILES_FORMATTED="- Não identificado"
+            fi
 
-            # Evita criar issue duplicada
+            BODY=$(cat <<EOF
+            ## 📌 Categoria
+            $CATEGORY
+
+            ## 🔥 Prioridade
+            $PRIORITY
+
+            ## 🏷️ Tipo da Melhoria
+            $IMPROVEMENT_TYPE
+
+            ## 📂 Arquivos Afetados
+            $FILES_FORMATTED
+
+            ## 📝 Problema Identificado
+            $PROBLEM
+
+            ## 📊 Impacto Técnico
+            $TECHNICAL_IMPACT
+
+            ## 💼 Impacto no Negócio
+            $BUSINESS_IMPACT
+
+            ## ⚠️ Risco Atual
+            $RISK
+
+            ## 🧪 Como Reproduzir
+            $REPRODUCTION
+
+            ## 💡 Sugestão Técnica
+            $SUGGESTION
+
+            ## 🛠️ Exemplo Técnico
+            $EXAMPLE
+
+            ## ✅ Benefícios Esperados
+            $BENEFITS
+
+            ## 📈 Complexidade Estimada
+            $COMPLEXITY
+            EOF
+            )
+
+            # EVITA ISSUES DUPLICADAS
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
               --json title \
@@ -361,3 +411,4 @@ jobs:
           done
 
           echo "✅ Auditoria finalizada"
+
