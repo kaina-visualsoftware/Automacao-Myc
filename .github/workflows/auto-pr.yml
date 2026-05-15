@@ -131,15 +131,14 @@ jobs:
 
           - Gere APENAS JSON válido
           - NÃO use markdown fora do JSON
-          - NÃO use explicações
-          - NÃO use blocos markdown
-          - O title deve ter no máximo 65 caracteres
-          - O description deve ser completo e profissional
+          - NÃO use backticks
+          - NÃO explique nada
+          - O título deve ter no máximo 65 caracteres
 
           Formato obrigatório:
 
           {
-            "title": "Título curto",
+            "title": "Título curto com no máximo 65 caracteres",
             "description": "Descrição completa em markdown"
           }
           EOF
