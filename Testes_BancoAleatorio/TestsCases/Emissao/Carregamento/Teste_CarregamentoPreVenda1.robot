@@ -139,3 +139,34 @@ Teste 10 - Editar carregamento com duas rotas removendo uma e fechando com statu
     Então gravo o carregamento com o status    Fechada
     E valido que o carregamento contém apenas uma rota
     E fecho a tela de carregamento
+
+Teste 11 - Validar obrigatoriedade da descrição ao montar carga
+    [Documentation]    Este teste valida o bloqueio ao tentar montar uma carga sem informar descrição
+    [Tags]    Teste11
+
+    Dado que eu crio uma pré-venda com rota
+    Então acesso a tela de Carregamento
+    E adiciono um carregamento com rota sem informar descrição
+    Quando eu tento montar a carga sem descrição
+    Então valido a mensagem de descrição obrigatória
+    E informo uma descrição
+    Então gravo o carregamento com o status    Montando
+    E fecho a tela de carregamento
+
+Teste 12 - Validar volume de pré-vendas após remoção em um carregamento
+    [Documentation]    Este teste valida que o campo volume do carregamento é atualizado corretamente quando uma pré-venda é removida
+    [Tags]    Teste12
+
+    Dado que eu crio duas pré-vendas com a mesma rota
+    Então acesso a tela de Carregamento
+    E adiciono um carregamento com uma rota
+    Então gravo o carregamento com o status    Cadastrando
+    Quando pesquiso o Carregamento gerado
+    E valido o volume inicial do carregamento como cadastrando
+    Então edito o carregamento
+    E clico em Incluir Rotas
+    Quando seleciono a rota incluída
+    E removo um pedido da rota
+    Então gravo o carregamento com o status    Montando
+    E valido o volume após remover uma pré-venda
+    E fecho a tela de carregamento
