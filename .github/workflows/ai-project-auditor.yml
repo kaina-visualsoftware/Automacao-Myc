@@ -1,0 +1,250 @@
+name: AI PROJECT AUDITOR
+
+on:
+  push:
+    branches:
+      - develop
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  audit-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📡 FETCH HISTORY
+        run: |
+          git fetch --all
+
+      - name: 📂 SCAN PROJECT FILES
+        run: |
+          echo "🔍 Escaneando projeto..."
+
+          find . \
+            -type f \
+            \( \
+              -name "*.robot" -o \
+              -name "*.resource" -o \
+              -name "*.py" -o \
+              -name "*.js" -o \
+              -name "*.ts" -o \
+              -name "*.json" -o \
+              -name "*.md" -o \
+              -name "*.yml" -o \
+              -name "*.yaml" \
+            \) \
+            ! -path "*/node_modules/*" \
+            ! -path "*/.git/*" \
+            > project_files.txt
+
+          echo "✅ Arquivos encontrados:"
+          wc -l project_files.txt
+
+      - name: 📄 BUILD PROJECT CONTEXT
+        run: |
+          echo "📄 Gerando contexto do projeto..."
+
+          > project_context.txt
+
+          echo "===== ESTRUTURA DO PROJETO =====" >> project_context.txt
+          head -200 project_files.txt >> project_context.txt
+
+          echo "" >> project_context.txt
+          echo "===== AMOSTRA DE CONTEÚDO =====" >> project_context.txt
+
+          while read file; do
+            echo "" >> project_context.txt
+            echo "FILE: $file" >> project_context.txt
+            echo "----------------------------------------" >> project_context.txt
+
+            head -80 "$file" >> project_context.txt 2>/dev/null || true
+
+          done < <(head -20 project_files.txt)
+
+          echo "" >> project_context.txt
+          echo "===== ÚLTIMOS COMMITS =====" >> project_context.txt
+
+          git log -20 --pretty=format:"%h - %s" >> project_context.txt
+
+          echo "✅ Contexto gerado"
+
+      - name: 🤖 AI AUDIT
+        id: ai_audit
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          echo "🤖 Executando auditoria IA..."
+
+          PROJECT_CONTEXT=$(head -c 120000 project_context.txt)
+
+          PROMPT=$(cat <<EOF
+          Você é um especialista em:
+
+          - Robot Framework
+          - BDD
+          - Arquitetura de automação
+          - Testes automatizados
+          - Qualidade de código
+          - Organização de keywords
+          - Casos de teste
+          - Estrutura de projetos QA
+
+          Analise o projeto abaixo e identifique:
+
+          1. Melhorias técnicas
+          2. Refatorações importantes
+          3. Keywords duplicadas
+          4. Casos de teste faltantes
+          5. Problemas de padrão BDD
+          6. Problemas de nomenclatura
+          7. Melhorias de performance
+          8. Melhorias de manutenção
+          9. Melhorias de legibilidade
+          10. Possíveis bugs
+          11. Melhorias de organização
+          12. Melhorias de reaproveitamento
+          13. Falta de validações
+          14. Falta de cenários negativos
+          15. Melhorias para escalabilidade
+
+          Gere NO MÁXIMO 10 issues relevantes.
+
+          Para cada issue:
+          - título claro
+          - prioridade
+          - descrição detalhada
+          - impacto
+          - sugestão técnica
+          - exemplo prático
+
+          RETORNE APENAS JSON VÁLIDO.
+
+          FORMATO:
+
+          {
+            "issues": [
+              {
+                "title": "Título",
+                "priority": "Alta",
+                "category": "BDD",
+                "description": "Descrição",
+                "impact": "Impacto",
+                "suggestion": "Sugestão"
+              }
+            ]
+          }
+
+          PROJETO:
+
+          $PROJECT_CONTEXT
+          EOF
+          )
+
+          REQUEST_BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            '{
+              model: "openai/gpt-4o-mini",
+              messages: [
+                {
+                  role: "user",
+                  content: $prompt
+                }
+              ],
+              temperature: 0.2,
+              max_tokens: 4000
+            }')
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")
+
+          echo "$RESPONSE" > response.json
+
+          echo "📥 Resposta recebida"
+
+          AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
+
+          if [ -z "$AI_CONTENT" ]; then
+            echo "❌ IA não retornou conteúdo"
+            exit 1
+          fi
+
+          echo "$AI_CONTENT" > ai_raw.txt
+
+          # Tenta converter para JSON válido
+          cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
+          cat ai_raw.txt | sed -n '/{/,$p' | sed -n '/}/q;p' | jq . > ai_issues.json
+
+          echo "✅ JSON validado"
+
+      - name: 🐞 CREATE GITHUB ISSUES
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🐞 Criando issues..."
+
+          TOTAL=$(jq '.issues | length' ai_issues.json)
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "⚠️ Nenhuma issue encontrada"
+            exit 0
+          fi
+
+          for row in $(jq -c '.issues[]' ai_issues.json); do
+
+            TITLE=$(echo "$row" | jq -r '.title')
+            PRIORITY=$(echo "$row" | jq -r '.priority')
+            CATEGORY=$(echo "$row" | jq -r '.category')
+            DESCRIPTION=$(echo "$row" | jq -r '.description')
+            IMPACT=$(echo "$row" | jq -r '.impact')
+            SUGGESTION=$(echo "$row" | jq -r '.suggestion')
+
+            BODY=$(cat <<EOF
+            ## 📌 Categoria
+            $CATEGORY
+
+            ## 🔥 Prioridade
+            $PRIORITY
+
+            ## 📝 Descrição
+            $DESCRIPTION
+
+            ## 📊 Impacto
+            $IMPACT
+
+            ## 💡 Sugestão Técnica
+            $SUGGESTION
+            EOF
+            )
+
+            # Evita criar issue duplicada
+            EXISTING=$(gh issue list \
+              --search "$TITLE in:title" \
+              --json title \
+              --jq '.[0].title // empty')
+
+            if [ -n "$EXISTING" ]; then
+              echo "⚠️ Issue já existe: $TITLE"
+              continue
+            fi
+
+            echo "🚀 Criando issue: $TITLE"
+
+            gh issue create \
+              --title "$TITLE" \
+              --body "$BODY"
+
+          done
+
+          echo "✅ Auditoria finalizada"
