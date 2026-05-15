@@ -206,24 +206,38 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT$PROJECT_CONTEXT" \
+            --arg prompt "$PROMPT" \
             '{
               model: "qwen/qwen3-coder-480b-a35b-instruct",
-              messages: [{ role: "user", content: $prompt }],
+              messages: [
+                {
+                  role: "user",
+                  content: $prompt
+                }
+              ],
               temperature: 0.1,
+              top_p: 0.8,
+              frequency_penalty: 0,
+              presence_penalty: 0,
               max_tokens: 2500,
-              response_format: { "type": "json_object" }
+              stream: false
             }')
 
+          echo "$REQUEST_BODY" > request.json
+
           RESPONSE=$(curl -s \
-          --request POST \
-          --url "https://integrate.api.nvidia.com/v1/chat/completions" \
-          --header "Authorization: Bearer $NVIDIA_API_KEY" \
-          --header "Accept: application/json" \
-          --header "Content-Type: application/json" \
-          --data "$REQUEST_BODY")
+            --request POST \
+            --url "https://integrate.api.nvidia.com/v1/chat/completions" \
+            --header "Authorization: Bearer $NVIDIA_API_KEY" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --data @request.json)
 
           echo "$RESPONSE" > response.json
+
+          echo "📥 Resposta recebida"
+
+          cat response.json
 
           AI_CONTENT=$(jq -r '.choices[0].message.content // empty' response.json)
 
@@ -238,19 +252,24 @@ jobs:
           cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
           python3 -c '
           import sys, json, re
+
           text = sys.stdin.read()
+
           match = re.search(r"\{[\s\S]*\}", text)
+
           if match:
               try:
                   data = json.loads(match.group(0))
                   print(json.dumps(data, ensure_ascii=False))
-              except:
+              except Exception:
                   print("{\"issues\": []}")
           else:
               print("{\"issues\": []}")
-          ' < ai_raw.txt > ai_issues.json 2>/dev/null || echo '{"issues": []}' > ai_issues.json
+          ' < ai_raw.txt > ai_issues.json
 
-          echo "✅ JSON Robot gerado com $(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0) issues"
+          echo "✅ JSON validado"
+
+          jq . ai_issues.json
 
       - name: 🐞 CREATE ROBOT ISSUES
         env:
