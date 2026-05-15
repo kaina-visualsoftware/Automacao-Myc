@@ -198,21 +198,19 @@ jobs:
 
           echo "✅ JSON validado"
 
-      - name: 🐞 CREATE GITHUB ISSUES
+            - name: 🐞 CREATE GITHUB ISSUES
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🐞 Criando issues..."
-
-          TOTAL=$(jq '.issues | length' ai_issues.json)
-
+          TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
+          
           if [ "$TOTAL" -eq 0 ]; then
             echo "⚠️ Nenhuma issue encontrada"
             exit 0
           fi
 
           for row in $(jq -c '.issues[]' ai_issues.json); do
-
             TITLE=$(echo "$row" | jq -r '.title')
             PRIORITY=$(echo "$row" | jq -r '.priority')
             CATEGORY=$(echo "$row" | jq -r '.category')
@@ -220,7 +218,8 @@ jobs:
             IMPACT=$(echo "$row" | jq -r '.impact')
             SUGGESTION=$(echo "$row" | jq -r '.suggestion')
 
-            BODY=$(cat <<EOF
+            # === BODY CORRIGIDO ===
+            BODY=$(cat <<'HEREDOC'
             ## 📌 Categoria
             $CATEGORY
 
@@ -235,7 +234,7 @@ jobs:
 
             ## 💡 Sugestão Técnica
             $SUGGESTION
-            EOF
+            HEREDOC
             )
 
             # Evita criar issue duplicada
@@ -250,11 +249,9 @@ jobs:
             fi
 
             echo "🚀 Criando issue: $TITLE"
-
             gh issue create \
               --title "$TITLE" \
               --body "$BODY"
-
           done
 
           echo "✅ Auditoria finalizada"
