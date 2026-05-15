@@ -19,7 +19,7 @@ Teste 01 - Validar que não é possível excluir um carregamento com status Fech
 
     Dado que eu crio uma pré-venda com rota
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com uma rota
+    E adiciono um carregamento com rotas    1
     Então gravo o carregamento com o status    Fechada   
     Quando pesquiso o Carregamento gerado
     E valido que um carregamento com status não pode ser excluído    Fechada
@@ -31,7 +31,7 @@ Teste 02 - Validar que não é possível Excluir um carregamento com status Mont
 
     Dado que eu crio uma pré-venda com rota
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com uma rota
+    E adiciono um carregamento com rotas    1
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     E valido que um carregamento com status não pode ser excluído    Montando
@@ -43,7 +43,7 @@ Teste 03 - Carregamento vinculado a duas pré-vendas com rotas distintas
 
     Dado que eu crio duas pré-vendas com rotas distintas
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com duas rotas
+    E adiciono um carregamento com rotas    2
     Então gravo o carregamento com o status    Fechada
     E valido que o carregamento contém duas rotas diferentes
     E fecho a tela de carregamento
@@ -74,7 +74,7 @@ Teste 06 - Validar que não é possível fechar uma carga sem montar e imprimir 
 
     Dado que eu crio uma pré-venda com rota
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com uma rota
+    E adiciono um carregamento com rotas    1
     Então tento fechar a carga sem montar e imprimir o mapa
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
@@ -85,7 +85,7 @@ Teste 07 - Editar um carregamento e em seguida fechar a carga
 
     Dado que eu crio duas pré-vendas com rotas distintas
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com uma rota
+    E adiciono um carregamento com rotas    1
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
@@ -99,7 +99,7 @@ Teste 08 - Editar um carregamento removendo a rota e revertendo para status Cada
 
     Dado que eu crio uma pré-venda com rota
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com uma rota
+    E adiciono um carregamento com rotas    1
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
@@ -130,7 +130,7 @@ Teste 10 - Editar carregamento com duas rotas removendo uma e fechando com statu
 
     Dado que eu crio duas pré-vendas com rotas distintas
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com duas rotas
+    E adiciono um carregamento com rotas    2
     Então gravo o carregamento com o status    Montando
     E valido que o carregamento contém duas rotas diferentes
     Quando pesquiso o Carregamento gerado
@@ -159,7 +159,7 @@ Teste 12 - Validar volume de pré-vendas após remoção em um carregamento
 
     Dado que eu crio duas pré-vendas com a mesma rota
     Então acesso a tela de Carregamento
-    E adiciono um carregamento com uma rota
+    E adiciono um carregamento com rotas    1
     Então gravo o carregamento com o status    Cadastrando
     Quando pesquiso o Carregamento gerado
     E valido o volume inicial do carregamento como cadastrando
