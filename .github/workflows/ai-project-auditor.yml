@@ -338,7 +338,6 @@ jobs:
             COMPLEXITY=$(echo "$row" | jq -r '.complexity // "Não informado"')
             IMPROVEMENT_TYPE=$(echo "$row" | jq -r '.improvement_type // "Melhoria Técnica"')
 
-            # FORMATA LISTA DE ARQUIVOS
             FILES_FORMATTED=""
 
             if [ -n "$FILES" ]; then
@@ -391,7 +390,6 @@ jobs:
             EOF
             )
 
-            # EVITA ISSUES DUPLICADAS
             EXISTING=$(gh issue list \
               --search "$TITLE in:title" \
               --json title \
