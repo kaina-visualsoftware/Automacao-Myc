@@ -181,7 +181,6 @@ Dado que eu crio uma pré-venda com rota
     E listo pela tela de Geração de vendas
 
 Dado que eu crio duas pré-vendas com rotas distintas
-    Buscar Duas Rotas Distintas Com Clientes
 
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
@@ -292,6 +291,12 @@ E removo um pedido da rota
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}   ${TEMPO_TELA}
 
+E removo um dos pedidos da rota
+
+    E clico em Incluir Rotas
+    Quando seleciono a rota incluída
+    E removo um pedido da rota
+
 # =============================================================
 # TELA DE GERAÇÃO DE VENDAS
 # =============================================================
@@ -377,23 +382,32 @@ Então edito o carregamento
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
-E adiciono um carregamento com uma rota
-    E clico para adicionar um carregamento
-    Quando adiciono uma Descrição qualquer e incluo um palete
-    E clico em Incluir Rotas
-    Então eu Listo as Rotas
-    E gravo incluindo a primeira Rota da lista
-
-E adiciono um carregamento com duas rotas
-    E clico para adicionar um carregamento
-    Quando adiciono uma Descrição qualquer e incluo um palete
-    E clico em Incluir Rotas
-    Então eu Listo as Rotas
-    E gravo incluindo duas rotas da lista
-
 E adiciono um carregamento sem rota
     E clico para adicionar um carregamento
     Quando adiciono uma Descrição qualquer e incluo um palete
+
+E adiciono um carregamento com rotas
+    [Arguments]    ${QUANTIDADE_ROTAS}
+
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    ${QUANTIDADE_ROTAS}
+
+E adiciono um carregamento com rota sem informar descrição
+
+    E clico para adicionar um carregamento
+
+    SikuliLibrary.Click    ${INPUT_PALETES_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    1
+    Sleep    ${SLEEP_BAIXO}
+
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
 
 # =============================================================
 # TELA DE CARREGAMENTO - GERENCIAMENTO DE ROTAS
@@ -409,39 +423,40 @@ Então eu Listo as Rotas
     Press Combination    KEY.ALT    KEY.L
     Sleep    ${SLEEP_BAIXO}
 
-E gravo incluindo a primeira Rota da lista
+E gravo incluindo rotas da lista
+    [Arguments]    ${QUANTIDADE_ROTAS}
 
     SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
+
+    FOR    ${index}    IN RANGE    ${QUANTIDADE_ROTAS}
+
+        Press Special Key    SPACE
+        Sleep    ${SLEEP_BAIXO}
+
+        IF    ${index} < (${QUANTIDADE_ROTAS} - 1)
+            Press Special Key    DOWN
+            Sleep    ${SLEEP_BAIXO}
+        END
+
+    END
+
     SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}   ${TEMPO_TELA}
 
-E gravo incluindo duas rotas da lista
+    Wait Until Screen Contain
+    ...    ${TELA_CADASTRO_CARREGAMENTO}
+    ...    ${TEMPO_TELA}
 
-    SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    DOWN
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    SPACE
-    Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.G
-    Sleep    ${SLEEP_BAIXO}
-    Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
 E incluo uma rota ao carregamento
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo a primeira Rota da lista
+    E gravo incluindo rotas da lista    1
 
 E removo uma rota do carregamento
     E clico em Incluir Rotas
@@ -526,6 +541,17 @@ E informo uma descrição
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
     Informar Descrição
+
+Então valido a mensagem de descrição obrigatória 
+
+    Wait Until Screen Contain    ${AVISO_DESCRICAO_OBRIGATORIA}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Wait Until Screen Contain
+    ...    ${TELA_CADASTRO_CARREGAMENTO}
+    ...    ${TEMPO_TELA}
 
 # =============================================================
 # TELA DE CARREGAMENTO - EXCLUSÃO
@@ -633,65 +659,4 @@ E valido o volume após remover uma pré-venda
     ${VOLUME_ESPERADO}    Evaluate    ${VOLUME_INICIAL} - 1
     Log To Console    *** VALIDAÇÃO 2: Volume esperado (Montando) = ${VOLUME_ESPERADO} pré-vendas (${VOLUME_INICIAL} - 1)
     E valido que o volume do carregamento é    ${VOLUME_ESPERADO}
-
-
-E adiciono um carregamento com várias rotas
-    [Arguments]    ${QUANTIDADE_ROTAS}
-
-    E clico para adicionar um carregamento
-    Quando adiciono uma Descrição qualquer e incluo um palete
-    E clico em Incluir Rotas
-    Então eu Listo as Rotas
-
-    SikuliLibrary.Click    ${GRID_ROTA_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-
-    FOR    ${index}    IN RANGE    ${QUANTIDADE_ROTAS}
-
-        Press Special Key    SPACE
-        Sleep    ${SLEEP_BAIXO}
-
-        IF    ${index} < (${QUANTIDADE_ROTAS} - 1)
-            Press Special Key    DOWN
-            Sleep    ${SLEEP_BAIXO}
-        END
-
-    END
-
-    SikuliLibrary.Click    ${BT_SETA_INCLUSÃO_ROTAS_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Combination    KEY.ALT    KEY.G
-    Sleep    ${SLEEP_BAIXO}
-
-    Wait Until Screen Contain
-    ...    ${TELA_CADASTRO_CARREGAMENTO}
-    ...    ${TEMPO_TELA}
-
-    Sleep    ${SLEEP_BAIXO}
-    
-E adiciono um carregamento com rota sem informar descrição
-
-    E clico para adicionar um carregamento
-
-    SikuliLibrary.Click    ${INPUT_PALETES_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-
-    Input Text    ${EMPTY}    1
-    Sleep    ${SLEEP_BAIXO}
-
-    E clico em Incluir Rotas
-    Então eu Listo as Rotas
-    E gravo incluindo a primeira Rota da lista
-
-Então valido a mensagem de descrição obrigatória 
-
-    Wait Until Screen Contain    ${AVISO_DESCRICAO_OBRIGATORIA}    ${TEMPO_TELA}
-
-    SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
-    Sleep    ${SLEEP_BAIXO}
-
-    Wait Until Screen Contain
-    ...    ${TELA_CADASTRO_CARREGAMENTO}
-    ...    ${TEMPO_TELA}
 
