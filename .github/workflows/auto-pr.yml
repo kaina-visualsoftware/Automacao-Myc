@@ -289,10 +289,31 @@ jobs:
             }')
 
 
-          RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-            -H "Authorization: Bearer $NVIDIA_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$REQUEST_BODY")
+            RESPONSE=""
+
+            for i in 1 2 3; do
+
+              echo "🔄 Tentativa descrição: $i"
+
+              RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
+                -H "Authorization: Bearer $NVIDIA_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$REQUEST_BODY")
+
+              echo "$RESPONSE"
+
+              if echo "$RESPONSE" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
+                echo "✅ Resposta válida recebida"
+                break
+              fi
+
+              ERROR_DETAIL=$(echo "$RESPONSE" | jq -r '.detail // empty')
+
+              echo "⚠️ Erro detectado: $ERROR_DETAIL"
+
+              sleep 5
+
+            done
 
           echo "🔍 Debug descrição:"
           echo "$RESPONSE"
