@@ -106,7 +106,7 @@ jobs:
           
           wc -l < file_contents_summary.txt
 
-            - name: 🤖 GENERATE AI DESCRIPTION
+      - name: 🤖 GENERATE AI DESCRIPTION
         id: ai
         if: env.HAS_DIFF == 'true'
         env:
