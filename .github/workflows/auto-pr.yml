@@ -118,9 +118,66 @@ jobs:
           COMMITS_CONTENT=$(cat commits.txt)
           FILES_ANALYSIS=$(cat files_analysis.txt)
 
+          echo "📝 Gerando título da PR..."
+
+          TITLE_PROMPT="Gere apenas um título profissional para Pull Request.
+          REGRAS:
+          - Máximo 65 caracteres
+          - Não ultrapasse 65 caracteres
+          - Não use aspas
+          - Não use markdown
+          - Não use emojis
+          - Deve terminar em palavra completa
+          - Responda apenas com o título
+
+          COMMITS:
+          $COMMITS_CONTENT
+
+          ARQUIVOS:
+          $FILES_ANALYSIS"
+
+          TITLE_REQUEST=$(jq -n \
+            --arg prompt "$TITLE_PROMPT" \
+            '{
+              model: "mistralai/mistral-nemotron",
+              messages: [
+                {
+                  role: "user",
+                  content: $prompt
+                }
+              ],
+              temperature: 0.05,
+              max_tokens: 80
+            }')
+
+          TITLE_RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
+            -H "Authorization: Bearer '"$NVIDIA_API_KEY"'" \
+            -H "Content-Type: application/json" \
+            -d "$TITLE_REQUEST")
+
+          echo "🔍 Debug título:" >&2
+          echo "$TITLE_RESPONSE" | jq . >&2 || true
+
+          TITLE=$(echo "$TITLE_RESPONSE" | jq -r '.choices[0].message.content // empty')
+
+          TITLE=$(echo "$TITLE" \
+            | tr -d '\n\r' \
+            | sed 's/["`]//g' \
+            | sed 's/[[:space:]]*$//')
+
+          if [ -z "$TITLE" ] || [ ${#TITLE} -gt 65 ]; then
+            echo "⚠️ Título inválido. Usando fallback."
+
+            TITLE="feat: ${{ github.ref_name }}"
+          fi
+
+          echo "✅ Título gerado: $TITLE"
+
+
           # Remove possíveis caracteres binários/null bytes
           FILE_CONTENTS=$(strings file_contents_summary.txt | head -c 4000)
           DIFF_CONTENT=$(strings diff.txt | head -c 6000)
+          
 
           # Cria um prompt muito mais detalhado
           read -r -d '' PROMPT << 'EOF' || true
@@ -166,7 +223,6 @@ jobs:
 
           FORMATO:
           {
-            "title": "Título obrigatório com até 65 caracteres",
             "description": "# Descrição da Pull Request\n\n## Resumo Técnico\n[TEXTO PREENCHIDO PELA IA]\n\n## Arquivos Alterados\n\n### Arquivos Criados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Modificados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Deletados\n- [ARQUIVO E MOTIVO]\n\n## O Que Foi Alterado\n- [ALTERAÇÃO REAL 1]\n- [ALTERAÇÃO REAL 2]\n\n## Impactos\n\n### Performance\n- [IMPACTO REAL]\n\n### Segurança\n- [IMPACTO REAL]\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n1. [PASSO REAL]\n2. [PASSO REAL]\n3. [RESULTADO ESPERADO]"
           }
 
@@ -247,7 +303,6 @@ jobs:
                 | jq . 2>/dev/null || echo '{}')
             fi
 
-            TITLE=$(echo "$AI_JSON" | jq -r '.title // empty' 2>/dev/null)
             BODY=$(echo "$AI_JSON" | jq -r '.description // empty' 2>/dev/null)
 
             if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
