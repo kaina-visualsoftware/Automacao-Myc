@@ -147,25 +147,27 @@ jobs:
           Retorne EXATAMENTE neste formato JSON (sem markdown, sem backticks, apenas JSON puro):
 
           {
-            "title": "Título OBRIGATORIAMENTE com no máximo 65 caracteres, sem truncamento, claro, objetivo e terminando em palavra completa",
-            "description": "# Descrição da Pull Request\n\n## Resumo Técnico\nDescreva em 2-3 linhas o que foi feito e por que.\n\n## Arquivos Alterados\n\n### Arquivos Criados:\n- `caminho/arquivo.ts`: Descrição do que o arquivo faz\n- `caminho/outro.ts`: Descrição detalhada\n\n### Arquivos Modificados:\n- `caminho/existente.ts`: O que foi alterado e por quê\n- `src/types/index.ts`: Que tipos foram adicionados\n\n### Arquivos Deletados:\n- `old/arquivo.ts`: Por que foi deletado\n\n## O Que Foi Alterado\n\n### Recurso/Componente 1\nDescreva o que mudou, qual era o problema, como foi resolvido.\n\n### Recurso/Componente 2\nDescreva mudanças específicas com contexto.\n\n## Impactos\n\n### Performance\n- Se teve algum impacto em performance\n\n### Segurança\n- Se tem impactos de segurança\n\n### Breaking Changes\n- Liste TODAS as breaking changes se houver\n- Se não tiver, remova esta seção\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n\n1. Passo 1 para testar\n2. Passo 2 para testar\n3. Passo 3 esperado resultado\n\n## Recursos Adicionais\n- Links relevantes se houver\n- Referências a issues\n- Documentação relacionada"
+            "title": "Título obrigatório com até 65 caracteres",
+            "description": "# Descrição da Pull Request\n\n## Resumo Técnico\n[TEXTO PREENCHIDO PELA IA]\n\n## Arquivos Alterados\n\n### Arquivos Criados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Modificados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Deletados\n- [ARQUIVO E MOTIVO]\n\n## O Que Foi Alterado\n- [ALTERAÇÃO REAL 1]\n- [ALTERAÇÃO REAL 2]\n\n## Impactos\n\n### Performance\n- [IMPACTO REAL]\n\n### Segurança\n- [IMPACTO REAL]\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n1. [PASSO REAL]\n2. [PASSO REAL]\n3. [RESULTADO ESPERADO]"
           }
 
-          IMPORTANTE:
-          - Seja ESPECÍFICO sobre quais arquivos foram criados/modificados
-          - Explique o PROPÓSITO de cada arquivo novo
-          - Descreva EXATAMENTE o que mudou em cada arquivo
-          - Inclua TODOS os impactos potenciais
-          - Explique COMO TESTAR a mudança
-          - Retorne APENAS JSON válido
-          - NÃO use markdown fora do JSON
-          - NÃO use emojis
-          - NÃO use texto fora do JSON
-          - TODOS os headers markdown DEVEM conter espaço após #
+          REGRAS OBRIGATÓRIAS:
+          - NÃO copie placeholders do exemplo
+          - NÃO escreva textos genéricos
+          - NÃO use frases como:
+            "Descreva o que mudou"
+            "Passo 1 para testar"
+            "Texto aqui"
+          - TODAS as seções DEVEM ser preenchidas com conteúdo real
+          - Se não houver conteúdo para uma seção, remova a seção
+          - NÃO invente arquivos
+          - NÃO invente funcionalidades
+          - Baseie-se SOMENTE no diff enviado
+          - O campo "description" deve conter markdown válido
           - O título DEVE ter no máximo 65 caracteres
-          - O título NÃO pode ultrapassar 65 caracteres
           - O título NÃO pode ser truncado
-          - O título deve terminar em palavra completa
+          - O JSON deve ser válido
+          - Retorne APENAS JSON
           EOF
 
           # Substitui as variáveis no prompt
@@ -175,7 +177,7 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
             '{
-              model: "meta/llama-3.1-70b-instruct",
+              model: "nvidia/llama-3.1-nemotron-70b-instruct",
 
               response_format: {
                 type: "json_object"
