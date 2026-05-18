@@ -22,3 +22,15 @@ Teste 01 - Criar OS validando cliente por CPF
     E acesso a aba de pagamentos
     KeyOrdemDeServicoRegressao.Então gravo a ordem de serviço
     Então a ordem de serviço deve estar salva no banco com os dados corretos
+
+
+Teste 02 - Validar CPF não cadastrado na OS
+    [Tags]    Teste02
+
+    Dado que gravo o código da última OS existente
+    Dado que acesso a tela de ordens de serviços para regressão
+    Quando inicio uma nova ordem de serviço
+    E informo o vendedor
+    E informo a tabela de preço
+    E informo cliente com CPF não existente
+    Então nenhuma OS deve ter sido persistida no banco
