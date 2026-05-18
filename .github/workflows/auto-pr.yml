@@ -119,8 +119,8 @@ jobs:
           FILES_ANALYSIS=$(cat files_analysis.txt)
 
           # Remove possíveis caracteres binários/null bytes
-          FILE_CONTENTS=$(strings file_contents_summary.txt | head -c 8000)
-          DIFF_CONTENT=$(strings diff.txt | head -c 10000)
+          FILE_CONTENTS=$(strings file_contents_summary.txt | head -c 4000)
+          DIFF_CONTENT=$(strings diff.txt | head -c 6000)
 
           # Cria um prompt muito mais detalhado
           read -r -d '' PROMPT << 'EOF' || true
@@ -142,14 +142,9 @@ jobs:
 
           ## INSTRUÇÃO
 
-          Analise TUDO acima e gere uma descrição profissional de Pull Request em JSON.
+          Analise os commits, arquivos alterados e diff enviados.
 
-          Retorne EXATAMENTE neste formato JSON (sem markdown, sem backticks, apenas JSON puro):
-
-          {
-            "title": "Título obrigatório com até 65 caracteres",
-            "description": "# Descrição da Pull Request\n\n## Resumo Técnico\n[TEXTO PREENCHIDO PELA IA]\n\n## Arquivos Alterados\n\n### Arquivos Criados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Modificados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Deletados\n- [ARQUIVO E MOTIVO]\n\n## O Que Foi Alterado\n- [ALTERAÇÃO REAL 1]\n- [ALTERAÇÃO REAL 2]\n\n## Impactos\n\n### Performance\n- [IMPACTO REAL]\n\n### Segurança\n- [IMPACTO REAL]\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n1. [PASSO REAL]\n2. [PASSO REAL]\n3. [RESULTADO ESPERADO]"
-          }
+          Gere APENAS um JSON válido.
 
           REGRAS OBRIGATÓRIAS:
           - NÃO copie placeholders do exemplo
@@ -168,6 +163,13 @@ jobs:
           - O título NÃO pode ser truncado
           - O JSON deve ser válido
           - Retorne APENAS JSON
+
+          FORMATO:
+          {
+            "title": "Título obrigatório com até 65 caracteres",
+            "description": "# Descrição da Pull Request\n\n## Resumo Técnico\n[TEXTO PREENCHIDO PELA IA]\n\n## Arquivos Alterados\n\n### Arquivos Criados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Modificados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Deletados\n- [ARQUIVO E MOTIVO]\n\n## O Que Foi Alterado\n- [ALTERAÇÃO REAL 1]\n- [ALTERAÇÃO REAL 2]\n\n## Impactos\n\n### Performance\n- [IMPACTO REAL]\n\n### Segurança\n- [IMPACTO REAL]\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n1. [PASSO REAL]\n2. [PASSO REAL]\n3. [RESULTADO ESPERADO]"
+          }
+
           EOF
 
           # Substitui as variáveis no prompt
@@ -177,7 +179,7 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
             '{
-              model: "nvidia/llama-3.1-nemotron-70b-instruct",
+              "model": "mistralai/mistral-nemotron",
 
               response_format: {
                 type: "json_object"
@@ -194,7 +196,7 @@ jobs:
                 }
               ],
 
-              temperature: 0.1,
+              temperature: 0.05,
               top_p: 0.7,
               max_tokens: 2000
             }')
