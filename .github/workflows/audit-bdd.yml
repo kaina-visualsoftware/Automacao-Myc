@@ -196,24 +196,24 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
-            '{
-              model: "minimaxai/minimax-m2.7",
-              messages: [
-                {
-                  role: "system",
-                  content: "Você responde SOMENTE JSON válido."
-                },
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-              temperature: 0.2,
-              top_p: 0.9,
-              max_tokens: 4096,
-              stream: false
-            }'
+          --arg prompt "$PROMPT" \
+          '{
+            model: "minimaxai/minimax-m2.7",
+            messages: [
+              {
+                role: "system",
+                content: "Você responde SOMENTE JSON válido."
+              },
+              {
+                role: "user",
+                content: $prompt
+              }
+            ],
+            temperature: 0.2,
+            top_p: 0.9,
+            max_tokens: 4096,
+            stream: false
+          }')
           
 
           echo "📡 Chamando NVIDIA API..."
