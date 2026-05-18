@@ -130,3 +130,15 @@ Teste 10 - Realizar embarque do carregamento com venda e cobrança
     Então o adiantamento deve estar cadastrado no banco
     Então fecho a tela de carregamento
 
+
+Teste 11 - Validar status Montada após incluir venda no carregamento
+    [Tags]    Teste 11
+
+    Dado que acesso o lançamento de carregamento de vendas
+    Quando inicio um novo carregamento
+    E informo uma descrição valida
+    E incluo vendas no carregamento    1
+    Então o status do carregamento deve ser    Montada
+    E gravo o carregamento da venda
+    Então o carregamento da venda deve ser salvo com sucesso
+    Então fecho a tela de carregamento
