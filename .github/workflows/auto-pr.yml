@@ -148,13 +148,14 @@ jobs:
               }
             ],
             temperature: 0.0,
+            top_p: 0.1,
             max_tokens: 80
           }')
 
           TITLE_RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
             -H "Authorization: Bearer $NVIDIA_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "$REQUEST_BODY")
+            -d "$TITLE_REQUEST")
 
           echo "🔍 Debug título:" >&2
           echo "$TITLE_RESPONSE" | jq . >&2 || true
@@ -166,7 +167,9 @@ jobs:
             | sed 's/["`]//g' \
             | sed 's/[[:space:]]*$//')
 
-          if [ -z "$TITLE" ] || [ ${#TITLE} -gt 65 ]; then
+          TITLE_LENGTH=${#TITLE}
+
+          if [ -z "$TITLE" ] || [ "$TITLE_LENGTH" -gt 65 ] || [ "$TITLE_LENGTH" -lt 20 ]; then
             echo "⚠️ Título inválido. Usando fallback."
 
             TITLE="feat: ${{ github.ref_name }}"
