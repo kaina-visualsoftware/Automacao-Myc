@@ -9,11 +9,12 @@ on:
 permissions:
   contents: read
   issues: write
-  pull-requests: read
+ pull-requests: read
 
 jobs:
   audit-bdd:
     runs-on: ubuntu-latest
+
     steps:
       - name: 📥 CHECKOUT
         uses: actions/checkout@v4
@@ -26,195 +27,125 @@ jobs:
       - name: 📂 SCAN BDD FILES
         run: |
           echo "🔍 Escaneando arquivos BDD..."
+
           find . \
             -type f \
             \( -name "*.robot" -o -name "*.feature" -o -name "*.resource" \) \
             ! -path "*/node_modules/*" \
             ! -path "*/.git/*" \
             > bdd_files.txt
-          
-          echo "✅ Arquivos BDD encontrados:"
+
+          echo "✅ Arquivos encontrados:"
           wc -l bdd_files.txt
 
-      - name: 📄 BUILD BDD CONTEXT
+      - name: 📄 BUILD LIGHTWEIGHT CONTEXT
         run: |
-          echo "📄 Gerando contexto BDD..."
+          echo "📄 Gerando contexto otimizado..."
+
           > bdd_context.txt
-          echo "===== ESTRUTURA BDD =====" >> bdd_context.txt
-          cat bdd_files.txt | head -40 >> bdd_context.txt
-          
+
+          echo "===== BDD FILES =====" >> bdd_context.txt
+          head -5 bdd_files.txt >> bdd_context.txt
+
           echo "" >> bdd_context.txt
-          echo "===== AMOSTRA DE ARQUIVOS BDD =====" >> bdd_context.txt
-          
-          head -15 bdd_files.txt | while read file; do
+          echo "===== TEST SCENARIOS =====" >> bdd_context.txt
+
+          head -5 bdd_files.txt | while read file; do
+
             echo "" >> bdd_context.txt
             echo "FILE: $file" >> bdd_context.txt
-            echo "----------------------------------------" >> bdd_context.txt
-            head -45 "$file" >> bdd_context.txt 2>/dev/null || true
-            echo "... (truncado)" >> bdd_context.txt
+            echo "--------------------------------" >> bdd_context.txt
+
+            if [[ "$file" == *.feature ]]; then
+              grep -E "^(Feature:|Scenario:|Scenario Outline:|Given|When|Then|And|But)" "$file" | head -40 >> bdd_context.txt || true
+            else
+              awk '/\*\*\* Test Cases \*\*\*/,0' "$file" | head -40 >> bdd_context.txt || true
+            fi
+
           done
-          
+
           echo "" >> bdd_context.txt
-          echo "===== ÚLTIMOS COMMITS =====" >> bdd_context.txt
-          git log -12 --pretty=format:"%h - %an - %s" >> bdd_context.txt
-          
-          echo "✅ Contexto BDD gerado ($(wc -c < bdd_context.txt) bytes)"
+          echo "===== LAST COMMITS =====" >> bdd_context.txt
+
+          git log -5 --pretty=format:"%h - %s" >> bdd_context.txt
+
+          echo "✅ Contexto gerado"
+          wc -c bdd_context.txt
 
       - name: 🤖 AI BDD AUDIT
         id: ai_bdd_audit
         env:
-           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+
         run: |
           echo "🤖 Executando auditoria BDD..."
-          PROJECT_CONTEXT=$(tail -c 8000 bdd_context.txt)
+
+          PROJECT_CONTEXT=$(tail -c 3000 bdd_context.txt)
 
           PROMPT=$(cat <<EOF
-          Você é um ESPECIALISTA MUNDIAL EM BDD e EXPERT EM BEHAVIOR-DRIVEN DEVELOPMENT.
-          Sua única missão é realizar uma AUDITORIA BDD PROFUNDA E CIRÚRGICA no projeto abaixo.
-          Você possui 15+ anos de experiência com:
-          - Design da linguagem Gherkin
-          - Metodologia Behavior-Driven Development
-          - Acceptance Test-Driven Development (ATDD)
-          - Práticas de documentação viva (Living Documentation)
-          - Domain-Driven Design aplicado a cenários de teste
-          - Specification by Example
-          - Metodologia Three Amigos
-          - Suítes de testes legíveis para o negócio
+          Você é especialista em BDD.
 
-          ========================
-          SEU FRAMEWORK DE AUDITORIA BDD
-          ========================
+          Analise os arquivos Robot Framework e Gherkin fornecidos.
 
-          CAMADA 1 — QUALIDADE DOS CENÁRIOS
-          - O cenário está escrito sob a perspectiva do NEGÓCIO ou da TÉCNICA?
-          - O cenário representa UM único comportamento?
-          - O nome do cenário descreve o RESULTADO, não os passos?
-          - Existem múltiplos passos WHEN? (anti-pattern de múltiplas ações)
-          - Os passos THEN estão validando resultados de negócio OBSERVÁVEIS?
-          - O cenário está testando detalhes de implementação em vez de comportamento?
-          - Um Product Owner não técnico conseguiria entender este cenário?
-          - Existe jargão técnico escondido vazando para o Gherkin?
+          Detecte:
+          - anti-patterns BDD
+          - múltiplos WHEN
+          - THEN fraco
+          - cenários técnicos demais
+          - ausência de cenário negativo
+          - excesso de setup
+          - baixa legibilidade
+          - cenários acoplados à implementação
 
-          CAMADA 2 — ESTRUTURA GIVEN / WHEN / THEN
-          - GIVEN: Está configurando contexto ou executando ações? (anti-pattern)
-          - GIVEN: Existe complexidade excessiva de setup escondida em um único passo?
-          - WHEN: É uma única ação ou evento de usuário, clara e objetiva?
-          - WHEN: Existem múltiplos passos WHEN? (necessidade de decomposição do cenário)
-          - THEN: Está validando resultados reais de negócio ou artefatos de UI?
-          - THEN: Existem asserções THEN ausentes?
-          - THEN: As asserções estão muito granulares ou muito vagas?
-          - AND / BUT: Estão sendo usados em excesso ou de forma incorreta?
+          REGRAS:
+          - máximo 5 issues
+          - respostas curtas
+          - sem markdown
+          - sem explicações
+          - sem reasoning
+          - apenas JSON válido
+          - cada campo com no máximo 200 caracteres
 
-          CAMADA 3 — COBERTURA DE CENÁRIOS
-          - Existe um cenário de Happy Path?
-          - Existe pelo menos UM cenário negativo por feature?
-          - Os casos extremos estão cobertos? (entrada vazia, tamanho máximo, valores nulos)
-          - As condições de limite (boundary conditions) estão testadas?
-          - Os cenários de permissão/autorização estão cobertos?
-          - Os cenários de estado de erro estão cobertos?
-          - Os comportamentos assíncronos/de espera estão considerados?
-          - Os cenários de validação de dados estão presentes?
-
-          CAMADA 4 — ESTRUTURA DO ARQUIVO DE FEATURE
-          - A descrição da Feature é significativa e orientada ao negócio?
-          - Os cenários estão agrupados de forma lógica?
-          - O Background está sobrecarregado? (passos compartilhados em excesso)
-          - Scenario Outlines estão sendo usados quando deveriam ser cenários simples?
-          - As tabelas de Examples estão bem estruturadas e são significativas?
-          - Existe um contexto de negócio claro no cabeçalho da Feature?
-          - As tags estão sendo usadas de forma eficaz para filtro e relatório?
-
-          CAMADA 5 — LINGUAGEM E LEGIBILIDADE
-          - A linguagem é consistente em todos os cenários?
-          - As definições de passos (step definitions) estão sendo reutilizadas corretamente?
-          - Existem formulações inconsistentes de passos para a mesma ação?
-          - Existe inconsistência entre voz passiva e voz ativa?
-          - As descrições dos passos estão longas demais ou vagas demais?
-          - Os atores estão claramente identificados? (usuário, administrador, sistema)
-
-          CAMADA 6 — ANTI-PATTERNS A DETECTAR
-          - "God scenarios" — um cenário fazendo coisas demais
-          - "Cenários acoplados à implementação" — testando COMO, não O QUÊ
-          - "Atores invisíveis" — nenhum sujeito claro executando as ações
-          - "Cenários sem resultado" — nenhum THEN significativo
-          - "Cenários sobrecarregados de dados" — dados hardcoded irrelevantes nos passos
-          - "Precondições instáveis" — GIVENs que dependem do estado do sistema
-          - "Cenários duplicados" — mesmo comportamento testado múltiplas vezes
-          - "Explosão de cenários" — muitos cenários similares em vez de usar Outline
-          - "Regra de negócio ausente" — cenário sem rastreabilidade para um requisito
-          - "Cenários órfãos" — cenários não vinculados a nenhum critério de aceitação
-
-          ========================
-          REGRAS DE SAÍDA DA AUDITORIA
-          ========================
-
-          - Reporte APENAS problemas REAIS encontrados nos arquivos fornecidos
-          - NÃO invente nomes de arquivos ou cenários
-          - NÃO gere conselhos genéricos
-          - SEMPRE cite o arquivo EXATO e o nome do cenário
-          - SEMPRE mostre o código atual problemático
-          - SEMPRE mostre a versão ideal reescrita
-          - Gere no máximo 10 issues
-          - Priorize os problemas de MAIOR IMPACTO
-
-          ========================
-          FORMATO DE RETORNO
-          ========================
-
-          RETORNE APENAS JSON VÁLIDO. SEM MARKDOWN. SEM TEXTO ADICIONAL.
+          FORMATO:
 
           {
             "issues": [
               {
-                "title": "Título técnico claro",
-                "priority": "Alta",
-                "severity": "Alta",
-                "category": "BDD",
-                "files": ["caminho/para/arquivo.robot"],
-                "problem": "Descrição extremamente detalhada do problema BDD encontrado",
-                "scenario_name": "Nome exato do cenário problemático",
-                "anti_pattern": "Qual anti-pattern BDD este representa",
-                "technical_impact": "Impacto na confiabilidade da automação e manutenção",
-                "business_impact": "Impacto na rastreabilidade de requisitos e comunicação",
-                "risk": "Qual risco isso introduz se não for corrigido",
-                "reproduction": "Como identificar este problema no código",
-                "current_code": "O código Gherkin atual problemático exato",
-                "suggested_rewrite": "A versão Gherkin ideal reescrita",
-                "bdd_principle_violated": "Qual princípio BDD está sendo violado",
-                "missing_scenarios": "Lista de cenários ausentes que deveriam existir",
-                "suggestion": "Sugestão detalhada de correção",
-                "benefits": "Benefícios esperados após a correção",
-                "complexity": "Baixa",
-                "improvement_type": "BDD"
+                "title": "",
+                "file": "",
+                "scenario": "",
+                "problem": "",
+                "current_code": "",
+                "suggested_rewrite": "",
+                "priority": ""
               }
             ]
           }
 
-          PROJECT CONTEXT:
+          CONTEXTO:
           $PROJECT_CONTEXT
           EOF
           )
 
           REQUEST_BODY=$(jq -n \
-          --arg prompt "$PROMPT" \
-          '{
-            model: "minimaxai/minimax-m2.7",
-            messages: [
-              {
-                role: "system",
-                content: "Você responde SOMENTE JSON válido."
-              },
-              {
-                role: "user",
-                content: $prompt
-              }
-            ],
-            temperature: 0.2,
-            top_p: 0.9,
-            max_tokens: 4096,
-            stream: false
-          }')
-          
+            --arg prompt "$PROMPT" \
+            '{
+              model: "minimaxai/minimax-m2.7",
+              messages: [
+                {
+                  role: "system",
+                  content: "Retorne apenas JSON válido. Não explique raciocínio."
+                },
+                {
+                  role: "user",
+                  content: $prompt
+                }
+              ],
+              temperature: 0.1,
+              top_p: 0.9,
+              max_tokens: 1500,
+              stream: false
+            }')
 
           echo "📡 Chamando NVIDIA API..."
 
@@ -227,32 +158,31 @@ jobs:
             --data "$REQUEST_BODY"
           )
 
-           echo "$RESPONSE" > response.json
+          echo "$RESPONSE" > response.json
 
-          echo "📄 Response salvo em response.json"
+          echo "📄 Response salvo"
 
           if ! jq empty response.json >/dev/null 2>&1; then
-            echo "❌ RESPOSTA INVÁLIDA DA API"
+            echo "❌ JSON inválido da API"
             cat response.json
             exit 1
           fi
 
           if jq -e '.error' response.json >/dev/null 2>&1; then
-            echo "❌ API RETORNOU ERRO"
+            echo "❌ API retornou erro"
             cat response.json | jq .
             exit 1
           fi
 
           AI_CONTENT=$(jq -r '
-            .choices[0].message.content // empty
+            .choices[0].message.content //
+            .choices[0].message.reasoning_content //
+            empty
           ' response.json)
 
           if [ -z "$AI_CONTENT" ] || [ "$AI_CONTENT" = "null" ]; then
-            echo "❌ IA NÃO RETORNOU CONTEÚDO"
-
-            echo "===== RESPONSE ====="
+            echo "❌ IA não retornou conteúdo"
             cat response.json | jq .
-
             exit 1
           fi
 
@@ -272,155 +202,118 @@ jobs:
               try:
                   data = json.loads(match.group(0))
                   print(json.dumps(data, ensure_ascii=False))
-              except Exception:
-                  print("{\"issues\": []}")
+              except:
+                  print("{\"issues\":[]}")
           else:
-              print("{\"issues\": []}")
+              print("{\"issues\":[]}")
           ' < ai_raw.txt > ai_issues.json
 
-          echo "✅ JSON BDD GERADO"
+          echo "✅ JSON FINAL"
 
           cat ai_issues.json | jq .
-
-          echo "TOTAL_ISSUES=$(jq '.issues | length' ai_issues.json)" >> $GITHUB_ENV
 
       - name: 🐞 CREATE BDD ISSUES
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         run: |
           TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
 
           if [ "$TOTAL" -eq 0 ]; then
-            echo "⚠️ Nenhuma issue BDD encontrada"
+            echo "⚠️ Nenhuma issue encontrada"
             exit 0
           fi
-          
-          sanitize() { echo "$1" | sed 's/\r//g'; }
 
           create_label_if_not_exists() {
-            local NAME="$1" COLOR="$2"
-            EXISTS=$(gh label list --json name --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
-            [ -z "$EXISTS" ] && gh label create "$NAME" --color "$COLOR" --description "AI BDD Audit" 2>/dev/null || true
+
+            local NAME="$1"
+            local COLOR="$2"
+
+            EXISTS=$(gh label list --json name \
+              --jq ".[] | select(.name == \"$NAME\") | .name" 2>/dev/null)
+
+            if [ -z "$EXISTS" ]; then
+              gh label create "$NAME" \
+                --color "$COLOR" \
+                --description "BDD AI Audit" \
+                2>/dev/null || true
+            fi
           }
 
           create_label_if_not_exists "ai-bdd-audit" "5319E7"
-          create_label_if_not_exists "priority-critical" "B60205"
           create_label_if_not_exists "priority-high" "D93F0B"
           create_label_if_not_exists "priority-medium" "FBCA04"
           create_label_if_not_exists "priority-low" "0E8A16"
-          create_label_if_not_exists "category-bdd" "1D76DB"
 
-          jq -c '.issues[]' ai_issues.json | while read -r row; do
-            TITLE=$(sanitize "$(echo "$row" | jq -r '.title // "Issue BDD"')")
-            PRIORITY=$(sanitize "$(echo "$row" | jq -r '.priority // "Média"')")
-            SEVERITY=$(sanitize "$(echo "$row" | jq -r '.severity // "Média"')")
-            CATEGORY=$(sanitize "$(echo "$row" | jq -r '.category // "BDD"')")
-            PROBLEM=$(sanitize "$(echo "$row" | jq -r '.problem // "Não informado"')")
-            SCENARIO_NAME=$(sanitize "$(echo "$row" | jq -r '.scenario_name // "Não identificado"')")
-            ANTI_PATTERN=$(sanitize "$(echo "$row" | jq -r '.anti_pattern // "Não identificado"')")
-            TECHNICAL_IMPACT=$(sanitize "$(echo "$row" | jq -r '.technical_impact // "Não informado"')")
-            BUSINESS_IMPACT=$(sanitize "$(echo "$row" | jq -r '.business_impact // "Não informado"')")
-            RISK=$(sanitize "$(echo "$row" | jq -r '.risk // "Não informado"')")
-            REPRODUCTION=$(sanitize "$(echo "$row" | jq -r '.reproduction // "Não informado"')")
-            CURRENT_CODE=$(sanitize "$(echo "$row" | jq -r '.current_code // "Não informado"')")
-            SUGGESTED_REWRITE=$(sanitize "$(echo "$row" | jq -r '.suggested_rewrite // "Não informado"')")
-            PRINCIPLE_VIOLATED=$(sanitize "$(echo "$row" | jq -r '.bdd_principle_violated // "Não informado"')")
-            MISSING_SCENARIOS=$(sanitize "$(echo "$row" | jq -r '.missing_scenarios // "Não informado"')")
-            SUGGESTION=$(sanitize "$(echo "$row" | jq -r '.suggestion // "Não informado"')")
-            BENEFITS=$(sanitize "$(echo "$row" | jq -r '.benefits // "Não informado"')")
-            COMPLEXITY=$(sanitize "$(echo "$row" | jq -r '.complexity // "Média"')")
-            IMPROVEMENT_TYPE=$(sanitize "$(echo "$row" | jq -r '.improvement_type // "BDD"')")
+          jq -c '.issues[]' ai_issues.json | while read row; do
 
-            FILES_FORMATTED=""
-            FILES_COUNT=$(echo "$row" | jq '.files | length' 2>/dev/null || echo "0")
-            if [ "$FILES_COUNT" -gt 0 ]; then
-              FILES_FORMATTED=$(echo "$row" | jq -r '.files[]' | while read -r f; do echo "- \`$f\`"; done)
-            else
-              FILES_FORMATTED="- Não identificado"
-            fi
+            TITLE=$(echo "$row" | jq -r '.title // "BDD Issue"')
+            FILE=$(echo "$row" | jq -r '.file // "N/A"')
+            SCENARIO=$(echo "$row" | jq -r '.scenario // "N/A"')
+            PROBLEM=$(echo "$row" | jq -r '.problem // "N/A"')
+            CURRENT_CODE=$(echo "$row" | jq -r '.current_code // "N/A"')
+            REWRITE=$(echo "$row" | jq -r '.suggested_rewrite // "N/A"')
+            PRIORITY=$(echo "$row" | jq -r '.priority // "medium"')
 
             BODY="
-            ## 🧠 Categoria BDD
-            $CATEGORY — $IMPROVEMENT_TYPE
+            ## 📂 Arquivo
+            \`$FILE\`
 
-            ## 🔥 Prioridade | 🚨 Severidade
-            $PRIORITY | $SEVERITY
+            ## 🎭 Cenário
+            \`$SCENARIO\`
 
-            ---
-            ## 📂 Arquivos Afetados
-            $FILES_FORMATTED
-
-            ---
-            ## 🎭 Cenário Problemático
-            \`$SCENARIO_NAME\`
-
-            ---
-            ## ⚠️ Anti-Pattern Detectado
-            $ANTI_PATTERN
-
-            ---
-            ## 📋 Princípio BDD Violado
-            $PRINCIPLE_VIOLATED
-
-            ---
-            ## 📝 Problema Identificado
+            ## ⚠️ Problema
             $PROBLEM
 
-            ---
             ## 🔴 Código Atual
             \`\`\`gherkin
             $CURRENT_CODE
             \`\`\`
 
-            ---
-            ## ✅ Reescrita Sugerida
+            ## ✅ Sugestão
             \`\`\`gherkin
-            $SUGGESTED_REWRITE
+            $REWRITE
             \`\`\`
 
-            ---
-            ## 📊 Impacto Técnico
-            $TECHNICAL_IMPACT
-
-            ---
-            ## 💼 Impacto no Negócio
-            $BUSINESS_IMPACT
-
-            ---
-            ## ⚠️ Risco
-            $RISK
-
-            ---
-            ## 💡 Sugestão
-            $SUGGESTION
-
-            ---
-            ## 🎯 Benefícios
-            $BENEFITS
-
-            > 🤖 Issue gerada automaticamente pelo **BDD Quality Auditor**
+            > 🤖 Gerado automaticamente pelo BDD Quality Auditor
             "
 
-            EXISTING=$(gh issue list --search "$TITLE in:title" --state all --json title --jq '.[0].title // empty' 2>/dev/null || echo "")
+            EXISTING=$(gh issue list \
+              --search "$TITLE in:title" \
+              --state all \
+              --json title \
+              --jq '.[0].title // empty')
 
             if [ -n "$EXISTING" ]; then
               echo "⚠️ Issue já existe: $TITLE"
               continue
             fi
 
-            LABELS="ai-bdd-audit,category-bdd"
-            PRIORITY_SLUG=$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')
-            case "$PRIORITY_SLUG" in
-              crítica|critica|critical) LABELS="$LABELS,priority-critical" ;;
-              alta|high)                LABELS="$LABELS,priority-high" ;;
-              média|media|medium)       LABELS="$LABELS,priority-medium" ;;
-              baixa|low)                LABELS="$LABELS,priority-low" ;;
+            LABELS="ai-bdd-audit"
+
+            case "$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')" in
+              alta|high)
+                LABELS="$LABELS,priority-high"
+                ;;
+              baixa|low)
+                LABELS="$LABELS,priority-low"
+                ;;
+              *)
+                LABELS="$LABELS,priority-medium"
+                ;;
             esac
 
-            echo "🚀 Criando issue BDD: $TITLE"
-            gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS"
-            echo "✅ Issue criada: $TITLE"
+            echo "🚀 Criando issue: $TITLE"
+
+            gh issue create \
+              --title "$TITLE" \
+              --body "$BODY" \
+              --label "$LABELS"
+
+            echo "✅ Issue criada"
+
             sleep 1
+
           done
 
-          echo "✅ Auditoria BDD finalizada"
+          echo "✅ Auditoria finalizada"
