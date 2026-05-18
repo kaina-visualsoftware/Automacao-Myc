@@ -128,24 +128,24 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
-            '{
-              model: "minimaxai/minimax-m2.7",
-              messages: [
-                {
-                  role: "system",
-                  content: "Retorne apenas JSON válido. Não explique raciocínio."
-                },
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-              temperature: 0.1,
-              top_p: 0.9,
-              max_tokens: 1500,
-              stream: false
-            }')
+          --arg prompt "$PROMPT" \
+          '{
+            model: "minimaxai/minimax-m2.7",
+            messages: [
+              {
+                role: "system",
+                content: "Retorne apenas JSON válido. Não explique raciocínio."
+              },
+              {
+                role: "user",
+                content: $prompt
+              }
+            ],
+            temperature: 0.1,
+            top_p: 0.9,
+            max_tokens: 1500,
+            stream: false
+          }')
 
           echo "📡 Chamando NVIDIA API..."
 
@@ -247,60 +247,60 @@ jobs:
 
           jq -c '.issues[]' ai_issues.json | while read row; do
 
-            TITLE=$(echo "$row" | jq -r '.title // "BDD Issue"')
-            FILE=$(echo "$row" | jq -r '.file // "N/A"')
-            SCENARIO=$(echo "$row" | jq -r '.scenario // "N/A"')
-            PROBLEM=$(echo "$row" | jq -r '.problem // "N/A"')
-            CURRENT_CODE=$(echo "$row" | jq -r '.current_code // "N/A"')
-            REWRITE=$(echo "$row" | jq -r '.suggested_rewrite // "N/A"')
-            PRIORITY=$(echo "$row" | jq -r '.priority // "medium"')
+          TITLE=$(echo "$row" | jq -r '.title // "BDD Issue"')
+          FILE=$(echo "$row" | jq -r '.file // "N/A"')
+          SCENARIO=$(echo "$row" | jq -r '.scenario // "N/A"')
+          PROBLEM=$(echo "$row" | jq -r '.problem // "N/A"')
+          CURRENT_CODE=$(echo "$row" | jq -r '.current_code // "N/A"')
+          REWRITE=$(echo "$row" | jq -r '.suggested_rewrite // "N/A"')
+          PRIORITY=$(echo "$row" | jq -r '.priority // "medium"')
 
-            BODY="
-            ## 📂 Arquivo
-            \`$FILE\`
+          BODY="
+          ## 📂 Arquivo
+          \`$FILE\`
 
-            ## 🎭 Cenário
-            \`$SCENARIO\`
+          ## 🎭 Cenário
+          \`$SCENARIO\`
 
-            ## ⚠️ Problema
-            $PROBLEM
+          ## ⚠️ Problema
+          $PROBLEM
 
-            ## 🔴 Código Atual
-            \`\`\`gherkin
-            $CURRENT_CODE
-            \`\`\`
+          ## 🔴 Código Atual
+          \`\`\`gherkin
+          $CURRENT_CODE
+          \`\`\`
 
-            ## ✅ Sugestão
-            \`\`\`gherkin
-            $REWRITE
-            \`\`\`
+          ## ✅ Sugestão
+          \`\`\`gherkin
+          $REWRITE
+          \`\`\`
 
-            > 🤖 Gerado automaticamente pelo BDD Quality Auditor
-            "
+          > 🤖 Gerado automaticamente pelo BDD Quality Auditor
+          "
 
-            EXISTING=$(gh issue list \
-              --search "$TITLE in:title" \
-              --state all \
-              --json title \
-              --jq '.[0].title // empty')
+          EXISTING=$(gh issue list \
+            --search "$TITLE in:title" \
+            --state all \
+            --json title \
+            --jq '.[0].title // empty')
 
-            if [ -n "$EXISTING" ]; then
-              echo "⚠️ Issue já existe: $TITLE"
-              continue
-            fi
+          if [ -n "$EXISTING" ]; then
+            echo "⚠️ Issue já existe: $TITLE"
+            continue
+          fi
 
-            LABELS="ai-bdd-audit"
+          LABELS="ai-bdd-audit"
 
-            case "$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')" in
-              alta|high)
-                LABELS="$LABELS,priority-high"
-                ;;
-              baixa|low)
-                LABELS="$LABELS,priority-low"
-                ;;
-              *)
-                LABELS="$LABELS,priority-medium"
-                ;;
+          case "$(echo "$PRIORITY" | tr '[:upper:]' '[:lower:]')" in
+            alta|high)
+              LABELS="$LABELS,priority-high"
+              ;;
+            baixa|low)
+              LABELS="$LABELS,priority-low"
+              ;;
+            *)
+              LABELS="$LABELS,priority-medium"
+              ;;
             esac
 
             echo "🚀 Criando issue: $TITLE"
