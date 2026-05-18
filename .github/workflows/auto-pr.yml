@@ -129,7 +129,8 @@ jobs:
           - Não use emojis
           - Deve terminar em palavra completa
           - Responda apenas com o título
-
+          - O título DEVE ter entre 45 e 65 caracteres.
+          
           COMMITS:
           $COMMITS_CONTENT
 
@@ -139,19 +140,19 @@ jobs:
           TITLE_REQUEST=$(jq -n \
             --arg prompt "$TITLE_PROMPT" \
             '{
-              model: "mistralai/mistral-nemotron",
+              model: "mistralai/mistral-large-3-675b-instruct-2512",
               messages: [
                 {
                   role: "user",
                   content: $prompt
                 }
               ],
-              temperature: 0.05,
+              temperature: 0.0,
               max_tokens: 80
             }')
 
           TITLE_RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-            -H "Authorization: Bearer '"$NVIDIA_API_KEY"'" \
+            -H "Authorization: Bearer $NVIDIA_API_KEY"
             -H "Content-Type: application/json" \
             -d "$TITLE_REQUEST")
 
@@ -244,7 +245,7 @@ jobs:
               messages: [
                 {
                   role: "system",
-                  content: "Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português. Retorne APENAS JSON válido, sem markdown, sem backticks e sem explicações."
+                  content: "Retorne APENAS um JSON válido contendo SOMENTE o campo 'description'. Nunca retorne 'title'. Nunca explique nada fora do JSON."
                 },
                 {
                   role: "user",
