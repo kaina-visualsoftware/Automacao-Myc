@@ -130,7 +130,7 @@ jobs:
           - Deve terminar em palavra completa
           - Responda apenas com o título
           - O título DEVE ter entre 45 e 65 caracteres.
-          
+
           COMMITS:
           $COMMITS_CONTENT
 
@@ -138,23 +138,23 @@ jobs:
           $FILES_ANALYSIS"
 
           TITLE_REQUEST=$(jq -n \
-            --arg prompt "$TITLE_PROMPT" \
-            '{
-              model: "mistralai/mistral-large-3-675b-instruct-2512",
-              messages: [
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-              temperature: 0.0,
-              max_tokens: 80
-            }')
+          --arg prompt "$TITLE_PROMPT" \
+          '{
+            model: "mistralai/mistral-large-3-675b-instruct-2512",
+            messages: [
+              {
+                role: "user",
+                content: $prompt
+              }
+            ],
+            temperature: 0.0,
+            max_tokens: 80
+          }')
 
           TITLE_RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-            -H "Authorization: Bearer $NVIDIA_API_KEY"
+            -H "Authorization: Bearer $NVIDIA_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "$TITLE_REQUEST")
+            -d "$REQUEST_BODY")
 
           echo "🔍 Debug título:" >&2
           echo "$TITLE_RESPONSE" | jq . >&2 || true
