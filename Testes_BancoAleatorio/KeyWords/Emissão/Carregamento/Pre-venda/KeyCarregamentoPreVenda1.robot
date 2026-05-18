@@ -181,7 +181,6 @@ Dado que eu crio uma pré-venda com rota
     E listo pela tela de Geração de vendas
 
 Dado que eu crio duas pré-vendas com rotas distintas
-    Buscar Duas Rotas Distintas Com Clientes
 
     Keypedidos1.Dado que acesso a tela de pedidos
     Keypedidos1.E clico em adicionar
@@ -291,6 +290,12 @@ E removo um pedido da rota
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}   ${TEMPO_TELA}
+
+E removo um dos pedidos da rota
+
+    E clico em Incluir Rotas
+    Quando seleciono a rota incluída
+    E removo um pedido da rota
 
 # =============================================================
 # TELA DE GERAÇÃO DE VENDAS

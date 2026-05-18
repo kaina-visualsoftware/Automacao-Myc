@@ -164,9 +164,7 @@ Teste 12 - Validar volume de pré-vendas após remoção em um carregamento
     Quando pesquiso o Carregamento gerado
     E valido o volume inicial do carregamento como cadastrando
     Então edito o carregamento
-    E clico em Incluir Rotas
-    Quando seleciono a rota incluída
-    E removo um pedido da rota
+    E removo um dos pedidos da rota
     Então gravo o carregamento com o status    Montando
     E valido o volume após remover uma pré-venda
     E fecho a tela de carregamento
