@@ -196,71 +196,105 @@ jobs:
           )
 
           REQUEST_BODY=$(jq -n \
-          --arg prompt "$PROMPT" \
-          '{
-            "model": "qwen/qwen3-235b-a22b",
-            "messages": [
-              {
-                "role": "system",
-                "content": "Você responde SOMENTE JSON válido."
-              },
-              {
-                "role": "user",
-                "content": $prompt
-              }
-            ],
-            "temperature": 0.1,
-            "top_p": 0.9,
-            "max_tokens": 2500,
-            "stream": false,
-            "response_format": {
-              "type": "json_object"
-            }
-          }')
+            --arg prompt "$PROMPT" \
+            '{
+              model: "minimaxai/minimax-m2.7",
+              messages: [
+                {
+                  role: "system",
+                  content: "Você responde SOMENTE JSON válido."
+                },
+                {
+                  role: "user",
+                  content: $prompt
+                }
+              ],
+              temperature: 0.2,
+              top_p: 0.9,
+              max_tokens: 4096,
+              stream: false
+            }'
+          
 
-          RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-          -H "Authorization: Bearer $NVIDIA_API_KEY" \
-          -H "Content-Type: application/json" \
-          -d "$REQUEST_BODY")
+          echo "📡 Chamando NVIDIA API..."
 
-          echo "$RESPONSE" > response.json
+          RESPONSE=$(curl --silent --show-error \
+            --request POST \
+            --url "https://integrate.api.nvidia.com/v1/chat/completions" \
+            --header "Authorization: Bearer $NVIDIA_API_KEY" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --data "$REQUEST_BODY"
+          )
+
+           echo "$RESPONSE" > response.json
+
+          echo "📄 Response salvo em response.json"
+
+          if ! jq empty response.json >/dev/null 2>&1; then
+            echo "❌ RESPOSTA INVÁLIDA DA API"
+            cat response.json
+            exit 1
+          fi
+
+          if jq -e '.error' response.json >/dev/null 2>&1; then
+            echo "❌ API RETORNOU ERRO"
+            cat response.json | jq .
+            exit 1
+          fi
 
           AI_CONTENT=$(jq -r '
-          .choices[0].message.content // empty
+            .choices[0].message.content // empty
           ' response.json)
 
-          if [ -z "$AI_CONTENT" ]; then
-            echo "❌ IA não retornou conteúdo"
-            cat response.json
+          if [ -z "$AI_CONTENT" ] || [ "$AI_CONTENT" = "null" ]; then
+            echo "❌ IA NÃO RETORNOU CONTEÚDO"
+
+            echo "===== RESPONSE ====="
+            cat response.json | jq .
+
             exit 1
           fi
 
           echo "$AI_CONTENT" > ai_raw.txt
 
+          echo "📄 Conteúdo IA salvo"
+
           cat ai_raw.txt | jq . > ai_issues.json 2>/dev/null || \
           python3 -c '
           import sys, json, re
+
           text = sys.stdin.read()
+
           match = re.search(r"\{[\s\S]*\}", text)
+
           if match:
               try:
                   data = json.loads(match.group(0))
                   print(json.dumps(data, ensure_ascii=False))
-              except:
+              except Exception:
                   print("{\"issues\": []}")
           else:
               print("{\"issues\": []}")
-          ' < ai_raw.txt > ai_issues.json 2>/dev/null || echo '{"issues": []}' > ai_issues.json
+          ' < ai_raw.txt > ai_issues.json
 
-          echo "✅ JSON BDD gerado com $(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0) issues"
+          echo "✅ JSON BDD GERADO"
+
+          cat ai_issues.json | jq .
+
+          echo "TOTAL_ISSUES=$(jq '.issues | length' ai_issues.json)" >> $GITHUB_ENV
 
       - name: 🐞 CREATE BDD ISSUES
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TOTAL=$(jq '.issues | length' ai_issues.json 2>/dev/null || echo 0)
-          [ "$TOTAL" -eq 0 ] && echo "⚠️ Nenhuma issue BDD encontrada" && exit 0
 
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "⚠️ Nenhuma issue BDD encontrada"
+            exit 0
+          fi
+          
           sanitize() { echo "$1" | sed 's/\r//g'; }
 
           create_label_if_not_exists() {
