@@ -33,7 +33,6 @@ ${INPUT_CODCOBRADOR_CARREGAMENTO}       input_CodCobrador.png
 ${AVISO_EXCLUIR_CARREGAMENTO}           aviso_ExcluirCarregamento.png
 ${AVISO_CANCELAR_CARREGAMENTO}          aviso_CancelarCarregamento.png
 ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    aviso_ExcluirCarregamentoFechado.png
-${AVISO_CLIENTE_NAO_CADASTRADO}        aviso_ClienteNaoCadastrado.png
 
 #CHECKBOX
 ${CHECKBOX_TODOS_ITENS}                 checkbox_SelecionadoTodosCarregamentoVenda.png
