@@ -13,7 +13,7 @@ Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
 *** Test Cases ***
 
-Teste 01 - Validar que não é possível excluir carregamento com status Fechada
+Teste 01 - Validar que não é possível excluir um carregamento com status Fechada
     [Documentation]    Este teste valida que não é possível excluir um carregamento com status Fechada
     [Tags]    Teste01
 
