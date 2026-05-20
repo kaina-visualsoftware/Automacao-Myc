@@ -142,8 +142,6 @@ jobs:
           authorization_header="Authorization: Bearer $NVIDIA_API_KEY"
           content_type_header='Content-Type: application/json'
 
-          stream=true
-
           if [ "$stream" = true ]; then
               accept_header='Accept: text/event-stream'
           else
@@ -309,11 +307,17 @@ jobs:
 
             echo "$RESPONSE"
 
-            AI_CONTENT=$(echo "$RESPONSE" \
-              | grep '^data:' \
-              | sed 's/^data: //' \
-              | jq -r '.choices[0].delta.content // empty' 2>/dev/null \
-              | tr -d '\000')
+            AI_CONTENT=$(echo "$RESPONSE" | while IFS= read -r line; do
+              if [[ "$line" == data:* ]]; then
+                json="${line#data: }"
+                if [[ "$json" == "[DONE]" ]]; then
+                  continue
+                fi
+                echo "$json" \
+                  | jq -r '.choices[0].delta.content // empty'
+              fi
+
+            done | paste -sd '' -)
 
             if [ -n "$AI_CONTENT" ]; then
               echo "✅ Resposta válida recebida"
