@@ -46,7 +46,7 @@ Fluxo Base Compra Consignada Com Devolução
     Quando adiciono Fornecedor
     E insiro um produto normal informando a quantidade(${quantidade})
     Então troco de guia
-    E insiro um produto normal informando a quantidade(${quantidade})
+    E insiro o mesmo produto normal informando a quantidade(${quantidade})
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
 
@@ -74,6 +74,7 @@ Teste 03 - Exclusão de Compra Consignada
     [Tags]    Teste03    Exclusao
     [Setup]    Fluxo Base Compra Consignada
     Então pressiono Excluir
+    E saio da tela(ComprasConsignada)
     
 
 Teste 04 - Edição de Compra Consignada
@@ -100,10 +101,11 @@ Teste 06 - Lançamento de Devolução de Compra Consignada
     Quando adiciono Fornecedor
     E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então troco de guia
-    E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
+    E insiro o mesmo produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E valido se a devolução foi lançada com sucesso
     E saio da tela(ComprasConsignada)
+    #falta adicionar validação para valor da compra que deve ser = 0
 
 Teste 07 - Pagamento de Compra Consignada 
     [Documentation]    Valida o pagamento de uma compra consignada no caixa

@@ -108,6 +108,7 @@ ${LABEL_REF_PRODUTO}                                   label_RefProduto.png
 
 # Rows
 ${ROW_PROD_INCLUSO}                                    row_ProdIncluso.png
+${ROW_PROD_CONSIGNADO}                                 row_ProdConsignado.png
 ${ROW_FUNCIONARIO_INCLUSO_SERVICO_OS}                  row_FuncComissionadoInclusoServicoOS.png
 
 # Outros
@@ -1740,6 +1741,14 @@ Valida parametros após incluir produto
             SikuliLibrary.Click    ${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}
             Sleep    ${SLEEP_BAIXO}
 
+        ELSE IF    '${TELA}' == 'ComprasConsignadas'
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_BAIXO}
+            Wait Until Screen Contain    ${ROW_PROD_CONSIGNADO}    ${SLEEP_MEDIO}
+            Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
+            RETURN
+
         ELSE
 
             Press Combination    KEY.ALT    KEY.I
@@ -1799,7 +1808,7 @@ Valida parametros após incluir produto
         Valida controle de entrega
 
     END
-
+    
     Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
