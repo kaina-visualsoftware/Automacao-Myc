@@ -269,7 +269,7 @@ jobs:
           REQUEST_BODY=$(jq -n \
             --arg prompt "$PROMPT" \
             '{
-              model: "mistralai/mistral-nemotron",
+              "model": "mistralai/mistral-large-3-675b-instruct-2512",
               response_format: {
                 type: "json_object"
               },
