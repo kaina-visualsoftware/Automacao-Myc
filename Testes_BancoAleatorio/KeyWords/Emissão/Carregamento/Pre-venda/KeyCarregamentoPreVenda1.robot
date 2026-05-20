@@ -316,7 +316,7 @@ E clico em Listar ALT L
 
 Então fecho a tela de geração de vendas
     Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ESC
+    Press Combination    KEY.ALT    KEY.S
     Wait Until Screen Not Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
 
 # =============================================================
@@ -328,7 +328,7 @@ Dado que acesso a tela de carregamento
 
 Então acesso a tela de Carregamento
     Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.CTRL    KEY.T
+    Type With Modifiers    T    CTRL
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
@@ -659,4 +659,3 @@ E valido o volume após remover uma pré-venda
     ${VOLUME_ESPERADO}    Evaluate    ${VOLUME_INICIAL} - 1
     Log To Console    *** VALIDAÇÃO 2: Volume esperado (Montando) = ${VOLUME_ESPERADO} pré-vendas (${VOLUME_INICIAL} - 1)
     E valido que o volume do carregamento é    ${VOLUME_ESPERADO}
-
