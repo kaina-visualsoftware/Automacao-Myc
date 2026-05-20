@@ -366,10 +366,60 @@ Antes de criar um novo arquivo, verifique:
 - [ ] Keywords estão em BDD português?
 - [ ] Tags estão em sequencial (`Teste01`, `Teste02`, etc.)?
 - [ ] Caminhos relativos estão corretos?
+- [ ] Se o botão é genérico (Adicionar, Editar, Excluir, Gravar, Salvar, Ok, Sim, Não, Fechar, Sair), já existe a keyword genérica em `utils.robot`?
 
 ---
 
-## 9. Referências
+## 9. Botões Genéricos
+
+### 9.1 O que são botões genéricos?
+
+Botões que aparecem em várias telas do sistema e têm o mesmo comportamento visual:
+- Adicionar, Editar, Excluir, Gravar, Salvar
+- Ok, Sim, Não, Fechar, Sair
+- Listar, Incluir, Cancelar
+
+### 9.2 Regra (R11)
+
+**Antes de criar uma keyword que clique em um botão genérico:**
+
+1. Verificar se já existe a keyword genérica em `utils.robot`
+2. Se não existir, criar a keyword genérica lá
+3. Usar a keyword genérica nos lugares que precisar
+
+### 9.3 Como verificar
+
+```robot
+# Buscar no utils.robot
+grep "Clicar no botão" Testes_BancoAleatorio/utils/utils.robot
+```
+
+### 9.4 Exemplo de keyword genérica
+
+```robot
+Clicar no botão Adicionar
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_ADICIONAR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_ADICIONAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+```
+
+### 9.5 Como usar
+
+```robot
+# ERRADO - criar nova keyword para botão genérico
+E clico no botão adicionar
+    SikuliLibrary.Click    ${BT_ADICIONAR}
+
+# CORRETO - usar a keyword genérica do utils.robot
+E clico no botão adicionar
+    Clicar no botão Adicionar
+```
+
+---
+
+## 10. Referências
 
 - `docs/ESTRUTURA_TESTES.md` — Estrutura completa dos testes
 - `.opencode/skills/padroes-desenvolvimento/SKILL.md` — Padrões de desenvolvimento

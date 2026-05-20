@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "mycommerce-dev",
+  "agent": {
+    "mycommerce-dev": {
+      "description": "Dev Sênior do projeto - implementa o que o usuário pedir seguindo todas as regras e usando skills/sub-agentes quando necessário",
+      "mode": "primary",
+      "prompt": "{file:.opencode/agents/mycommerce-dev.md}",
+      "steps": 50
+    },
+    "validador-bdd": {
+      "description": "Valida padrões BDD em arquivos .robot após criação ou modificação",
+      "mode": "subagent",
+      "prompt": "{file:.opencode/agents/validador-bdd.md}",
+      "steps": 15
+    },
+    "gerador-dados": {
+      "description": "Gera dados de teste para qualquer módulo do projeto: CPF válido/cadastrado/não cadastrado, CNPJ, dados cliente, produto, vendedor, OS, dados aleatórios",
+      "mode": "subagent",
+      "prompt": "{file:.opencode/agents/gerador-dados.md}",
+      "steps": 10
+    },
+    "debugador-testes": {
+      "description": "Diagnostica falhas de teste e sugere correções. Suporta: erros Sikuli, timeout, banco, validação, fluxo",
+      "mode": "subagent",
+      "prompt": "{file:.opencode/agents/debugador-testes.md}",
+      "steps": 20
+    }
+  }
+}

@@ -17,13 +17,21 @@ ${CODIGO_ULTIMA_OS_ANTES}    NONE
 ${CODIGO_CLIENTE_CNPJ}    NONE
 ${NOME_CLIENTE_CNPJ}    NONE
 ${Quantidade_Produto}                  ${1}
+${CODIGO_OS_EXCLUIR}                   ${NONE}
+${CODIGO_PRODUTO}                      ${NONE}
+${SENHA_SUPERVISOR}                    1
 
 ${AVISO_CLIENTE_NAO_CADASTRADO_CPF}   aviso_ClienteNaoCadastradoCPF.png
 ${AVISO_CLIENTE_NAO_CADASTRADO_CNPJ}  aviso_ClienteNaoCadastradoCNPJ.png
 ${AVISO_OS_SEM_SERVICO}                aviso_ObrigatorioIncluirServico.png
-${BT_SIM}                                            bt_Sim.png
+
+
 ${TELA_ADICIONAR_ORDEM_DE_SERVICO}     tela_OrdemDeServicoAdicionar.png
 ${TELA_ORDEM_DE_SERVICO}                tela_OrdemDeServico.png
+${TELA_EXCLUIR_OS}                      tela_ExcluirOS.png
+${TELA_SENHA_USUARIO}                  tela_SenhaUsuario.png
+${TELA_SETAR_VENDEDOR_PRODUTO}         tela_SetarVendedorProduto.png
+${INPUT_DESCRICAO_EXCLUSAO}            input_DescricaoExclusao.png
 
 *** Keywords ***
 
@@ -38,7 +46,7 @@ Dado que acesso a tela de ordens de serviços para regressão
     Valida lançamento de ordem de serviço em aberto
 
 Quando inicio uma nova ordem de serviço
-    SikuliLibrary.Click    ${BT_ADICIONAR}
+    Clicar no botão Adicionar
     Valida indicação de venda(${Parametro_IndicacaoOS})
     Valida local de negociação da venda
     Sleep    ${SLEEP_MEDIO}
@@ -75,10 +83,8 @@ E informo o cliente pelo CPF
     Input Text    ${EMPTY}    ${CPF_SEM_MASCARA}
     Press Special Key    ENTER
     Sleep    ${SLEEP_MEDIO}
-    # Busca o código do cliente no banco para usar na validação de crédito
     ${resultado}=    Query    SELECT c.Codigo FROM clientes c WHERE c.CPF = '${CPF_COM_MASCARA}' AND c.Ativo = -1 LIMIT 1;
     Set Test Variable    ${Codigo_Cliente}    ${resultado[0][0]}
-    Log    Código do cliente: ${Codigo_Cliente}
     validacaoAviso.Valida informações de crédito
 
 E informo o cliente pelo CNPJ
@@ -89,10 +95,8 @@ E informo o cliente pelo CNPJ
     Input Text    ${EMPTY}    ${CNPJ_SEM_MASCARA}
     Press Special Key    ENTER
     Sleep    ${SLEEP_MEDIO}
-    # Busca o código do cliente no banco para usar na validação de crédito
     ${resultado}=    Query    SELECT c.Codigo FROM clientes c WHERE c.CNPJ = '${CNPJ_CLIENTE}' AND c.Ativo = -1 LIMIT 1;
     Set Test Variable    ${Codigo_Cliente}    ${resultado[0][0]}
-    Log    Código do cliente: ${Codigo_Cliente}
     validacaoAviso.Valida informações de crédito
 
 E acesso a aba de pagamentos
@@ -101,6 +105,35 @@ E acesso a aba de pagamentos
     Sleep    ${SLEEP_BAIXO}
     validacaoAviso.Valida cliente com vales compra disponíveis
     Sleep    ${SLEEP_MEDIO}
+
+E acesso a aba de produtos
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_MEDIO}
+
+E informo um produto
+    ${produto}=    Query    SELECT p.Codigo FROM produtos p INNER JOIN produtosestoque pe ON p.Codigo = pe.CodigoProduto WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Estoque > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1;
+    Should Not Be Empty    ${produto}    msg=Nenhum produto encontrado
+    Set Test Variable    ${CODIGO_PRODUTO}    ${produto[0][0]}
+    Input Text    ${EMPTY}    ${CODIGO_PRODUTO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
+
+E informo o vendedor que inseriu o produto
+    Wait Until Screen Contain    ${TELA_SETAR_VENDEDOR_PRODUTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    Input Text    ${EMPTY}    ${Codigo_Vendedor}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
+
+Então o foco deve estar no campo de código do produto
+    Wait Until Screen Contain    ${TELA_ADICIONAR_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    Log    Foco está no campo de código do produto
 
 Então gravo a ordem de serviço
     Press Combination    KEY.ALT    KEY.G
@@ -122,11 +155,11 @@ E informo cliente com CPF não existente
     ELSE
         Fail    Aviso de CPF não cadastrado não foi exibido
     END
-    SikuliLibrary.Click    ${BT_NAO}
+    Clicar no botão Não
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
     Sleep    ${SLEEP_MEDIO}
-    SikuliLibrary.Click    ${BT_SIM}
+    Clicar no botão Sim
     Sleep    ${SLEEP_MEDIO}
 
 E informo cliente com CNPJ não existente
@@ -142,11 +175,11 @@ E informo cliente com CNPJ não existente
     ELSE
         Fail    Aviso de CNPJ não cadastrado não foi exibido
     END
-    SikuliLibrary.Click    ${BT_NAO}
+    Clicar no botão Não
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ESC
     Sleep    ${SLEEP_MEDIO}
-    SikuliLibrary.Click    ${BT_SIM}
+    Clicar no botão Sim
     Sleep    ${SLEEP_MEDIO}
 
 Então o sistema exibe aviso de CPF não cadastrado
@@ -164,9 +197,6 @@ Então o sistema exibe aviso de CNPJ não cadastrado
     ELSE
         Fail    Aviso de CNPJ não cadastrado não foi exibido
     END
-
-Clicar no botão Não
-    SikuliLibrary.Click    ${BT_NAO}
 
 Fechar tela de informações de crédito
     ${tela_credito}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_INFO_CRÉDITOS}    3
@@ -317,13 +347,9 @@ Validar OS criada com CNPJ no banco
     Log    OS validada com sucesso! Código: ${resultado[0][0]}, Cliente: ${resultado[0][4]}, CNPJ: ${CNPJ_BANCO}
 
 Então o sistema exibe o código do cliente substituindo o CNPJ
-    # Validação visual: após digitar o CNPJ e pressionar Enter, o sistema deve ter substituído
-    # o CNPJ pelo código do cliente no campo de código
     Sleep    ${SLEEP_MEDIO}
-    # Pressiona Tab para ir ao próximo campo e verificar se o código do cliente foi preenchido
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
-    # O sistema deve ter preenchido o campo de código do cliente com o código correspondente ao CNPJ
     Log    CNPJ ${CNPJ_CLIENTE} foi substituído pelo código do cliente ${CODIGO_CLIENTE_CNPJ} - Nome: ${NOME_CLIENTE_CNPJ}
 
 Então a ordem de serviço deve estar salva no banco com o CNPJ correto
@@ -380,3 +406,45 @@ Então a OS com produto normal deve estar salva no banco
     ${produtos}=    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO} AND vp.Cancelada IS NULL;
     Should Be True    ${produtos[0][0]} > 0    msg=A OS não possui produtos
     Log    OS com produto normal validada com sucesso! Código: ${COD_ORDEM_SERVICO}, Status: ${resultado[0][2]}, Produtos: ${produtos[0][0]}
+
+E que existe uma OS com produto normal salva
+    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Tipo = 'OS' AND v.Status = 'c' AND v.Cancelada IS NULL AND EXISTS (SELECT 1 FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo AND vp.Cancelada IS NULL) ORDER BY v.Codigo DESC LIMIT 1;
+    Should Not Be Empty    ${resultado}    msg=Nenhuma OS com produto normal encontrada
+    Set Test Variable    ${CODIGO_OS_EXCLUIR}    ${resultado[0][0]}
+    Log    OS encontrada para exclusão: ${CODIGO_OS_EXCLUIR}
+
+Quando seleciono a OS e clico em excluir
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT    KEY.C
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    HOME
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_MEDIO}
+    Input Text    ${EMPTY}    ${CODIGO_OS_EXCLUIR}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
+    Clicar no botão Editar
+    Clicar no botão Excluir
+
+E informo a descrição de exclusão
+    ${tela_senha}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_SENHA_USUARIO}    3
+    IF    ${tela_senha}
+        Input Text    ${EMPTY}    ${SENHA_SUPERVISOR}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_MEDIO}
+    END
+    ${tela_exclusao}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_EXCLUIR_OS}    5
+    Should Be True    ${tela_exclusao}    msg=Tela de exclusão não foi exibida
+    Input Text    ${INPUT_DESCRICAO_EXCLUSAO}    Caso de teste: 1-319
+    Sleep    ${SLEEP_BAIXO}
+    Clicar no botão Sim
+    Sleep    ${SLEEP_MEDIO}
+
+Então a OS deve ser excluída do banco
+    ${resultado}=    Query    SELECT v.Cancelada FROM vendas v WHERE v.Codigo = ${CODIGO_OS_EXCLUIR} AND v.Tipo = 'OS';
+    Should Not Be Empty    ${resultado}
+    Should Be Equal As Strings    ${resultado[0][0]}    x    msg=A OS não foi marcada como cancelada
+    Log    OS ${CODIGO_OS_EXCLUIR} excluída com sucesso!

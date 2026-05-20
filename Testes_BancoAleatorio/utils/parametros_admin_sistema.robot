@@ -46,6 +46,7 @@
 ...    OS_COMISSAO_VENDEDOR_EXECUTOR=OS_ComVendedorEexecutor
 ...    CARGA_VENDAS=Carga_Vendas
 ...    OS_SERVICO_OBRIGATORIO=OS_Servico_obrigatorio
+...    OS_FUNCIONARIO_PRODUTO=OS_Funcionario_Produto
 
 &{PARAM_EMP}    
 ...    VENDA_IMPRIME_CUPOM=Venda_ImprimeCupom

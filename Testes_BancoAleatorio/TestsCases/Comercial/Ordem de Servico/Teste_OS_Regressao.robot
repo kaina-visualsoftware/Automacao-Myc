@@ -87,3 +87,28 @@ Teste 06 - Criar OS com produto da modalidade Normal
     E acesso a aba de pagamentos
     Então fecho a ordem de serviço sem pagamentos
     Então a OS com produto normal deve estar salva no banco
+
+
+Teste 07 - Validar exclusão de OS com produto da modalidade Normal
+    [Tags]    Teste07
+
+    Dado que acesso a tela de ordens de serviços para regressão
+    E que existe uma OS com produto normal salva
+    Quando seleciono a OS e clico em excluir
+    E informo a descrição de exclusão
+    Então a OS deve ser excluída do banco
+
+
+Teste 08 - Validar sequência de foco ao setar vendedor que inseriu produto
+    [Tags]    Teste08
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_FUNCIONARIO_PRODUTO    1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
+
+    Dado que acesso a tela de ordens de serviços para regressão
+    Quando inicio uma nova ordem de serviço
+    E informo o vendedor
+    E informo a tabela de preço
+    E informo o cliente pelo CPF
+    E acesso a aba de produtos
+    E informo um produto
+    E informo o vendedor que inseriu o produto
+    Então o foco deve estar no campo de código do produto
