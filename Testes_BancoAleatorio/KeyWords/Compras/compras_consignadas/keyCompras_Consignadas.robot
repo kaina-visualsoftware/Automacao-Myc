@@ -27,7 +27,7 @@ ${BT_ADICIONAR}                         bt_Adicionar.png
 ${BT_FINALIZAR}                         bt_finalizaCompraConsig.png
 ${BT_INCLUIR}                           bt_IncluirProdutoComprasConsig.png
 ${BT_VISUALIZAR}                        bt_visualizarComprasConsignadas.png
-${INPUT_QUANTIDADE_PRODUTO}             input_QuantidadeServico.png
+${INPUT_QUANTIDADE_PRODUTO}             input_QuantidadeProdutoComprasConsig.png
 ${BT_QUANTIDADE_PRODUTO}                input_QuantidadeProdutoComprasConsig.png
 ${LABEL_CRITERIO_CODIGO_COMPRA_CONSIG}  combo_criterioCodComprasConsig.png
 ${OPCAO_COMBO_CODIGO}                   combo_opcaoCodigoCriterioComprasConsig.png
@@ -40,6 +40,7 @@ ${CHECK_BOX_TODOS_MARCADO}              checkBox_SelecionarTudoComprasConsigMarc
 ${GRID_CODIGO_LANC_COMPRA_CONSIG}       grid_CodigoLancCompraConsig.png
 ${AVISO_CONFIRMAR_EXCLUSAO_BLOQUEADA}   aviso_ConfirmarExclusaoBloqueadaCompraConsig.png
 ${AVISO_DEVOLVIDO_SUPERIOR_A_COMPRADO}  alertaCliente.png
+${OPERACAO_EM_ABERTO}                   aviso_QuedaEnergiaOperacaoEmAberto.png
 # ── Variáveis de Runtime ───────────────────────────────────────────────────
 ${COD_COMPRA}                           None
 ${QTDE_BAIXA_PRODUTO}                   None
@@ -51,6 +52,9 @@ ${COD_COMPRA_ANTIGA}                    None
 ${VALOR_COMPRA}                         None
 ${VALOR_APAGAR}                         None
 ${CHECK_BOX_MARCADO_true}               None
+${QUANTIDADE_PRODUTOS_COMPRADOS}        None
+${QUANTIDADE_DEVOLVIDA}                None
+${prosseguir_apos_aviso}               False
 *** Keywords ***
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -59,13 +63,12 @@ ${CHECK_BOX_MARCADO_true}               None
 
 Dado que eu acesso a tela de Compras Consignadas
     [Documentation]    Acessa o menu Compras > Compras Consignadas e valida a tela
+    Set Test Variable    ${TELA}    ComprasConsignadas
     Sleep    ${SLEEP_MEDIO}
     SikuliLibrary.Click    ${MENU_COMPRAS}
     Wait Until Screen Contain    ${SUBMENU_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
     SikuliLibrary.Click    ${SUBMENU_COMPRAS_CONSIGNADAS}
     Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
-
-
 # ══════════════════════════════════════════════════════════════════════════════
 # LANÇAMENTO
 # ══════════════════════════════════════════════════════════════════════════════
@@ -73,6 +76,8 @@ Dado que eu acesso a tela de Compras Consignadas
 Quando eu pressionar em adicionar
     [Documentation]    Clica em Adicionar, aguarda a tela de lançamento e captura o código gerado
     Sleep    ${SLEEP_BAIXO}
+
+    Valida aviso de queda do sistema(${prosseguir_apos_aviso})
     SikuliLibrary.Click    ${BT_ADICIONAR}
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
     Capturar Código Da Última Compra Consignada
@@ -100,15 +105,17 @@ E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     utils.Inserir Produto normal - Necessita de estoque
     Informa a quantidade do produto(${Quantidade_Produto})
     utils.Valida parametros após incluir produto
-       ${GUIA_DEVOLUCAO}    Run Keyword And Return Status
+    ${GUIA_DEVOLUCAO}    Run Keyword And Return Status
     ...    Wait Until Screen Contain    ${ABA_DEVOLUCAO}    ${SLEEP_BAIXO}
 
-    IF    ${GUIA_DEVOLUCAO}
-        Validar aviso de devolução maior que comprado
-    END
+
     Atualizar Tipo Compra Conforme Aba Ativa
     Set Test Variable    ${CompraConsig_PossuiProduto}    ${True}
 
+    IF    ${GUIA_DEVOLUCAO}
+        Validar aviso de devolução maior que comprado
+
+    END
 E insiro o mesmo produto normal informando a quantidade(${Quantidade_Produto})
     [Documentation]    Insere um produto com estoque e informa a quantidade fornecida
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${SLEEP_MEDIO}
@@ -463,12 +470,23 @@ E valido se a devolução foi lançada com sucesso
 
 Validar aviso de devolução maior que comprado
     [Documentation]    Verifica se o aviso de devolução maior que comprado é exibido ao tentar finalizar a compra consignada
+    #CASO UM PRODUTO SEJA ADICIONADO NA GUIA COMPRAS E SEJA MENOR QUE A QUANTIDADE DE DEVOLUÇÃO, O SISTEMA DEVE PULAR A VALIDAÇÃO DE AVISO DE DEVOLUÇÃO MAIOR QUE COMPRADO, POIS O USUÁRIO ESTÁ CORRIGINDO A QUANTIDADE DO PRODUTO NA COMPRA PARA QUE SEJA MAIOR OU IGUAL A QUANTIDADE DE DEV
+    IF    '${QUANTIDADE_PRODUTOS_COMPRADOS}' == 'None' or '${QUANTIDADE_DEVOLVIDA}' == 'None'
+        RETURN
+    END
+    IF    $QUANTIDADE_PRODUTOS_COMPRADOS > $QUANTIDADE_DEVOLVIDA or $QUANTIDADE_PRODUTOS_COMPRADOS == $QUANTIDADE_DEVOLVIDA
+        RETURN
+    END
+    
+
+
     Wait Until Screen Contain    ${AVISO_DEVOLVIDO_SUPERIOR_A_COMPRADO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
-    
+        #CASO UM PRODUTO SEJA ADICIONADO NA GUIA COMPRAS E SEJA MENOR QUE A QUANTIDADE DE DEVOLUÇÃO, O SISTEMA DEVE PULAR A VALIDAÇÃO DE AVISO DE DEVOLUÇÃO MAIOR QUE COMPRADO, POIS O USUÁRIO ESTÁ CORRIGINDO A QUANTIDADE DO PRODUTO NA COMPRA PARA QUE SEJA MAIOR OU IGUAL A QUANTIDADE DE DEV
+
 #-----------------------------------------
 #Valor da compra
 #-----------------------------------------
@@ -487,4 +505,56 @@ E valido valor da compra
         Log    Valor da compra está correto: ${valor_compra}
     ELSE
         Fail    Valor da compra está incorreto. Esperado: ${VALOR_COMPRA}, Encontrado: ${valor_compra}
+    END
+
+#-----------------------------------------
+#VALIDA ABA ABERTA
+#-----------------------------------------
+Então visualizo aba atual
+    [Documentation]   Define as variaveis de acordo com a aba que está aberta
+    ${aba_devolucao_ativa}    Run Keyword And Return Status
+    ...    Wait Until Screen Contain    ${ABA_DEVOLUCAO}    ${SLEEP_BAIXO}    
+    ${aba_compras_ativa}    Run Keyword And Return Status
+    ...    Wait Until Screen Contain    ${ABA_DETALHES}    ${SLEEP_BAIXO}
+    IF    ${aba_devolucao_ativa}
+        Log    Aba de devolução está ativa
+        Set Test Variable    ${TIPO_COMPRA}    DV
+    ELSE IF    ${aba_compras_ativa}
+        Log    Aba de compra está ativa
+        Set Test Variable    ${TIPO_COMPRA}    CS
+    END
+#----------------------------------------------
+#VALIDAÇÃO DE AVISOS
+#----------------------------------------------
+Valida aviso de queda do sistema(${prosseguir_apos_aviso})
+    [Documentation]    Verifica se o aviso de queda do sistema apareceu e o descarta
+
+    ${aviso_apareceu}    Run Keyword And Return Status
+    ...    Wait Until Screen Contain    ${OPERACAO_EM_ABERTO}    ${SLEEP_ALTO}
+
+    IF    ${aviso_apareceu} == ${True} and ${prosseguir_apos_aviso} == ${False}
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    TAB
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Not Contain    ${OPERACAO_EM_ABERTO}    ${SLEEP_BAIXO}
+
+        Log    Aviso de queda do sistema apareceu e foi descartado.
+
+    ELSE IF    ${aviso_apareceu} == ${True} and ${prosseguir_apos_aviso} == ${True}
+
+        Sleep    ${SLEEP_BAIXO}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+        Wait Until Screen Not Contain
+        ...    ${OPERACAO_EM_ABERTO}
+        ...    ${SLEEP_BAIXO}
+
+        Log    Aviso de queda do sistema apareceu e foi descartado. Prosseguindo com o teste.
+
+        Wait Until Screen Contain
+        ...    ${TELA_LANC_COMPRA_CONSIG}
+        ...    ${SLEEP_MEDIO}
     END
