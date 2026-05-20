@@ -137,10 +137,22 @@ jobs:
           FILE_CONTENTS=$(cat file_contents_summary.txt | strings | head -c 4000)
           DIFF_CONTENT=$(cat diff.txt | strings | head -c 6000)
 
+          invoke_url='https://integrate.api.nvidia.com/v1/chat/completions'
+
+          authorization_header="Authorization: Bearer $NVIDIA_API_KEY"
+          content_type_header='Content-Type: application/json'
+
+          if [ "$stream" = true ]; then
+              accept_header='Accept: text/event-stream'
+          else
+              accept_header='Accept: application/json'
+          fi
 
           echo "📝 Gerando título da PR..."
 
-          TITLE_PROMPT="Gere apenas um título profissional para Pull Request.
+          TITLE_PROMPT=$(cat <<EOF
+          Gere apenas um título profissional para Pull Request.
+
           REGRAS OBRIGATÓRIAS:
           - MÍNIMO: 40 caracteres
           - MÁXIMO: 70 caracteres
@@ -161,43 +173,42 @@ jobs:
           $COMMITS_CONTENT
 
           ARQUIVOS:
-          $FILES_ANALYSIS"
+          $FILES_ANALYSIS
+          EOF
+          )
 
-          TITLE_REQUEST=$(jq -n \
-            --arg prompt "$TITLE_PROMPT" \
-            '{
-              model: "mistralai/mistral-large-3-675b-instruct-2512",
+          cat > title_payload.json <<EOF
+          {
+            "model": "google/gemma-3n-e2b-it",
+            "messages": [
+              {
+                "role": "user",
+                "content": $(jq -Rs . <<< "$TITLE_PROMPT")
+              }
+            ],
+            "max_tokens": 128,
+            "temperature": 0.20,
+            "top_p": 0.70,
+            "frequency_penalty": 0.00,
+            "presence_penalty": 0.00,
+            "stream": true
+          }
+          EOF
 
-              response_format: {
-                type: "text"
-              },
-
-              messages: [
-                {
-                  role: "system",
-                  content: "Você gera títulos curtos de Pull Request e deve obedecer rigorosamente limites de caracteres."
-                },
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-
-              temperature: 0.0,
-              top_p: 0.1,
-              max_tokens: 40
-            }')
-
-          TITLE_RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-            -H "Authorization: Bearer $NVIDIA_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$TITLE_REQUEST")
+          TITLE_RAW=$(curl -s "$invoke_url" \
+            -H "$authorization_header" \
+            -H "$content_type_header" \
+            -H "$accept_header" \
+            -d @title_payload.json)
 
           echo "🔍 Debug título:"
-          echo "$TITLE_RESPONSE"
+          echo "$TITLE_RAW"
 
-          TITLE=$(echo "$TITLE_RESPONSE" \
-            | jq -r '.choices[0].message.content // empty' 2>/dev/null)
+          TITLE=$(echo "$TITLE_RAW" \
+            | grep '^data:' \
+            | sed 's/^data: //' \
+            | jq -r '.choices[0].delta.content // empty' 2>/dev/null \
+            | tr -d '\n')
 
           TITLE=$(echo "$TITLE" \
             | tr -d '\n\r' \
@@ -215,7 +226,6 @@ jobs:
           echo "✅ Título final: $TITLE"
 
           echo "📄 Gerando descrição..."
-
 
           PROMPT=$(cat <<EOF
           Você é um engenheiro especialista em análise de código e Pull Requests profissionais em português.
@@ -262,99 +272,89 @@ jobs:
           {
             "description": "# Descrição da Pull Request\n\n## Resumo Técnico\n[TEXTO PREENCHIDO PELA IA]\n\n## Arquivos Alterados\n\n### Arquivos Criados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Modificados\n- [ARQUIVO E DESCRIÇÃO REAL]\n\n### Arquivos Deletados\n- [ARQUIVO E MOTIVO]\n\n## O Que Foi Alterado\n- [ALTERAÇÃO REAL 1]\n- [ALTERAÇÃO REAL 2]\n\n## Impactos\n\n### Performance\n- [IMPACTO REAL]\n\n### Segurança\n- [IMPACTO REAL]\n\n### Compatibilidade\n- Compatível com versões anteriores: Sim/Não\n- Requer migration: Sim/Não\n\n## Como Testar\n1. [PASSO REAL]\n2. [PASSO REAL]\n3. [RESULTADO ESPERADO]"
           }
-
           EOF
           )
 
-          REQUEST_BODY=$(jq -n \
-            --arg prompt "$PROMPT" \
-            '{
-              model: "mistralai/mistral-nemotron",
-              response_format: {
-                type: "json_object"
-              },
-              messages: [
-                {
-                  role: "system",
-                  content: "Retorne somente JSON válido."
-                },
-                {
-                  role: "user",
-                  content: $prompt
-                }
-              ],
-              temperature: 0.05,
-              top_p: 0.7,
-              max_tokens: 2000
-            }')
+          cat > description_payload.json <<EOF
+          {
+            "model": "qwen/qwen3-coder-480b-a35b-instruct",
+            "messages": [
+              {
+                "role": "user",
+                "content": $(jq -Rs . <<< "$PROMPT")
+              }
+            ],
+            "temperature": 0.7,
+            "top_p": 0.8,
+            "frequency_penalty": 0,
+            "presence_penalty": 0,
+            "max_tokens": 4096,
+            "stream": true
+          }
+          EOF
 
+          RESPONSE=""
 
-            RESPONSE=""
+          for i in 1 2 3; do
 
-            for i in 1 2 3; do
+            echo "🔄 Tentativa descrição: $i"
 
-              echo "🔄 Tentativa descrição: $i"
+            RESPONSE=$(curl -s "$invoke_url" \
+              -H "$authorization_header" \
+              -H "$content_type_header" \
+              -H "$accept_header" \
+              -d @description_payload.json)
 
-              RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-                -H "Authorization: Bearer $NVIDIA_API_KEY" \
-                -H "Content-Type: application/json" \
-                -d "$REQUEST_BODY")
+            echo "$RESPONSE"
 
-              echo "$RESPONSE"
-
-              if echo "$RESPONSE" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
-                echo "✅ Resposta válida recebida"
-                break
+            AI_CONTENT=$(echo "$RESPONSE" | while IFS= read -r line; do
+              if [[ "$line" == data:* ]]; then
+                json="${line#data: }"
+                if [[ "$json" == "[DONE]" ]]; then
+                  continue
+                fi
+                echo "$json" \
+                  | jq -r '.choices[0].delta.content // empty'
               fi
 
-              ERROR_DETAIL=$(echo "$RESPONSE" | jq -r '.detail // empty')
+            done | paste -sd '' -)
 
-              echo "⚠️ Erro detectado: $ERROR_DETAIL"
+            if [ -n "$AI_CONTENT" ]; then
+              echo "✅ Resposta válida recebida"
+              break
+            fi
 
-              sleep 5
+            echo "⚠️ Falha ao gerar descrição"
 
-            done
+            sleep 5
+
+          done
 
           echo "🔍 Debug descrição:"
-          echo "$RESPONSE"
+          echo "$AI_CONTENT"
 
-          AI_CONTENT=$(echo "$RESPONSE" \
-            | jq -r '.choices[0].message.content // empty' 2>/dev/null)
+          CLEAN_CONTENT=$(echo "$AI_CONTENT" \
+            | sed 's/^```json//g' \
+            | sed 's/^```//g' \
+            | sed 's/```$//g')
 
-          if [ -z "$AI_CONTENT" ]; then
+          if echo "$CLEAN_CONTENT" | jq empty 2>/dev/null; then
+            AI_JSON="$CLEAN_CONTENT"
+          else
+            AI_JSON="{}"
+          fi
+
+          BODY=$(echo "$AI_JSON" \
+            | jq -r '.description // empty' 2>/dev/null)
+
+          if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
 
             echo "⚠️ IA falhou. Usando fallback."
 
-            BODY="## 📋 PR Automática
-
-          Branch: \`${{ github.ref_name }}\`
-
-          Alterações detectadas automaticamente."
-
-          else
-
-            CLEAN_CONTENT=$(echo "$AI_CONTENT" \
-              | sed 's/^```json//g' \
-              | sed 's/^```//g' \
-              | sed 's/```$//g')
-
-            if echo "$CLEAN_CONTENT" | jq empty 2>/dev/null; then
-              AI_JSON="$CLEAN_CONTENT"
-            else
-              AI_JSON="{}"
-            fi
-
-            BODY=$(echo "$AI_JSON" \
-              | jq -r '.description // empty' 2>/dev/null)
-
-            if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-
-              BODY="## 📋 Alterações Detectadas
+            BODY="## 📋 Alterações Detectadas
 
           Branch: \`${{ github.ref_name }}\`"
-            fi
           fi
-
 
           echo "title=$TITLE" >> $GITHUB_OUTPUT
 

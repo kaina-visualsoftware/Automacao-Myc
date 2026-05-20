@@ -13,7 +13,7 @@
 ...    REALIZA_VENDA_SEM_ESTOQUE_VENDA=RealizaVendaSemEstoque_Venda
 ...    REALIZA_VENDA_SEM_ESTOQUE_OS=RealizaVendaSemEstoque_OS
 ...    REALIZA_VENDA_SEM_ESTOQUE_PREVENDA=RealizaVendaSemEstoque_PreVenda
-...    DESCONTO_FINAL_IGUALMENTE=DescontoFinalIgualmente
+...    DESCONTO_FINAL_IGUALMENTE=DescontoFinaladamente
 ...    AVISO_SEM_ESTOQUE=Aviso_Sem_Est
 ...    CONTROLAR_ENTREGA_PREVISTA=ControlaEntregaPrevista
 ...    CONTROLAR_CREDITO_CLIENTE=ControlaCreditoClientes
@@ -45,6 +45,8 @@
 ...    PERMITE_VARIAS_TABELAS=PermiteVariasTabelas
 ...    OS_COMISSAO_VENDEDOR_EXECUTOR=OS_ComVendedorEexecutor
 ...    CARGA_VENDAS=Carga_Vendas
+...    OS_SERVICO_OBRIGATORIO=OS_Servico_obrigatorio
+...    OS_FUNCIONARIO_PRODUTO=OS_Funcionario_Produto
 
 &{PARAM_EMP}    
 ...    VENDA_IMPRIME_CUPOM=Venda_ImprimeCupom
