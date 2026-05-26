@@ -12,6 +12,7 @@ Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
+Resource    ../KeyWords/Emissão/Carregamento/Venda/KeyCarregamentoVenda.robot
 
 *** Variables ***
 
@@ -594,6 +595,22 @@ Dado que realizo uma ordem de serviço com produto e serviço e desconto escalon
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
+
+Dado que realizo um carregamento de venda com
+    [Arguments]    ${STATUS}
+    # Navega para carregamento e cria um novo (inclui iniciar + descrição + gravar)
+    KeyCarregamentoVenda.Dado que acesso o lançamento de carregamento de vendas
+    KeyCarregamentoVenda.Quando realizo um novo carregamento com descrição valida
+
+    # Aplica status especial se necessário (Fechada via DB)
+    ${carregamento_deve_ser_fechado}=    Evaluate    '${STATUS}' == 'Fechada'
+    IF    ${carregamento_deve_ser_fechado}
+        Execute Sql String    UPDATE cargas SET Status = 'Fechada' WHERE Sequencia = ${COD_CARREGAMENTO};
+    END
+
+    # Sai da tela de carregamento
+    KeyCarregamentoVenda.Então fecho a tela de carregamento
+
 
 Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
 
