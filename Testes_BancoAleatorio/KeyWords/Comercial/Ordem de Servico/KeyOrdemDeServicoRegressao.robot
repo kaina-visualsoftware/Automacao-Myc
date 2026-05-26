@@ -408,10 +408,22 @@ Então a OS com produto normal deve estar salva no banco
     Log    OS com produto normal validada com sucesso! Código: ${COD_ORDEM_SERVICO}, Status: ${resultado[0][2]}, Produtos: ${produtos[0][0]}
 
 E que existe uma OS com produto normal salva
-    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Tipo = 'OS' AND v.Status = 'c' AND v.Cancelada IS NULL AND EXISTS (SELECT 1 FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo AND vp.Cancelada IS NULL) ORDER BY v.Codigo DESC LIMIT 1;
-    Should Not Be Empty    ${resultado}    msg=Nenhuma OS com produto normal encontrada
+    ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Tipo = 'OS' AND v.Status = 'c' AND v.Cancelada IS NULL AND DATE(v.Data) = CURDATE() AND EXISTS (SELECT 1 FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo AND vp.Cancelada IS NULL) ORDER BY v.Codigo DESC LIMIT 1;
+    ${tem_os}=    Evaluate    len($resultado) > 0
+    IF    not ${tem_os}
+        Log    Nenhuma OS com produto encontrada para a data atual. Criando uma nova OS...
+        Quando inicio uma nova ordem de serviço
+        E informo o vendedor
+        E informo a tabela de preço
+        E informo o cliente pelo CPF
+        E insiro um produto normal
+        E acesso a aba de pagamentos
+        Então gravo a ordem de serviço
+        ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Tipo = 'OS' AND v.Status = 'c' AND v.Cancelada IS NULL AND DATE(v.Data) = CURDATE() AND EXISTS (SELECT 1 FROM vendasprodutos vp WHERE vp.CodigoVenda = v.Codigo AND vp.Cancelada IS NULL) ORDER BY v.Codigo DESC LIMIT 1;
+    END
+    Should Not Be Empty    ${resultado}    msg=Nenhuma OS com produto normal encontrada nem foi possível criar uma nova
     Set Test Variable    ${CODIGO_OS_EXCLUIR}    ${resultado[0][0]}
-    Log    OS encontrada para exclusão: ${CODIGO_OS_EXCLUIR}
+    Log    OS encontrada/criada para exclusão: ${CODIGO_OS_EXCLUIR}
 
 Quando seleciono a OS e clico em excluir
     Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
@@ -426,7 +438,6 @@ Quando seleciono a OS e clico em excluir
     Sleep    ${SLEEP_BAIXO}
     Press Special Key    ENTER
     Sleep    ${SLEEP_MEDIO}
-    Clicar no botão Editar
     Clicar no botão Excluir
 
 E informo a descrição de exclusão
