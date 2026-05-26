@@ -4,6 +4,7 @@ Documentation    Testes em Banco Aleatório
 
 Resource  ${EXECDIR}/Testes_BancoAleatorio/KeyWords/Emissão/Carregamento/Pre-venda/KeyCarregamentoPreVenda1.robot
 Resource   ${EXECDIR}/Testes_BancoAleatorio/utils/parametros_pre_condicoes.robot
+Resource   ${EXECDIR}/Testes_BancoAleatorio/utils/montadorDeCenarios.robot
 
 Suite Setup    Run Keywords     Start Sikuli Process    AND    KeycarregamentoPreVenda1.Ler imagens iniciais    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 Suite Teardown    Stop Remote Server
@@ -16,10 +17,14 @@ Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 Teste 01 - Validar que não é possível excluir um carregamento com status Fechada
     [Documentation]    Este teste valida que não é possível excluir um carregamento com status Fechada
     [Tags]    Teste01
+    [Setup]    MontadordeCenarios.Dado que eu crio uma pré-venda com rota
 
-    Dado que eu crio uma pré-venda com rota
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    1
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Fechada   
     Quando pesquiso o Carregamento gerado
     E valido que um carregamento com status não pode ser excluído    Fechada
@@ -28,10 +33,14 @@ Teste 01 - Validar que não é possível excluir um carregamento com status Fech
 Teste 02 - Validar que não é possível Excluir um carregamento com status Montando
     [Documentation]    Este teste valida que não é possível excluir um carregamento com status Montando
     [Tags]    Teste02
+    [Setup]    MontadordeCenarios.Dado que eu crio uma pré-venda com rota
 
-    Dado que eu crio uma pré-venda com rota
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    1
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     E valido que um carregamento com status não pode ser excluído    Montando
@@ -40,10 +49,14 @@ Teste 02 - Validar que não é possível Excluir um carregamento com status Mont
 Teste 03 - Carregamento vinculado a duas pré-vendas com rotas distintas
     [Documentation]    Este teste valida a criação de um carregamento vinculado a duas pré-vendas com rotas distintas
     [Tags]    Teste03
+    [Setup]    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    2
 
-    Dado que eu crio duas pré-vendas com rotas distintas
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    2
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    2
     Então gravo o carregamento com o status    Fechada
     E valido que o carregamento contém duas rotas diferentes
     E fecho a tela de carregamento
@@ -71,10 +84,14 @@ Teste 05 - Validar exclusão de um carregamento com status Cadastrando
 Teste 06 - Validar que não é possível fechar uma carga sem montar e imprimir o mapa
     [Documentation]    Este teste valida que não é possível fechar uma carga sem montar e imprimir o mapa
     [Tags]    Teste06
+    [Setup]    MontadordeCenarios.Dado que eu crio uma pré-venda com rota
 
-    Dado que eu crio uma pré-venda com rota
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    1
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então tento fechar a carga sem montar e imprimir o mapa
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
@@ -82,10 +99,14 @@ Teste 06 - Validar que não é possível fechar uma carga sem montar e imprimir 
 Teste 07 - Editar um carregamento e em seguida fechar a carga
     [Documentation]    Este teste valida a edição de um carregamento e o posterior fechamento da carga
     [Tags]    Teste07
+    [Setup]    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    2
 
-    Dado que eu crio duas pré-vendas com rotas distintas
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    1
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
@@ -96,10 +117,14 @@ Teste 07 - Editar um carregamento e em seguida fechar a carga
 Teste 08 - Editar um carregamento removendo a rota e revertendo para status Cadastrando
     [Documentation]    Este teste valida a edição de um carregamento removendo a rota e revertendo para status Cadastrando
     [Tags]    Teste08
+    [Setup]    MontadordeCenarios.Dado que eu crio uma pré-venda com rota
 
-    Dado que eu crio uma pré-venda com rota
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    1
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
@@ -117,7 +142,7 @@ Teste 09 - Validar inclusão de rota em um carregamento com status Cadastrando
     E fecho a tela de carregamento
 
     Dado que eu crio uma pré-venda com rota
-    Então acesso a tela de Carregamento
+    Dado que acesso a tela de Carregamento
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
     E incluo uma rota ao carregamento
@@ -127,10 +152,14 @@ Teste 09 - Validar inclusão de rota em um carregamento com status Cadastrando
 Teste 10 - Editar carregamento com duas rotas removendo uma e fechando com status Fechada
     [Documentation]    Este teste valida a edição de um carregamento com duas rotas, remoção de uma rota e fechamento com status Fechada
     [Tags]    Teste10
+    [Setup]    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    2
 
-    Dado que eu crio duas pré-vendas com rotas distintas
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    2
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    2
     Então gravo o carregamento com o status    Montando
     E valido que o carregamento contém duas rotas diferentes
     Quando pesquiso o Carregamento gerado
@@ -143,9 +172,10 @@ Teste 10 - Editar carregamento com duas rotas removendo uma e fechando com statu
 Teste 11 - Validar obrigatoriedade da descrição ao montar carga
     [Documentation]    Este teste valida o bloqueio ao tentar montar uma carga sem informar descrição
     [Tags]    Teste11
+    [Setup]    MontadordeCenarios.Dado que eu crio uma pré-venda com rota
 
     Dado que eu crio uma pré-venda com rota
-    Então acesso a tela de Carregamento
+    Dado que acesso a tela de Carregamento
     E adiciono um carregamento com rota sem informar descrição
     Quando eu tento montar a carga sem descrição
     Então valido a mensagem de descrição obrigatória
@@ -156,10 +186,14 @@ Teste 11 - Validar obrigatoriedade da descrição ao montar carga
 Teste 12 - Validar volume de pré-vendas após remoção em um carregamento
     [Documentation]    Este teste valida que o campo volume do carregamento é atualizado corretamente quando uma pré-venda é removida
     [Tags]    Teste12
+    [Setup]    MontadordeCenarios.Dado que eu crio pré-vendas com a mesma rota    2  
 
-    Dado que eu crio duas pré-vendas com a mesma rota
-    Então acesso a tela de Carregamento
-    E adiciono um carregamento com rotas    1
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Cadastrando
     Quando pesquiso o Carregamento gerado
     E valido o volume inicial do carregamento como cadastrando

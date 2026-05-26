@@ -8,7 +8,6 @@ Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/utils.robot
 Resource    ../../../utils/validacaoAviso.robot
-Resource    ../../../utils/montadorDeCenarios.robot
 
 *** Variables ***
 # Telas
