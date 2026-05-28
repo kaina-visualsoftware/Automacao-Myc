@@ -678,7 +678,7 @@ Dado que eu crio uma pré-venda com rota
 Dado que eu crio pré-vendas com a mesma rota
 
     [Arguments]    ${QUANTIDADE_PRE_VENDAS}=2
-    Buscar Duas Rotas Distintas Com Clientes
+    Buscar Rotas Distintas Com Clientes    ${QUANTIDADE_PRE_VENDAS}
 
     FOR    ${index}    IN RANGE    ${QUANTIDADE_PRE_VENDAS}
 
@@ -699,13 +699,12 @@ Dado que eu crio pré-vendas com rotas distintas
 
     [Arguments]    ${QUANTIDADE_PRE_VENDAS}=2
 
-    Buscar Duas Rotas Distintas Com Clientes
-    ${ROTAS}    Create List    ${ROTA_1}    ${ROTA_2}
+    Buscar Rotas Distintas Com Clientes    ${QUANTIDADE_PRE_VENDAS}
 
     FOR    ${index}    IN RANGE    ${QUANTIDADE_PRE_VENDAS}
 
-        ${rota_index}    Evaluate    ${index} % len(${ROTAS})
-        ${rota_selecionada}    Get From List    ${ROTAS}    ${rota_index}
+        ${rota_index}    Evaluate    ${index} % len(${LISTA_ROTAS})
+        ${rota_selecionada}    Get From List    ${LISTA_ROTAS}    ${rota_index}
 
         Keypedidos1.Dado que acesso a tela de pedidos
         Keypedidos1.E clico em adicionar
