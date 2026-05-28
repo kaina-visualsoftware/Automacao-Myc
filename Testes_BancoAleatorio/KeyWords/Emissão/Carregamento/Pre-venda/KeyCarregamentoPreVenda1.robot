@@ -110,6 +110,7 @@ ${ROTA_1}                                      None
 ${ROTA_2}                                      None
 ${VOLUME_CARREGAMENTO}                         None
 ${VOLUME_INICIAL}                              None
+${LISTA_ROTAS}                                 None
 
 *** Keywords ***
 
@@ -155,16 +156,24 @@ Seleciona cliente com rota aleatória
 
     RETURN    ${codCliente[0][0]}
 
-Buscar Duas Rotas Distintas Com Clientes
+Buscar Rotas Distintas Com Clientes
 
-    ${rotas}    Query    SELECT DISTINCT Rota FROM clientes WHERE (Tipo LIKE 'C' OR Tipo LIKE 'A') AND Ativo = -1 AND Status = 'ATIVA' AND CreditoCortado = 0 AND Codigo <> 1 AND Rota IS NOT NULL ORDER BY RAND() LIMIT 2;
+    [Arguments]    ${QUANTIDADE_ROTAS}
 
-    IF    len($rotas) < 2
-        Fail    Não foram encontradas duas rotas distintas com clientes ativos no ambiente.
+    ${rotas}    Query    SELECT DISTINCT Rota FROM clientes WHERE (Tipo LIKE 'C' OR Tipo LIKE 'A') AND Ativo = -1 AND Status = 'ATIVA' AND CreditoCortado = 0 AND Codigo <> 1 AND Rota IS NOT NULL ORDER BY RAND() LIMIT ${QUANTIDADE_ROTAS};
+
+    IF    len($rotas) < ${QUANTIDADE_ROTAS}
+        Fail    Não foram encontradas ${QUANTIDADE_ROTAS} rotas distintas com clientes ativos no ambiente.
+    END
+
+    ${LISTA_ROTAS}    Create List
+    FOR    ${rota}    IN    @{rotas}
+        Append To List    ${LISTA_ROTAS}    ${rota[0]}
     END
 
     Set Test Variable    ${ROTA_1}    ${rotas[0][0]}
     Set Test Variable    ${ROTA_2}    ${rotas[1][0]}
+    Set Test Variable    ${LISTA_ROTAS}
 
 Valida Carregamento gerado
 
@@ -589,25 +598,21 @@ E valido que o carregamento está com o status
     ...    ${carregamento_existe}
     ...    Carregamento pesquisado não está com o status ${STATUS}
 
-E valido que o carregamento contém duas rotas diferentes
+E valido que o carregamento contém as rotas esperadas
 
     ${rotas}    Query    SELECT CodigoRota FROM cargas_rotas WHERE CodigoCarregamento = ${COD_CARREGAMENTO} ORDER BY CodigoRota;
-    
-    ${rotas_encontradas}    Evaluate    sorted([r[0] for r in $rotas])
-
-    ${rotas_esperadas}      Evaluate    sorted([${ROTA_1}, ${ROTA_2}])
-
-    Should Be Equal    ${rotas_encontradas}    ${rotas_esperadas}
-    ...    As rotas do carregamento não correspondem às rotas das pré-vendas criadas.
-
-E valido que o carregamento contém apenas uma rota
-
-    ${rotas}    Query    SELECT CodigoRota FROM cargas_rotas WHERE CodigoCarregamento = ${COD_CARREGAMENTO};
 
     ${quantidade}    Get Length    ${rotas}
 
-    Should Be Equal As Integers    ${quantidade}    1
-    ...    O carregamento contém ${quantidade} rotas, mas deveria conter apenas uma.
+    Should Be Equal As Integers    ${quantidade}    ${LISTA_ROTAS.__len__()}
+    ...    O carregamento contém ${quantidade} rotas, mas deveria conter ${LISTA_ROTAS.__len__()}.
+
+    ${rotas_encontradas}    Evaluate    sorted([r[0] for r in $rotas])
+
+    ${rotas_esperadas}    Evaluate    sorted(${LISTA_ROTAS})
+
+    Should Be Equal    ${rotas_encontradas}    ${rotas_esperadas}
+    ...    As rotas do carregamento não correspondem às rotas das pré-vendas criadas.
 
 E obtenho o volume atual do carregamento
 

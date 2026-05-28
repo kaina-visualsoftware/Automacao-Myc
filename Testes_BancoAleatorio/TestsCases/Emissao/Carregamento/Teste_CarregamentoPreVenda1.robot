@@ -49,16 +49,16 @@ Teste 02 - Validar que não é possível Excluir um carregamento com status Mont
 Teste 03 - Carregamento vinculado a duas pré-vendas com rotas distintas
     [Documentation]    Este teste valida a criação de um carregamento vinculado a duas pré-vendas com rotas distintas
     [Tags]    Teste03
-    [Setup]    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    2
+    [Setup]    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    3
 
     Dado que acesso a tela de Carregamento
     E clico para adicionar um carregamento
     Quando adiciono uma Descrição qualquer e incluo um palete
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo rotas da lista    2
+    E gravo incluindo rotas da lista    3
     Então gravo o carregamento com o status    Fechada
-    E valido que o carregamento contém duas rotas diferentes
+    E valido que o carregamento contém as rotas esperadas
     E fecho a tela de carregamento
 
 Teste 04 - Validar que um carregamento sem rota permanece com o status Cadastrando
@@ -161,12 +161,12 @@ Teste 10 - Editar carregamento com duas rotas removendo uma e fechando com statu
     Então eu Listo as Rotas
     E gravo incluindo rotas da lista    2
     Então gravo o carregamento com o status    Montando
-    E valido que o carregamento contém duas rotas diferentes
+    E valido que o carregamento contém as rotas esperadas
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
     E removo uma rota do carregamento
     Então gravo o carregamento com o status    Fechada
-    E valido que o carregamento contém apenas uma rota
+    E valido que o carregamento contém as rotas esperadas
     E fecho a tela de carregamento
 
 Teste 11 - Validar obrigatoriedade da descrição ao montar carga
