@@ -61,7 +61,7 @@ Teste 04 - Excluir carregamento com status cadastrando
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda com    Cadastrando
+    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
     Dado que acesso o lançamento de carregamento de vendas
     Quando excluo o carregamento
@@ -76,7 +76,7 @@ Teste 05 - Nao permitir excluir carregamento fechado
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda com    Fechada
+    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
     Dado que acesso o lançamento de carregamento de vendas
     E que existe um carregamento com status    Fechada
@@ -138,7 +138,7 @@ Teste 09 - Editar carregamento incluindo venda e cobranca
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda com    Cadastrando
+    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
 
     Dado que acesso o lançamento de carregamento de vendas
