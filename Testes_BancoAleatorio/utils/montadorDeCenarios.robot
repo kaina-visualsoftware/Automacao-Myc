@@ -12,8 +12,7 @@ Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
-Resource    ../KeyWords/Emissão/Carregamento/Venda/KeyCarregamentoVenda.robot
-Resource    ../KeyWords/Emissão/Carregamento/Pre-venda/KeyCarregamentoPreVenda1.robot
+Resource    ../KeyWords/Emissão/Carregamento/KeyCarregamento1.robot
 
 *** Variables ***
 
@@ -598,9 +597,9 @@ Dado que realizo uma ordem de serviço com produto e serviço e desconto escalon
     utils.E saio da tela(OrdemDeServico)
 
 Dado que realizo um carregamento de venda
-    KeyCarregamentoVenda.Dado que acesso o lançamento de carregamento de vendas
-    KeyCarregamentoVenda.Quando realizo um novo carregamento com descrição valida
-    KeyCarregamentoVenda.Então fecho a tela de carregamento
+    KeyCarregamento1.Dado que acesso o lançamento de carregamento de vendas
+    KeyCarregamento1.Quando realizo um novo carregamento com descrição valida
+    KeyCarregamento1.Então fecho a tela de carregamento
 
 
 Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
