@@ -12,8 +12,7 @@ Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
-Resource    ../KeyWords/Emissão/Carregamento/Venda/KeyCarregamentoVenda.robot
-Resource    ../KeyWords/Emissão/Carregamento/Pre-venda/KeyCarregamentoPreVenda1.robot
+Resource    ../KeyWords/Emissão/Carregamento/KeyCarregamento1.robot
 
 *** Variables ***
 
