@@ -53,52 +53,44 @@ ${TOTAL_ADIANTAMENTO}                   NONE
 
 *** Keywords ***
 
-Acessar menu Emissão
-    Wait Until Screen Contain    ${MENU_EMISSÃO}    ${TEMPO_TELA}
-    SikuliLibrary.Click    ${MENU_EMISSÃO}
-    Sleep    ${SLEEP_BAIXO}
-
-
-Acessar submenu Carregamento
-    Wait Until Screen Contain    ${SUBMENU_CARREGAMENTO}    ${TEMPO_TELA}
-    SikuliLibrary.Click    ${SUBMENU_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
-
-
-Abrir módulo de carregamento
-    Acessar menu Emissão
-    Acessar submenu Carregamento
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
-
-
-# ====================================================================
-# CRIAÇÃO DE CARREGAMENTO
-# ====================================================================
 
 
 Iniciar novo carregamento
+
     Clicar no botão Adicionar
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTO_ADICIONAR}    ${TEMPO_TELA}
+
     Setar codigo carregamento
 
 
 Setar codigo carregamento
+
     ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Cancelado IS NULL ORDER BY c.Sequencia DESC LIMIT 1
+
     IF    not ${resultado}
+
         RETURN    0
+
     END
+
     Set Test Variable    ${COD_CARREGAMENTO}    ${resultado[0][0]}
 
 
 Preencher descrição com o código do carregamento
+
     ${descricao}=    Catenate    SEPARATOR=    AUTOMACAO -    ${COD_CARREGAMENTO}
+
     SikuliLibrary.Input Text    ${EMPTY}    ${descricao}
     Sleep    ${SLEEP_BAIXO}
 
 
 Gravar carregamento da venda
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTO_ADICIONAR}    ${TEMPO_TELA}
+
     Clicar no botão Gravar
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
 
 
@@ -106,82 +98,102 @@ Fechar tela de carregamento
     Run Keyword And Ignore Error    Press Special Key    ESC
 
 
-# ====================================================================
-# PESQUISA / EDIÇÃO / EXCLUSÃO
-# ====================================================================
-
-
 Pesquisar carregamento por código
     [Arguments]    ${codigo}
+
     Press Combination    KEY.ALT    KEY.P
+
     Input Text    ${EMPTY}    ${codigo}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
 
 Limpar filtro de pesquisa
     Press Combination    KEY.ALT    KEY.P
+
     Input Text    ${EMPTY}    ${EMPTY}
+    
     Press Special Key    ENTER
 
 
 Editar carregamento existente
+
     Clicar no botão Editar
+
     Sleep    ${SLEEP_BAIXO}
 
 
 Excluir carregamento existente
+
     ${aviso_excluir}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    3
+
     IF    ${aviso_excluir}
+
         Press Combination    KEY.ALT    KEY.S
+
     END
+
     ${aviso_cancelar}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CANCELAR_CARREGAMENTO}    3
+
     IF    ${aviso_cancelar}
+
         Press Combination    KEY.ALT    KEY.S
+
     END
-
-
-# ====================================================================
-# INCLUSÃO DE VENDAS NO CARREGAMENTO
-# ====================================================================
-
 
 Clicar no botão Incluir Venda no carregamento
+
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR_VENDA_CARREGAMENTO}    5
+
     IF    ${existe}
+
         SikuliLibrary.Click    ${BT_INCLUIR_VENDA_CARREGAMENTO}
         Sleep    ${SLEEP_BAIXO}
+
     END
 
 
 Abrir tela de listagem de vendas
+
     Clicar no botão Incluir Venda no carregamento
+
     Clicar no botão Listar
 
 
 Selecionar a próxima venda disponível
+
     ${COD_VENDA}=    Pegar próxima venda disponível
+
     Log    Selecionando venda código: ${COD_VENDA}
 
-    # Limpa qualquer filtro existente na listagem
-    Press Combination    KEY.ALT    KEY.P
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${COD_VENDA}
-    Sleep    ${SLEEP_BAIXO}
-    Press Special Key    ENTER
-    Sleep    ${SLEEP_BAIXO}
+   ${CHECKBOX_TODOS_ITENS_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_TODOS_ITENS}    15
 
-    # Marca a venda no grid
-    ${CHECKBOX_TODOS_ITENS_BOOL}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_TODOS_ITENS}    15
     IF    ${CHECKBOX_TODOS_ITENS_BOOL}
-        SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}
+
+        SikuliLibrary.Click    ${CHECKBOX_TODOS_ITENS}    2    
         Sleep    ${SLEEP_BAIXO}
+
     END
 
-    # Confirma seleção
-    Press Combination    KEY.ALT    KEY.O
+    FOR    ${I}    IN RANGE    3
+
+        Press Special Key    TAB
+
+    END
+
+    SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
+    SikuliLibrary.Click    ${LB_NVENDA_CARREGAMENTO}
+    
+    Input Text    ${EMPTY}    ${COD_VENDA}
+
+    Press Special Key    LEFT
+
+    Press Special Key    SPACE
     Sleep    ${SLEEP_BAIXO}
+
+    Clicar no botão Adicionar
 
 
 Pegar próxima venda disponível
@@ -206,12 +218,6 @@ Pegar ultimas vendas do carregamento
     END
     ${VENDAS}=    Evaluate    [item[0] for item in $resultado]
     RETURN    ${VENDAS}
-
-
-# ====================================================================
-# INCLUSÃO DE COBRANÇA NO CARREGAMENTO
-# ====================================================================
-
 
 Clicar no botão Incluir Cobrança no carregamento
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR_COBRANÇA_CARREGAMENTO}    5
@@ -310,12 +316,6 @@ Cancelar operação e fechar tela
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
     Fechar tela de carregamento
-
-
-# ====================================================================
-# EMBARQUE
-# ====================================================================
-
 
 Navegar para próximo campo
     [Arguments]    ${QTD_TABS}
@@ -439,13 +439,16 @@ Validar dados do adiantamento na tabela cargas
     Log    KM Saída: ${resultado[0][4]} | KM Chegada: ${resultado[0][5]} | Litros: ${resultado[0][6]} | Valor Adiantamento: ${resultado[0][7]}
 
 
-# ====================================================================
-# KEYWORDS BDD CONSOLIDADAS
-# ====================================================================
-
-
 Dado que acesso o lançamento de carregamento de vendas
-    Abrir módulo de carregamento
+
+    Sleep    ${SLEEP_BAIXO}
+    Press Combination    KEY.ALT    KEY.E
+
+    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_BAIXO}
+
+    SikuliLibrary.Click    ${TELA_CARREGAMENTO}
+    Sleep    ${SLEEP_BAIXO}
 
 
 Quando inicio um novo carregamento

@@ -31,7 +31,7 @@ Teste 02 - Validar status inicial do carregamento
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda com    Cadastrando
+    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
     Dado que acesso o lançamento de carregamento de vendas
     E que existe um carregamento com status    Cadastrando
@@ -45,9 +45,7 @@ Teste 03 - Editar carregamento adicionando venda
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(2)
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda com    Cadastrando
-    ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
+    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
     Dado que acesso o lançamento de carregamento de vendas
     Quando edito o carregamento cadastrado
