@@ -9,7 +9,7 @@ Suite Teardown    Stop Remote Server
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
 
-*** Test Cases ***
+*** Test Cases *** 
 
 
 Teste 01 - Lancamento de carregamento de venda
