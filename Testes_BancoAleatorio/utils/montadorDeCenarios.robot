@@ -13,6 +13,7 @@ Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
 Resource    ../KeyWords/Emissão/Carregamento/Venda/KeyCarregamentoVenda.robot
+Resource    ../KeyWords/Emissão/Carregamento/Pre-venda/KeyCarregamentoPreVenda1.robot
 
 *** Variables ***
 
@@ -651,3 +652,60 @@ Dado que realizo uma ordem de serviço somente com produto e desconto tabela de 
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
+
+Dado que eu crio uma pré-venda com rota
+
+    Keypedidos1.Dado que acesso a tela de pedidos
+    Keypedidos1.E clico em adicionar
+    Quando adiciono um Vendedor e um Cliente com rota
+    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+    Quando vou para a aba de pagamentos
+    E audito o pedido
+    Então finalizo o pedido
+    E saio da tela(Pedido)
+    E listo pela tela de Geração de vendas
+
+Dado que eu crio pré-vendas com a mesma rota
+
+    [Arguments]    ${QUANTIDADE_PRE_VENDAS}=2
+    Buscar Duas Rotas Distintas Com Clientes
+
+    FOR    ${index}    IN RANGE    ${QUANTIDADE_PRE_VENDAS}
+
+        Keypedidos1.Dado que acesso a tela de pedidos
+        Keypedidos1.E clico em adicionar
+        Quando adiciono um Vendedor e um Cliente com rota    ${ROTA_1}
+        KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+        Quando vou para a aba de pagamentos
+        E audito o pedido
+        Então finalizo o pedido
+        E saio da tela(Pedido)
+
+    END
+    
+    E listo pela tela de Geração de vendas
+
+Dado que eu crio pré-vendas com rotas distintas
+
+    [Arguments]    ${QUANTIDADE_PRE_VENDAS}=2
+
+    Buscar Duas Rotas Distintas Com Clientes
+    ${ROTAS}    Create List    ${ROTA_1}    ${ROTA_2}
+
+    FOR    ${index}    IN RANGE    ${QUANTIDADE_PRE_VENDAS}
+
+        ${rota_index}    Evaluate    ${index} % len(${ROTAS})
+        ${rota_selecionada}    Get From List    ${ROTAS}    ${rota_index}
+
+        Keypedidos1.Dado que acesso a tela de pedidos
+        Keypedidos1.E clico em adicionar
+        Quando adiciono um Vendedor e um Cliente com rota    ${rota_selecionada}
+        KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
+        Quando vou para a aba de pagamentos
+        E audito o pedido
+        Então finalizo o pedido
+        E saio da tela(Pedido)
+
+    END
+    
+    E listo pela tela de Geração de vendas
