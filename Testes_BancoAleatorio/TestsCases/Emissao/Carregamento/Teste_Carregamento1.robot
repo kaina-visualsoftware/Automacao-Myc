@@ -261,10 +261,12 @@ Teste 13 - Lancamento de carregamento de venda
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
 
-    Dado que acesso o lançamento de carregamento de vendas
-    Quando realizo um novo carregamento com descrição valida
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    E informo uma descrição valida
+    E gravo o carregamento da venda
     Então o carregamento da venda deve ser salvo com sucesso
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 14 - Validar status inicial do carregamento
@@ -275,10 +277,12 @@ Teste 14 - Validar status inicial do carregamento
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
-    Dado que acesso o lançamento de carregamento de vendas
-    E que existe um carregamento com status    Cadastrando
-    Então o status deve ser "Cadastrando"
-    Então fecho a tela de carregamento
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    E informo uma descrição valida
+    E gravo o carregamento da venda
+    Então o status deve ser    Cadastrando
+    E fecho a tela de carregamento
 
 
 Teste 15 - Editar carregamento adicionando venda
@@ -289,12 +293,12 @@ Teste 15 - Editar carregamento adicionando venda
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
-    Dado que acesso o lançamento de carregamento de vendas
+    Dado que acesso a tela de Carregamento
     Quando edito o carregamento cadastrado
     E incluo vendas no carregamento    1
     E gravo o carregamento da venda
     Então o carregamento da venda deve ser salvo com sucesso
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 16 - Excluir carregamento com status cadastrando
@@ -305,10 +309,10 @@ Teste 16 - Excluir carregamento com status cadastrando
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
-    Dado que acesso o lançamento de carregamento de vendas
+    Dado que acesso a tela de Carregamento
     Quando excluo o carregamento
     Então o carregamento deve ser excluído com sucesso
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 17 - Nao permitir excluir carregamento fechado
@@ -319,12 +323,12 @@ Teste 17 - Nao permitir excluir carregamento fechado
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
-
-    Dado que acesso o lançamento de carregamento de vendas
+ 
+    Dado que acesso a tela de Carregamento
     E que existe um carregamento com status    Fechada
     Quando excluo o carregamento
     Então o sistema deve impedir a exclusão
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 18 - Incluir uma venda no carregamento
@@ -335,11 +339,12 @@ Teste 18 - Incluir uma venda no carregamento
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
 
-    Dado que acesso o lançamento de carregamento de vendas
-    Quando realizo um novo carregamento com descrição valida
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    E informo uma descrição valida
     E incluo vendas no carregamento    1
     Então a venda deve ser incluída com sucesso no carregamento
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 19 - Incluir multiplas vendas no carregamento
@@ -350,11 +355,12 @@ Teste 19 - Incluir multiplas vendas no carregamento
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(3)
 
-    Dado que acesso o lançamento de carregamento de vendas
-    Quando realizo um novo carregamento com descrição valida
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    E informo uma descrição valida
     E incluo vendas no carregamento    3
     Então a venda deve ser incluída com sucesso no carregamento
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 20 - Incluir cobranca no carregamento
@@ -365,12 +371,13 @@ Teste 20 - Incluir cobranca no carregamento
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
 
-    Dado que acesso o lançamento de carregamento de vendas
-    Quando realizo um novo carregamento com descrição valida
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    E informo uma descrição valida
     E incluo vendas no carregamento    1
     E incluo uma cobrança no carregamento
     Então o carregamento da venda deve ser salvo com sucesso
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 21 - Editar carregamento incluindo venda e cobranca
@@ -383,13 +390,13 @@ Teste 21 - Editar carregamento incluindo venda e cobranca
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
 
-    Dado que acesso o lançamento de carregamento de vendas
+    Dado que acesso a tela de Carregamento
     Quando edito o carregamento cadastrado
     E incluo vendas no carregamento    1
     E incluo uma cobrança no carregamento
     E gravo o carregamento da venda
     Então o carregamento da venda deve ser salvo com sucesso
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
 
 
 Teste 22 - Realizar embarque do carregamento
@@ -400,8 +407,9 @@ Teste 22 - Realizar embarque do carregamento
     ...    AND    Reiniciar MyCommerce Se Necessário
     ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
 
-    Dado que acesso o lançamento de carregamento de vendas
-    Quando realizo um novo carregamento com descrição valida
+    Dado que acesso a tela de Carregamento
+    E clico para adicionar um carregamento
+    E informo uma descrição valida
     E incluo vendas no carregamento    1
     E incluo uma cobrança no carregamento
     Quando acesso a tela de embarque
@@ -412,4 +420,4 @@ Teste 22 - Realizar embarque do carregamento
     E gravo o embarque
     Então o embarque deve ser salvo com sucesso
     Então o adiantamento deve estar cadastrado no banco
-    Então fecho a tela de carregamento
+    E fecho a tela de carregamento
