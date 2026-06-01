@@ -145,7 +145,7 @@ ${TOTAL_ADIANTAMENTO}                          None
 *** Keywords ***
 
 # =============================================================
-# SETUP / INICIALIZAÇÃO
+# KEYS CARREGAMENTO DE PREVENDA - VINICIUS
 # =============================================================
 
 Ler imagens iniciais
@@ -375,12 +375,6 @@ Então edito o carregamento
     Sleep    ${SLEEP_BAIXO}
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
-E adiciono um carregamento sem rota
-
-    E clico para adicionar um carregamento
-
-    Quando adiciono uma Descrição qualquer e incluo um palete
-
 E adiciono um carregamento com rota sem informar descrição
 
     E clico para adicionar um carregamento
@@ -441,12 +435,6 @@ E gravo incluindo rotas da lista
     ...    ${TEMPO_TELA}
 
     Sleep    ${SLEEP_BAIXO}
-
-E incluo uma rota ao carregamento
-
-    E clico em Incluir Rotas
-    Então eu Listo as Rotas
-    E gravo incluindo rotas da lista    1
 
 E removo uma rota do carregamento
 
@@ -574,11 +562,6 @@ E excluo o carregamento
 # VALIDAÇÕES DE REGRA DE NEGÓCIO
 # =============================================================
 
-Então tento fechar a carga sem montar e imprimir o mapa
-
-    Quando tento fechar a carga sem montar e imprimir o mapa
-    Então fecho a validação de fechar sem montar e imprimir o mapa
-
 Quando tento fechar a carga sem montar e imprimir o mapa
 
     SikuliLibrary.Click    ${BT_FECHAR_CARGA}
@@ -690,7 +673,9 @@ E valido o volume após remover uma pré-venda
 
     E valido que o volume do carregamento é    ${VOLUME_ESPERADO}
 
-
+# =============================================================
+# KEYS CARREGAMENTO DE VENDA - KAINA
+# =============================================================
 
 Iniciar novo carregamento
 
