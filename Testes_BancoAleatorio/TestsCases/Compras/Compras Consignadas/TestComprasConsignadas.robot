@@ -16,6 +16,11 @@ Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 ${QTDE_PADRAO_TESTES}    5
 ${QTDE_EDITADA}          10
 *** Keywords ***
+# Esta suite usa somente keywords dos resources
+
+#> Teste 1
+#    - Não precisa da keyword "Valida aviso de queda do sistema", pois já existe uma keyword que valida esse aviso.
+
 
 *** Test Cases ***
 Teste 01 – Lançamento de Compra Consignada
@@ -23,17 +28,24 @@ Teste 01 – Lançamento de Compra Consignada
     [Tags]    Teste01    Lancamento
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     keyCompras_Consignadas.E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E saio da tela(ComprasConsignada)
+
+
+
+ #> Teste 2
+ #   - Não é necessário "[Setup]    Fluxo Base Compra Consignada", e sim colocar todas as keywords no teste mesmo, mesmo sendo keywords usados por praticamente todos os testes do móculo.
+ #   - Em "Então visualizo compra consignada", não é necessário ter um sleep de 25 segundos (TEMPO_TELA), apenas o Wait Until Screen Contain
+    
 
 Teste 02 - Visualização de Compra Consignada
     [Documentation]    Valida a visualização de uma compra consignada finalizada
     [Tags]    Teste02    Visualizacao
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     keyCompras_Consignadas.E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
@@ -48,7 +60,7 @@ Teste 03 - Exclusão de Compra Consignada
   
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     keyCompras_Consignadas.E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
@@ -62,7 +74,7 @@ Teste 04 - Edição de Compra Consignada
     
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     keyCompras_Consignadas.E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
@@ -78,13 +90,16 @@ Teste 05 - Exclusão de Compras consignadas em lote
 
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     keyCompras_Consignadas.E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E seleciono todas as compras consignadas geradas
     Então pressiono Excluir
     E saio da tela(ComprasConsignada)
 
+#-> Teste 6
+#    - Keyword "Então troco de guia" nome muito genérico.
+#
 
 Teste 06 - Lançamento de Devolução de Compra Consignada
     [Documentation]    Valida o lançamento de uma compra consignada com devolução
@@ -92,9 +107,9 @@ Teste 06 - Lançamento de Devolução de Compra Consignada
 
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
-    Então troco de guia
+    E Abro Aba de Devolução
     E insiro o mesmo produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E valido se a devolução foi lançada com sucesso
@@ -104,16 +119,17 @@ Teste 06 - Lançamento de Devolução de Compra Consignada
 Teste 07 - Pagamento de Compra Consignada 
     [Documentation]    Valida o pagamento de uma compra consignada no caixa
     [Tags]    Teste07    Pagamento_Caixa
+    
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
     Então pressiono pagar
     Então desdobro forma de pagamento
     Então finalizo pagamento
-    E valido contas a receber em caixa
+    E valido contas a receber em caixa      #validação no banco está errada, corrigir quando houver tempo
     E saio da tela(ComprasConsignada)
 
 #caso de teste baseado na Tarefa #101167 VALOR DE COMPRA INCORRETO - COMPRA CONSIGNADA
@@ -123,11 +139,11 @@ Teste 08 - Validação do valor da conta a pagar gerada para compra consignada
 
     Dado que eu acesso a tela de Compras Consignadas
     Quando eu pressionar em adicionar
-    Quando adiciono Fornecedor
+    E adiciono Fornecedor
     E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})  
-    Então troco de guia
+    E Abro Aba de Devolução
     E insiro o mesmo produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
     Então excluo o produto da compra consignada
     Então finalizo a compra consignada
-    E valido valor da compra
+    E valido valor da compra     #validação no banco está errada, corrigir quando houver tempo
     E saio da tela(ComprasConsignada)

@@ -124,6 +124,10 @@ Quando adiciono Fornecedor
     Adicionar Fornecedor(TELA)
     Sleep    ${SLEEP_BAIXO}
 
+E adiciono Fornecedor
+    [Documentation]    Alias para o passo BDD que adiciona o fornecedor na compra consignada
+    Quando adiciono Fornecedor
+
 # ═════════════════════════════════════════════════════════════════════════════
 # Manipulação do produto normal
 # ═════════════════════════════════════════════════════════════════════════════
@@ -333,7 +337,7 @@ Selecionar Registro Na Grid
 # GERENCIAMENTO DE ABAS
 # ══════════════════════════════════════════════════════════════════════════════
 
-Abrir Aba de Compra
+E Abro Aba de Compra
     [Documentation]    Abre/Navega para a aba de Compra e atualiza o tipo de compra
 
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
@@ -344,7 +348,7 @@ Abrir Aba de Compra
 
     Set Test Variable    ${TIPO_COMPRA}    CS
 
-Abrir Aba de Devolução
+E Abro Aba de Devolução
     [Documentation]    Abre/Navega para a aba de Devolução e atualiza o tipo de compra
 
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
@@ -376,10 +380,7 @@ Atualizar Tipo Compra Conforme Aba Ativa
 # AÇÕES NA LISTAGEM
 # ══════════════════════════════════════════════════════════════════════════════
 
-Então troco de guia
-    [Documentation]    Navega para a aba de Devolução
 
-    Abrir Aba de Devolução
 
 Então visualizo compra consignada
     [Documentation]    Abre a visualização via ALT+V e navega até a aba Devolução
@@ -391,10 +392,7 @@ Então visualizo compra consignada
 
     Wait Until Screen Contain    ${TELA_VISUALIZAR_COMPRAS_CONSIG}    ${TEMPO_TELA}
 
-E acesso a aba Devolução
-    [Documentation]    Navega para a aba de Devolução
 
-    Abrir Aba de Devolução
 
 Então pressiono Excluir
     [Documentation]    Exclui a compra selecionada e valida a exclusão no banco de dados
@@ -521,13 +519,13 @@ Então desdobro forma de pagamento
 
         Press Special Key    DOWN
 
-        FOR    ${_}    IN RANGE    4
+        FOR    ${_}    IN RANGE    5
 
             Sleep    ${SLEEP_BAIXO}
             Press Special Key    ENTER
 
         END
-
+        Sleep    ${SLEEP_BAIXO}
     ELSE
 
         Fail
@@ -537,7 +535,7 @@ Então desdobro forma de pagamento
 Então finalizo pagamento
     [Documentation]    Finaliza o pagamento e valida a geração do contas a receber no banco de dados
 
-    Sleep    ${SLEEP_BAIXO}
+    Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT    KEY.F
 
     ${VALOR_COMPRA}    Query    SELECT ValorTotal FROM compraconsignada WHERE Codigo = ${COD_COMPRA};
@@ -553,7 +551,7 @@ Então finalizo pagamento
 
 E valido contas a receber em caixa
     [Documentation]    Valida no banco de dados que o contas a receber foi gerado com o código da compra
-
+    Sleep    ${SLEEP_MEDIO}
     ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY id DESC LIMIT 1;
 
     Should Be True
@@ -617,6 +615,32 @@ Validar aviso de devolução maior que comprado
 
 E valido valor da compra
     [Documentation]    Verifica se o valor da compra está correto no banco de dados
+
+    ${valor_compra}    Query
+    ...    SELECT valorTotal
+    ...    FROM compraconsignada
+    ...    WHERE codigo = ${COD_COMPRA}
+    ...    AND Cancelada = 0
+    ...    LIMIT 1;
+
+    ${valor_compra}    Set Variable    ${valor_compra[0][0][0]}
+
+    ${VALOR_PRODUTO_TOTAL}    Query    SELECT ValorTotal FROM compraconsignada_produtos WHERE codigoProduto = '${COD_PRODUTO}' AND cancelado = 0 ORDER BY Sequencia DESC LIMIT 1;
+
+    ${VALOR_PRODUTO_TOTAL}    Set Variable    ${VALOR_PRODUTO_TOTAL[0][0][0]}
+
+    Log    valor_compra: ${valor_compra} | tipo: ${valor_compra.__class__.__name__}
+    Log    VALOR_PRODUTO_TOTAL: ${VALOR_PRODUTO_TOTAL} | tipo: ${VALOR_PRODUTO_TOTAL.__class__.__name__}
+
+    ${valor_compra}    Evaluate    round(float(${valor_compra}), 2)
+    ${VALOR_PRODUTO_TOTAL}    Evaluate    round(float(${VALOR_PRODUTO_TOTAL}), 2)
+
+    Should Be Equal As Numbers
+    ...    ${valor_compra}
+    ...    ${VALOR_PRODUTO_TOTAL}
+    ...    precision=2
+
+    Log    Valor da compra está correto: ${valor_compra}
 
     ${valor_compra}    Query    SELECT valorTotal FROM compraconsignada WHERE codigo = ${COD_COMPRA} AND Cancelada = 0 LIMIT 1;
 
