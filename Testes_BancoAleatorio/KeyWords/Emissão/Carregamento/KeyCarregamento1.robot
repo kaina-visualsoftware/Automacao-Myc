@@ -145,7 +145,7 @@ ${TOTAL_ADIANTAMENTO}                          None
 *** Keywords ***
 
 # =============================================================
-# SETUP / INICIALIZAÇÃO
+# KEYS CARREGAMENTO DE PREVENDA - VINICIUS
 # =============================================================
 
 Ler imagens iniciais
@@ -407,12 +407,6 @@ Então edito o carregamento
     Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
-
-E adiciono um carregamento sem rota
-
-    E clico para adicionar um carregamento
-
-    Quando adiciono uma Descrição qualquer e incluo um palete
 
 E adiciono um carregamento com rota sem informar descrição
 
@@ -774,7 +768,9 @@ E valido o volume após remover uma pré-venda
 
     E valido que o volume do carregamento é    ${VOLUME_ESPERADO}
 
-
+# =============================================================
+# KEYS CARREGAMENTO DE VENDA - KAINA
+# =============================================================
 
 Iniciar novo carregamento
 
