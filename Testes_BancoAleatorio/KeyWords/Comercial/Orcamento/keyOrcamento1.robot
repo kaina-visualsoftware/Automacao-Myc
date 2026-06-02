@@ -79,6 +79,7 @@ Quando pressiono o atalho de adicionar
     ${Consulta}    Query    SELECT Codigo FROM orcamentos ORDER BY Codigo DESC LIMIT 1;
 
     Set Test Variable    ${COD_ORCAMENTO}    ${Consulta[0][0]}
+    Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${COD_ORCAMENTO}
 
 E adiciono vendedor e cliente
     
@@ -126,6 +127,16 @@ Quando insiro um produto normal informando a quantidade(${Quantidade_Produto})
     utils.Valida parametros após incluir produto
 
 Então gravo o orçamento
+    
+    # Caso for cenário de agrupamento de produtos, desmarca o checkbox para não impactar os outros cenários.
+    IF    ${Teste_Orc_Agrup_Prod}
+        
+        Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    KEY.P
+    
+        SikuliLibrary.Click    ${CHECKBOX_INFORMA_AGRUPAMENTO}
+    
+    END
 
     ${FORMA_PACELAMENTO_CLIENTE}    Verifica Forma Parcelamento Cliente    ${Codigo_Cliente}
     Sleep    ${SLEEP_BAIXO}
@@ -496,5 +507,3 @@ Então altero o status do orçamento
 
     # Valida alteração de status do orçamento
     Check If Exists In Database    SELECT 1 FROM orcamentos WHERE Codigo = ${COD_ORCAMENTO} AND StatusOR = 'AUTOMACAO' AND IDStatusOR = (SELECT Codigo FROM status_registros WHERE Descricao = 'AUTOMACAO' AND Excluido = 0);
-
-    

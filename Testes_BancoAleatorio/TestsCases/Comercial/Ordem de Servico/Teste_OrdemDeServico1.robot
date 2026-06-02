@@ -2,6 +2,7 @@
 Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
+Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeServicoRegressao.robot
 Resource    ../../../KeyWords/Financeiro/Caixa/keyCaixa1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
@@ -165,7 +166,7 @@ Teste 10 - Lançamento de ordem de serviço e gravando ao final
     E insiro um serviço informando a quantidade(1)
     E insiro um produto normal informando a quantidade(1)
     KeyOrdemDeSevico1.E acesso a aba pagamentos
-    Então gravo a ordem de serviço
+    KeyOrdemDeSevico1.Então gravo a ordem de serviço
     E saio da tela(OrdemDeServico)
 
 Teste 11 - Fechamento e reabertura de ordem de serviço

@@ -23,6 +23,7 @@ ${TELA_WORKFLOW_ENTREGA}                       tela_WorkflowEntrega.png
 
 # Telas Avisos
 ${AVISO_ENTREGADOR_JA_VINCULADO_ENTREGA}       aviso_EntregadorJaVinculadoComEntrega.png
+${AVISO_REGISTROS_SEM_VENDA_SEMELHANTES}       aviso_RegistrosSemVendaSemelhantes.png
 
 # Botões
 ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}             bt_SetaIncluirProdutoEntrega.png
@@ -39,12 +40,15 @@ ${CHECKBOX_VENDA_SELECIONA}                    checkbox_VendaSelecionadaOrdemDeE
 ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}           checkbox_SelecionarItensEntrega.png
 ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}         checkbox_ItensEntregaSelecionados.png
 ${LABEL_VENDA_SELECIONADA_ENTREGA}             lb_VendaSelecionadaEntrega.png
+${CHECKBOX_PRODUTOS_SELECIONADOS}              checkBox_ProdutosSelecionadosEntregas.png
 
 # Variáveis de Operação (inicializadas em runtime via Set Test Variable)
 ${COD_DOACAO}                                  None
 ${ID_GRUPO_ENTREGA}                            None
 ${Codigos_Vendas}                              ${None}
 ${Quantidade_Vendas_Feitas}                    None
+${Cenario_Multiplas_Vendas}                    ${False}
+${Cenario_Doacao}                              ${False}
 
 *** Keywords ***
 Dado que eu inicio um lançamento de Ordem de Entrega Novo
@@ -92,19 +96,35 @@ E seleciono o produto
 
     Valida descricao automatica de ordem de entrega
 
-    SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}
-    Wait Until Screen Contain    ${CHECKBOX_ITENS_ENTREGA_SELECIONADOS}    ${TEMPO_TELA}
+    IF    ${Cenario_Multiplas_Vendas}
+        
+        Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Click    ${CHECKBOX_PRODUTOS_SELECIONADOS}
+
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}
+
+        Wait Until Screen Contain    ${CHECKBOX_PRODUTOS_SELECIONADOS}    ${SLEEP_ALTO}
+    
+    ELSE
+        
+        Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Click    ${CHECKBOX_SELECIONAR_ITENS_ENTREGA}
+
+        Wait Until Screen Contain    ${CHECKBOX_PRODUTOS_SELECIONADOS}    ${SLEEP_ALTO}
+
+    END
 
     SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
-    Sleep    ${SLEEP_BAIXO}
-
-    SikuliLibrary.Click    ${BT_OK}
     Sleep    ${SLEEP_BAIXO}
 
     ${entregaComMaisDeUmaVenda}    Valida a geração de entregas com apenas uma venda por entrega
 
     IF    '${entregaComMaisDeUmaVenda}' == 'False'
-        
+
+        Valida aviso de pré-vendas e orçamentos com semelhança de rota e bairro    ${CODIGO_OPERACAO_MOV}    ${Cenario_Doacao}
+
         Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
         
     END
@@ -139,7 +159,7 @@ Quando seleciono as últimas vendas feitas
     Wait Until Screen Contain    ${GRID_PEDIDOS_ORDEM_ENTREGA_NOVO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
-    FOR    ${I}    IN RANGE    ${Quantidade_Vendas_Feitas}
+    FOR    ${i}    IN RANGE    ${Quantidade_Vendas_Feitas}
 
         SikuliLibrary.Click    ${LB_CODIGO_PEDIDO}
         Sleep    ${SLEEP_BAIXO}
@@ -147,9 +167,9 @@ Quando seleciono as últimas vendas feitas
         SikuliLibrary.Click    ${LB_CODIGO_PEDIDO}
         Sleep    ${SLEEP_BAIXO}
 
-        Input Text    ${EMPTY}    ${Codigos_Vendas[${I}]}
+        Input Text    ${EMPTY}    ${Codigos_Vendas[${i}]}
 
-        FOR    ${i}    IN RANGE    3
+        FOR    ${j}    IN RANGE    3
         
             Press Special Key    LEFT
         
@@ -160,6 +180,14 @@ Quando seleciono as últimas vendas feitas
         Wait Until Screen Contain    ${CHECKBOX_VENDA_SELECIONA}    ${SLEEP_ALTO}
         Sleep    ${SLEEP_BAIXO}
 
+        Set Test Variable    ${CODIGO_OPERACAO_MOV}    ${Codigos_Vendas[${i}]}
+
+        IF    ${i} > 0
+            
+            Set Test Variable    ${Cenario_Multiplas_Vendas}    ${True}
+
+        END
+        
         E seleciono o produto
         
     END
@@ -174,14 +202,13 @@ E seleciono os produtos
     SikuliLibrary.Click    ${BT_SETA_INCLUIR_PRODUTO_ENTREGA}
     Wait Until Screen Contain    ${LABEL_VENDA_SELECIONADA_ENTREGA}    ${TEMPO_TELA}
 
-    SikuliLibrary.Click    ${BT_OK}
-    Sleep    ${SLEEP_BAIXO}
-
     Valida a geração de entregas com apenas uma venda por entrega
 
 Quando seleciono a última doação gerada
     
     Valida considerar lançamento de ordem de entrega de doações
+
+    Set Test Variable    ${Cenario_Doacao}    ${True}
 
     Press Combination    KEY.ALT    KEY.F
     Sleep    ${SLEEP_BAIXO}    
@@ -197,7 +224,7 @@ Quando seleciono a última doação gerada
     FOR    ${i}    IN RANGE    3
         
         Press Special Key    LEFT
-
+        
     END
 
     Press Special Key    SPACE
@@ -396,3 +423,33 @@ Então saio das telas de Entrega e Ordem de Entrega
     Wait Until Screen Contain    ${TELA_ORDEM_DE_ENTREGA}    ${TEMPO_TELA}
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
+
+Valida aviso de pré-vendas e orçamentos com semelhança de rota e bairro
+    [Arguments]    ${codigo_operacao}    ${cenario_doacao}=${False}
+
+    IF    ${cenario_doacao}
+
+        ${sql_pre_vendas}    Query    SELECT EXISTS(SELECT 1 FROM PedidosVenda p INNER JOIN Doacoes d ON d.Codigo = ${codigo_operacao} INNER JOIN Clientes cli ON cli.Codigo = d.CodigoCliente WHERE COALESCE(p.Cancelada, 0) = 0 AND COALESCE(p.Status, '') <> 'x' AND p.VendaGerada IS NULL AND (p.RotaPedidos = cli.Rota OR UPPER(TRIM(COALESCE(p.Bairro, ''))) = UPPER(TRIM(COALESCE(cli.Bairro, ''))))) AS PossuiPreVenda;
+
+        ${sql_orcamentos}    Query    SELECT EXISTS(SELECT 1 FROM Orcamentos o INNER JOIN Clientes c ON c.Codigo = o.CodigoCliente INNER JOIN Doacoes d ON d.Codigo = ${codigo_operacao} INNER JOIN Clientes cli ON cli.Codigo = d.CodigoCliente WHERE COALESCE(o.Cancelada, 0) = 0 AND COALESCE(o.Status, '') = 'p' AND NOT EXISTS (SELECT 1 FROM PedidosVenda pv WHERE pv.CodigoOrcamento = o.Codigo AND COALESCE(pv.Cancelada, 0) = 0 AND pv.VendaGerada IS NOT NULL) AND (c.Rota = cli.Rota OR UPPER(TRIM(COALESCE(o.EndBairro, ''))) = UPPER(TRIM(COALESCE(cli.Bairro, ''))))) AS PossuiOrcamento;
+
+    ELSE
+
+        ${sql_pre_vendas}    Query    SELECT EXISTS(SELECT 1 FROM PedidosVenda p INNER JOIN Vendas v ON v.Codigo = ${codigo_operacao} INNER JOIN Clientes cli ON cli.Codigo = v.CodigoCliente WHERE COALESCE(p.Cancelada, 0) = 0 AND COALESCE(p.Status, '') <> 'x' AND p.VendaGerada IS NULL AND (p.RotaPedidos = cli.Rota OR UPPER(TRIM(COALESCE(p.Bairro, ''))) = UPPER(TRIM(COALESCE(cli.Bairro, ''))))) AS PossuiPreVenda;
+
+        ${sql_orcamentos}    Query    SELECT EXISTS(SELECT 1 FROM Orcamentos o INNER JOIN Clientes c ON c.Codigo = o.CodigoCliente INNER JOIN Vendas v ON v.Codigo = ${codigo_operacao} INNER JOIN Clientes cli ON cli.Codigo = v.CodigoCliente WHERE COALESCE(o.Cancelada, 0) = 0 AND COALESCE(o.Status, '') = 'p' AND NOT EXISTS (SELECT 1 FROM PedidosVenda pv WHERE pv.CodigoOrcamento = o.Codigo AND COALESCE(pv.Cancelada, 0) = 0 AND pv.VendaGerada IS NOT NULL) AND (c.Rota = cli.Rota OR UPPER(TRIM(COALESCE(o.EndBairro, ''))) = UPPER(TRIM(COALESCE(cli.Bairro, ''))))) AS PossuiOrcamento;
+
+    END
+
+    ${pre_vendas_semelhantes}    Set Variable    ${sql_pre_vendas[0][0]}
+    ${orcamentos_semelhantes}    Set Variable    ${sql_orcamentos[0][0]}
+
+    IF    ${pre_vendas_semelhantes} == 1 or ${orcamentos_semelhantes} == 1
+
+        Wait Until Screen Contain    ${AVISO_REGISTROS_SEM_VENDA_SEMELHANTES}    ${TEMPO_TELA}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+
+    END

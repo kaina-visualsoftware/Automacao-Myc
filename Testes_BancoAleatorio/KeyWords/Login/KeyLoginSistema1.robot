@@ -56,12 +56,12 @@ Então realizo o login no MyCommerce
     Key Up      CTRL
 
     Wait Until Screen Contain    ${ICONE_USUARIO_VISUAL}    ${SLEEP_ALTO}
-    Type    ${EMPTY}    FELIPE
+    Type    ${EMPTY}    KAINA
     Press Special Key    ENTER
 
     Garantir Caps Lock Desligado
 
-    Type    ${EMPTY}    zwBt4@24
+    Type    ${EMPTY}    d9o67@rD8
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
