@@ -597,9 +597,10 @@ Dado que realizo uma ordem de serviço com produto e serviço e desconto escalon
     utils.E saio da tela(OrdemDeServico)
 
 Dado que realizo um carregamento de venda
-    KeyCarregamento1.Dado que acesso o lançamento de carregamento de vendas
-    KeyCarregamento1.Quando realizo um novo carregamento com descrição valida
-    KeyCarregamento1.Então fecho a tela de carregamento
+    KeyCarregamento1.Dado que acesso a tela de Carregamento
+    KeyCarregamento1.E clico para adicionar um carregamento
+    KeyCarregamento1.E informo uma descrição valida
+    KeyCarregamento1.E fecho a tela de carregamento
 
 
 Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
