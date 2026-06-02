@@ -294,20 +294,6 @@ Personalização de Pagamentos
         
     END
 
-Adicionar Fornecedor(${TELA})
-    ${codCliente}    Seleciona cliente
-    Set Test Variable    ${Codigo_Cliente}    ${codCliente}
-    #Pressioona no campo codigo
-    IF    '${TELA}' == 'tela_Compra_consignada'
-        SikuliLibrary.Double Click    ${INPUT_COD_FORNECEDOR}
-    END
-    #insere o codigo do fornecedor
-    Sleep    ${SLEEP_BAIXO}
-    Input Text    ${EMPTY}    ${Codigo_Cliente}
-    Sleep    ${SLEEP_BAIXO}
-    #Passa para o campo Inclusão de Produtos
-    Press Special Key    TAB
-    Sleep    ${SLEEP_MEDIO}
 
 Adicionar Vendedor e Cliente(${TELA})
 
