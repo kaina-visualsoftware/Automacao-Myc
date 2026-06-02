@@ -283,6 +283,7 @@ Personalização de Pagamentos
         
     END
 
+
 Adicionar Vendedor e Cliente(${TELA})
 
     IF    '${TELA}' != 'NFeSaidasManual'
