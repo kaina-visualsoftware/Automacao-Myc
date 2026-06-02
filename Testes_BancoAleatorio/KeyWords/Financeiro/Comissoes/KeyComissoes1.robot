@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    Collections
@@ -46,7 +46,6 @@ ${CHECKBOX_SERVICOS}                              check_Servicos.png
 # ComboBox
 ${COMBOBOX_GERAR_SOBRE_VENDAS}                    combo_gerar_sobre_vendas.png
 
-
 # Labels
 ${LABEL_CARREGANDO_COMISSOES_GRID}                lb_CarregandoComissoesGrid.png
 ${LABEL_GERANDO_RELATORIO_AGUARDE}                lb_GerandoRelatorioAguarde.png
@@ -74,6 +73,7 @@ ${SETA_ESQUERDA_GRID}                             setaEsqGrid.png
 ${GRID_SEM_REGISTROS}    	                      grid_ComissoesSemRegistros.png
 ${GUIA_COMISSOES_PAGAS_AGENDADAS}                 guia_ComissoesPagasAgendadas.png
 ${TOOLTIP_ATALHOS_DATA}                           tooltip_AtalhosData.png
+${SUBMENU_VALE_COMPRA}                            subMenu_ValeCompra.png
 ${j}                                              ${0}
 ${Total_Comissao_Produtos}                        ${0}
 ${Total_Comissao_Servicos}                        ${0}
@@ -1973,18 +1973,13 @@ Dado que acesso o menu de vale compras
 
     SikuliLibrary.Click    ${MENU_COMERCIAL}
 
-    FOR    ${I}    IN RANGE    9
+    SikuliLibrary.Click    ${SUBMENU_VALE_COMPRA}
 
-        Press Special Key    DOWN
-
-    END
-    Sleep    ${SLEEP_BAIXO}
-
-    Press Special Key    ENTER
     Wait Until Screen Contain    ${TELA_VALE_COMPRA}     ${TEMPO_TELA}
 
 E seleciono o vale gerado pela devolução
-
+    
+    Sleep    ${SLEEP_BAIXO}
     Input Text    ${EMPTY}    ${ID_VALE_COMPRA}
     Sleep    ${SLEEP_BAIXO}
 

@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
@@ -62,7 +62,6 @@ ${EntradaIgualA_Outros}                  None
 ${N_Documento_Parcelas}                  None
 ${QTDE_BAIXA_PRODUTO}                    None
 ${QTDE_PARCELAS_PAG_PERSONALIZADA}       None
-${Desconto_Produto}                      ${None}
 ${List_Quantidades_Produto}              ${None}
 ${Quantidade_Produto}                    None
 ${Valor_Total_Produtos}                  None
@@ -271,7 +270,7 @@ Então finalizo a venda - Desconto(${PERCENT_DESCONTO})
 
     Press Combination    KEY.ALT    KEY.F
 
-    Valida desconto que não se encaixa em nenhuma escala de comissão
+    utils.Valida desconto que não se encaixa em nenhuma escala de comissão
 
     IF    '${FORMA_PADRAO[0]}' == '30 DIAS'
 

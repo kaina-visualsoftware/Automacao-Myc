@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
@@ -966,21 +966,13 @@ E pressiono o atalho de status
     Press Combination    KEY.ALT    KEY.T
     Wait Until Screen Contain    ${TELA_ALTERACAO_STATUS_OS}    ${TEMPO_TELA}
 
+    Garante status 'automacao' para ordem de serviço
+
 Então altero o status da ordem de serviço
 
     SikuliLibrary.Click    ${ICONE_PASTA_STATUS_OS}
 
     Wait Until Screen Contain    ${TELA_STATUS_OS}    ${TEMPO_TELA}
-
-    ${status_automamacao}    Query    SELECT 1 FROM statusos s WHERE s.Descricao = 'AUTOMACAO';
-
-    IF    ${status_automamacao} == ()
-
-        Execute Sql String    INSERT INTO statusos (`Descricao`, `Cor`, `PadraoAbrirOS`, `PadraoFinalizarOS`, `ExigirSenhaSupervisor`, `PadraoFecharOS`, `sto_OrdemExibicao`) VALUES ('AUTOMACAO', '8421440', 0, 0, 1, 0, NULL);
-        
-        Log To Console    Inserido status 'AUTOMACAO'.
-
-    END
 
     SikuliLibrary.Click    ${INPUT_DESCRICAO_STATUS_OS}
     Sleep    ${SLEEP_BAIXO}
@@ -1139,3 +1131,13 @@ E clico em reabrir OS
 
     SikuliLibrary.Click    ${BT_REABRIR_OS}
     Sleep    ${SLEEP_BAIXO}
+
+Garante status 'automacao' para ordem de serviço
+
+    ${status_automamacao}    Query    SELECT EXISTS (SELECT s.Codigo FROM statusos s WHERE s.Descricao = 'AUTOMACAO');
+
+    IF    ${status_automamacao[0][0]} == 0
+
+        Execute Sql String    INSERT INTO statusos (Descricao, Cor, PadraoAbrirOS, PadraoFinalizarOS, ExigirSenhaSupervisor, PadraoFecharOS, sto_OrdemExibicao) VALUES ('AUTOMACAO', '8421440', 0, 0, 1, 0, NULL);
+
+    END

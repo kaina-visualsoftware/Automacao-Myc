@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    Collections
 
 Resource    ../utils/utils.robot
@@ -12,7 +12,6 @@ Resource    ../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 Resource    ../KeyWords/Financeiro/Contas a Pagar/keyContasPagar1.robot
 Resource    ../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNovo1.robot
 Resource    ../KeyWords/Comercial/Doacao/KeyDocao1.robot
-Resource    ../KeyWords/Emissão/Carregamento/KeyCarregamento1.robot
 
 *** Variables ***
 
@@ -596,13 +595,6 @@ Dado que realizo uma ordem de serviço com produto e serviço e desconto escalon
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
 
-Dado que realizo um carregamento de venda
-    KeyCarregamento1.Dado que acesso a tela de Carregamento
-    KeyCarregamento1.E clico para adicionar um carregamento
-    KeyCarregamento1.E informo uma descrição valida
-    KeyCarregamento1.E fecho a tela de carregamento
-
-
 Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
 
     Set Test Variable    ${OS_Vendedor_E_Tecnico_Diferentes}    ${True}
@@ -652,59 +644,3 @@ Dado que realizo uma ordem de serviço somente com produto e desconto tabela de 
     KeyOrdemDeSevico1.E acesso a aba pagamentos
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
-
-Dado que eu crio uma pré-venda com rota
-
-    Keypedidos1.Dado que acesso a tela de pedidos
-    Keypedidos1.E clico em adicionar
-    Quando adiciono um Vendedor e um Cliente com rota
-    KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
-    Quando vou para a aba de pagamentos
-    E audito o pedido
-    Então finalizo o pedido
-    E saio da tela(Pedido)
-    E listo pela tela de Geração de vendas
-
-Dado que eu crio pré-vendas com a mesma rota
-
-    [Arguments]    ${QUANTIDADE_PRE_VENDAS}=2
-    Buscar Rotas Distintas Com Clientes    ${QUANTIDADE_PRE_VENDAS}
-
-    FOR    ${index}    IN RANGE    ${QUANTIDADE_PRE_VENDAS}
-
-        Keypedidos1.Dado que acesso a tela de pedidos
-        Keypedidos1.E clico em adicionar
-        Quando adiciono um Vendedor e um Cliente com rota    ${ROTA_1}
-        KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
-        Quando vou para a aba de pagamentos
-        E audito o pedido
-        Então finalizo o pedido
-        E saio da tela(Pedido)
-
-    END
-    
-    E listo pela tela de Geração de vendas
-
-Dado que eu crio pré-vendas com rotas distintas
-
-    [Arguments]    ${QUANTIDADE_PRE_VENDAS}=2
-
-    Buscar Rotas Distintas Com Clientes    ${QUANTIDADE_PRE_VENDAS}
-
-    FOR    ${index}    IN RANGE    ${QUANTIDADE_PRE_VENDAS}
-
-        ${rota_index}    Evaluate    ${index} % len(${LISTA_ROTAS})
-        ${rota_selecionada}    Get From List    ${LISTA_ROTAS}    ${rota_index}
-
-        Keypedidos1.Dado que acesso a tela de pedidos
-        Keypedidos1.E clico em adicionar
-        Quando adiciono um Vendedor e um Cliente com rota    ${rota_selecionada}
-        KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
-        Quando vou para a aba de pagamentos
-        E audito o pedido
-        Então finalizo o pedido
-        E saio da tela(Pedido)
-
-    END
-    
-    E listo pela tela de Geração de vendas
