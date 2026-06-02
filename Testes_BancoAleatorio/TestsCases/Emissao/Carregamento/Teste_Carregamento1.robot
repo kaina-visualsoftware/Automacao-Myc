@@ -275,7 +275,6 @@ Teste 14 - Validar status inicial do carregamento
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
     Dado que acesso a tela de Carregamento
     E clico para adicionar um carregamento

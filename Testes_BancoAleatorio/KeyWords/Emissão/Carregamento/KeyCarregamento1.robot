@@ -334,9 +334,6 @@ E listo pela tela de Geração de vendas
 # =============================================================
 
 Dado que acesso a tela de Carregamento
-
-    Sleep    ${SLEEP_BAIXO}
-
     Type With Modifiers    T    CTRL
 
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
@@ -357,7 +354,6 @@ Quando pesquiso o Carregamento gerado
     Sleep    ${SLEEP_BAIXO}
 
 E fecho a tela de carregamento
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
     Sleep    ${SLEEP_BAIXO}
@@ -384,7 +380,7 @@ Quando adiciono uma Descrição qualquer e incluo um palete
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
-    Informar Descrição
+    Informar Descrição    CARREGAMENTO PREVENDA
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
@@ -397,11 +393,12 @@ Quando adiciono uma Descrição qualquer e incluo um palete
     Sleep    ${SLEEP_BAIXO}
 
 Informar Descrição
+    [Arguments]    ${DESCRICAO}
 
     Valida carregamento gerado
     Sleep    ${SLEEP_BAIXO}
 
-    SikuliLibrary.Input Text    ${EMPTY}    CARREGAMENTO PREVENDA - ${COD_CARREGAMENTO}
+    SikuliLibrary.Input Text    ${EMPTY}    ${DESCRICAO} - ${COD_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
 Então edito o carregamento
@@ -608,7 +605,7 @@ E informo uma descrição
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
-    Informar Descrição
+    Informar Descrição    CARREGAMENTO PREVENDA
 
 Então valido a mensagem de descrição obrigatória 
 
@@ -1327,9 +1324,7 @@ Quando excluo o carregamento
 
 
 E informo uma descrição valida
-    ${descricao}=    Catenate    SEPARATOR=    AUTOMACAO -    ${COD_CARREGAMENTO}
-
-    SikuliLibrary.Input Text    ${EMPTY}    ${descricao}
+    Informar Descrição    AUTOMACAO
     Sleep    ${SLEEP_BAIXO}
 
 
@@ -1339,8 +1334,10 @@ Então o carregamento da venda deve ser salvo com sucesso
     ${carregamento_bool}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
     Should Not Be Empty    ${carregamento_bool}
     
-    IF    ${carregamento_bool}
+    IF    not ${carregamento_bool}
+
         Fail    O carregamento não foi salvo com sucesso. Status atual: ${carregamento_bool[0][0]}
+
     END
 
 
@@ -1349,13 +1346,13 @@ Então o status deve ser
 
     Log    Verificando status do carregamento ${COD_CARREGAMENTO}
     
-    ${status}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+    ${resultado}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
 
-    Should Not Be Empty    ${status}
+    Should Not Be Empty    ${resultado}
 
-    Should Be Equal As Strings    ${status[0][0]}    ${status}
+    Should Be Equal As Strings    ${resultado[0][0]}    ${status}
     
-    Log    Status do carregamento: ${status[0][0]}
+    Log    Status do carregamento: ${resultado[0][0]}
 
 
 Então o status do carregamento deve ser
