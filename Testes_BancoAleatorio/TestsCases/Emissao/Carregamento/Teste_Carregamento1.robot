@@ -11,9 +11,6 @@ Suite Teardown    Stop Remote Server
 
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
-
-
-
 *** Test Cases ***
 
 Teste 01 - Validar que não é possível excluir um carregamento com status Fechada
@@ -63,14 +60,14 @@ Teste 03 - Carregamento vinculado a duas pré-vendas com rotas distintas
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   2
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    3
+    ...    AND    MontadordeCenarios.Dado que eu crio pré-vendas com rotas distintas    2
 
     Dado que acesso a tela de Carregamento
     E clico para adicionar um carregamento
     Quando adiciono uma Descrição qualquer e incluo um palete
     E clico em Incluir Rotas
     Então eu Listo as Rotas
-    E gravo incluindo rotas da lista    3
+    E gravo incluindo rotas da lista    2
     Então gravo o carregamento com o status    Fechada
     E valido que o carregamento contém as rotas esperadas
     E fecho a tela de carregamento
@@ -84,7 +81,8 @@ Teste 04 - Validar que um carregamento sem rota permanece com o status Cadastran
     ...    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de carregamento
-    E adiciono um carregamento sem rota
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
     Então gravo o carregamento com o status    Cadastrando
     E fecho a tela de carregamento
 
@@ -97,7 +95,8 @@ Teste 05 - Validar exclusão de um carregamento com status Cadastrando
     ...    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de Carregamento
-    E adiciono um carregamento sem rota
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
     Então gravo o carregamento com o status    Cadastrando
     Quando pesquiso o Carregamento gerado
     E excluo o carregamento
@@ -118,7 +117,8 @@ Teste 06 - Validar que não é possível fechar uma carga sem montar e imprimir 
     E clico em Incluir Rotas
     Então eu Listo as Rotas
     E gravo incluindo rotas da lista    1
-    Então tento fechar a carga sem montar e imprimir o mapa
+    Quando tento fechar a carga sem montar e imprimir o mapa
+    Então fecho a validação de fechar sem montar e imprimir o mapa
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
 
@@ -140,7 +140,9 @@ Teste 07 - Editar um carregamento e em seguida fechar a carga
     Então gravo o carregamento com o status    Montando
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
-    E incluo uma rota ao carregamento
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
 
@@ -175,7 +177,8 @@ Teste 09 - Validar inclusão de rota em um carregamento com status Cadastrando
     ...    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de carregamento
-    E adiciono um carregamento sem rota
+    E clico para adicionar um carregamento
+    Quando adiciono uma Descrição qualquer e incluo um palete
     Então gravo o carregamento com o status    Cadastrando
     E fecho a tela de carregamento
 
@@ -183,7 +186,9 @@ Teste 09 - Validar inclusão de rota em um carregamento com status Cadastrando
     Dado que acesso a tela de Carregamento
     Quando pesquiso o Carregamento gerado
     Então edito o carregamento
-    E incluo uma rota ao carregamento
+    E clico em Incluir Rotas
+    Então eu Listo as Rotas
+    E gravo incluindo rotas da lista    1
     Então gravo o carregamento com o status    Fechada
     E fecho a tela de carregamento
 
@@ -275,7 +280,6 @@ Teste 14 - Validar status inicial do carregamento
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
 
     Dado que acesso a tela de Carregamento
     E clico para adicionar um carregamento
@@ -321,7 +325,6 @@ Teste 17 - Nao permitir excluir carregamento fechado
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
  
     Dado que acesso a tela de Carregamento

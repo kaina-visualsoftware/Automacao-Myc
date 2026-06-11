@@ -1134,7 +1134,15 @@ Valida cliente com vales compra disponíveis
     IF    ${aviso}
         
         Sleep    ${SLEEP_BAIXO}
-        SikuliLibrary.Click    ${BT_OK}
+        
+        ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_OK}    5
+        
+        IF    ${existe}
+
+            SikuliLibrary.Click    ${BT_OK}
+            Sleep    ${SLEEP_BAIXO}
+
+        END
 
         Wait Until Screen Contain    ${LABEL_VALES_COMPRA_DISPONIVEIS}    ${TEMPO_TELA}
         

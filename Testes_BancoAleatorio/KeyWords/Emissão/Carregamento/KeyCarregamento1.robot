@@ -145,7 +145,7 @@ ${TOTAL_ADIANTAMENTO}                          None
 *** Keywords ***
 
 # =============================================================
-# SETUP / INICIALIZAÇÃO
+# KEYS CARREGAMENTO DE PREVENDA - VINICIUS
 # =============================================================
 
 Ler imagens iniciais
@@ -384,7 +384,7 @@ Quando adiciono uma Descrição qualquer e incluo um palete
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
-    Informar Descrição
+    Informar Descrição    CARREGAMENTO PREVENDA
     Sleep    ${SLEEP_BAIXO}
 
     Press Special Key    TAB
@@ -397,11 +397,12 @@ Quando adiciono uma Descrição qualquer e incluo um palete
     Sleep    ${SLEEP_BAIXO}
 
 Informar Descrição
+    [Arguments]    ${DESCRICAO}
 
     Valida carregamento gerado
     Sleep    ${SLEEP_BAIXO}
 
-    SikuliLibrary.Input Text    ${EMPTY}    CARREGAMENTO PREVENDA - ${COD_CARREGAMENTO}
+    SikuliLibrary.Input Text    ${EMPTY}    ${DESCRICAO} - ${COD_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
 Então edito o carregamento
@@ -410,12 +411,6 @@ Então edito o carregamento
     Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
-
-E adiciono um carregamento sem rota
-
-    E clico para adicionar um carregamento
-
-    Quando adiciono uma Descrição qualquer e incluo um palete
 
 E adiciono um carregamento com rota sem informar descrição
 
@@ -608,7 +603,7 @@ E informo uma descrição
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
-    Informar Descrição
+    Informar Descrição    CARREGAMENTO PREVENDA
 
 Então valido a mensagem de descrição obrigatória 
 
@@ -777,7 +772,9 @@ E valido o volume após remover uma pré-venda
 
     E valido que o volume do carregamento é    ${VOLUME_ESPERADO}
 
-
+# =============================================================
+# KEYS CARREGAMENTO DE VENDA - KAINA
+# =============================================================
 
 Iniciar novo carregamento
 
@@ -1327,9 +1324,7 @@ Quando excluo o carregamento
 
 
 E informo uma descrição valida
-    ${descricao}=    Catenate    SEPARATOR=    AUTOMACAO -    ${COD_CARREGAMENTO}
-
-    SikuliLibrary.Input Text    ${EMPTY}    ${descricao}
+    Informar Descrição    AUTOMACAO
     Sleep    ${SLEEP_BAIXO}
 
 
@@ -1339,8 +1334,10 @@ Então o carregamento da venda deve ser salvo com sucesso
     ${carregamento_bool}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
     Should Not Be Empty    ${carregamento_bool}
     
-    IF    ${carregamento_bool}
+    IF    not ${carregamento_bool}
+
         Fail    O carregamento não foi salvo com sucesso. Status atual: ${carregamento_bool[0][0]}
+
     END
 
 
@@ -1349,13 +1346,13 @@ Então o status deve ser
 
     Log    Verificando status do carregamento ${COD_CARREGAMENTO}
     
-    ${status}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+    ${resultado}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
 
-    Should Not Be Empty    ${status}
+    Should Not Be Empty    ${resultado}
 
-    Should Be Equal As Strings    ${status[0][0]}    ${status}
+    Should Be Equal As Strings    ${resultado[0][0]}    ${status}
     
-    Log    Status do carregamento: ${status[0][0]}
+    Log    Status do carregamento: ${resultado[0][0]}
 
 
 Então o status do carregamento deve ser
@@ -1417,11 +1414,16 @@ Então o carregamento deve ser excluído com sucesso
 
 Então o sistema deve impedir a exclusão
     ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+
     Should Not Be Empty    ${resultado}
-    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    3
+
+    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    ${TEMPO_TELA}
+    
     IF    ${aviso_excluir_carregamento_fechado}
+
         Clicar no botão Ok
         Sleep    ${SLEEP_BAIXO}
+        
     END
 
 Quando acesso a tela de embarque

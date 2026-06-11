@@ -595,6 +595,14 @@ Dado que realizo uma ordem de serviço com produto e serviço e desconto escalon
     KeyOrdemDeSevico1.Então finalizo a ordem de serviço - A Prazo
     utils.E saio da tela(OrdemDeServico)
 
+Dado que realizo um carregamento de venda
+    KeyCarregamento1.Dado que acesso a tela de Carregamento
+    KeyCarregamento1.E clico para adicionar um carregamento
+    KeyCarregamento1.E informo uma descrição valida
+    KeyCarregamento1.E gravo o carregamento da venda
+    KeyCarregamento1.E fecho a tela de carregamento
+
+
 Dado que realizo uma ordem de serviço com produto e serviço e desconto escalonada, com vendedor e técnico executor distintos
 
     Set Test Variable    ${OS_Vendedor_E_Tecnico_Diferentes}    ${True}

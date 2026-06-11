@@ -471,12 +471,7 @@ Validar Edição De Produto No Banco
 
     ${SPACE}=    Set Variable    ${SPACE}
 
-    ${query}=    Catenate    SEPARATOR=${SPACE}
-    ...    SELECT * FROM compraconsignada_produtos
-    ...    WHERE CodigoCompra = ${codigo_compra}
-    ...    AND Cancelado = 0
-    ...    AND CodigoProduto = '${COD_PRODUTO}'
-
+    ${query}=    Catenate    SEPARATOR=${SPACE} SELECT * FROM compraconsignada_produtos WHERE CodigoCompra = ${codigo_compra} AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}'
     Log    ${query}
 
     ${editado}=    Run Keyword And Return Status
@@ -536,9 +531,13 @@ Então finalizo pagamento
     [Documentation]    Finaliza o pagamento e valida a geração do contas a receber no banco de dados
 
     Sleep    ${SLEEP_MEDIO}
+
     Press Combination    KEY.ALT    KEY.F
 
+    Sleep    ${SLEEP_MEDIO}
+
     ${VALOR_COMPRA}    Query    SELECT ValorTotal FROM compraconsignada WHERE Codigo = ${COD_COMPRA};
+
     Set Test Variable    ${VALOR_COMPRA}    ${VALOR_COMPRA[0][0]}
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -552,13 +551,11 @@ Então finalizo pagamento
 E valido contas a receber em caixa
     [Documentation]    Valida no banco de dados que o contas a receber foi gerado com o código da compra
     Sleep    ${SLEEP_MEDIO}
-    ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY id DESC LIMIT 1;
+    ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY codigo DESC LIMIT 1;
 
-    Should Be True
-    ...    ${contas_geradas}
-    ...    Contas a receber da Compra Consignada ${COD_COMPRA} não foram geradas corretamente.
+    Should Be True    ${contas_geradas}    Contas a receber da Compra Consignada ${COD_COMPRA} não foram geradas corretamente.
 
-    ${VALOR_APAGAR}    Query    SELECT valor FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY id DESC LIMIT 1;
+    ${VALOR_APAGAR}    Query    SELECT valor FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY codigo DESC LIMIT 1;
 
     ${VALOR_APAGAR}    Set Variable    ${VALOR_APAGAR[0][0]}
 
@@ -604,10 +601,14 @@ Validar aviso de devolução maior que comprado
     END
 
     Wait Until Screen Contain    ${AVISO_DEVOLVIDO_SUPERIOR_A_COMPRADO}    ${TEMPO_TELA}
+    
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
+    Sleep    ${SLEEP_BAIXO}
 
 # -----------------------------------------
 # Valor da compra
@@ -615,32 +616,6 @@ Validar aviso de devolução maior que comprado
 
 E valido valor da compra
     [Documentation]    Verifica se o valor da compra está correto no banco de dados
-
-    ${valor_compra}    Query
-    ...    SELECT valorTotal
-    ...    FROM compraconsignada
-    ...    WHERE codigo = ${COD_COMPRA}
-    ...    AND Cancelada = 0
-    ...    LIMIT 1;
-
-    ${valor_compra}    Set Variable    ${valor_compra[0][0][0]}
-
-    ${VALOR_PRODUTO_TOTAL}    Query    SELECT ValorTotal FROM compraconsignada_produtos WHERE codigoProduto = '${COD_PRODUTO}' AND cancelado = 0 ORDER BY Sequencia DESC LIMIT 1;
-
-    ${VALOR_PRODUTO_TOTAL}    Set Variable    ${VALOR_PRODUTO_TOTAL[0][0][0]}
-
-    Log    valor_compra: ${valor_compra} | tipo: ${valor_compra.__class__.__name__}
-    Log    VALOR_PRODUTO_TOTAL: ${VALOR_PRODUTO_TOTAL} | tipo: ${VALOR_PRODUTO_TOTAL.__class__.__name__}
-
-    ${valor_compra}    Evaluate    round(float(${valor_compra}), 2)
-    ${VALOR_PRODUTO_TOTAL}    Evaluate    round(float(${VALOR_PRODUTO_TOTAL}), 2)
-
-    Should Be Equal As Numbers
-    ...    ${valor_compra}
-    ...    ${VALOR_PRODUTO_TOTAL}
-    ...    precision=2
-
-    Log    Valor da compra está correto: ${valor_compra}
 
     ${valor_compra}    Query    SELECT valorTotal FROM compraconsignada WHERE codigo = ${COD_COMPRA} AND Cancelada = 0 LIMIT 1;
 
@@ -651,10 +626,8 @@ E valido valor da compra
     ${VALOR_PRODUTO_TOTAL}    Set Variable    ${VALOR_PRODUTO_TOTAL[0][0]}
 
     Log    valor_compra: ${valor_compra} | tipo: ${valor_compra.__class__.__name__}
-    Log    VALOR_PRODUTO_TOTAL: ${VALOR_PRODUTO_TOTAL} | tipo: ${VALOR_PRODUTO_TOTAL.__class__.__name__}
 
-    ${valor_compra}    Evaluate    round(float(${valor_compra}), 2)
-    ${VALOR_PRODUTO_TOTAL}    Evaluate    round(float(${VALOR_PRODUTO_TOTAL}), 2)
+    Log    VALOR_PRODUTO_TOTAL: ${VALOR_PRODUTO_TOTAL} | tipo: ${VALOR_PRODUTO_TOTAL.__class__.__name__}
 
     Should Be Equal As Numbers
     ...    ${valor_compra}
@@ -662,6 +635,7 @@ E valido valor da compra
     ...    precision=2
 
     Log    Valor da compra está correto: ${valor_compra}
+
 # -----------------------------------------
 # VALIDA ABA ABERTA
 # -----------------------------------------
@@ -700,10 +674,13 @@ Valida aviso de queda do sistema(${prosseguir_apos_aviso})
     IF    ${aviso_apareceu} == ${True} and ${prosseguir_apos_aviso} == ${False}
 
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
+
         Wait Until Screen Not Contain    ${OPERACAO_EM_ABERTO}    ${SLEEP_BAIXO}
 
         Log    Aviso de queda do sistema apareceu e foi descartado.
@@ -711,17 +688,22 @@ Valida aviso de queda do sistema(${prosseguir_apos_aviso})
     ELSE IF    ${aviso_apareceu} == ${True} and ${prosseguir_apos_aviso} == ${True}
 
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
 
         Wait Until Screen Not Contain
+
         ...    ${OPERACAO_EM_ABERTO}
+
         ...    ${SLEEP_BAIXO}
 
         Log    Aviso de queda do sistema apareceu e foi descartado. Prosseguindo com o teste.
 
         Wait Until Screen Contain
+
         ...    ${TELA_LANC_COMPRA_CONSIG}
+
         ...    ${SLEEP_MEDIO}
 
     END
