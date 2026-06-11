@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../libs/verificacoesExtras.py
@@ -56,12 +56,12 @@ Então realizo o login no MyCommerce
     Key Up      CTRL
 
     Wait Until Screen Contain    ${ICONE_USUARIO_VISUAL}    ${SLEEP_ALTO}
-    Type    ${EMPTY}    KAINA
+    Type    ${EMPTY}    FELIPE
     Press Special Key    ENTER
 
     Garantir Caps Lock Desligado
 
-    Type    ${EMPTY}    d9o67@rD8
+    Type    ${EMPTY}    zwBt4@24
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 

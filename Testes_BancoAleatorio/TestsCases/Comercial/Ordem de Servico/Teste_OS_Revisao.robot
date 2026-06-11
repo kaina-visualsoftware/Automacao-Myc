@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    Teste de Regressão - Ordem de Serviço
 
-Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeServicoRegressao.robot
+Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeServicoRevisao.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
 Suite Setup    Run Keywords    Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
@@ -11,8 +11,8 @@ Test Teardown    parametros_pre_condicoes.Teardown Restaurar Parametros Alterado
 
 
 *** Test Cases ***
-Teste 01 - Criar OS validando cliente por CPF
-    [Tags]    Teste01
+CT 1-579 - Selecionar cliente na OS com CPF existente
+    [Tags]    CT 1-579
 
     Dado que acesso a tela de ordens de serviços para regressão
     Quando inicio uma nova ordem de serviço
@@ -20,12 +20,13 @@ Teste 01 - Criar OS validando cliente por CPF
     E informo a tabela de preço
     E informo o cliente pelo CPF
     E acesso a aba de pagamentos
-    KeyOrdemDeServicoRegressao.Então gravo a ordem de serviço
+    KeyOrdemDeServicoRevisao.Então gravo a ordem de serviço
     Então a ordem de serviço deve estar salva no banco com os dados corretos
+    E saio da tela(OrdemDeServico)
 
 
-Teste 02 - Validar CPF não cadastrado na OS
-    [Tags]    Teste02
+CT 1-580 - Selecionar cliente na OS com CPF inexistente
+    [Tags]    CT 1-580
 
     Dado que gravo o código da última OS existente
     Dado que acesso a tela de ordens de serviços para regressão
@@ -34,10 +35,11 @@ Teste 02 - Validar CPF não cadastrado na OS
     E informo a tabela de preço
     E informo cliente com CPF não existente
     Então nenhuma OS deve ter sido persistida no banco
+    E saio da tela(OrdemDeServico)
 
 
-Teste 03 - Selecionar cliente na OS pelo CNPJ existente
-    [Tags]    Teste03
+CT 1-581 - Selecionar cliente na OS com CNPJ existente
+    [Tags]    CT 1-581
 
     Dado que acesso a tela de ordens de serviços para regressão
     Quando inicio uma nova ordem de serviço
@@ -45,12 +47,12 @@ Teste 03 - Selecionar cliente na OS pelo CNPJ existente
     E informo a tabela de preço
     E informo o cliente pelo CNPJ
     E acesso a aba de pagamentos
-    KeyOrdemDeServicoRegressao.Então gravo a ordem de serviço
+    KeyOrdemDeServicoRevisao.Então gravo a ordem de serviço
     Então a ordem de serviço deve estar salva no banco com o CNPJ correto
+    E saio da tela(OrdemDeServico)
 
-
-Teste 04 - Validar CNPJ não cadastrado na OS
-    [Tags]    Teste04
+CT 1-582 - Selecionar cliente na OS com CNPJ inexistente
+        [Tags]    CT 1-582
 
     Dado que gravo o código da última OS existente
     Dado que acesso a tela de ordens de serviços para regressão
@@ -59,10 +61,11 @@ Teste 04 - Validar CNPJ não cadastrado na OS
     E informo a tabela de preço
     E informo cliente com CNPJ não existente
     Então nenhuma OS deve ter sido persistida no banco
+    E saio da tela(OrdemDeServico)
 
 
-Teste 05 - Validar bloqueio ao gravar OS sem serviço
-    [Tags]    Teste05
+CT 1-141 - Bloquear Gravar a O.S sem incluir um serviço
+    [Tags]    CT 1-141
     [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_SERVICO_OBRIGATORIO    -1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de ordens de serviços para regressão
@@ -73,10 +76,11 @@ Teste 05 - Validar bloqueio ao gravar OS sem serviço
     E acesso a aba de pagamentos
     E tento gravar a OS sem serviço
     E o foco deve estar na guia de serviços
+    E saio da tela(OrdemDeServico)
 
 
-Teste 06 - Criar OS com produto da modalidade Normal
-    [Tags]    Teste06
+CT 1-318 - Criar Ordem de Serviço - Produtos Modalidade Normal
+    [Tags]    CT 1-318
 
     Dado que acesso a tela de ordens de serviços para regressão
     Quando inicio uma nova ordem de serviço
@@ -87,20 +91,24 @@ Teste 06 - Criar OS com produto da modalidade Normal
     E acesso a aba de pagamentos
     Então fecho a ordem de serviço sem pagamentos
     Então a OS com produto normal deve estar salva no banco
+    E saio da tela(OrdemDeServico)
 
 
-Teste 07 - Validar exclusão de OS com produto da modalidade Normal
-    [Tags]    Teste07
+CT 1-319 - Excluir Ordem de Serviço - Produtos Modalidade Normal
+    [Tags]    CT 1-319
+    [Setup]    Run Keywords    Pré Condição Os_exclui_Super Ativado    AND    Reiniciar MyCommerce Se Necessário
+    [Teardown]    Run Keywords    Restaurar Os_exclui_Super    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de ordens de serviços para regressão
     E que existe uma OS com produto normal salva
     Quando seleciono a OS e clico em excluir
     E informo a descrição de exclusão
     Então a OS deve ser excluída do banco
+    E saio da tela(OrdemDeServico)
 
 
-Teste 08 - Validar sequência de foco ao setar vendedor que inseriu produto
-    [Tags]    Teste08
+CT 1-393 - Lançamento de Vendedor na inclusão do produto
+    [Tags]    CT 1-393
     [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_FUNCIONARIO_PRODUTO    1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de ordens de serviços para regressão
@@ -109,6 +117,40 @@ Teste 08 - Validar sequência de foco ao setar vendedor que inseriu produto
     E informo a tabela de preço
     E informo o cliente pelo CPF
     E acesso a aba de produtos
-    E informo um produto
+    E insiro um produto normal
     E informo o vendedor que inseriu o produto
-    Então o foco deve estar no campo de código do produto
+    E acesso a aba de pagamentos
+    KeyOrdemDeServicoRevisao.Então gravo a ordem de serviço
+    Então o vendedor do produto deve estar salvo no banco com o código correto
+    E saio da tela(OrdemDeServico)
+
+CT 1-103 - Realizar O.S incluindo descrição em serviços
+    [Tags]    CT 1-103
+ 
+    Dado que acesso a tela de ordens de serviços para regressão
+    Quando inicio uma nova ordem de serviço para detalhamento
+    E informo o vendedor para OS detalhamento
+    E informo a tabela de preço para OS detalhamento
+    E informo o cliente pelo CPF para OS detalhamento
+    Quando insiro um serviço com descrição detalhada
+    Quando insiro o segundo serviço com descrição detalhada
+    Então gravo a ordem de serviço com serviços detalhados
+    Quando visualizo a ordem de serviço gerada
+    Quando acesso a aba de serviços da OS
+    Então as descrições dos serviços devem estar salvas corretamente
+    Então a OS com serviços detalhados deve estar salva no banco
+
+
+CT 1-105 - Bloquear Finalizar O.S sem serviço
+    [Tags]    CT 1-105
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_SERVICO_OBRIGATORIO    -1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
+
+    Dado que acesso a tela de ordens de serviços para regressão
+    Quando inicio uma nova ordem de serviço
+    E informo o vendedor
+    E informo a tabela de preço
+    E informo o cliente pelo CPF
+    E insiro um produto normal
+    E acesso a aba de pagamentos
+    E tento finalizar a OS sem serviço
+    E o foco deve estar na guia de serviços

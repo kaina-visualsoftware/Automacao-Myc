@@ -1,10 +1,18 @@
 USUARIO_PARA_NUMERO = {
     "viniciusjesus": 1,
+    "vinicius de jesus": 1,
     "kaina": 2,
+    "kainã magdiel": 2,
     "cassio": 3,
+    "cassio kessler": 3,
     "viniciusmerlak": 4,
+    "vinicius alexandre": 4,
     "eduarda": 5,
+    "eduarda santos": 5,
     "thiagocesar": 6,
+    "thiago cesar": 6,
     "gabriel": 7,
+    "gabriel santos": 7,
     "felipe": 8,
+    "felipe dos santos": 8,
 }

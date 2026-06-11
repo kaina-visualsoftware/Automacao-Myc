@@ -10,6 +10,38 @@ cursor = connection.cursor()
 
 class validaParametros:
 
+    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+
+    def __init__(self):
+        self._usuario_logado = None
+
+    def _get_usuario_logado(self):
+        
+        if self._usuario_logado is None:
+            cursor.execute(
+                "SELECT u.Codigo "
+                "FROM usuario_acesso ua "
+                "INNER JOIN usuarios u ON u.UserName = ua.ua_usuario_mycommerce "
+                "WHERE ua.ua_data = CURDATE() "
+                "ORDER BY ua.ua_id DESC, u.Codigo ASC "
+                "LIMIT 1"
+            )
+            resultado = cursor.fetchone()
+            self._usuario_logado = resultado[0] if resultado else None
+        return self._usuario_logado
+
+    def _carregar_permissoes_lista(self, sql, params=()):
+        
+        cursor.execute(sql, params)
+        linha = cursor.fetchone()
+        if not linha:
+            return []
+        return [
+            cursor.description[i][0]
+            for i in range(len(cursor.description))
+            if linha[i] == 1
+        ]
+
     def Valida_Parametros_Config(self):
 
         avisosMapeados = ("AvisoVendedor, Aviso_Info_Financeiro, Aviso_Info_Financeiro_Prev, BloqueiaVendaClienteInativo, BloqVenda_CaixaFechado, "
@@ -24,7 +56,7 @@ class validaParametros:
                           "ControlaCreditoORC, ControlaCreditoCond, ControlaCreditoGeraPreOrcamento, ControlaCreditoOS, ControlaCreditoDevTroca, ControlaCreditoPRE, "
                           "ControlaCredPreSepPreVenda, DescontaChPre_CreditoCliente, Aviso_Info_Financeiro_Orc, VinculaDevolucaoEntrega, ObrigarMotivoDevolucao, "
                           "IndicacaoOrcamento, IndicacaoOS, ImprimirPreVenda_FinalizarPreVenda, PrevendaDireto, ValorMinimoBoleto, Exibir_Campo_Nped_Venda, "
-                          "pula_foco_npedido")
+                          "pula_foco_npedido, LiberaDescontoMaiorMaximo")
 
         telasQtdePadraoProduto = None
         quantidadePadraoVenda = None
@@ -311,7 +343,7 @@ class validaParametros:
 
         if not formaParcelamentoFetch:
             sqlInsert = "INSERT INTO `formaparcelamento` (`Descricao`, `ComEntrada`, `NPagamentos`, `TaxaJuro`, `PrazoMedio`, `Personalizavel`, `Tipo_Intervalo`, `Comissao_Produtos`, `Comissao_Servicos`, `DataAlteracao`, `EnviaMymobile`, `FormaRecebimento`, `Comissao_Produtos_Ent`, `Comissao_Servicos_Ent`, `Padrao_Venda`, `Padrao_OS`, `Padrao_Pre`, `TPCalculo`, `AtivaIntervalos`, `Digitavel`, `TaxaFlex`, `ListaPreco`, `PrazoFixado`, `DataPrazoFixado`, `PDesconto`, `Padrao_Orc`, `DiaExtra`, `Empresas`, `ValorMinimo`, `CodigoPreOcorrencia`, `DescricaoPreOcorrencia`, `CodigoGrupo`, `DescricaoGrupo`, `CodigoIdentificador`, `Padrao_Devolucao`, `ConsiderarOfertas`, `ParcelamentoPadrao`, `Cancelado`, `ValorMaximo`, `PDescontoMaximo`, `Considera_DescMax_produto`) VALUES ('30 DIAS', 0, 1, 0, 30, 0, 'Dias', 1, 1, '2023-10-26 11:07:42', 1, 'DINHEIRO                       1    ', 1, 1, 0, 0, 0, 'TP', 0, 0, 0, 0, 0, NULL, 0, 1, 999, NULL, 0, NULL, NULL, NULL, NULL, '', 1, 1, 0, NULL, 0, 0, 1);"
-            cursor.execute(sql)
+            cursor.execute(sqlInsert)
 
             print("Realizou o Insert da forma 30 DIAS")
             consultaForma = "SELECT Descricao, comEntrada, NPagamentos, PDesconto, ValorMinimo, FormaRecebimento, Personalizavel, Comissao_Produtos FROM formaparcelamento WHERE (ComEntrada = 0 AND Personalizavel = 0) AND (NPagamentos >= 1 AND Cancelado IS NULL);"
@@ -365,6 +397,32 @@ class validaParametros:
         print(formaParcelamento)
 
         return formaParcelamento
+
+    def valida_Permissoes_Usuario(self):
+        
+        codigo = self._get_usuario_logado()
+        sql = (
+            "SELECT MenuInicializacao, Avisos_menu, AvisoChequeCompensar, "
+            "AvisoChequesCompensarVencidos, ContaAvisoTodas, AvisoCortes, "
+            "Crm_Notify, prod_EstAviso, AvisoNcmCest, Entrega_Aviso, "
+            "AvisoVendaAberta, AvisoProdutosLoteValidade, AvisoAniversariantes, "
+            "AvisoClienteSemCompra, ContaAviso, AvisoNFCPendente "
+            "FROM usuarios WHERE Codigo = %s"
+        )
+        return self._carregar_permissoes_lista(sql, (codigo,))
+
+    def valida_Permissoes_Usuario_Auxiliar(self):
+        
+        codigo = self._get_usuario_logado()
+        sql = (
+            "SELECT uax.uau_avisa_ferias, uax.Uau_Cons_Avisos_Manutencoes_Inicializar, "
+            "uax.Uau_Cons_Avisos_TransfRecusadas_Inicializar, uax.Uau_Avisos_Cotacao_Moeda, "
+            "uax.Uau_Importa_Produtos, uax.uau_BloqDev_ComValorNegativo, "
+            "uax.uau_PreVenda_BotaoConferencia, uax.uau_PreVenda_Conferencia_AoFinalizar "
+            "FROM usuarios_auxiliar uax "
+            "WHERE uax.uau_codigo_usuario = %s"
+        )
+        return self._carregar_permissoes_lista(sql, (codigo,))
 
 # validaParametros.valida_Forma_Parcelamento("Venda")
 # validaParametros.valida_Configuracoes_OS()

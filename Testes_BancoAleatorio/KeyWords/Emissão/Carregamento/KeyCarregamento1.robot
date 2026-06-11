@@ -202,7 +202,9 @@ Buscar Rotas Distintas Com Clientes
     END
 
     Set Test Variable    ${ROTA_1}    ${rotas[0][0]}
+
     Set Test Variable    ${ROTA_2}    ${rotas[1][0]}
+    
     Set Test Variable    ${LISTA_ROTAS}
 
 Valida Carregamento gerado
@@ -227,6 +229,7 @@ Quando adiciono um Vendedor e um Cliente com rota
     Set Test Variable    ${Codigo_Vendedor}    ${codVendedor}
 
     Input Text    ${EMPTY}    ${Codigo_Vendedor}
+
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
 
@@ -260,39 +263,53 @@ Quando adiciono um Vendedor e um Cliente com rota
 E abro a tela de pedido
 
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.A
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_PEDIDOS_ROTA}    ${TEMPO_TELA}
 
 Quando removo uma pré-venda
 
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    DOWN
     Sleep    ${SLEEP_BAIXO}    
+
     Press Combination    KEY.ALT    KEY.R
+
     Wait Until Screen Contain    ${AVISO_PERGUNTA_QUALQUER}    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_MEDIO}
 
 E fecho a tela de pedido
 
     Press Combination    KEY.ALT    KEY.F
+
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Not Contain    ${TELA_PEDIDOS_ROTA}    ${SLEEP_BAIXO}
 
 E removo um pedido da rota
 
     E abro a tela de pedido
+
     Quando removo uma pré-venda
+
     E fecho a tela de pedido
+
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}   ${TEMPO_TELA}
 
 E removo um dos pedidos da rota
 
     E clico em Incluir Rotas
+
     Quando seleciono a rota incluída
+
     E removo um pedido da rota
 
 # =============================================================
@@ -302,10 +319,14 @@ E removo um dos pedidos da rota
 E listo pela tela de Geração de vendas
 
     KeyGeracaoDeVenda1.Dado que acesso a tela de geração de vendas
+
     Press Combination    KEY.ALT    KEY.L
+
     Wait Until Screen Not Contain    ${ICONE_LUPA_GERACAO_VENDAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.S
+
     Wait Until Screen Not Contain    ${TELA_GERACAO_VENDAS}    ${TEMPO_TELA}
 
 # =============================================================
@@ -315,9 +336,12 @@ E listo pela tela de Geração de vendas
 Dado que acesso a tela de Carregamento
 
     Sleep    ${SLEEP_BAIXO}
+
     Type With Modifiers    T    CTRL
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
     Sleep    ${SLEEP_BAIXO}
 
@@ -325,17 +349,22 @@ Quando pesquiso o Carregamento gerado
 
     SikuliLibrary.Click    ${INPUT_PESQUISA_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
+
     Input Text    ${EMPTY}    ${COD_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
 E fecho a tela de carregamento
+    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Not Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -347,32 +376,40 @@ E clico para adicionar um carregamento
 
     Press Combination    KEY.ALT    KEY.A
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
 Quando adiciono uma Descrição qualquer e incluo um palete
 
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
-    Informar Descrição
+
+    Informar Descrição    CARREGAMENTO PREVENDA
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    TAB
     Sleep    ${SLEEP_BAIXO}
+
     SikuliLibrary.click    ${INPUT_PALETES_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
+
     Input Text    ${EMPTY}    1
     Sleep    ${SLEEP_BAIXO}
 
 Informar Descrição
+    [Arguments]    ${DESCRICAO}
 
     Valida carregamento gerado
     Sleep    ${SLEEP_BAIXO}
-    SikuliLibrary.Input Text    ${EMPTY}    CARREGAMENTO PREVENDA - ${COD_CARREGAMENTO}
+
+    SikuliLibrary.Input Text    ${EMPTY}    ${DESCRICAO} - ${COD_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
 Então edito o carregamento
 
     Press Combination    KEY.ALT    KEY.E
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
 E adiciono um carregamento com rota sem informar descrição
@@ -386,7 +423,9 @@ E adiciono um carregamento com rota sem informar descrição
     Sleep    ${SLEEP_BAIXO}
 
     E clico em Incluir Rotas
+
     Então eu Listo as Rotas
+
     E gravo incluindo rotas da lista    1
 
 # =============================================================
@@ -397,6 +436,7 @@ E clico em Incluir Rotas
 
     SikuliLibrary.Click    ${BT_INCLUIR_ROTAS}
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_INCLUSAO_ROTAS}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
@@ -418,8 +458,10 @@ E gravo incluindo rotas da lista
         Sleep    ${SLEEP_BAIXO}
 
         IF    ${index} < (${QUANTIDADE_ROTAS} - 1)
+
             Press Special Key    DOWN
             Sleep    ${SLEEP_BAIXO}
+
         END
 
     END
@@ -436,30 +478,46 @@ E gravo incluindo rotas da lista
 
     Sleep    ${SLEEP_BAIXO}
 
+E incluo uma rota ao carregamento
+
+    E clico em Incluir Rotas
+
+    Então eu Listo as Rotas
+
+    E gravo incluindo rotas da lista    1
+
 E removo uma rota do carregamento
 
     E clico em Incluir Rotas
+
     Quando removo a rota selecionada
+
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
 
 Quando removo a rota selecionada
 
     Wait Until Screen Contain    ${GRID_CARREGAMENTO_INCLUIDO}    ${TEMPO_TELA}
+
     SikuliLibrary.Click    ${GRID_CARREGAMENTO_INCLUIDO}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    DOWN
     Sleep    ${SLEEP_BAIXO}
+
     SikuliLibrary.Click    ${BT_SETA_REMOÇÃO_ROTAS_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
 
 Quando seleciono a rota incluída
 
     Wait Until Screen Contain    ${GRID_CARREGAMENTO_INCLUIDO}    ${TEMPO_TELA}
+
     SikuliLibrary.Click    ${GRID_CARREGAMENTO_INCLUIDO}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    DOWN
     Sleep    ${SLEEP_BAIXO}
 
@@ -471,18 +529,24 @@ Quando eu Monto a Carga
 
     SikuliLibrary.Click    ${BT_MONTAR_CARGA}
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${AVISO_CARGA_MONTADA}    ${TEMPO_TELA}
+
     SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
 Quando Imprimo o mapa da rota
 
     SikuliLibrary.Click    ${BT_IMPRIMIR_MAPA_ROTA}
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_IMPRESSAO}    ${TEMPO_TELA}
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.S
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
 E em seguida fecho a carga
@@ -494,7 +558,9 @@ Então Gravo o carregamento
 
     Press Combination    KEY.ALT    KEY.G
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
+
     Valida Carregamento gerado
 
 Então gravo o carregamento com o status
@@ -502,21 +568,29 @@ Então gravo o carregamento com o status
     [Arguments]    ${STATUS}
 
     IF    '${STATUS}' == 'Fechada'
-        Quando eu monto a carga
-        Quando imprimo o mapa da rota
-        E em seguida fecho a carga
 
+        Quando eu monto a carga
+
+        Quando imprimo o mapa da rota
+
+        E em seguida fecho a carga
+        
     ELSE IF    '${STATUS}' == 'Montando'
+
         Quando eu monto a carga
 
     ELSE IF    '${STATUS}' == 'Cadastrando'
+
         Log To Console    Nenhuma ação necessária
 
     ELSE
+
         Fail    Status inválido informado: ${STATUS}
+
     END
 
     Então Gravo o carregamento
+
     E valido que o carregamento está com o status    ${STATUS}
 
 Quando eu tento montar a carga sem descrição
@@ -528,7 +602,8 @@ E informo uma descrição
 
     SikuliLibrary.Click    ${INPUT_DESCRICAO_CARREGAMENTO}
     Sleep    ${SLEEP_BAIXO}
-    Informar Descrição
+
+    Informar Descrição    CARREGAMENTO PREVENDA
 
 Então valido a mensagem de descrição obrigatória 
 
@@ -548,19 +623,31 @@ Então valido a mensagem de descrição obrigatória
 E excluo o carregamento
 
     Press Combination    KEY.ALT    KEY.X
+
     Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT    KEY.S
+
     Wait Until Screen Contain    ${AVISO_CANCELAR_CARREGAMENTO}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT    KEY.S
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
     ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado = 1
     Sleep    ${SLEEP_BAIXO}
+
     Should Be True    ${carregamento_excluido}    Carregamento não foi excluído corretamente.
 
 # =============================================================
 # VALIDAÇÕES DE REGRA DE NEGÓCIO
 # =============================================================
+
+Então tento fechar a carga sem montar e imprimir o mapa
+
+    Quando tento fechar a carga sem montar e imprimir o mapa
+
+    Então fecho a validação de fechar sem montar e imprimir o mapa
 
 Quando tento fechar a carga sem montar e imprimir o mapa
 
@@ -570,8 +657,10 @@ Quando tento fechar a carga sem montar e imprimir o mapa
 Então fecho a validação de fechar sem montar e imprimir o mapa
 
     Wait Until Screen Contain    ${AVISO_FECHAR_SEM_MONTAR_MAPA}    ${TEMPO_TELA}
+
     SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CADASTRO_CARREGAMENTO}    ${TEMPO_TELA}
 
 E valido que um carregamento com status não pode ser excluído
@@ -579,7 +668,9 @@ E valido que um carregamento com status não pode ser excluído
     [Arguments]    ${STATUS}
 
     Press Combination    KEY.ALT    KEY.X
+
     Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT    KEY.S
 
     IF    '${STATUS}' == 'Fechada'
@@ -591,15 +682,21 @@ E valido que um carregamento com status não pode ser excluído
         Wait Until Screen Contain    ${AVISO_EXCLUSAO_STATUS_MONTANDO}    ${TEMPO_TELA}
 
     ELSE
+
         Fail    Status inválido informado: ${STATUS}
+
     END
 
     Sleep    ${SLEEP_BAIXO}
+
     SikuliLibrary.Click    ${BT_OK_SEM_ATALHO}
     Sleep    ${SLEEP_BAIXO}
+
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
+
     ${carregamento_excluido}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM cargas WHERE sequencia = ${COD_CARREGAMENTO} AND Cancelado IS NULL
     Sleep    ${SLEEP_BAIXO}
+
     Should Be True    ${carregamento_excluido}    Carregamento foi excluído indevidamente
 
 E valido que o carregamento está com o status
@@ -656,7 +753,9 @@ E valido que o volume do carregamento é
     ${volume}    Query    SELECT Volume FROM cargas WHERE Sequencia = ${COD_CARREGAMENTO};
     
     IF    len($volume) == 0
+
         Fail    Carregamento não encontrado no banco de dados.
+
     END
     
     ${volume_atual}    Set Variable    ${volume[0][0]}
@@ -707,7 +806,7 @@ Preencher descrição com o código do carregamento
     Sleep    ${SLEEP_BAIXO}
 
 
-Gravar carregamento da venda
+E gravo o carregamento da venda
 
     Wait Until Screen Contain    ${TELA_CARREGAMENTO_ADICIONAR}    ${TEMPO_TELA}
 
@@ -717,6 +816,7 @@ Gravar carregamento da venda
 
 
 Fechar tela de carregamento
+
     Run Keyword And Ignore Error    Press Special Key    ESC
 
 
@@ -733,6 +833,7 @@ Pesquisar carregamento por código
 
 
 Limpar filtro de pesquisa
+
     Press Combination    KEY.ALT    KEY.P
 
     Input Text    ${EMPTY}    ${EMPTY}
@@ -819,71 +920,114 @@ Selecionar a próxima venda disponível
 
 
 Pegar próxima venda disponível
+
     ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.Cancelada IS NULL AND v.CodigoCarregamento IS NULL ORDER BY v.Codigo DESC LIMIT 1
+
     RETURN    ${resultado[0][0]}
 
 
 Pegar quantidade de vendas incluídas no carregamento
+
     Log    Consultando quantidade de vendas incluídas no carregamento ${COD_CARREGAMENTO}
+
     ${resultado}=    Query    SELECT COUNT(*) FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} AND v.Cancelada IS NULL
+
     ${tamanho}=    Get Length    ${resultado}
+
     IF    ${tamanho} == 0
+
         RETURN    0
+
     END
+
     RETURN    ${resultado[0][0]}
 
 
 Pegar ultimas vendas do carregamento
+
     ${resultado}=    Query    SELECT v.Codigo FROM vendas v WHERE v.CodigoCarregamento = ${COD_CARREGAMENTO} ORDER BY v.Codigo DESC
+
     IF    not ${resultado}
+
         RETURN    ${EMPTY}
+
     END
+
     ${VENDAS}=    Evaluate    [item[0] for item in $resultado]
+
     RETURN    ${VENDAS}
 
 Clicar no botão Incluir Cobrança no carregamento
+
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR_COBRANÇA_CARREGAMENTO}    5
+
     IF    ${existe}
+
         SikuliLibrary.Click    ${BT_INCLUIR_COBRANÇA_CARREGAMENTO}
         Sleep    ${SLEEP_BAIXO}
+
     END
 
 
 Abrir tela de listagem de cobranças
+
     Clicar no botão Incluir Cobrança no carregamento
-    ${input_cobrador}=    Run Keyword And Return Status    Wait Until Screen Contain    ${INPUT_CODCOBRADOR_CARREGAMENTO}    15
-    IF    ${input_cobrador}
+
+    IF    ${INPUT_CODCOBRADOR_CARREGAMENTO}
+
         SikuliLibrary.Click    ${INPUT_CODCOBRADOR_CARREGAMENTO}
         Sleep    ${SLEEP_BAIXO}
+
         Input Text    ${EMPTY}    2
+
         Press Special Key    ENTER
         Sleep    ${SLEEP_BAIXO}
+
     END
+
     Clicar no botão Listar
+
     Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER_CARREGAMENTO}    ${TEMPO_TELA}
 
 
 Incluir cobrança no carregamento
     @{ULTIMAS_VENDAS}=    Pegar ultimas vendas do carregamento
+
     Abrir tela de listagem de cobranças
+    
     FOR    ${COD_VENDA}    IN    @{ULTIMAS_VENDAS}
+
         ${DOCUMENTO}=    Pegar documento da venda sem cobrança    ${COD_VENDA}
+
         Selecionar cobrança pelo documento    ${DOCUMENTO}
+
     END
+
     Aguardar tela de cobrança fechar
+
     Clicar no botão Gravar
 
 
 Verificar se existe cobrança a incluir
+
     @{ULTIMAS_VENDAS}=    Pegar ultimas vendas do carregamento
+
     ${EXISTE}=    Set Variable    ${FALSE}
+
     FOR    ${COD_VENDA}    IN    @{ULTIMAS_VENDAS}
+
         ${DOCUMENTO}=    Pegar documento da venda sem cobrança    ${COD_VENDA}
+
         IF    "${DOCUMENTO}" != "${EMPTY}"
+
             ${EXISTE}=    Set Variable    ${TRUE}
+
             BREAK
+
         END
+
     END
+
     RETURN    ${EXISTE}
 
 
@@ -893,16 +1037,22 @@ Selecionar cobrança pelo documento
     # Limpa filtro e busca pelo documento
     Press Combination    KEY.ALT    KEY.P
     Sleep    ${SLEEP_BAIXO}
+
     Input Text    ${EMPTY}    ${DOCUMENTO}
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
     # Seleciona a cobrança encontrada
     ${CHECKBOX_COBRANCA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${CHECKBOX_COBRANCA_CARREGAMENTO}    5
+
     IF    ${CHECKBOX_COBRANCA}
+
         SikuliLibrary.Click    ${CHECKBOX_COBRANCA_CARREGAMENTO}
+
         Sleep    ${SLEEP_BAIXO}
+        
     END
 
     # Confirma seleção
@@ -911,134 +1061,210 @@ Selecionar cobrança pelo documento
 
 
 Aguardar tela de cobrança fechar
-    FOR    ${I}    IN RANGE    15
-        ${TELA_ABERTA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER_CARREGAMENTO}    0.1
-        IF    not ${TELA_ABERTA}
-            BREAK
-        END
-        Sleep    ${SLEEP_MEDIO}
-    END
 
+    FOR    ${I}    IN RANGE    15
+
+        ${TELA_ABERTA}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_CONTAS_A_RECEBER_CARREGAMENTO}    0.1
+
+        IF    not ${TELA_ABERTA}
+
+            BREAK
+
+        END
+
+        Sleep    ${SLEEP_MEDIO}
+
+    END
 
 Pegar documento da venda sem cobrança
+
     [Arguments]    ${COD_VENDA}
+
     ${resultado}=    Query    SELECT cr.NDocumento FROM contasareceber cr LEFT JOIN cobrancas_detalhes cbd ON cr.Sequencia = cbd.SequenciaCR WHERE cr.CodigoVenda = ${COD_VENDA} AND cbd.SequenciaCR IS NULL
+
     IF    not ${resultado}
+
         Log    Nenhum documento sem cobrança para venda ${COD_VENDA}
-        RETURN    ${EMPTY}
+
+        RETURN    ${EMPTY} 
+
     END
+
     RETURN    ${resultado[0][0]}
 
 
 Cancelar operação e fechar tela
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ESC
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
+
     Fechar tela de carregamento
 
 Navegar para próximo campo
     [Arguments]    ${QTD_TABS}
+
     FOR    ${I}    IN RANGE    ${QTD_TABS}
+
         Press Special Key    TAB
         Sleep    ${SLEEP_BAIXO}
+
     END
 
 
 Acessar tela de embarque
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_EMBARCAR}    5
+
     IF    ${existe}
+
         SikuliLibrary.Click    ${BT_EMBARCAR}
         Sleep    ${SLEEP_BAIXO}
+
     END
+
     Wait Until Screen Contain    ${TELA_EMBARQUE}    ${TEMPO_TELA}
 
 
 Preencher dados do veículo no embarque
+    
     [Arguments]    ${UF}    ${PLACA}    ${KM_SAIDA}    ${KM_CHEGADA}    ${LITROS}
+
     Press Special Key    HOME
+
     ${POSICAO}=    Obter posição do estado no combobox    ${UF}
+
     FOR    ${I}    IN RANGE    ${POSICAO}
+
         Press Special Key    DOWN
+
     END
+
     Navegar para próximo campo    1
+
     Input Text    ${EMPTY}    ${PLACA}
+
     Navegar para próximo campo    1
+
     Input Text    ${EMPTY}    ${KM_SAIDA}
+
     Navegar para próximo campo    1
+
     Input Text    ${EMPTY}    ${KM_CHEGADA}
+
     Navegar para próximo campo    1
+
     Input Text    ${EMPTY}    ${LITROS}
+
     Navegar para próximo campo    1
 
 
 Obter posição do estado no combobox
     [Arguments]    ${UF}
+
     ${ESTADOS}=    Create List    ${EMPTY}    AC    AL    AP    AM    BA    CE    DF    ES    GO    MA    MG    MS    MT    PA    PB    PE    PI    PR    RJ    RN    RO    RR    RS    SC    SE    SP    TO    EX
+
     ${POSICAO}=    Get Index From List    ${ESTADOS}    ${UF}
+
     RETURN    ${POSICAO}
 
 
 Preencher código do motorista
+
     [Arguments]    ${COD_MOTORISTA}
+
     Input Text    ${EMPTY}    ${COD_MOTORISTA}
+
     Navegar para próximo campo    1
     Sleep    ${SLEEP_MEDIO}
+
     ${AVISO}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CLIENTE_NAO_CADASTRADO}    2
+
     IF    ${AVISO}
+
         Clicar no botão Ok
+
         ${NOVO_COD}=    Obter código do cliente diferente    D    ${COD_MOTORISTA}
+
         Preencher código do motorista    ${NOVO_COD}
+
     END
 
 
 Preencher código do entregador
     [Arguments]    ${COD_ENTREGADOR}
+
     Input Text    ${EMPTY}    ${COD_ENTREGADOR}
+
     Navegar para próximo campo    1
     Sleep    ${SLEEP_MEDIO}
+
     ${AVISO}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_CLIENTE_NAO_CADASTRADO}    2
+
     IF    ${AVISO}
+
         Clicar no botão Ok
+
         ${NOVO_COD}=    Obter código do cliente diferente    V    ${COD_ENTREGADOR}
+
         Preencher código do entregador    ${NOVO_COD}
+
     END
 
 
 Obter código do cliente diferente
     [Arguments]    ${TIPO}    ${COD_ATUAL}
+
     ${resultado}=    Query    SELECT c.Codigo FROM clientes c WHERE c.Tipo = '${TIPO}' AND c.Ativo = -1 AND c.Codigo != ${COD_ATUAL} LIMIT 1
+
     IF    not ${resultado}
+
         ${resultado}=    Query    SELECT c.Codigo FROM clientes c WHERE c.Tipo = '${TIPO}' AND c.Ativo = -1 LIMIT 1
+
     END
+
     Should Not Be Empty    ${resultado}
+
     RETURN    ${resultado[0][0]}
 
 
 Obter código do cliente
     [Arguments]    ${TIPO}
+
     ${resultado}=    Query    SELECT c.Codigo FROM clientes c WHERE c.Tipo = '${TIPO}' AND c.Ativo = -1 LIMIT 1
+
     Should Not Be Empty    ${resultado}
+    
     RETURN    ${resultado[0][0]}
 
 
 Preencher dados do adiantamento
+
     [Arguments]    ${DOC}    ${TOTAL}
+
     Navegar para próximo campo    2
+
     Input Text    ${EMPTY}    ${DOC}
+
     Navegar para próximo campo    1
+
     Input Text    ${EMPTY}    ${TOTAL}
+
     Sleep    ${SLEEP_BAIXO}
 
 
 Gerar dados do adiantamento
     ${DOC}=    Evaluate    random.randint(100000,999999)
-    ${TOTAL}=    Evaluate    random.randint(100,1000)
-    Set Test Variable    ${DOC_ADIANTAMENTO}    ${DOC}
-    Set Test Variable    ${TOTAL_ADIANTAMENTO}    ${TOTAL}
 
+    ${TOTAL}=    Evaluate    random.randint(100,1000)
+
+    Set Test Variable    ${DOC_ADIANTAMENTO}    ${DOC}
+
+    Set Test Variable    ${TOTAL_ADIANTAMENTO}    ${TOTAL}
+    
 
 Salvar embarque
     Clicar no botão Gravar
@@ -1047,35 +1273,33 @@ Salvar embarque
 
 Validar adiantamento no banco
     ${resultado}=    Query    SELECT ca.Documento, ca.Valor FROM cargas_adiantamento ca WHERE ca.CodigoCarga = ${COD_CARREGAMENTO} AND ca.Cancelado IS NULL
+
     Should Not Be Empty    ${resultado}
+
     Should Be Equal As Strings    ${resultado[0][0]}    ${DOC_ADIANTAMENTO}
+
     Should Be Equal As Numbers    ${resultado[0][1]}    ${TOTAL_ADIANTAMENTO}
 
 
 Validar dados do adiantamento na tabela cargas
     ${resultado}=    Query    SELECT c.CodMotorista, c.CodEntregador, c.UFPlaca, c.Placa, c.KMSaida, c.KMChegada, c.QtdeLitros_Comb, c.ValorAdiantamento FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO}
+
     Should Not Be Empty    ${resultado}
+
     Set Test Variable    ${COD_MOTORISTA}    ${resultado[0][0]}
+
     Set Test Variable    ${COD_ENTREGADOR}    ${resultado[0][1]}
+
     Log    Motorista: ${resultado[0][0]} | Entregador: ${resultado[0][1]} | UF: ${resultado[0][2]} | Placa: ${resultado[0][3]}
+
     Log    KM Saída: ${resultado[0][4]} | KM Chegada: ${resultado[0][5]} | Litros: ${resultado[0][6]} | Valor Adiantamento: ${resultado[0][7]}
-
-
-Dado que acesso o lançamento de carregamento de vendas
-
-    Sleep    ${SLEEP_BAIXO}
-    Press Combination    KEY.ALT    KEY.E
-
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
-    Sleep    ${SLEEP_BAIXO}
-
-    SikuliLibrary.Click    ${TELA_CARREGAMENTO}
-    Sleep    ${SLEEP_BAIXO}
 
 
 Quando inicio um novo carregamento
     Clicar no botão Adicionar
+    
     Wait Until Screen Contain    ${TELA_CARREGAMENTO_ADICIONAR}    ${TEMPO_TELA}
+
     Setar codigo carregamento
 
 
@@ -1093,12 +1317,6 @@ Quando edito o carregamento cadastrado
     Clicar no botão Editar
 
 
-Quando realizo um novo carregamento com descrição valida
-    Quando inicio um novo carregamento
-    E informo uma descrição valida
-    E gravo o carregamento da venda
-
-
 Quando excluo o carregamento
     Pesquisar carregamento por código    ${COD_CARREGAMENTO}
     Clicar no botão Excluir
@@ -1106,23 +1324,35 @@ Quando excluo o carregamento
 
 
 E informo uma descrição valida
-    Preencher descrição com o código do carregamento
-
-
-E gravo o carregamento da venda
-    Gravar carregamento da venda
+    Informar Descrição    AUTOMACAO
+    Sleep    ${SLEEP_BAIXO}
 
 
 Então o carregamento da venda deve ser salvo com sucesso
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
-
-
-Então o status deve ser "Cadastrando"
     Log    Verificando status do carregamento ${COD_CARREGAMENTO}
-    ${status}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
-    Should Not Be Empty    ${status}
-    Should Be Equal As Strings    ${status[0][0]}    Cadastrando
-    Log    Status do carregamento: ${status[0][0]}
+
+    ${carregamento_bool}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+    Should Not Be Empty    ${carregamento_bool}
+    
+    IF    not ${carregamento_bool}
+
+        Fail    O carregamento não foi salvo com sucesso. Status atual: ${carregamento_bool[0][0]}
+
+    END
+
+
+Então o status deve ser
+    [Arguments]    ${status}
+
+    Log    Verificando status do carregamento ${COD_CARREGAMENTO}
+    
+    ${resultado}=    Query    SELECT c.Status FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+
+    Should Not Be Empty    ${resultado}
+
+    Should Be Equal As Strings    ${resultado[0][0]}    ${status}
+    
+    Log    Status do carregamento: ${resultado[0][0]}
 
 
 Então o status do carregamento deve ser
@@ -1184,18 +1414,17 @@ Então o carregamento deve ser excluído com sucesso
 
 Então o sistema deve impedir a exclusão
     ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+
     Should Not Be Empty    ${resultado}
-    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    3
+
+    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    ${TEMPO_TELA}
+    
     IF    ${aviso_excluir_carregamento_fechado}
+
         Clicar no botão Ok
         Sleep    ${SLEEP_BAIXO}
+        
     END
-
-
-Então fecho a tela de carregamento
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
-    Run Keyword And Ignore Error    Press Special Key    ESC
-
 
 Quando acesso a tela de embarque
     Pesquisar carregamento por código    ${COD_CARREGAMENTO}

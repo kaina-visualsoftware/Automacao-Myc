@@ -1,8 +1,9 @@
-*** Settings ***
-Library    SikuliLibrary
+﻿*** Settings ***
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
+Library    ../libs/validaPermissoesUsuario.py
 Library    Process
 
 Resource    ../utils/utils.robot
@@ -33,7 +34,9 @@ ${TELA_GUIA_CONFIGURACOES}                             tela_GuiaConfiguracoes.pn
 ${TELA_ENDERECO_ENTREGA_VENDA}                         tela_EnderecoEntregaVenda.png
 ${TELA_CONSULTA_SCPC_SEM_CONSULTA_SALVA}               tela_ConsultaSCPC_SemConsultaSalva.png
 ${TELA_CONSULTA_SCPC_COM_CONSULTA_SALVA}               tela_ConsultaSCPC_ComConsultaSalva.png
-${TELA_CARREGAMENTO}                                   tela_Carregamento.png
+${TELA_SEPARACAO_PRE_VENDA}                            tela_SeparacaoPreVenda.png
+${TELA_RETORNO_LIB_DESC_MAIOR_MAX_PROD}                tela_RetornoLibDescMaiorMaxProd.png
+
 # Telas Avisos
 ${AVISO_USAR_ESSE_VENDEDOR}                            aviso_clienteOutroVendedor.png
 ${AVISO_ALTERAR_VENDEDOR}                              aviso_DesejaAlterarVendedor.png
@@ -53,7 +56,6 @@ ${AVISO_LANC_ORÇAMENTO_EM_ABERTO}                      aviso_LancOrçamentoEmAb
 ${AVISO_LANC_OS_EM_ABERTO}                             aviso_LancOSEmAberto.png
 ${AVISO_LANC_VENDA_EM_ABERTO}                          aviso_LancVendaEmAberto.png
 ${AVISO_LANC_PRE_VENDA_EM_ABERTO}                      aviso_LancPreVendaEmAberto.png
-${AVISO_DESC_ESCALA_COMISSAO}                          aviso_DescEscalaComissao.png
 ${AVISO_EDITAR_OS_FINALIZADA}                          aviso_EditarOSFinalizadaSupervisor.png
 ${AVISO_VENDEDOR_SEM_PERCENT_COMISSAO_VALE_COMPRA}     aviso_VendedorSemPercentualComissaoValeCompra.png
 ${AVISO_CLIENTE_MENOR_DE_IDADE}                        aviso_ClienteMenorDeIdade.png
@@ -65,15 +67,18 @@ ${BT_NAO}                                              bt_Nao.png
 ${BT_FECHAR_X}                                         bt_FecharX.png
 ${BT_SIM_AVISO_VENCIMENTO_FERIADO}                     bt_SimAvisoVencimentoFeriado.png
 ${BT_OK}                                               bt_OK_sem_atalho.png
+${BT_RECALCULAR_ITENS}                                 bt_RecalcularItens.png
 
 # Inputs
 ${INPUT_DESCRICAO_ENTREGA_PREENCHIDO}                  input_DescricaoEntregaPreenchido.png
+${INPUT_SENHA_RET_LIB_DESC_MAIOR_MAX_PROD}             input_SenhaRetLibDescMaiorMaxProd.png
 
 # Labels
 ${LABEL_LIBERAÇÃO_SUPERVISOR}                          label_PasseOCartaoDeLiberacao.png
 ${LABEL_COI_NFE}                                       lb_CoiNFe.png
 ${LABEL_GUIA_CONFIGURACOES}                            lb_GuiaConfiguracoes.png
 ${LABEL_VALES_COMPRA_DISPONIVEIS}                      lb_ValesCompraDisponiveis.png
+${LABEL_RESPOSTA_OBTIDA}                               lb_RespostaObtida.png
 
 # Outros
 ${EXPANDIR_COMBOBOX}                                   expandir_combobox.png
@@ -161,12 +166,41 @@ ${Parametro_VendaSemEstoqueOrdemDeServico}             ${False}
 ${Parametro_VendeSemEstoque}                           ${False}
 ${Parametro_VendeSemEstoqueCondicional}                ${False}
 ${Parametro_VinculaProdutoDevolvidoEntrega}            ${False}
+${Parametro_LiberaDescontoMaiorMaximo}                 ${False}
 
 # Parâmetros escalares (inicializados em runtime via Set Global Variable)
 ${Parametro_DiasInativoSCPC}                           None
 ${Parametro_EmitirBoletosAcimaDeValorMinimo}           None
 ${Parametro_QuantidadePadraoProduto}                   None
 ${Parametro_TelasQtdePadraoProduto}                    None
+
+# Permissões de usuário — tabela usuarios (inicializadas em runtime via Set Global Variable)
+${Permissao_Usuario_ExibirMenuInicializacao}                    ${False}
+${Permissao_Usuario_ExibirMenuAvisos}                           ${False}
+${Permissao_Usuario_AvisarChequeACompensar}                     ${False}
+${Permissao_Usuario_AvisarChequesCompensarVencidos}             ${False}
+${Permissao_Usuario_ExibirAvisosTodasContas}                    ${False}
+${Permissao_Usuario_AvisarCortes}                               ${False}
+${Permissao_Usuario_NotificacoesCRM}                            ${False}
+${Permissao_Usuario_AvisarEstoqueBaixoProduto}                  ${False}
+${Permissao_Usuario_AvisarNcmCest}                              ${False}
+${Permissao_Usuario_AvisarEntregaPendente}                      ${False}
+${Permissao_Usuario_AvisarVendaAberta}                          ${False}
+${Permissao_Usuario_AvisarProdutosLoteValidade}                 ${False}
+${Permissao_Usuario_AvisarAniversariantes}                      ${False}
+${Permissao_Usuario_AvisarClienteSemCompra}                     ${False}
+${Permissao_Usuario_AvisarContas}                               ${False}
+${Permissao_Usuario_AvisarNFCPendente}                          ${False}
+
+# Permissões de usuário — tabela usuarios_auxiliar (inicializadas em runtime via Set Global Variable)
+${Permissao_Usuario_AvisarFerias}                               ${False}
+${Permissao_Usuario_AvisarManutencoesAoInicializar}             ${False}
+${Permissao_Usuario_AvisarTransferenciasRecusadasAoInicializar}    ${False}
+${Permissao_Usuario_AvisarCotacaoMoeda}                         ${False}
+${Permissao_Usuario_ImportarProdutos}                           ${False}
+${Permissao_Usuario_BloquearDevolucaoComValorNegativo}          ${False}
+${Permissao_Usuario_PreVendaExibirBotaoConferencia}             ${False}
+${Permissao_Usuario_PreVendaConferirAoFinalizar}                ${False}
 
 # Variáveis internas (Set Test Variable)
 ${Check_List_Objeto}                                   ${False}
@@ -312,6 +346,10 @@ Verifica avisos presentes ao incluir cliente(${Codigo_Cliente})
     Verifica se cliente possui objeto vinculado
 
 Carregar parâmetros do sistema
+    [Documentation]    Consulta as tabelas `config` e `configempresa` no banco de dados e carrega
+    ...                todos os parâmetros do sistema como variáveis globais do Robot Framework.
+    ...                Deve ser chamada uma vez no setup da suite ou após reinicialização do myCommerce.
+    ...                Encerra a execução via Fatal Error se o parâmetro "Venda_Rapida" estiver ativo.
 
     ${Lista_de_Parametros}    ${TelasQtdePadraoProduto}    ${QuantidadePadraoVenda}    ${DiasInativoSCPC}    ${ValorMinimoBoleto}    Valida Parametros Config
     ${Config_Empresas}        Valida Config Empresa
@@ -397,11 +435,11 @@ Carregar parâmetros do sistema
     ${Parametro_ImpressaoDiretaPreVenda}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    PrevendaDireto
     ${Parametro_ExibirCampoNpedVenda}                      Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    Exibir_Campo_Nped_Venda
     ${Parametro_BloquearCampoNpedPreVenda}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    pula_foco_npedido
+    ${Parametro_LiberaDescontoMaiorMaximo}                 Run Keyword And Return Status    Should Contain    ${Lista_de_Parametros}    LiberaDescontoMaiorMaximo
 
     IF    ${Parametro_VendaRapida}
 
-        Log To Console    \n\nO parâmetro "Venda_Rapida" interfere diretamente no processo de venda. Teste sendo finalizado.${\n}Caminho do parâmetro: ADM Sistema → +Config → Geral → Mais → Trazer vendedor e cliente padrão...\n
-        Terminate Process
+        Fatal Error    \nO parâmetro "Venda_Rapida" está ativo e interfere diretamente no fluxo de venda.\nDesative-o antes de executar os testes.\nCaminho: ADM Sistema → +Config → Geral → Mais → Trazer vendedor e cliente padrão...
 
     END
 
@@ -413,182 +451,161 @@ Carregar parâmetros do sistema
         # Como o parâmetro 'Vende sem estoque' está configurado como falso, os demais também serão considerados falsos.
 
         Set Global Variable    ${Parametro_RealizaPreVendaSemEstoque}    ${False}
-
         Set Global Variable    ${Parametro_RealizaVendaSemEstoque}    ${False}
-
         Set Global Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}    ${False}
-
         Set Global Variable    ${Parametro_VendeSemEstoque}    ${False}
 
     ELSE
 
         Set Global Variable    ${Parametro_RealizaPreVendaSemEstoque}
-
         Set Global Variable    ${Parametro_RealizaVendaSemEstoque}
-
         Set Global Variable    ${Parametro_VendaSemEstoqueOrdemDeServico}
-
         Set Global Variable    ${Parametro_VendeSemEstoque}
 
     END
 
     Set Global Variable    ${Parametro_DescontoFinalRespeitaMaximoDosProdutos}
-
     Set Global Variable    ${Parametro_CaixaControladoPorUsuario}
-
     Set Global Variable    ${Parametro_FaturaVendaDireto}
-
     Set Global Variable    ${Parametro_BloqueiaGeracaoVendaParcial}
-
     Set Global Variable    ${Parametro_ExigeSenhaCancelarVenda}
-
     Set Global Variable    ${Parametro_DevolucaoPermiteAberta}
-
     Set Global Variable    ${Parametro_DevolucaoExigeOBS}
-
     Set Global Variable    ${Parametro_ValeCompra_Dev_Menor0}
-
     Set Global Variable    ${Parametro_DevolucaoAvulsa}
-
     Set Global Variable    ${Parametro_Fatura_OS}
-
     Set Global Variable    ${Parametro_Imprime_Carne_OS}
-
     Set Global Variable    ${Parametro_Imprime_OS}
-
     Set Global Variable    ${Parametro_Seleciona_Funcionario_Comissao_Servico}
-
     Set Global Variable    ${Parametro_Suprime_Objetos_OS_Orcamento}
-
     Set Global Variable    ${Parametro_Desabilita_Servico_Orcamento}
-
     Set Global Variable    ${Parametro_ImprimirBoletoAoFinalizarVenda}
-
     Set Global Variable    ${Parametro_ImprimirPromissoriaAoFinalizarVenda}
-
     Set Global Variable    ${Parametro_ImprimirContratoAoFinalizarVenda}
-
     Set Global Variable    ${Parametro_ImprimirReciboEntradaAoFinalizarVenda}
-
     Set Global Variable    ${Parametro_Impre_Ordem_de_Entrega}
-
     Set Global Variable    ${Parametro_ControlaCreditoVenda}
-
     Set Global Variable    ${Parametro_IndicacaoVenda}
-
     Set Global Variable    ${Parametro_IncluiDireto}
-
     Set Global Variable    ${Aviso_ProdutoSemEstoque}
-
     Set Global Variable    ${Parametro_ImprimeNFCeDireto}
-
     Set Global Variable    ${Parametro_ImprimirVendaAoFinalizarVenda}
-
     Set Global Variable    ${Parametro_ImprimirDuplicatasAoFinalizarVenda}
-
     Set Global Variable    ${Parametro_ExibeVendasAnteriores}
-
     Set Global Variable    ${Parametro_ExigeSenhaMultiplo}
-
     Set Global Variable    ${Parametro_BaixaCentralizada}
-
     Set Global Variable    ${Parametro_BaixaAutomatico}
-
     Set Global Variable    ${Caixa_Baixas_Automatica}
-
     Set Global Variable    ${Parametro_Exibe_Foto_Cliente}
-
     Set Global Variable    ${Parametro_Controla_Entrega}
-
     Set Global Variable    ${Parametro_Local_Negociacao}
-
     Set Global Variable    ${Parametro_Imprime_OrdemEntrega}
-
     Set Global Variable    ${Parametro_Permite_Varias_Tabelas}
-
     Set Global Variable    ${Parametro_VendeSemEstoqueCondicional}
-
     Set Global Variable    ${Parametro_ImprimeCondicional}
-
     Set Global Variable    ${Parametro_BloqueiaOrcamentoSemEstoque}
-
     Set Global Variable    ${Parametro_BaixaEstoquePreVenda}
-
     Set Global Variable    ${Parametro_ImpressaoAposGerarEntrega}
-
     Set Global Variable    ${Parametro_UmaEntregaPorVenda}
-
     Set Global Variable    ${Parametro_ConsideraDoacoes}
-
     Set Global Variable    ${Parametro_Venda_Padrao_Entregue}
-
     Set Global Variable    ${Parametro_TrazerDescricaoAutomaticaEntrega}
-
     Set Global Variable    ${Parametro_FaturamentoAoFinalizarOS}
-
     Set Global Variable    ${Parametro_ComissaoVendedorEExecutorServico}
-
     Set Global Variable    ${Parametro_NaoDeduzirISSQNComissaoOS}
-
     Set Global Variable    ${Parametro_PesquisaCodigoCodFabricaReferencia}
-
     Set Global Variable    ${Parametro_ConsultaSCPCVenda}
-
     Set Global Variable    ${Parametro_FocoCampoCliente}
-
     Set Global Variable    ${Parametro_IndicacaoPreVenda}
-
     Set Global Variable    ${Parametro_TelasQtdePadraoProduto}    ${TelasQtdePadraoProduto}
-
     Set Global Variable    ${Parametro_QuantidadePadraoProduto}    ${QuantidadePadraoVenda}
-
     Set Global Variable    ${Parametro_DiasInativoSCPC}    ${DiasInativoSCPC}
-
     Set Global Variable    ${Parametro_ControlaCreditoOrcamento}
-
     Set Global Variable    ${Parametro_ControlaCreditoCondicional}
-
     Set Global Variable    ${Parametro_ControlaCreditoGerarPreVendaOrcamento}
-
     Set Global Variable    ${Parametro_ControlaCreditoOS}
-
     Set Global Variable    ${Parametro_ControlaCreditoDevTroca}
-
     Set Global Variable    ${Parametro_ControlaCreditoPreVenda}
-
     Set Global Variable    ${Parametro_ControlaCreditoPreSeparacaoPreVenda}
-
     Set Global Variable    ${Parametro_ControlaCreditoDescontaChequePreEmMaos}
-
     Set Global Variable    ${Parametro_ControlaCreditoPreVendaAuditoria}
-
     Set Global Variable    ${Parametro_VinculaProdutoDevolvidoEntrega}
-
     Set Global Variable    ${Parametro_ObrigaMotivoDevolucao}
-
     Set Global Variable    ${Parametro_AvisarVendedorDiferenteDoCadastro}
-
     Set Global Variable    ${Parametro_IndicacaoOrcamento}
-
     Set Global Variable    ${Parametro_IndicacaoOS}
-
     Set Global Variable    ${Parametro_InfoCreditoClienteVenda}
-
     Set Global Variable    ${Parametro_InfoCreditoClienteOrcamento}
-
     Set Global Variable    ${Parametro_InfoCreditoClientePreVenda}
-
     Set Global Variable    ${Parametro_ExigeSenhaOutroVendedor}
-
     Set Global Variable    ${Parametro_ImprimirPreVendaAoFinalizarPreVenda}
-
     Set Global Variable    ${Parametro_ImpressaoDiretaPreVenda}
-
     Set Global Variable    ${Parametro_EmitirBoletosAcimaDeValorMinimo}    ${ValorMinimoBoleto}
-
     Set Global Variable    ${Parametro_ExibirCampoNpedVenda}
-
     Set Global Variable    ${Parametro_BloquearCampoNpedPreVenda}
+    Set Global Variable    ${Parametro_LiberaDescontoMaiorMaximo}
+
+    Carregar permissões do usuário
+
+Carregar permissões do usuário
+    [Documentation]    Consulta as tabelas `usuarios` e `usuarios_auxiliar` no banco de dados e carrega
+    ...                as permissões do usuário logado como variáveis globais.
+    ...                Chamada automaticamente ao final de `Carregar parâmetros do sistema`.
+
+    ${Lista_de_Permissoes}    Carregar Permissoes Usuario
+
+    # Tabela `usuarios`
+    ${Permissao_Usuario_ExibirMenuInicializacao}                       Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    MenuInicializacao
+    ${Permissao_Usuario_ExibirMenuAvisos}                              Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Avisos_menu
+    ${Permissao_Usuario_AvisarChequeACompensar}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoChequeCompensar
+    ${Permissao_Usuario_AvisarChequesCompensarVencidos}                Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoChequesCompensarVencidos
+    ${Permissao_Usuario_ExibirAvisosTodasContas}                       Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    ContaAvisoTodas
+    ${Permissao_Usuario_AvisarCortes}                                  Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoCortes
+    ${Permissao_Usuario_NotificacoesCRM}                               Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Crm_Notify
+    ${Permissao_Usuario_AvisarEstoqueBaixoProduto}                     Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    prod_EstAviso
+    ${Permissao_Usuario_AvisarNcmCest}                                 Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoNcmCest
+    ${Permissao_Usuario_AvisarEntregaPendente}                         Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Entrega_Aviso
+    ${Permissao_Usuario_AvisarVendaAberta}                             Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoVendaAberta
+    ${Permissao_Usuario_AvisarProdutosLoteValidade}                    Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoProdutosLoteValidade
+    ${Permissao_Usuario_AvisarAniversariantes}                         Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoAniversariantes
+    ${Permissao_Usuario_AvisarClienteSemCompra}                        Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoClienteSemCompra
+    ${Permissao_Usuario_AvisarContas}                                  Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    ContaAviso
+    ${Permissao_Usuario_AvisarNFCPendente}                             Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    AvisoNFCPendente
+
+    # Tabela `usuarios_auxiliar`
+    ${Permissao_Usuario_AvisarFerias}                                  Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    uau_avisa_ferias
+    ${Permissao_Usuario_AvisarManutencoesAoInicializar}                Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Uau_Cons_Avisos_Manutencoes_Inicializar
+    ${Permissao_Usuario_AvisarTransferenciasRecusadasAoInicializar}    Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Uau_Cons_Avisos_TransfRecusadas_Inicializar
+    ${Permissao_Usuario_AvisarCotacaoMoeda}                            Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Uau_Avisos_Cotacao_Moeda
+    ${Permissao_Usuario_ImportarProdutos}                              Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    Uau_Importa_Produtos
+    ${Permissao_Usuario_BloquearDevolucaoComValorNegativo}             Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    uau_BloqDev_ComValorNegativo
+    ${Permissao_Usuario_PreVendaExibirBotaoConferencia}                Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    uau_PreVenda_BotaoConferencia
+    ${Permissao_Usuario_PreVendaConferirAoFinalizar}                   Run Keyword And Return Status    Should Contain    ${Lista_de_Permissoes}    uau_PreVenda_Conferencia_AoFinalizar
+
+    Set Global Variable    ${Permissao_Usuario_ExibirMenuInicializacao}
+    Set Global Variable    ${Permissao_Usuario_ExibirMenuAvisos}
+    Set Global Variable    ${Permissao_Usuario_AvisarChequeACompensar}
+    Set Global Variable    ${Permissao_Usuario_AvisarChequesCompensarVencidos}
+    Set Global Variable    ${Permissao_Usuario_ExibirAvisosTodasContas}
+    Set Global Variable    ${Permissao_Usuario_AvisarCortes}
+    Set Global Variable    ${Permissao_Usuario_NotificacoesCRM}
+    Set Global Variable    ${Permissao_Usuario_AvisarEstoqueBaixoProduto}
+    Set Global Variable    ${Permissao_Usuario_AvisarNcmCest}
+    Set Global Variable    ${Permissao_Usuario_AvisarEntregaPendente}
+    Set Global Variable    ${Permissao_Usuario_AvisarVendaAberta}
+    Set Global Variable    ${Permissao_Usuario_AvisarProdutosLoteValidade}
+    Set Global Variable    ${Permissao_Usuario_AvisarAniversariantes}
+    Set Global Variable    ${Permissao_Usuario_AvisarClienteSemCompra}
+    Set Global Variable    ${Permissao_Usuario_AvisarContas}
+    Set Global Variable    ${Permissao_Usuario_AvisarNFCPendente}
+    Set Global Variable    ${Permissao_Usuario_AvisarFerias}
+    Set Global Variable    ${Permissao_Usuario_AvisarManutencoesAoInicializar}
+    Set Global Variable    ${Permissao_Usuario_AvisarTransferenciasRecusadasAoInicializar}
+    Set Global Variable    ${Permissao_Usuario_AvisarCotacaoMoeda}
+    Set Global Variable    ${Permissao_Usuario_ImportarProdutos}
+    Set Global Variable    ${Permissao_Usuario_BloquearDevolucaoComValorNegativo}
+    Set Global Variable    ${Permissao_Usuario_PreVendaExibirBotaoConferencia}
+    Set Global Variable    ${Permissao_Usuario_PreVendaConferirAoFinalizar}
 
 Valida aviso exige senha para outro vendedor
 
@@ -905,7 +922,6 @@ Valida vencimento em fins de semana e feriados(${N_Pagamentos})
         IF    ${aviso}
             
             SikuliLibrary.Click    ${BT_SIM_AVISO_VENCIMENTO_FERIADO}
-            # Press Combination    KEY.ALT    KEY.S
             Sleep    ${SLEEP_BAIXO}
 
         END
@@ -1118,7 +1134,15 @@ Valida cliente com vales compra disponíveis
     IF    ${aviso}
         
         Sleep    ${SLEEP_BAIXO}
-        SikuliLibrary.Click    ${BT_OK}
+        
+        ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_OK}    5
+        
+        IF    ${existe}
+
+            SikuliLibrary.Click    ${BT_OK}
+            Sleep    ${SLEEP_BAIXO}
+
+        END
 
         Wait Until Screen Contain    ${LABEL_VALES_COMPRA_DISPONIVEIS}    ${TEMPO_TELA}
         
@@ -1126,20 +1150,20 @@ Valida cliente com vales compra disponíveis
 
 Valida mensagem informativa não lida
 
-    ${informativo}    Run Keyword And Return Status    	Check If Not Exists In Database    SELECT il.* FROM (SELECT * FROM informativos WHERE DataLimite > CURDATE() AND Titulo <> 'Curso Gratuito do MyMilk' ORDER BY ID DESC LIMIT 1) AS i LEFT JOIN informativos_lidos il ON il.IDInformativo = i.ID WHERE il.Usuario = 'Visual';
-    # A validação [AND i.Titulo <> 'Curso Gratuito do MyMilk'] foi adicionada porque possui [DataLimite] muito distante (até 2050) e a mensagem nunca é exibida.
+    ${consulta}    Query    SELECT EXISTS(SELECT 1 FROM (SELECT * FROM informativos WHERE DataLimite > CURDATE() AND Titulo <> 'Curso Gratuito do MyMilk' ORDER BY ID DESC LIMIT 1) AS i INNER JOIN informativos_lidos il ON il.IDInformativo = i.ID WHERE il.Usuario = 'Visual');
 
-    IF    ${informativo}
+    ${informativo_ja_lido}    Set Variable    ${consulta[0][0]}
 
-        Sleep    ${SLEEP_BAIXO}
-        ${msg}    Exists    ${AVISO_INFORMATIVO_SAIBA_MAIS}
+    IF    ${informativo_ja_lido}
+        RETURN
+    END
 
-        IF    ${msg}
+    Sleep    ${SLEEP_BAIXO}
 
-            SikuliLibrary.Click    ${BT_FECHAR_X}
-                        
-        END
-        
+    ${mensagem_exibida}    Exists    ${AVISO_INFORMATIVO_SAIBA_MAIS}
+
+    IF    ${mensagem_exibida}
+        SikuliLibrary.Click    ${BT_FECHAR_X}
     END
 
 Valida envio de xml à contabilidade
@@ -1159,8 +1183,6 @@ Valida lançamento de condicional em aberto
     Sleep    ${SLEEP_BAIXO}
     ${condicionalEmAberto}    Run Keyword And Return Status    Check If Exists In Database    SELECT c.Codigo FROM condicionais AS c WHERE c.`Status` IN ('a', 'e') AND c.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) AND c.Cancelada IS NULL ORDER BY c.Codigo DESC LIMIT 1;
 
-    Log To Console    \ncondicionalEmAberto: ${condicionalEmAberto}
-
     IF    ${condicionalEmAberto}
         
         Sleep    ${SLEEP_MEDIO}
@@ -1168,7 +1190,6 @@ Valida lançamento de condicional em aberto
 
         IF    ${aviso}
 
-            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             SikuliLibrary.Click    ${BT_NAO}
             Sleep    ${SLEEP_BAIXO}
@@ -1185,15 +1206,11 @@ Valida lançamento de devolução em aberto
     IF    ${devolucaoEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        # ${aviso}    Exists    ${AVISO_LANC_DEVOLUCAO_EM_ABERTO}
         ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
-
-        Log To Console    Aviso de devolução em aberto: ${aviso}
 
         IF    ${aviso}
             
             Sleep    ${SLEEP_BAIXO}
-            # Press Combination    KEY.ALT    KEY.N
             SikuliLibrary.Click    ${BT_NAO}
             Sleep    ${SLEEP_BAIXO}
             
@@ -1209,12 +1226,10 @@ Valida lançamento de orçamento em aberto
     IF    ${orcamentoEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        # ${aviso}    Exists    ${AVISO_LANC_ORÇAMENTO_EM_ABERTO}
         ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
             
-            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             SikuliLibrary.Click    ${BT_NAO}
             Sleep    ${SLEEP_BAIXO}
@@ -1231,14 +1246,12 @@ Valida lançamento de ordem de serviço em aberto
     IF    ${OSEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        # ${aviso}    Exists    ${AVISO_LANC_OS_EM_ABERTO}
         ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
             
             Sleep    ${SLEEP_BAIXO}
             SikuliLibrary.Click    ${BT_NAO}
-            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             
         END
@@ -1253,14 +1266,12 @@ Valida lançamento de venda em aberto
     IF    ${VendaEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        # ${aviso}    Exists    ${AVISO_LANC_VENDA_EM_ABERTO}
         ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
             
             Sleep    ${SLEEP_BAIXO}
             SikuliLibrary.Click    ${BT_NAO}
-            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             
         END
@@ -1275,34 +1286,16 @@ Valida lançamento de pré-venda em aberto
     IF    ${PreVendaEmAberto}
 
         Sleep    ${SLEEP_BAIXO}
-        # ${aviso}    Exists    ${AVISO_LANC_PRE_VENDA_EM_ABERTO}
         ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
 
         IF    ${aviso}
             
             Sleep    ${SLEEP_BAIXO}
             SikuliLibrary.Click    ${BT_NAO}
-            # Press Combination    KEY.ALT    KEY.N
             Sleep    ${SLEEP_BAIXO}
             
         END
         
-    END
-
-Valida desconto que não se encaixa em nenhuma escala de comissão
-    
-    FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-        
-        Sleep    ${SLEEP_BAIXO}
-        ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
-
-        IF    ${aviso}
-
-            Press Special Key    ENTER
-            Sleep    ${SLEEP_BAIXO}
-            
-        END
-         
     END
 
 Valida edição de ordem de serviço finalizada
@@ -1456,9 +1449,69 @@ Valida aviso atualizar número no cadastro principal
     END
 
 Valida parâmetros/impressões pós pré-venda
-    
+
     IF    ${Parametro_ImprimirPreVendaAoFinalizarPreVenda}
 
         Valida impressão pré-venda ao finalizar pré-venda
+        
+    END
+
+Valida tela de separação de pré-venda ao finalizar pré-venda
+
+    Wait Until Screen Contain    ${TELA_SEPARACAO_PRE_VENDA}    ${TEMPO_TELA}
+
+    # Provisório até corrigir a tarefa 187470.
+    Sleep    ${SLEEP_MEDIO}
+    Press Special Key    ESC
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.S
+
+Valida tela de retorno de liberação de desconto maior que o máximo do produto
+
+    Wait Until Screen Contain    ${TELA_RETORNO_LIB_DESC_MAIOR_MAX_PROD}    ${TEMPO_TELA}
+    
+    SikuliLibrary.Click    ${INPUT_SENHA_RET_LIB_DESC_MAIOR_MAX_PROD}
+
+    Valida supervisor para liberação de desconto maior que o máximo do produto    ${Desconto_Produto}
+
+    Wait Until Screen Contain    ${LABEL_RESPOSTA_OBTIDA}    ${TEMPO_TELA}
+
+    SikuliLibrary.Click    ${BT_RECALCULAR_ITENS}
+
+    Wait Until Screen Not Contain    ${TELA_RETORNO_LIB_DESC_MAIOR_MAX_PROD}    ${TEMPO_TELA}
+
+
+Valida supervisor para liberação de desconto maior que o máximo do produto
+    [Arguments]    ${desconto}
+
+    ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_RETORNO_LIB_DESC_MAIOR_MAX_PROD}    ${SLEEP_ALTO}
+
+    IF    ${tela}
+
+        ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 AND us.Lib_Desconto = 1 AND us.Lib_MaximoDesconto > ${desconto} LIMIT 1;
+        ${senhaUsuarioDescriptografada}    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
+
+        Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_MEDIO}
+
+    END
+
+Valida lançamento de nota fiscal de saída manual em aberto
+
+    Sleep    ${SLEEP_ALTO}
+    ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
+
+    IF    ${aviso}
+        
+        Sleep    ${SLEEP_BAIXO}
+        SikuliLibrary.Click    ${BT_NAO}
+        Sleep    ${SLEEP_BAIXO}
         
     END
