@@ -1,4 +1,5 @@
 *** Settings ***
+
 Documentation    Testes em Banco Aleatório
 
 
@@ -257,7 +258,6 @@ Teste 12 - Validar volume de pré-vendas após remoção em um carregamento
     Então gravo o carregamento com o status    Montando
     E valido o volume após remover uma pré-venda
     E fecho a tela de carregamento
-
 
 Teste 13 - Lancamento de carregamento de venda
     [Tags]    Teste13
