@@ -81,6 +81,16 @@ ${BT_CONFIRMA_CANAL_NEGOCIACAO}                        bt_ConfirmarCanal.png
 ${BT_SOLICITAR_CRÉDITO}                                bt_SolicitarCredito.png
 ${BT_SETA_DIREITA}                                     bt_SetaDireita.png
 ${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}                    bt_IncluirProdutoNFeSaidaManual.png
+${BT_ADICIONAR}                                        bt_Adicionar.png
+${BT_GRAVAR}                                           bt_Gravar.png
+${BT_EDITAR}                                           bt_Editar.png
+${BT_EXCLUIR}                                          bt_Excluir.png
+${BT_SALVAR}                                           bt_Salvar.png
+${BT_LISTAR}                                           bt_Listar.png
+${BT_OK}                                               bt_Ok.png
+${BT_INCLUIR}                                          bt_Incluir.png
+${BT_SIM}                                              bt_Sim.png
+${BT_NAO}                                              bt_Nao.png
 
 # Inputs
 ${INPUT_COD_CLIENTE}                                   lb_CodCliente.png
@@ -2988,4 +2998,76 @@ Valida desconto que não se encaixa em nenhuma escala de comissão
 
         ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
 
+    END
+
+Clicar no botão Adicionar
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_ADICIONAR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_ADICIONAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Gravar
+    ${botao}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_GRAVAR}    ${SLEEP_MEDIO}
+    IF    ${botao}
+        SikuliLibrary.Click    ${BT_GRAVAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Salvar
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_SALVAR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_SALVAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Editar
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_EDITAR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_EDITAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Excluir
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_EXCLUIR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_EXCLUIR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Listar
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_LISTAR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_LISTAR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Ok
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_OK}    5
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_OK}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+
+
+Clicar no botão Incluir
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_INCLUIR}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_INCLUIR}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Sim
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_SIM}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_SIM}
+        Sleep    ${SLEEP_BAIXO}
+    END
+
+Clicar no botão Não
+    ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_NAO}    ${SLEEP_MEDIO}
+    IF    ${existe}
+        SikuliLibrary.Click    ${BT_NAO}
+        Sleep    ${SLEEP_BAIXO}
     END
