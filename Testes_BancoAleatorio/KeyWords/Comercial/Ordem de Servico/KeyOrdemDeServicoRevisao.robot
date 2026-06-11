@@ -569,9 +569,6 @@ E tento finalizar a OS sem serviço
     Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_MEDIO}
 
-    Press Combination    KEY.ALT    KEY.F
-    Sleep    ${SLEEP_MEDIO}
-
     ${AVISO}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_OS_SEM_SERVICO}    3
 
     IF    ${AVISO}
@@ -604,15 +601,6 @@ Então o sistema exibe aviso de OS sem serviço
     Sleep    ${SLEEP_MEDIO}
 
 E o foco deve estar na guia de serviços
-    Sleep    ${SLEEP_MEDIO}
-
-    Press Combination    KEY.ALT    KEY.S
-    Sleep    ${SLEEP_BAIXO}
-
-    Wait Until Screen Contain    ${GUIA_SERVICOS_OS}    ${TEMPO_TELA}
-
-    Log    Foco alterado para a guia de serviços com sucesso
-
     Press Special Key    ESC
     Sleep    ${SLEEP_MEDIO}
 
@@ -620,16 +608,6 @@ E o foco deve estar na guia de serviços
     Sleep    ${SLEEP_MEDIO}
 
     Log    OS cancelada com sucesso
-
-Então o foco deve estar na guia de serviços
-    Sleep    ${SLEEP_MEDIO}
-
-    Press Combination    KEY.ALT    KEY.S
-    Sleep    ${SLEEP_BAIXO}
-
-    Wait Until Screen Contain    ${GUIA_SERVICOS_OS}    ${TEMPO_TELA}
-
-    Log    Foco alterado para a guia de serviços com sucesso
 
 
 Verifica ordem de serviço após ser fechada
@@ -799,7 +777,7 @@ E informo o cliente pelo CPF para OS detalhamento
 
 
 Quando insiro um serviço com descrição detalhada
-    [Arguments]    ${QUANTIDADE_SERVICOS}=1
+    [Arguments]    ${QQTD_SERVICOS}=1
 
     # Busca todos os servicos elegiveis ANTES do loop
     ${consultaServico}    Query    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Detalha <> 0;
@@ -814,9 +792,9 @@ Quando insiro um serviço com descrição detalhada
 
     Log    Encontrados ${quantidade_servicos} servicos para possivel insercao
 
-    FOR    ${i}    IN RANGE    ${QUANTIDADE_SERVICOS}
+    FOR    ${i}    IN RANGE    ${QQTD_SERVICOS}
 
-        Log    Inserindo servico ${i + 1} de ${QUANTIDADE_SERVICOS}
+        Log    Inserindo servico ${i + 1} de ${QQTD_SERVICOS}
 
         Press Combination    KEY.ALT    KEY.S
         Sleep    ${SLEEP_BAIXO}
@@ -918,8 +896,6 @@ Gerar descrição detalhada para serviço
 
     # Remove acentos para compatibilidade com Sikuli
     ${descricao}=    Evaluate    "${descricao}".replace("ã", "a").replace("â", "a").replace("á", "a").replace("à", "a").replace("é", "e").replace("ê", "e").replace("è", "e").replace("í", "i").replace("î", "i").replace("ì", "i").replace("õ", "o").replace("ô", "o").replace("ó", "o").replace("ò", "o").replace("ú", "u").replace("û", "u").replace("ù", "u").replace("ç", "c")
-
-    [RETURN]    ${descricao}
 
     RETURN    ${descricao}
 
