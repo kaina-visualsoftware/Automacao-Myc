@@ -364,6 +364,7 @@ Atualizar Tipo Compra Conforme Aba Ativa
     [Documentation]    Detecta qual aba está ativa e atualiza TIPO_COMPRA automaticamente
 
     ${aba_devolucao_ativa}    Run Keyword And Return Status
+
     ...    Exists    ${ABA_DEVOLUCAO}
 
     IF    ${aba_devolucao_ativa}
@@ -387,7 +388,8 @@ Então visualizo compra consignada
 
     Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.V
+    Press Combination    KEY.ALT    KEY.
+    
     Sleep    ${TEMPO_TELA}
 
     Wait Until Screen Contain    ${TELA_VISUALIZAR_COMPRAS_CONSIG}    ${TEMPO_TELA}
@@ -395,26 +397,39 @@ Então visualizo compra consignada
 
 
 Então pressiono Excluir
+
     [Documentation]    Exclui a compra selecionada e valida a exclusão no banco de dados
 
     IF    ${SELECIONAR_TODOS}
 
         Sleep    ${SLEEP_BAIXO}
+        
         Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${SLEEP_BAIXO}
+
         Wait Until Screen Contain    ${CHECK_BOX_TODOS_MARCADO}    ${SLEEP_BAIXO}
+
         Press Combination    KEY.ALT    KEY.X
+
         Wait Until Screen Contain    ${AVISO_CONFIRMAR_EXCLUSAO_BLOQUEADA}    ${SLEEP_BAIXO}
+
         Sleep    ${SLEEP_BAIXO}
+
         Press Special Key    ENTER
+
         RETURN
 
     END
 
     Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT    KEY.X
+
     Wait Until Screen Contain    ${AVISO_CONFIRMAR_EXCLUSAO}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT    KEY.S
+
     Sleep    ${SLEEP_MEDIO}
+
     Validar Exclusão No Banco    ${COD_COMPRA}
 
 Validar Exclusão No Banco
@@ -422,10 +437,13 @@ Validar Exclusão No Banco
     [Arguments]    ${codigo}
 
     ${excluida}    Run Keyword And Return Status
+
     ...    Check If Exists In Database
+
     ...    SELECT * FROM compraconsignada WHERE Codigo = ${codigo} AND Status = 'x' AND Cancelada = 1
 
     Should Be True    ${excluida}
+
     ...    Compra Consignada ${codigo} não foi excluída corretamente no banco de dados.
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -436,17 +454,23 @@ Então pressiono Editar
     [Documentation]    Abre a tela de edição da compra consignada selecionada via ALT+E
 
     Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+
     Press Combination    KEY.ALT    KEY.E
+
     Sleep    ${SLEEP_MEDIO}
+
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
 
 Então edito a quantidade do produto para(${nova_quantidade})
     [Documentation]    Seleciona o produto na grid de edição, altera a quantidade e valida no banco
 
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
+
     Selecionar Produto Na Grid De Edição
+
     Alterar Quantidade Do Produto    ${nova_quantidade}
-    Validar Edição De Produto No Banco    ${COD_COMPRA}
+
+    Validar Edição De Produto No Banco    ${COD_COMPRA}    ${nova_quantidade}
 
 Selecionar Produto Na Grid De Edição
     [Documentation]    Clica no registro da grid e aguarda o campo ficar disponível para edição
@@ -458,28 +482,49 @@ Alterar Quantidade Do Produto
     [Documentation]    Digita a nova quantidade e confirma com TABs e ENTER
     [Arguments]    ${nova_quantidade}
 
+    #verifica se nova quantidade é diferente da anterior para evitar regravação do mesmo valor e invalidar teste
+
+    IF    '${nova_quantidade}' == '${Quantidade_Produto}'
+
+        Log    Nova quantidade é igual à quantidade atual. Nenhuma alteração será feita.
+
+        Fail    END
+
+        RETURN
+
+    END
+
     Sleep    ${SLEEP_BAIXO}
+
     Input Text    ${EMPTY}    ${nova_quantidade}
+
     Sleep    ${SLEEP_BAIXO}
+
     Press Combination    KEY.ALT    KEY.I
+
     Sleep    ${SLEEP_BAIXO}
+
     Press Special Key    ENTER
 
 Validar Edição De Produto No Banco
     [Documentation]    Confirma no banco que o produto foi atualizado e não está cancelado
-    [Arguments]    ${codigo_compra}
+
+    [Arguments]    ${codigo_compra}    ${nova_quantidade}
+
 
     ${SPACE}=    Set Variable    ${SPACE}
-
-    ${query}=    Catenate    SEPARATOR=${SPACE} SELECT * FROM compraconsignada_produtos WHERE CodigoCompra = ${codigo_compra} AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}'
-    Log    ${query}
+    
 
     ${editado}=    Run Keyword And Return Status
+   
     ...    Check If Exists In Database
-    ...    ${query}
 
+    ...    SELECT * FROM compraconsignada_produtos WHERE CodigoCompra = ${codigo_compra} AND Cancelado = 0 AND CodigoProduto = '${COD_PRODUTO}' AND quantidade = '${nova_quantidade}'
+   
     Should Be True
+
     ...    ${editado}
+ 
     ...    Produto da Compra Consignada ${codigo_compra} não foi editado corretamente.
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -550,19 +595,25 @@ Então finalizo pagamento
 
 E valido contas a receber em caixa
     [Documentation]    Valida no banco de dados que o contas a receber foi gerado com o código da compra
+
     Sleep    ${SLEEP_MEDIO}
-    ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY codigo DESC LIMIT 1;
+
+    ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} 
 
     Should Be True    ${contas_geradas}    Contas a receber da Compra Consignada ${COD_COMPRA} não foram geradas corretamente.
+
 
     ${VALOR_APAGAR}    Query    SELECT valor FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY codigo DESC LIMIT 1;
 
     ${VALOR_APAGAR}    Set Variable    ${VALOR_APAGAR[0][0]}
 
+
     Log    VALOR_APAGAR: ${VALOR_APAGAR} | tipo: ${VALOR_APAGAR.__class__.__name__}
+
     Log    VALOR_COMPRA: ${VALOR_COMPRA} | tipo: ${VALOR_COMPRA.__class__.__name__}
 
     ${VALOR_APAGAR}    Convert To Number    ${VALOR_APAGAR}    2
+
     ${VALOR_COMPRA}    Convert To Number    ${VALOR_COMPRA}    2
 
     Should Be Equal As Numbers
@@ -621,7 +672,7 @@ E valido valor da compra
 
     ${valor_compra}    Set Variable    ${valor_compra[0][0]}
 
-    ${VALOR_PRODUTO_TOTAL}    Query    SELECT ValorTotal FROM compraconsignada_produtos WHERE codigoProduto = '${COD_PRODUTO}' AND cancelado = 0 ORDER BY Sequencia DESC LIMIT 1;
+    ${VALOR_PRODUTO_TOTAL}    Query    SELECT SUM(CASE WHEN Tipo = 'DV' THEN -ValorTotal ELSE ValorTotal END) AS ValorTotalCalculado FROM compraconsignada_produtos WHERE codigoCompra = '${COD_COMPRA}' AND cancelado = 0;
 
     ${VALOR_PRODUTO_TOTAL}    Set Variable    ${VALOR_PRODUTO_TOTAL[0][0]}
 
