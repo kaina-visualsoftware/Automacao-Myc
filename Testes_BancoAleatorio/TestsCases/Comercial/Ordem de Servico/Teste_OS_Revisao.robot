@@ -61,6 +61,7 @@ CT 1-582 - Selecionar cliente na OS com CNPJ inexistente
     E informo a tabela de preço
     E informo cliente com CNPJ não existente
     Então nenhuma OS deve ter sido persistida no banco
+    E saio da tela(OrdemDeServico)
 
 
 CT 1-141 - Bloquear Gravar a O.S sem incluir um serviço
@@ -75,6 +76,7 @@ CT 1-141 - Bloquear Gravar a O.S sem incluir um serviço
     E acesso a aba de pagamentos
     E tento gravar a OS sem serviço
     E o foco deve estar na guia de serviços
+    E saio da tela(OrdemDeServico)
 
 
 CT 1-318 - Criar Ordem de Serviço - Produtos Modalidade Normal
@@ -89,6 +91,7 @@ CT 1-318 - Criar Ordem de Serviço - Produtos Modalidade Normal
     E acesso a aba de pagamentos
     Então fecho a ordem de serviço sem pagamentos
     Então a OS com produto normal deve estar salva no banco
+    E saio da tela(OrdemDeServico)
 
 
 CT 1-319 - Excluir Ordem de Serviço - Produtos Modalidade Normal
@@ -101,6 +104,7 @@ CT 1-319 - Excluir Ordem de Serviço - Produtos Modalidade Normal
     Quando seleciono a OS e clico em excluir
     E informo a descrição de exclusão
     Então a OS deve ser excluída do banco
+    E saio da tela(OrdemDeServico)
 
 
 CT 1-393 - Lançamento de Vendedor na inclusão do produto
@@ -118,7 +122,7 @@ CT 1-393 - Lançamento de Vendedor na inclusão do produto
     E acesso a aba de pagamentos
     KeyOrdemDeServicoRevisao.Então gravo a ordem de serviço
     Então o vendedor do produto deve estar salvo no banco com o código correto
-
+    E saio da tela(OrdemDeServico)
 
 CT 1-103 - Realizar O.S incluindo descrição em serviços
     [Tags]    CT 1-103

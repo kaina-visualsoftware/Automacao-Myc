@@ -600,6 +600,7 @@ Dado que realizo um carregamento de venda
     KeyCarregamento1.Dado que acesso a tela de Carregamento
     KeyCarregamento1.E clico para adicionar um carregamento
     KeyCarregamento1.E informo uma descrição valida
+    KeyCarregamento1.E gravo o carregamento da venda
     KeyCarregamento1.E fecho a tela de carregamento
 
 

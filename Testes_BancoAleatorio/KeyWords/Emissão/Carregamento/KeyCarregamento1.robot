@@ -1410,11 +1410,16 @@ Então o carregamento deve ser excluído com sucesso
 
 Então o sistema deve impedir a exclusão
     ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+
     Should Not Be Empty    ${resultado}
-    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    3
+
+    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    ${TEMPO_TELA}
+    
     IF    ${aviso_excluir_carregamento_fechado}
+
         Clicar no botão Ok
         Sleep    ${SLEEP_BAIXO}
+        
     END
 
 Quando acesso a tela de embarque

@@ -325,7 +325,6 @@ Teste 17 - Nao permitir excluir carregamento fechado
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
-    ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
  
     Dado que acesso a tela de Carregamento
