@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 
 Resource    ../KeyWords/Login/KeyLoginSistema1.robot
 

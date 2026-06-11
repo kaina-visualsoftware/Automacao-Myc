@@ -3,8 +3,7 @@ Resource    ../../../KeyWords/Emissão/Ordem de Entrega-Novo/KeyOrdemDeEntregaNo
 Resource    ../../../utils/parametros_pre_condicoes.robot
 Resource    ../../../utils/montadorDeCenarios.robot
 
-Suite Setup    Run Keywords    Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
-Suite Teardown    Stop Remote Server
+Suite Setup    Run Keywords    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal, sem excluir a ordem de entrega
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar

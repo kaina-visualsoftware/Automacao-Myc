@@ -334,6 +334,9 @@ E listo pela tela de Geração de vendas
 # =============================================================
 
 Dado que acesso a tela de Carregamento
+
+    Sleep    ${SLEEP_BAIXO}
+
     Type With Modifiers    T    CTRL
 
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
@@ -354,6 +357,7 @@ Quando pesquiso o Carregamento gerado
     Sleep    ${SLEEP_BAIXO}
 
 E fecho a tela de carregamento
+    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
     Sleep    ${SLEEP_BAIXO}
