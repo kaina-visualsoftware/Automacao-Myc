@@ -126,3 +126,17 @@ Teste 08 - Validação do valor da conta a pagar gerada para compra consignada
     Então finalizo a compra consignada
     E valido valor da compra     
     E saio da tela(ComprasConsignada)
+
+Teste 09 - Validação do valor da conta a pagar gerada para compra consignada com devolução
+    [Documentation]    Valida se o valor da conta a pagar gerada para a compra consignada com devolução está correto no banco de dados
+    [Tags]    Teste09    Validacao_Valor_Conta_Pagar_Devolucao
+
+    Dado que eu acesso a tela de Compras Consignadas
+    Quando eu pressionar em adicionar
+    E adiciono Fornecedor
+    E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})  
+    E Abro Aba de Devolução
+    E insiro o mesmo produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
+    Então finalizo a compra consignada
+    E valido valor da compra     
+    E saio da tela(ComprasConsignada)
