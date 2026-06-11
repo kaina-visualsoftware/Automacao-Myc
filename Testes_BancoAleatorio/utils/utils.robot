@@ -2178,7 +2178,7 @@ Desativa avisos de inicialização nas permissões de usuário
 
     Execute Sql String    UPDATE usuarios_auxiliar AS uax JOIN usuarios AS u ON u.Codigo = uax.uau_codigo_usuario SET uax.uau_avisa_ferias = 0, uax.Uau_Cons_Avisos_Manutencoes_Inicializar = 0, uax.Uau_Cons_Avisos_TransfRecusadas_Inicializar = 0, uax.Uau_Avisos_Cotacao_Moeda = 0, uax.Uau_Importa_Produtos = 0, uax.uau_BloqDev_ComValorNegativo = 0 WHERE u.UserName = 'Visual';
 
-E saio da tela(${TELA})
+E saio da tela(${TELA})    
 
     IF    '${TELA}' == 'Condicional'
             

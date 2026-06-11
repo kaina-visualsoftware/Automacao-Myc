@@ -652,12 +652,13 @@ Valida informações de crédito
 
     IF    '${TELA}' != 'NFeSaidasManual'
 
-        Sleep    ${SLEEP_BAIXO}
         ${query_duplicatasNaoQuitadas}    Run Keyword And Return Status    Check If Exists In Database    SELECT Sequencia, Descricao, DataQuitacao, DataLancamento, CodigoVenda, NDocumento, NPagamento, Vencimento, Valor, ValorPendente, Empresa, TipoCR FROM ContasAReceber WHERE Codigo = ${Codigo_Cliente} AND Quitado = 0 AND ISNULL(Cancelada) AND SEQUENCIA NOT IN(SELECT valecompra.SeqCR FROM valecompra WHERE valecompra.SeqCR = SEQUENCIA);
+        Sleep    ${SLEEP_BAIXO}
 
         IF    ${query_duplicatasNaoQuitadas}
 
             ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_INFO_CRÉDITOS}    ${TEMPO_TELA}
+            Sleep    ${SLEEP_BAIXO}
 
             IF    ${tela}
 

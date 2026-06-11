@@ -106,7 +106,6 @@ CT 1-319 - Excluir Ordem de Serviço - Produtos Modalidade Normal
     Então a OS deve ser excluída do banco
     E saio da tela(OrdemDeServico)
 
-
 CT 1-393 - Lançamento de Vendedor na inclusão do produto
     [Tags]    CT 1-393
     [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_FUNCIONARIO_PRODUTO    1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
@@ -126,24 +125,24 @@ CT 1-393 - Lançamento de Vendedor na inclusão do produto
 
 CT 1-103 - Realizar O.S incluindo descrição em serviços
     [Tags]    CT 1-103
- 
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMFUNCIONARIO    1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
+
     Dado que acesso a tela de ordens de serviços para regressão
     Quando inicio uma nova ordem de serviço para detalhamento
     E informo o vendedor para OS detalhamento
     E informo a tabela de preço para OS detalhamento
     E informo o cliente pelo CPF para OS detalhamento
-    Quando insiro um serviço com descrição detalhada
-    Quando insiro o segundo serviço com descrição detalhada
+    Quando insiro um serviço com descrição detalhada    2
+    E acesso a aba de pagamentos
     Então gravo a ordem de serviço com serviços detalhados
-    Quando visualizo a ordem de serviço gerada
-    Quando acesso a aba de serviços da OS
     Então as descrições dos serviços devem estar salvas corretamente
     Então a OS com serviços detalhados deve estar salva no banco
+    E saio da tela(OrdemDeServico)
 
 
 CT 1-105 - Bloquear Finalizar O.S sem serviço
     [Tags]    CT 1-105
-    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_SERVICO_OBRIGATORIO    -1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_SERVICO_OBRIGATORIO_FINALIZAR    -1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de ordens de serviços para regressão
     Quando inicio uma nova ordem de serviço
@@ -154,3 +153,4 @@ CT 1-105 - Bloquear Finalizar O.S sem serviço
     E acesso a aba de pagamentos
     E tento finalizar a OS sem serviço
     E o foco deve estar na guia de serviços
+    E saio da tela(OrdemDeServico)

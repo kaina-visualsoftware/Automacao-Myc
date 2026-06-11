@@ -45,6 +45,12 @@
 ...    PERMITE_VARIAS_TABELAS=PermiteVariasTabelas
 ...    OS_COMISSAO_VENDEDOR_EXECUTOR=OS_ComVendedorEexecutor
 ...    LIBERA_DESCONTO_MAIOR_MAXIMO=LiberaDescontoMaiorMaximo
+...    CARGA_VENDAS=Carga_Vendas
+...    OS_SERVICO_OBRIGATORIO=OS_Servico_obrigatorio
+...    OS_FUNCIONARIO_PRODUTO=OS_Funcionario_Produto
+...    OS_EXCLUI_SUPER=Os_exclui_Super
+...    OS_COMFUNCIONARIO=OS_ComFuncionario
+...    OS_SERVICO_OBRIGATORIO_FINALIZAR=OS_Servico_obrigatorio_finalizar
 
 &{PARAM_EMP}    
 ...    VENDA_IMPRIME_CUPOM=Venda_ImprimeCupom
