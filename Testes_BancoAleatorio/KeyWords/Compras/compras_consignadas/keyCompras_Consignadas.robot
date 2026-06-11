@@ -364,7 +364,7 @@ Atualizar Tipo Compra Conforme Aba Ativa
     [Documentation]    Detecta qual aba está ativa e atualiza TIPO_COMPRA automaticamente
 
     ${aba_devolucao_ativa}    Run Keyword And Return Status
-    
+
     ...    Exists    ${ABA_DEVOLUCAO}
 
     IF    ${aba_devolucao_ativa}
@@ -666,7 +666,7 @@ E valido valor da compra
 
     ${valor_compra}    Set Variable    ${valor_compra[0][0]}
 
-    ${VALOR_PRODUTO_TOTAL}    Query    SELECT ValorTotal FROM compraconsignada_produtos WHERE codigoProduto = '${COD_PRODUTO}' AND cancelado = 0 ORDER BY Sequencia DESC LIMIT 1;
+    ${VALOR_PRODUTO_TOTAL}    Query    SELECT SUM(CASE WHEN Tipo = 'DV' THEN -ValorTotal ELSE ValorTotal END) AS ValorTotalCalculado FROM compraconsignada_produtos WHERE codigoCompra = '${COD_COMPRA}' AND cancelado = 0;
 
     ${VALOR_PRODUTO_TOTAL}    Set Variable    ${VALOR_PRODUTO_TOTAL[0][0]}
 
