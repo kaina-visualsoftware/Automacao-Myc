@@ -140,3 +140,45 @@ Teste 09 - Validação do valor da conta a pagar gerada para compra consignada c
     Então finalizo a compra consignada
     E valido valor da compra     
     E saio da tela(ComprasConsignada)
+
+
+
+Teste 10 - Validação do pagamento de compra consignada com devolução
+    [Documentation]    Valida o pagamento no caixa de uma compra consignada com devolução
+    [Tags]    Teste10    Validacao_Pagamento_Compra_Consignada_Devolucao
+
+    Dado que eu acesso a tela de Compras Consignadas
+    Quando eu pressionar em adicionar
+    E adiciono Fornecedor
+    E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})  
+    E Abro Aba de Devolução
+    E insiro o mesmo produto normal informando a quantidade(1)
+    Então finalizo a compra consignada
+    E valido valor da compra
+    E seleciono compra consignada gerada
+    Então pressiono pagar
+    Então desdobro forma de pagamento
+    Então finalizo pagamento
+    E valido contas a receber em caixa      
+    E saio da tela(ComprasConsignada)
+
+Teste 11 - Validação do pagamento de compra consignada com devolução e exclusão de produto
+    [Documentation]    Valida o pagamento no caixa de uma compra consignada com devolução e exclusão de produto
+    [Tags]    Teste11    Validacao_Pagamento_Compra_Consignada_Devolucao_Exclusao
+
+    Dado que eu acesso a tela de Compras Consignadas
+    Quando eu pressionar em adicionar
+    E adiciono Fornecedor
+    E insiro um produto normal informando a quantidade(${QTDE_PADRAO_TESTES})  
+    E Abro Aba de Devolução
+    E insiro o mesmo produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
+    Então excluo o produto da compra consignada
+    Então finalizo a compra consignada
+    E seleciono compra consignada gerada
+    Então pressiono pagar
+    Então desdobro forma de pagamento
+    Então finalizo pagamento
+    E valido contas a receber em caixa      
+    E saio da tela(ComprasConsignada)
+
+

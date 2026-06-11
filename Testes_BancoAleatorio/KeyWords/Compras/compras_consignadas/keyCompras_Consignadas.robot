@@ -595,19 +595,25 @@ Então finalizo pagamento
 
 E valido contas a receber em caixa
     [Documentation]    Valida no banco de dados que o contas a receber foi gerado com o código da compra
+
     Sleep    ${SLEEP_MEDIO}
-    ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY codigo DESC LIMIT 1;
+
+    ${contas_geradas}    Run Keyword And Return Status    Check If Exists In Database    SELECT * FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} 
 
     Should Be True    ${contas_geradas}    Contas a receber da Compra Consignada ${COD_COMPRA} não foram geradas corretamente.
+
 
     ${VALOR_APAGAR}    Query    SELECT valor FROM contasapagar WHERE codigo = ${Codigo_Cliente} AND descricao = 'Compra Consginada' AND compraconsignada = ${COD_COMPRA} ORDER BY codigo DESC LIMIT 1;
 
     ${VALOR_APAGAR}    Set Variable    ${VALOR_APAGAR[0][0]}
 
+
     Log    VALOR_APAGAR: ${VALOR_APAGAR} | tipo: ${VALOR_APAGAR.__class__.__name__}
+
     Log    VALOR_COMPRA: ${VALOR_COMPRA} | tipo: ${VALOR_COMPRA.__class__.__name__}
 
     ${VALOR_APAGAR}    Convert To Number    ${VALOR_APAGAR}    2
+
     ${VALOR_COMPRA}    Convert To Number    ${VALOR_COMPRA}    2
 
     Should Be Equal As Numbers
