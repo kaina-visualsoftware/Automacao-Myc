@@ -126,7 +126,7 @@ CT 1-393 - Lançamento de Vendedor na inclusão do produto
 
 CT 1-103 - Realizar O.S incluindo descrição em serviços
     [Tags]    CT 1-103
-
+ 
     Dado que acesso a tela de ordens de serviços para regressão
     Quando inicio uma nova ordem de serviço para detalhamento
     E informo o vendedor para OS detalhamento
