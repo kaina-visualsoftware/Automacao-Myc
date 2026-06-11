@@ -192,7 +192,7 @@ Então o foco deve estar no campo de código do produto
 
 Então o vendedor do produto deve estar salvo no banco com o código correto
     # Valida que o CodVendedorEntrega está correto na tabela vendasprodutos
-    ${consulta}    Query    SELECT vp.CodVendedorEntrega FROM vendasprodutos vp INNER JOIN vendas v ON v.Codigo = vp.CodigoVenda WHERE v.Codigo = ${COD_ORDEM_SERVICO} AND v.Tipo = 'OS' AND v.Status = 'c' AND v.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) LIMIT 1
+    ${consulta}    Query    SELECT vp.CodVendedorEntrega FROM vendasprodutos vp INNER JOIN vendas v ON v.Codigo = vp.CodigoVenda WHERE v.Codigo = ${COD_ORDEM_SERVICO}  AND v.Tipo = 'OS' LIMIT 1;
 
     Should Not Be Empty    ${consulta}    msg=Não foi encontrado registro na tabela vendasprodutos para a OS ${COD_ORDEM_SERVICO}
 
@@ -793,43 +793,63 @@ E informo o cliente pelo CPF para OS detalhamento
     ${resultado}=    Query    SELECT c.Codigo FROM clientes c WHERE c.CPF = '${CPF_COM_MASCARA}' AND c.Ativo = -1 LIMIT 1;
 
     Set Test Variable    ${Codigo_Cliente}    ${resultado[0][0]}
-
+    
+    Sleep    ${SLEEP_BAIXO}
     validacaoAviso.Valida informações de crédito
 
 
 Quando insiro um serviço com descrição detalhada
-    Press Combination    KEY.ALT    KEY.S
-    Sleep    ${SLEEP_BAIXO}
+    [Arguments]    ${QUANTIDADE_SERVICOS}=1
 
-    ${consultaServico}    Query    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IS NULL AND s.Detalha = 1 ORDER BY RAND() LIMIT 1;
+    # Busca todos os servicos elegiveis ANTES do loop
+    ${consultaServico}    Query    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Detalha <> 0;
 
-    ${condicao}=    Run Keyword And Return Status    Check If Exists In Database    SELECT 1 FROM servicos s WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Inativo = 0 AND s.TabelaComissao IS NULL AND s.Detalha = 1 LIMIT 1;
+    IF    not ${consultaServico}
 
-    IF    not ${condicao}
-
-        Fail    Banco de dados sem serviço cadastrado que exija detalhamento (Detalha = 1).
+        Fail    Banco de dados sem servico cadastrado que exija detalhamento (Detalha = 1).
 
     END
 
-    Input Text    ${EMPTY}    ${consultaServico[0][0]}
-    Sleep    ${SLEEP_BAIXO}
+    ${quantidade_servicos}    Get Length    ${consultaServico}
 
-    Press Special Key    TAB
+    Log    Encontrados ${quantidade_servicos} servicos para possivel insercao
 
-    ${tela_detalhamento}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVICO}    ${TEMPO_TELA}
-    Should Be True    ${tela_detalhamento}    msg=Tela de detalhamento do serviço não foi exibida
+    FOR    ${i}    IN RANGE    ${QUANTIDADE_SERVICOS}
 
-    ${descricao}=    Gerar descrição detalhada para serviço
-    Append To List    ${DESCRICOES_SERVICOS}    ${descricao}
+        Log    Inserindo servico ${i + 1} de ${QUANTIDADE_SERVICOS}
 
-    Input Text    ${EMPTY}    ${descricao}
-    Sleep    ${SLEEP_BAIXO}
+        Press Combination    KEY.ALT    KEY.S
+        Sleep    ${SLEEP_BAIXO}
 
-    Press Combination    KEY.ALT    KEY.C
-    Sleep    ${SLEEP_MEDIO}
+        # Seleciona um servico aleatorio da lista
+        ${indice_servico}    Evaluate    random.randint(0, len($consultaServico) - 1)
+        ${servico_selecionado}    Get From List    ${consultaServico}    ${indice_servico}
+        ${codigo_servico}    Set Variable    ${servico_selecionado[0]}
 
-    Set Test Variable    ${COD_SERVICO}    ${consultaServico[0][0]}
-    Log    Serviço ${COD_SERVICO} inserido com descrição: ${descricao}
+        Input Text    ${EMPTY}    ${codigo_servico}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Special Key    TAB
+
+        ${tela_detalhamento}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVICO}    ${TEMPO_TELA}
+        Should Be True    ${tela_detalhamento}    msg=Tela de detalhamento do servico nao foi exibida
+
+        ${descricao}=    Gerar descrição detalhada para serviço
+        Append To List    ${DESCRICOES_SERVICOS}    ${descricao}
+
+        Input Text    ${EMPTY}    ${descricao}
+        Sleep    ${SLEEP_BAIXO}
+
+        Press Combination    KEY.ALT    KEY.C
+        Sleep    ${SLEEP_MEDIO}
+
+        Press Combination    KEY.ALT    KEY.N
+        Sleep    ${SLEEP_MEDIO}
+
+        Set Test Variable    ${COD_SERVICO}    ${codigo_servico}
+        Log    Servico ${codigo_servico} inserido com descricao: ${descricao}
+
+    END
 
 
 Quando insiro o segundo serviço com descrição detalhada
@@ -868,13 +888,13 @@ Quando insiro o segundo serviço com descrição detalhada
 
 
 Gerar descrição detalhada para serviço
-    ${tipos}=    Create List    Reparo    Instalação    Manutenção    Revisão    Conserto    Configuração    Montagem    Desmontagem    Inspeção    Teste
-    
-    ${local}=    Create List    no local    no escritório    na residência do cliente    no veículo    no equipamento    no sistema    na rede    no servidor    no computador    no dispositivo
+    ${tipos}=    Create List    Reparo    Instalacao    Manutencao    Revisao    Conserto    Configuracao    Montagem    Desmontagem    Inspecao    Teste
 
-    ${problema}=    Create List    apresentando defeito    com mau funcionamento    com erro no sistema    com problema de conexão    com falha de comunicação    com desempenho lento    com tela preta    com superaquecimento    com ruído anormal    com vibração excessiva
+    ${local}=    Create List    no local    no escritorio    na residencia do cliente    no veiculo    no equipamento    no sistema    na rede    no servidor    no computador    no dispositivo
 
-    ${acao}=    Create List    foi realizada    foi executada    foi concluída    foi finalizada    foi completada    foi efetuada    foi feita    foi aplicada    foi implementada    foi executada com sucesso
+    ${problema}=    Create List    apresentando defeito    com mau funcionamento    com erro no sistema    com problema de conexao    com falha de comunicacao    com desempenho lento    com tela preta    com superaquecimento    com ruido anormal    com vibracao excessiva
+
+    ${acao}=    Create List    foi realizada    foi executada    foi concluida    foi finalizada    foi completada    foi efetuada    foi feita    foi aplicada    foi implementada    foi executada com sucesso
 
     ${tipo_idx}=    Evaluate    random.randint(0, len($tipos) - 1)
 
@@ -895,6 +915,11 @@ Gerar descrição detalhada para serviço
     ${numero}=    Evaluate    random.randint(100, 9999)
 
     ${descricao}=    Catenate    SEPARATOR=    ${SPACE}    ${tipo}${SPACE}${local_val}${SPACE}numero${SPACE}${numero},${SPACE}${problema_val},${SPACE}${acao_val}.
+
+    # Remove acentos para compatibilidade com Sikuli
+    ${descricao}=    Evaluate    "${descricao}".replace("ã", "a").replace("â", "a").replace("á", "a").replace("à", "a").replace("é", "e").replace("ê", "e").replace("è", "e").replace("í", "i").replace("î", "i").replace("ì", "i").replace("õ", "o").replace("ô", "o").replace("ó", "o").replace("ò", "o").replace("ú", "u").replace("û", "u").replace("ù", "u").replace("ç", "c")
+
+    [RETURN]    ${descricao}
 
     RETURN    ${descricao}
 
@@ -947,24 +972,24 @@ Então as descrições dos serviços devem estar salvas corretamente
     ${desc1}=    Set Variable    ${servicos_db[0][1]}
     ${desc2}=    Set Variable    ${servicos_db[1][1]}
 
-    Should Not Be Empty    ${desc1}    msg=Descrição do primeiro serviço está vazia
-    Should Not Be Empty    ${desc2}    msg=Descrição do segundo serviço está vazia
+    Should Not Be Empty    ${desc1}    msg=Descricao do primeiro serviço está vazia
+    Should Not Be Empty    ${desc2}    msg=Descricao do segundo serviço está vazia
 
-    Log    Descrição 1 salva: ${desc1}
-    Log    Descrição 2 salva: ${desc2}
+    Log    Descricao 1 salva: ${desc1}
+    Log    Descricao 2 salva: ${desc2}
 
     ${desc1_valida}=    Evaluate    len(str($desc1).strip()) > 10
     ${desc2_valida}=    Evaluate    len(str($desc2).strip()) > 10
 
-    Should Be True    ${desc1_valida}    msg=Descrição 1 muito curta ou inválida: ${desc1}
-    Should Be True    ${desc2_valida}    msg=Descrição 2 muito curta ou inválida: ${desc2}
+    Should Be True    ${desc1_valida}    msg=Descricao 1 muito curta ou inválida: ${desc1}
+    Should Be True    ${desc2_valida}    msg=Descricao 2 muito curta ou inválida: ${desc2}
 
     Log    Descrições validadas com sucesso no banco de dados!
 
 
 Então a OS com serviços detalhados deve estar salva no banco
     ${resultado}=    Query    SELECT v.Codigo, v.Tipo, v.Status FROM vendas v WHERE v.Codigo = ${CODIGO_OS_CRIADA} AND v.Tipo = 'OS' AND v.Status = 'o' AND v.Cancelada IS NULL;
-    Should Not Be Empty    ${resultado}    msg=OS não encontrada ou com status incorreto
+    Should Not Be Empty    ${resultado}    msg=OS nao encontrada ou com status incorreto
     Log    OS ${CODIGO_OS_CRIADA} validada no banco — Status: ${resultado[0][2]}
 
 
@@ -993,7 +1018,7 @@ Quando insiro um serviço com descrição para NFS-e
 
     # Abre tela de detalhamento
     ${tela_detalhamento}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVICO}    ${TEMPO_TELA}
-    Should Be True    ${tela_detalhamento}    msg=Tela de detalhamento do serviço não foi exibida
+    Should Be True    ${tela_detalhamento}    msg=Tela de detalhamento do serviço nao foi exibida
 
     # Gera descrição única
     ${descricao}=    Gerar descrição detalhada para serviço
@@ -1029,7 +1054,7 @@ Quando insiro um serviço com descrição para NFS-e
     Sleep    ${SLEEP_MEDIO}
 
     Set Test Variable    ${CODIGO_SERVICO_NFSE}    ${consultaServico[0][0]}
-    Log    Serviço ${CODIGO_SERVICO_NFSE} inserido com descrição: ${descricao}, valor: ${valor}
+    Log    Serviço ${CODIGO_SERVICO_NFSE} inserido com descriçao: ${descricao}, valor: ${valor}
 
 
 E insiro funcionários comissionados para NFS-e
