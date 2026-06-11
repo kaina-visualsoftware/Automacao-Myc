@@ -357,7 +357,7 @@ Quando pesquiso o Carregamento gerado
     Sleep    ${SLEEP_BAIXO}
 
 E fecho a tela de carregamento
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
     Sleep    ${SLEEP_BAIXO}
