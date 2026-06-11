@@ -2,7 +2,7 @@
 Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
-Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeServicoRegressao.robot
+Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeServicoRevisao.robot
 Resource    ../../../KeyWords/Financeiro/Caixa/keyCaixa1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
