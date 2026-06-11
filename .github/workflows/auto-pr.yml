@@ -277,7 +277,7 @@ jobs:
 
           cat > description_payload.json <<EOF
           {
-            "model": "stepfun-ai/step-3.7-flash",
+            "model": "deepseek-ai/deepseek-v4-flash",
             "messages": [
               {
                 "role": "user",
