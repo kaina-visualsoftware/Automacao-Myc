@@ -170,7 +170,6 @@ CT 1-271 - Adicionar serviço agregado ao incluir produto
     E seleciono o servico agregado
     E insiro o servico agregado
     E acesso a aba de pagamentos
-    E desdobre o pagamentos
-    Então fecho a ordem de serviço sem pagamentos
+    Então finalizo a ordem de serviço
     Então a OS com servico agregado deve estar salva no banco    ${COD_ORDEM_SERVICO}
     E saio da tela(OrdemDeServico)
