@@ -10,23 +10,24 @@ Resource    ${EXECDIR}/Testes_BancoAleatorio/KeyWords/Emissão/Carregamento/KeyC
 
 
 *** Variables ***
-${CPF_CLIENTE}    NONE
-${CNPJ_CLIENTE}    NONE
-${CODIGO_OS_CRIADA}    NONE
-${CODIGO_ULTIMA_OS_ANTES}    NONE
-${CODIGO_CLIENTE_CNPJ}    NONE
-${NOME_CLIENTE_CNPJ}    NONE
+${CPF_CLIENTE}                         NONE
+${CNPJ_CLIENTE}                        NONE
+${CODIGO_OS_CRIADA}                    NONE
+${CODIGO_ULTIMA_OS_ANTES}              NONE
+${CODIGO_CLIENTE_CNPJ}                 NONE
+${NOME_CLIENTE_CNPJ}                   NONE
 ${Quantidade_Produto}                  ${1}
 ${CODIGO_OS_EXCLUIR}                   ${NONE}
 ${CODIGO_PRODUTO}                      ${NONE}
 ${SENHA_SUPERVISOR}                    1
 ${CODIGO_OS_DETALHAMENTO}              NONE
 @{DESCRICOES_SERVICOS}
-${CODIGO_OS_NFSE}                        NONE
-${CODIGO_SERVICO_NFSE}                   NONE
-${DESCRICAO_SERVICO_NFSE}               NONE
-${VALOR_SERVICO_NFSE}                   NONE
-${FORMA_PAGAMENTO_30_DIAS}              NONE
+${CODIGO_OS_NFSE}                      NONE
+${CODIGO_SERVICO_NFSE}                 NONE
+${DESCRICAO_SERVICO_NFSE}              NONE
+${VALOR_SERVICO_NFSE}                  NONE
+${FORMA_PAGAMENTO_30_DIAS}             NONE
+
 
 ${AVISO_CLIENTE_NAO_CADASTRADO_CPF}   aviso_ClienteNaoCadastradoCPF.png
 ${AVISO_CLIENTE_NAO_CADASTRADO_CNPJ}  aviso_ClienteNaoCadastradoCNPJ.png
@@ -1169,8 +1170,8 @@ Dado que existe servico agregado no banco
     ${servico_agregado}    Query    SELECT sa.CodigoProdutoPrincipal, sa.CodigoServicoAgregado FROM servicos_agregados sa INNER JOIN produtos p ON p.Codigo = sa.CodigoProdutoPrincipal AND p.Cancelado IS NULL AND p.Ativo = -1 INNER JOIN servicos s ON s.Codigo = sa.CodigoServicoAgregado AND s.`Status` = 'g' AND s.Ativo = 1 LIMIT 1
 
     IF    ${servico_agregado}
-        Set Test Variable    ${CODIGO_PRODUTO_AGREGADO}    ${servico_agregado[0][0]}
-        Set Test Variable    ${CODIGO_SERVICO_AGREGADO}    ${servico_agregado[0][1]}
+        Set Suite Variable    ${CODIGO_PRODUTO_AGREGADO}    ${servico_agregado[0][0]}
+        Set Suite Variable    ${CODIGO_SERVICO_AGREGADO}    ${servico_agregado[0][1]}
         Log    Servico agregado encontrado: Produto=${CODIGO_PRODUTO_AGREGADO}, Servico=${CODIGO_SERVICO_AGREGADO}
     ELSE
         # Nao existe, precisa criar
@@ -1180,7 +1181,7 @@ Dado que existe servico agregado no banco
         ${produto}    Query    SELECT p.Codigo FROM produtos p INNER JOIN produtosestoque pe ON p.Codigo = pe.CodigoProduto WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Estoque > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1
 
         Should Not Be Empty    ${produto}    msg=Nenhum produto valido encontrado para criar servico agregado
-        Set Test Variable    ${CODIGO_PRODUTO_AGREGADO}    ${produto[0][0]}
+        Set Suite Variable    ${CODIGO_PRODUTO_AGREGADO}    ${produto[0][0]}
 
         # Busca servico valido
         ${servico}    Query
@@ -1189,7 +1190,7 @@ Dado que existe servico agregado no banco
         ...    ORDER BY RAND() LIMIT 1
 
         Should Not Be Empty    ${servico}    msg=Nenhum servico valido encontrado para criar servico agregado
-        Set Test Variable    ${CODIGO_SERVICO_AGREGADO}    ${servico[0][0]}
+        Set Suite Variable    ${CODIGO_SERVICO_AGREGADO}    ${servico[0][0]}
 
         # Insere servico agregado no banco
         Execute Sql String
@@ -1200,6 +1201,7 @@ Dado que existe servico agregado no banco
     END
 
 E informo o produto com servico agregado
+
     # Segue o mesmo padrao de "E insiro um produto normal informando a quantidade"
     Sleep    ${SLEEP_MEDIO}
     Press Combination    KEY.ALT    KEY.P
@@ -1216,8 +1218,11 @@ E informo o produto com servico agregado
         Sleep    ${SLEEP_BAIXO}
         Input Text    ${EMPTY}    1
     END
-    Press Special Key    TAB
-    Sleep    ${SLEEP_MEDIO}
+
+    FOR   ${i}    IN RANGE    ${7}
+        Press Special Key    ENTER
+        Sleep    ${SLEEP_BAIXO}
+    END
 
 E seleciono o servico agregado
     # Aguarda tela de agregados
@@ -1240,7 +1245,7 @@ E insiro o servico agregado
 
     ${exige_detalhamento}    Set Variable    ${servico_info[0][0]}
 
-    IF    ${exige_detalhamento} == 1
+    IF    ${exige_detalhamento} > 0
         # Servico exige detalhamento
         ${tela_detalhamento}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVICO}    ${TEMPO_TELA}
         IF    ${tela_detalhamento}
