@@ -42,6 +42,8 @@ ${TELA_EXCLUIR_OS}                      tela_ExcluirOS.png
 ${TELA_SENHA_USUARIO}                  tela_SenhaUsuario.png
 ${TELA_SETAR_VENDEDOR_PRODUTO}         tela_SetarVendedorProduto.png
 ${INPUT_DESCRICAO_EXCLUSAO}            input_DescricaoExclusao.png
+${TELA_AGREGADOS}                       tela_Agregados.png
+${CHECKBOX_SERVICO_AGREGADO}            checkbox_ServicoAgregado.png
 
 *** Keywords ***
 
@@ -150,6 +152,12 @@ E acesso a aba de pagamentos
     Sleep    ${SLEEP_BAIXO}
 
     validacaoAviso.Valida cliente com vales compra disponíveis
+    Sleep    ${SLEEP_MEDIO}
+
+E desdobre o pagamentos
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Combination    KEY.ALT    KEY.D
     Sleep    ${SLEEP_MEDIO}
 
 E acesso a aba de produtos
@@ -1150,3 +1158,137 @@ Então gero a NFS-e
     ELSE
         Log    NFS-e processada (pode ter sido aceita em homologação)
     END
+
+
+# ====================================================================
+# KEYWORDS - SERVIÇO AGREGADO (CT 1-271)
+# ====================================================================
+
+Dado que existe servico agregado no banco
+    # Verifica se existe servico agregado cadastrado
+    ${servico_agregado}    Query    SELECT sa.CodigoProdutoPrincipal, sa.CodigoServicoAgregado FROM servicos_agregados sa INNER JOIN produtos p ON p.Codigo = sa.CodigoProdutoPrincipal AND p.Cancelado IS NULL AND p.Ativo = -1 INNER JOIN servicos s ON s.Codigo = sa.CodigoServicoAgregado AND s.`Status` = 'g' AND s.Ativo = 1 LIMIT 1
+
+    IF    ${servico_agregado}
+        Set Test Variable    ${CODIGO_PRODUTO_AGREGADO}    ${servico_agregado[0][0]}
+        Set Test Variable    ${CODIGO_SERVICO_AGREGADO}    ${servico_agregado[0][1]}
+        Log    Servico agregado encontrado: Produto=${CODIGO_PRODUTO_AGREGADO}, Servico=${CODIGO_SERVICO_AGREGADO}
+    ELSE
+        # Nao existe, precisa criar
+        Log    Nenhum servico agregado encontrado. Criando...
+
+        # Busca produto valido
+        ${produto}    Query    SELECT p.Codigo FROM produtos p INNER JOIN produtosestoque pe ON p.Codigo = pe.CodigoProduto WHERE p.ModalidadeControle = 'Normal' AND p.Cancelado IS NULL AND p.Ativo = -1 AND p.VendaT1 > 0 AND pe.Estoque > 0 AND pe.Empresa = (SELECT ua_empresa FROM usuario_acesso WHERE ua_data = CURDATE() ORDER BY ua_id DESC LIMIT 1) ORDER BY RAND() LIMIT 1
+
+        Should Not Be Empty    ${produto}    msg=Nenhum produto valido encontrado para criar servico agregado
+        Set Test Variable    ${CODIGO_PRODUTO_AGREGADO}    ${produto[0][0]}
+
+        # Busca servico valido
+        ${servico}    Query
+        ...    SELECT s.Codigo FROM servicos s
+        ...    WHERE s.`Status` = 'g' AND s.Ativo = 1 AND s.Detalha = 0
+        ...    ORDER BY RAND() LIMIT 1
+
+        Should Not Be Empty    ${servico}    msg=Nenhum servico valido encontrado para criar servico agregado
+        Set Test Variable    ${CODIGO_SERVICO_AGREGADO}    ${servico[0][0]}
+
+        # Insere servico agregado no banco
+        Execute Sql String
+        ...    INSERT INTO servicos_agregados (CodigoProdutoPrincipal, CodigoServicoAgregado, Data, Usuario, Terminal)
+        ...    VALUES (${CODIGO_PRODUTO_AGREGADO}, ${CODIGO_SERVICO_AGREGADO}, NOW(), 'automacao', 'teste')
+
+        Log    Servico agregado criado: Produto=${CODIGO_PRODUTO_AGREGADO}, Servico=${CODIGO_SERVICO_AGREGADO}
+    END
+
+E informo o produto com servico agregado
+    # Segue o mesmo padrao de "E insiro um produto normal informando a quantidade"
+    Sleep    ${SLEEP_MEDIO}
+    Press Combination    KEY.ALT    KEY.P
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${CODIGO_PRODUTO_AGREGADO}
+    Sleep    ${SLEEP_BAIXO}
+    Press Special Key    ENTER
+    Sleep    ${SLEEP_MEDIO}
+
+    # Informa a quantidade do produto
+    IF    1 != ${Parametro_QuantidadePadraoProduto}
+        SikuliLibrary.Double Click    ${INPUT_QUANTIDADE_PRODUTO}
+        Sleep    ${SLEEP_BAIXO}
+        Input Text    ${EMPTY}    1
+    END
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+E seleciono o servico agregado
+    # Aguarda tela de agregados
+    ${tela_agregados}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_AGREGADOS}    ${TEMPO_TELA}
+    Should Be True    ${tela_agregados}    msg=Tela de agregados nao foi exibida
+
+    Sleep    ${SLEEP_MEDIO}
+
+    # Clica no checkbox do servico agregado (imagem)
+    SikuliLibrary.Click    ${CHECKBOX_SERVICO_AGREGADO}
+    Sleep    ${SLEEP_BAIXO}
+
+    # Clica em Selecionar (Alt+E)
+    Press Combination    KEY.ALT    KEY.E
+    Sleep    ${SLEEP_MEDIO}
+
+E insiro o servico agregado
+    # Verifica se o servico exige detalhamento
+    ${servico_info}    Query    SELECT s.Detalha FROM servicos s WHERE s.Codigo = ${CODIGO_SERVICO_AGREGADO};
+
+    ${exige_detalhamento}    Set Variable    ${servico_info[0][0]}
+
+    IF    ${exige_detalhamento} == 1
+        # Servico exige detalhamento
+        ${tela_detalhamento}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVICO}    ${TEMPO_TELA}
+        IF    ${tela_detalhamento}
+            ${descricao}=    Gerar descrição detalhada para serviço
+            Append To List    ${DESCRICOES_SERVICOS}    ${descricao}
+            Input Text    ${EMPTY}    ${descricao}
+            Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    KEY.C
+            Sleep    ${SLEEP_MEDIO}
+        END
+    END
+
+    # Clica em Incluir (Alt+N)
+    Press Combination    KEY.ALT    KEY.N
+    Sleep    ${SLEEP_MEDIO}
+
+Então a OS com servico agregado deve estar salva no banco
+    [Arguments]    ${CODIGO_OS}
+
+    Log    Validando OS ${CODIGO_OS} com servico agregado no banco
+
+    # Valida que a OS existe e esta fechada
+    ${os_info}    Query
+    ...    SELECT v.Codigo, v.Status, v.Tipo FROM vendas v
+    ...    WHERE v.Codigo = ${CODIGO_OS} AND v.Tipo = 'OS' AND v.Status = 'c'
+
+    Should Not Be Empty    ${os_info}    msg=OS nao encontrada ou com status incorreto
+
+    # Valida produto na tabela vendasprodutos
+    ${produtos_os}    Query
+    ...    SELECT vp.CodigoProduto, vp.CodigoVenda FROM vendasprodutos vp
+    ...    WHERE vp.CodigoVenda = ${CODIGO_OS}
+
+    Should Not Be Empty    ${produtos_os}    msg=Nenhum produto encontrado na OS ${CODIGO_OS}
+
+    # Verifica se o produto agregado esta na OS
+    ${produto_encontrado}    Evaluate    any(str(p[0]) == str($CODIGO_PRODUTO_AGREGADO) for p in $produtos_os)
+    Should Be True    ${produto_encontrado}    msg=Produto ${CODIGO_PRODUTO_AGREGADO} nao encontrado na OS
+
+    # Valida servico na tabela vendasservicos
+    ${servicos_os}    Query
+    ...    SELECT vs.CodigoServico, vs.CodigoVenda FROM vendasservicos vs
+    ...    WHERE vs.CodigoVenda = ${CODIGO_OS} AND vs.Cancelada IS NULL
+
+    Should Not Be Empty    ${servicos_os}    msg=Nenhum servico encontrado na OS ${CODIGO_OS}
+
+    # Verifica se o servico agregado esta na OS
+    ${servico_encontrado}    Evaluate    any(str(s[0]) == str($CODIGO_SERVICO_AGREGADO) for s in $servicos_os)
+    Should Be True    ${servico_encontrado}    msg=Servico ${CODIGO_SERVICO_AGREGADO} nao encontrado na OS
+
+    Log    OS ${CODIGO_OS} validada com sucesso: Produto=${CODIGO_PRODUTO_AGREGADO}, Servico=${CODIGO_SERVICO_AGREGADO}

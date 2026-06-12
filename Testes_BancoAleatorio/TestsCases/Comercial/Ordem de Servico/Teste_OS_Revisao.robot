@@ -154,3 +154,23 @@ CT 1-105 - Bloquear Finalizar O.S sem serviço
     E tento finalizar a OS sem serviço
     E o foco deve estar na guia de serviços
     E saio da tela(OrdemDeServico)
+
+
+CT 1-271 - Adicionar serviço agregado ao incluir produto
+    [Tags]    CT 1-271
+
+    Dado que existe servico agregado no banco
+    Dado que acesso a tela de ordens de serviços para regressão
+    Quando inicio uma nova ordem de serviço
+    E informo o vendedor
+    E informo a tabela de preço
+    E informo o cliente pelo CPF
+    E acesso a aba de produtos
+    E informo o produto com servico agregado
+    E seleciono o servico agregado
+    E insiro o servico agregado
+    E acesso a aba de pagamentos
+    E desdobre o pagamentos
+    Então fecho a ordem de serviço sem pagamentos
+    Então a OS com servico agregado deve estar salva no banco    ${COD_ORDEM_SERVICO}
+    E saio da tela(OrdemDeServico)
