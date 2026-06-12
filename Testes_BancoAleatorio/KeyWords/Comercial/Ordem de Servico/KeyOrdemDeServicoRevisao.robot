@@ -1282,7 +1282,8 @@ Então a OS com servico agregado deve estar salva no banco
     Should Not Be Empty    ${produtos_os}    msg=Nenhum produto encontrado na OS ${CODIGO_OS}
 
     # Verifica se o produto agregado esta na OS
-    ${produto_encontrado}    Evaluate    any(str(p[0]) == str($CODIGO_PRODUTO_AGREGADO) for p in $produtos_os)
+    ${produto_encontrado}    Check If Exists In Database
+    ...    SELECT 1 FROM vendasprodutos vp WHERE vp.CodigoVenda = ${CODIGO_OS} AND vp.CodigoProduto = ${CODIGO_PRODUTO_AGREGADO}
     Should Be True    ${produto_encontrado}    msg=Produto ${CODIGO_PRODUTO_AGREGADO} nao encontrado na OS
 
     # Valida servico na tabela vendasservicos
@@ -1293,7 +1294,8 @@ Então a OS com servico agregado deve estar salva no banco
     Should Not Be Empty    ${servicos_os}    msg=Nenhum servico encontrado na OS ${CODIGO_OS}
 
     # Verifica se o servico agregado esta na OS
-    ${servico_encontrado}    Evaluate    any(str(s[0]) == str($CODIGO_SERVICO_AGREGADO) for s in $servicos_os)
+    ${servico_encontrado}    Check If Exists In Database
+    ...    SELECT 1 FROM vendasservicos vs WHERE vs.CodigoVenda = ${CODIGO_OS} AND vs.CodigoServico = ${CODIGO_SERVICO_AGREGADO} AND vs.Cancelada IS NULL
     Should Be True    ${servico_encontrado}    msg=Servico ${CODIGO_SERVICO_AGREGADO} nao encontrado na OS
 
     Log    OS ${CODIGO_OS} validada com sucesso: Produto=${CODIGO_PRODUTO_AGREGADO}, Servico=${CODIGO_SERVICO_AGREGADO}
