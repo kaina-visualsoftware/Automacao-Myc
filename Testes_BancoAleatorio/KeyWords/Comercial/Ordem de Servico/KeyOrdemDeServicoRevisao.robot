@@ -45,6 +45,9 @@ ${TELA_SETAR_VENDEDOR_PRODUTO}         tela_SetarVendedorProduto.png
 ${INPUT_DESCRICAO_EXCLUSAO}            input_DescricaoExclusao.png
 ${TELA_AGREGADOS}                       tela_Agregados.png
 ${CHECKBOX_SERVICO_AGREGADO}            checkbox_ServicoAgregado.png
+${TELA_FUNCIONARIOS_COMISSIONADOS}      tela_FuncionariosComissionados.png
+${CODIGO_SERVICO_COMISSAO}              NONE
+${CODIGO_FUNCIONARIO_COMISSAO}          NONE
 
 *** Keywords ***
 
@@ -1307,3 +1310,155 @@ Então a OS com servico agregado deve estar salva no banco
     ...    msg=Servico ${CODIGO_SERVICO_AGREGADO} nao encontrado na OS ${CODIGO_OS}. Servicos na OS: ${servicos_os}
 
     Log    OS ${CODIGO_OS} validada com sucesso: Produto=${CODIGO_PRODUTO_AGREGADO}, Servico=${CODIGO_SERVICO_AGREGADO}
+
+
+# ====================================================================
+# KEYWORDS - FUNCIONARIO COMISSIONADO NA OS (CT 1-309)
+# ====================================================================
+
+Dado que obtenho um servico ativo para comissionamento
+    # Busca servico ativo que pode ser comissionado
+    ${servico}    Query
+    ...    SELECT s.Codigo, s.Detalha FROM servicos s
+    ...    WHERE s.`Status` = 'g' AND s.Ativo = 1
+    ...    ORDER BY RAND() LIMIT 1
+
+    Should Not Be Empty    ${servico}    msg=Nenhum servico ativo encontrado para comissionamento
+
+    Set Suite Variable    ${CODIGO_SERVICO_COMISSAO}    ${servico[0][0]}
+    Set Suite Variable    ${DETALHA_SERVICO}    ${servico[0][1]}
+
+    Log    Servico selecionado para comissionamento: ${CODIGO_SERVICO_COMISSAO} (Detalha: ${DETALHA_SERVICO})
+
+E obtenho um funcionario com comissao cadastrada
+    # Busca funcionario que tem comissao cadastrada
+    ${funcionario}    Query
+    ...    SELECT f.Codigo FROM funcionarios f
+    ...    INNER JOIN comissaoporlinha cl ON cl.Codigo = f.CodigoComissao
+    ...    WHERE f.Ativo = -1 AND f.CodigoComissao IS NOT NULL AND f.CodigoComissao > 0
+    ...    ORDER BY RAND() LIMIT 1
+
+    IF    not ${funcionario}
+        # Se nao encontrou com comissao, busca qualquer funcionario ativo
+        ${funcionario}    Query
+        ...    SELECT f.Codigo FROM funcionarios f
+        ...    WHERE f.Ativo = -1
+        ...    ORDER BY RAND() LIMIT 1
+    END
+
+    Should Not Be Empty    ${funcionario}    msg=Nenhum funcionario encontrado
+
+    Set Suite Variable    ${CODIGO_FUNCIONARIO_COMISSAO}    ${funcionario[0][0]}
+
+    Log    Funcionario selecionado para comissionamento: ${CODIGO_FUNCIONARIO_COMISSAO}
+
+E informo o servico na OS
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_BAIXO}
+
+    Input Text    ${EMPTY}    ${CODIGO_SERVICO_COMISSAO}
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+E informo o servico com detalhamento se necessario
+    IF    ${DETALHA_SERVICO} == 1
+        ${tela_detalhamento}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_DETALHAMENTO_SERVICO}    ${TEMPO_TELA}
+        IF    ${tela_detalhamento}
+            ${descricao}=    Gerar descrição detalhada para serviço
+            Append To List    ${DESCRICOES_SERVICOS}    ${descricao}
+            Input Text    ${EMPTY}    ${descricao}
+            Sleep    ${SLEEP_BAIXO}
+            Press Combination    KEY.ALT    KEY.C
+            Sleep    ${SLEEP_MEDIO}
+        END
+    END
+
+E clico em incluir servico
+    Press Combination    KEY.ALT    KEY.N
+    Sleep    ${SLEEP_MEDIO}
+
+E informo o funcionario comissionado
+    # Aguarda tela de funcionarios comissionados
+    ${tela_comissionados}=    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_FUNCIONARIOS_COMISSIONADOS}    ${TEMPO_TELA}
+    Should Be True    ${tela_comissionados}    msg=Tela de Funcionarios Comissionados nao foi exibida
+
+    Sleep    ${SLEEP_MEDIO}
+
+    # Digita o codigo do funcionario
+    Input Text    ${EMPTY}    ${CODIGO_FUNCIONARIO_COMISSAO}
+    Sleep    ${SLEEP_BAIXO}
+
+    # Inclui o funcionario (Alt+I)
+    Press Combination    KEY.ALT    KEY.I
+    Sleep    ${SLEEP_MEDIO}
+
+    # Fecha a tela (Alt+S)
+    Press Combination    KEY.ALT    KEY.S
+    Sleep    ${SLEEP_MEDIO}
+
+E gravo a OS
+    Press Combination    KEY.ALT    KEY.G
+    Sleep    ${SLEEP_MEDIO}
+
+    Wait Until Screen Contain    ${TELA_ORDEM_DE_SERVICO}    ${TEMPO_TELA}
+    Sleep    ${SLEEP_MEDIO}
+
+    # Obtem o codigo da OS criada
+    ${CODIGO_OS_CRIADA}=    Pegar código da última OS criada do banco
+    Set Suite Variable    ${CODIGO_OS_CRIADA}    ${CODIGO_OS_CRIADA}
+    Log    OS criada com codigo: ${CODIGO_OS_CRIADA}
+
+Então a OS com funcionario comissionado deve estar salva no banco
+    Log    Validando OS ${CODIGO_OS_CRIADA} com funcionario comissionado
+
+    # Valida que a OS existe e esta fechada
+    ${os_info}    Query
+    ...    SELECT v.Codigo, v.Status, v.Tipo FROM vendas v
+    ...    WHERE v.Codigo = ${CODIGO_OS_CRIADA} AND v.Tipo = 'OS' AND v.Status = 'c'
+
+    Should Not Be Empty    ${os_info}    msg=OS nao encontrada ou com status incorreto
+
+    # Valida servico na tabela vendasservicos
+    ${servico_os}    Query
+    ...    SELECT vs.CodigoServico, vs.Sequencia FROM vendasservicos vs
+    ...    WHERE vs.CodigoVenda = ${CODIGO_OS_CRIADA} AND vs.Cancelada IS NULL
+
+    Should Not Be Empty    ${servico_os}    msg=Nenhum servico encontrado na OS ${CODIGO_OS_CRIADA}
+
+    # Verifica se o servico correto esta na OS
+    ${servico_encontrado}    Query
+    ...    SELECT vs.CodigoServico FROM vendasservicos vs
+    ...    WHERE vs.CodigoVenda = ${CODIGO_OS_CRIADA} AND vs.CodigoServico = ${CODIGO_SERVICO_COMISSAO} AND vs.Cancelada IS NULL
+
+    Should Not Be Empty    ${servico_encontrado}
+    ...    msg=Servico ${CODIGO_SERVICO_COMISSAO} nao encontrado na OS ${CODIGO_OS_CRIADA}
+
+    Log    Servico ${CODIGO_SERVICO_COMISSAO} validado na OS
+
+    # Valida comissao na tabela comissoesservico
+    ${comissao_info}    Query
+    ...    SELECT cs.CodigoServico, cs.CodigoFuncionario, cs.ValorComissao
+    ...    FROM comissoesservico cs
+    ...    WHERE cs.CodigoVenda = ${CODIGO_OS_CRIADA} AND cs.Cancelada IS NULL
+
+    Should Not Be Empty    ${comissao_info}    msg=Comissao nao encontrada na OS ${CODIGO_OS_CRIADA}
+
+    # Verifica se o servico e funcionario estao na comissao
+    ${comissao_servico}    Query
+    ...    SELECT cs.CodigoServico FROM comissoesservico cs
+    ...    WHERE cs.CodigoVenda = ${CODIGO_OS_CRIADA} AND cs.CodigoServico = ${CODIGO_SERVICO_COMISSAO} AND cs.Cancelada IS NULL
+
+    Should Not Be Empty    ${comissao_servico}
+    ...    msg=Servico ${CODIGO_SERVICO_COMISSAO} nao encontrado na comissao da OS ${CODIGO_OS_CRIADA}
+
+    ${comissao_funcionario}    Query
+    ...    SELECT cs.CodigoFuncionario FROM comissoesservico cs
+    ...    WHERE cs.CodigoVenda = ${CODIGO_OS_CRIADA} AND cs.CodigoFuncionario = ${CODIGO_FUNCIONARIO_COMISSAO} AND cs.Cancelada IS NULL
+
+    Should Not Be Empty    ${comissao_funcionario}
+    ...    msg=Funcionario ${CODIGO_FUNCIONARIO_COMISSAO} nao encontrado na comissao da OS ${CODIGO_OS_CRIADA}
+
+    Log    Comissao validada: Servico=${CODIGO_SERVICO_COMISSAO}, Funcionario=${CODIGO_FUNCIONARIO_COMISSAO}
+    Log    OS ${CODIGO_OS_CRIADA} validada com sucesso com funcionario comissionado!
