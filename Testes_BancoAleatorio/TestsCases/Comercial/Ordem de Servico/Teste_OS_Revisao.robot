@@ -178,10 +178,11 @@ CT 1-271 - Adicionar serviço agregado ao incluir produto
 
 CT 1-309 - Funcionário comissionado na ordem de serviço
     [Tags]    CT 1-309
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMFUNCIONARIO    0    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de ordens de serviços para regressão
-    E que obtenho um servico ativo para comissionamento
-    E que obtenho um funcionario com comissao cadastrada
+    E obtenho um servico ativo para comissionamento
+    E obtenho um funcionario qualquer
     Quando inicio uma nova ordem de serviço
     E informo o vendedor
     E informo a tabela de preço

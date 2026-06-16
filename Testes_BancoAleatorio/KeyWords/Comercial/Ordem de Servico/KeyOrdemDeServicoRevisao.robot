@@ -1330,21 +1330,12 @@ Dado que obtenho um servico ativo para comissionamento
 
     Log    Servico selecionado para comissionamento: ${CODIGO_SERVICO_COMISSAO} (Detalha: ${DETALHA_SERVICO})
 
-E obtenho um funcionario com comissao cadastrada
-    # Busca funcionario que tem comissao cadastrada
+E obtenho um funcionario qualquer
+    # Busca qualquer funcionario ativo (pode ser qualquer um)
     ${funcionario}    Query
     ...    SELECT f.Codigo FROM funcionarios f
-    ...    INNER JOIN comissaoporlinha cl ON cl.Codigo = f.CodigoComissao
-    ...    WHERE f.Ativo = -1 AND f.CodigoComissao IS NOT NULL AND f.CodigoComissao > 0
+    ...    WHERE f.Ativo = -1
     ...    ORDER BY RAND() LIMIT 1
-
-    IF    not ${funcionario}
-        # Se nao encontrou com comissao, busca qualquer funcionario ativo
-        ${funcionario}    Query
-        ...    SELECT f.Codigo FROM funcionarios f
-        ...    WHERE f.Ativo = -1
-        ...    ORDER BY RAND() LIMIT 1
-    END
 
     Should Not Be Empty    ${funcionario}    msg=Nenhum funcionario encontrado
 
