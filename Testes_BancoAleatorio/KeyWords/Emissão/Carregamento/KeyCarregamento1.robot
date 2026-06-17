@@ -812,7 +812,7 @@ E gravo o carregamento da venda
 
     Clicar no botão Gravar
 
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
 
 
 Fechar tela de carregamento
@@ -1457,7 +1457,7 @@ E gravo o embarque
 
 
 Então o embarque deve ser salvo com sucesso
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
 
 
 Então o adiantamento deve estar cadastrado no banco
