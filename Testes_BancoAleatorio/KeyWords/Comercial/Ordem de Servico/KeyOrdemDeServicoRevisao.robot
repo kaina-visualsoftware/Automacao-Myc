@@ -48,6 +48,9 @@ ${CHECKBOX_SERVICO_AGREGADO}            checkbox_ServicoAgregado.png
 ${TELA_FUNCIONARIOS_COMISSIONADOS}      tela_FuncionariosComissionados.png
 ${CODIGO_SERVICO_COMISSAO}              NONE
 ${CODIGO_FUNCIONARIO_COMISSAO}          NONE
+${CODIGO_PRODUTO_AGREGADO}              NONE
+${CODIGO_SERVICO_AGREGADO}              NONE
+${DETALHA_SERVICO}                      NONE
 
 *** Keywords ***
 
@@ -1316,7 +1319,7 @@ Então a OS com servico agregado deve estar salva no banco
 # KEYWORDS - FUNCIONARIO COMISSIONADO NA OS (CT 1-309)
 # ====================================================================
 
-Dado que obtenho um servico ativo para comissionamento
+Obtenho um servico ativo para comissionamento
     # Busca servico ativo que pode ser comissionado
     ${servico}    Query
     ...    SELECT s.Codigo, s.Detalha FROM servicos s
