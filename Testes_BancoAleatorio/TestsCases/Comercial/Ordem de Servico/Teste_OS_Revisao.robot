@@ -181,7 +181,7 @@ CT 1-309 - Funcionário comissionado na ordem de serviço
     [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMFUNCIONARIO    0    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que acesso a tela de ordens de serviços para regressão
-    E obtenho um servico ativo para comissionamento
+    Obtenho um servico ativo para comissionamento
     E obtenho um funcionario qualquer
     Quando inicio uma nova ordem de serviço
     E informo o vendedor
@@ -192,7 +192,7 @@ CT 1-309 - Funcionário comissionado na ordem de serviço
     E clico em incluir servico
     E informo o funcionario comissionado
     E acesso a aba de pagamentos
-    E gravo a OS
+    Então finalizo a ordem de serviço
     Então a OS com funcionario comissionado deve estar salva no banco
     E saio da tela(OrdemDeServico)
     
