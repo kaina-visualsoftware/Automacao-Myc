@@ -433,43 +433,52 @@ Então clico em excluir
     Should Be True    ${os_excluida}    Ordem de Serviço não foi excluída corretamente.
 
 Calcula valor final da OS
-    
+
+    # Verificacao dinamica no banco - nao depende de variaveis setadas manualmente
+    ${consultaProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
+    ${OS_PossuiProduto_DB}    Set Variable    ${consultaProdutos[0][0]}
+    ${OS_PossuiProduto_DB}    Evaluate    ${OS_PossuiProduto_DB} > 0
+
+    ${consultaServicos}    Query    SELECT COUNT(*) FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL;
+    ${OS_PossuiServico_DB}    Set Variable    ${consultaServicos[0][0]}
+    ${OS_PossuiServico_DB}    Evaluate    ${OS_PossuiServico_DB} > 0
+
     ${somaValorTotalProdutos}    Evaluate    0
 
-    IF    ${OS_PossuiProduto}
-        
+    IF    ${OS_PossuiProduto_DB}
+
         Sleep    ${SLEEP_BAIXO}
         ${consultaOSProdutos}     Query    SELECT vp.CodigoProduto, vp.ValorUnitario, vp.ValorTotal FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO} ORDER BY vp.Sequencia;
-        
+
         ${consultaQtdeProdutos}    Query    SELECT COUNT(*) FROM vendasprodutos vp WHERE vp.CodigoVenda = ${COD_ORDEM_SERVICO};
 
         ${QUANTIDADE_PRODUTOS}    Set Variable    ${consultaQtdeProdutos[0][0]}
 
         FOR    ${i}    IN RANGE    ${QUANTIDADE_PRODUTOS}
-            
+
             IF    $List_Quantidades_Produto is not None
 
                 ${Quantidade_Produto}    Set Variable    ${List_Quantidades_Produto[${i}]}
-            
+
             END
 
             ${Produto_ValorUnitario}    Set Variable    ${consultaOSProdutos[${i}][1]}
             ${Produto_ValorTotal}       Set Variable    ${consultaOSProdutos[${i}][2]}
-            
+
             ${calcValorTotalProduto}    Evaluate    round((${Quantidade_Produto} * ${Produto_ValorUnitario}), 2)
 
             # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
             ${calcValorTotalProduto}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcValorTotalProduto}    ${Produto_ValorTotal}
-            
+
             ${somaValorTotalProdutos}    Evaluate    (${somaValorTotalProdutos} + ${calcValorTotalProduto})
-        
+
         END
-    
+
     END
-    
+
     ${somaValorTotalServicos}    Evaluate    0
 
-    IF    ${OS_PossuiServico}
+    IF    ${OS_PossuiServico_DB}
         
         Sleep    ${SLEEP_BAIXO}
         ${consultaOSServicos}     Query    SELECT vs.CodigoServico, vs.ValorUnitario, vs.ValorTotal FROM vendasservicos vs WHERE vs.CodigoVenda = ${COD_ORDEM_SERVICO} AND vs.Cancelada IS NULL ORDER BY vs.Sequencia;
@@ -507,7 +516,7 @@ Calcula valor final da OS
     # Valida se há diferença de um centavo entre o valor do BD/ERP e o valor calculado pela automação. Se houver diferença, retorna o valor esperado (BD/ERP).
     ${calcValorTotalOS}    ${houve_ajuste}    Valida Diferenca De Um Centavo    ${calcValorTotalOS}    ${ValorTotalOS[0][0]}
 
-    IF    ${OS_PossuiServico} and not ${Parametro_NaoDeduzirISSQNComissaoOS}
+    IF    ${OS_PossuiServico_DB} and not ${Parametro_NaoDeduzirISSQNComissaoOS}
 
         Set Test Variable    ${Valor_Total_Servicos}    ${calcValorTotalServicoDeducaoTrbutos}
 
