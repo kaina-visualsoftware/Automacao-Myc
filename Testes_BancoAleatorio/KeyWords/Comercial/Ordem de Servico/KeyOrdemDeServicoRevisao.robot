@@ -1321,24 +1321,26 @@ Então a OS com servico agregado deve estar salva no banco
 
 Obtenho um servico ativo para comissionamento
     # Busca servico ativo que pode ser comissionado
-    ${servico}    Query
-    ...    SELECT s.Codigo, s.Detalha FROM servicos s
-    ...    WHERE s.`Status` = 'g' AND s.Ativo = 1
-    ...    ORDER BY RAND() LIMIT 1
+    ${servico}    Query    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.Ativo = 1 ORDER BY RAND() LIMIT 1
+
+    Log    Resultado da query: ${servico}
 
     Should Not Be Empty    ${servico}    msg=Nenhum servico ativo encontrado para comissionamento
 
-    Set Suite Variable    ${CODIGO_SERVICO_COMISSAO}    ${servico[0][0]}
-    Set Suite Variable    ${DETALHA_SERVICO}    ${servico[0][1]}
+    ${primeiro_resultado}    Get From List    ${servico}    0
+    Log    Primeiro resultado: ${primeiro_resultado}
+
+    ${codigo_servico}    Get From List    ${primeiro_resultado}    0
+    ${detalha_servico}    Get From List    ${primeiro_resultado}    1
+
+    Set Suite Variable    ${CODIGO_SERVICO_COMISSAO}    ${codigo_servico}
+    Set Suite Variable    ${DETALHA_SERVICO}    ${detalha_servico}
 
     Log    Servico selecionado para comissionamento: ${CODIGO_SERVICO_COMISSAO} (Detalha: ${DETALHA_SERVICO})
 
 E obtenho um funcionario qualquer
     # Busca qualquer funcionario ativo (pode ser qualquer um)
-    ${funcionario}    Query
-    ...    SELECT f.Codigo FROM funcionarios f
-    ...    WHERE f.Ativo = -1
-    ...    ORDER BY RAND() LIMIT 1
+    ${funcionario}    Query    SELECT f.Codigo FROM funcionarios f WHERE f.Ativo = -1 ORDER BY RAND() LIMIT 1
 
     Should Not Be Empty    ${funcionario}    msg=Nenhum funcionario encontrado
 
