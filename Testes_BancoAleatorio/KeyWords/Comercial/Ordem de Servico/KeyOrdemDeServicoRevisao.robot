@@ -1321,7 +1321,7 @@ Então a OS com servico agregado deve estar salva no banco
 
 Obtenho um servico ativo para comissionamento
     # Busca servico ativo que pode ser comissionado
-    ${servico}    Query    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.`Status` = 'g' AND s.Ativo = 1 ORDER BY RAND() LIMIT 1
+    ${servico}    Query    SELECT s.Codigo, s.Detalha FROM servicos s WHERE s.Ativo = 1 ORDER BY RAND() LIMIT 1
 
     Log    Resultado da query: ${servico}
 
@@ -1339,7 +1339,7 @@ Obtenho um servico ativo para comissionamento
 
 E obtenho um funcionario qualquer
     # Busca qualquer funcionario ativo (pode ser qualquer um)
-    ${funcionario}    Query    SELECT f.Codigo FROM funcionarios f WHERE f.Ativo = -1 ORDER BY RAND() LIMIT 1
+    ${funcionario}    Query    SELECT c.* FROM clientes c WHERE c.Tipo = "V" AND c.Ativo = -1 ORDER BY RAND() LIMIT 1
 
     Should Not Be Empty    ${funcionario}    msg=Nenhum funcionario encontrado
 
@@ -1407,6 +1407,8 @@ E gravo a OS
 
 Então a OS com funcionario comissionado deve estar salva no banco
     Log    Validando OS ${CODIGO_OS_CRIADA} com funcionario comissionado
+    Log    CODIGO_SERVICO_COMISSAO: ${CODIGO_SERVICO_COMISSAO}
+    Log    CODIGO_FUNCIONARIO_COMISSAO: ${CODIGO_FUNCIONARIO_COMISSAO}
 
     # Valida que a OS existe e esta fechada
     ${os_info}    Query
@@ -1433,10 +1435,7 @@ Então a OS com funcionario comissionado deve estar salva no banco
     Log    Servico ${CODIGO_SERVICO_COMISSAO} validado na OS
 
     # Valida comissao na tabela comissoesservico
-    ${comissao_info}    Query
-    ...    SELECT cs.CodigoServico, cs.CodigoFuncionario, cs.ValorComissao
-    ...    FROM comissoesservico cs
-    ...    WHERE cs.CodigoVenda = ${CODIGO_OS_CRIADA} AND cs.Cancelada IS NULL
+    ${comissao_info}    Query    SELECT cs.CodigoServico, cs.CodigoFuncionario, cs.ValorComissao FROM comissoesservico cs WHERE cs.CodigoVenda = ${CODIGO_OS_CRIADA} AND cs.Cancelada IS NULL
 
     Should Not Be Empty    ${comissao_info}    msg=Comissao nao encontrada na OS ${CODIGO_OS_CRIADA}
 
