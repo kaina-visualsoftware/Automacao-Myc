@@ -1405,6 +1405,10 @@ E gravo a OS
     Set Suite Variable    ${CODIGO_OS_CRIADA}    ${CODIGO_OS_CRIADA}
     Log    OS criada com codigo: ${CODIGO_OS_CRIADA}
 
+    # Debug - verifica se OS foi criada
+    ${os_status}    Query    SELECT v.Codigo, v.Status FROM vendas v WHERE v.Codigo = ${CODIGO_OS_CRIADA} AND v.Tipo = 'OS';
+    Log    Status da OS no banco: ${os_status}
+
 Então a OS com funcionario comissionado deve estar salva no banco
     Log    Validando OS ${CODIGO_OS_CRIADA} com funcionario comissionado
     Log    CODIGO_SERVICO_COMISSAO: ${CODIGO_SERVICO_COMISSAO}
