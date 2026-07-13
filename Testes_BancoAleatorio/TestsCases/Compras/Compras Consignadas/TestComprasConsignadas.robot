@@ -106,7 +106,7 @@ Teste 07 - Pagamento de Compra Consignada
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
     Então pressiono pagar
-    Então desdobro forma de pagamento
+    Então desdobro forma de pagamento    SELECIONAR_TODOS=False
     Então finalizo pagamento
     E valido contas a receber em caixa      
     E saio da tela(ComprasConsignada)
@@ -157,7 +157,7 @@ Teste 10 - Validação do pagamento de compra consignada com devolução
     E valido valor da compra
     E seleciono compra consignada gerada
     Então pressiono pagar
-    Então desdobro forma de pagamento
+    Então desdobro forma de pagamento    SELECIONAR_TODOS=False
     Então finalizo pagamento
     E valido contas a receber em caixa      
     E saio da tela(ComprasConsignada)
@@ -176,7 +176,7 @@ Teste 11 - Validação do pagamento de compra consignada com devolução e exclu
     Então finalizo a compra consignada
     E seleciono compra consignada gerada
     Então pressiono pagar
-    Então desdobro forma de pagamento
+    Então desdobro forma de pagamento    SELECIONAR_TODOS=False
     Então finalizo pagamento
     E valido contas a receber em caixa      
     E saio da tela(ComprasConsignada)
@@ -192,7 +192,7 @@ Teste 12 - Validação do pagamento de compra consignada em lotes
     E adciono fornecedor em pagamento da compra consignada
     E filtro por data de criação de compras consignadas
     E seleciono todas as compras consignadas geradas nesse lote
-    Então desdobro forma de pagamento
+    Então desdobro forma de pagamento    SELECIONAR_TODOS=True
     Então finalizo pagamento
     
     E valido contas a receber em caixa      

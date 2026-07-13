@@ -143,6 +143,8 @@ Quando eu pressionar em adicionar
 
     Capturar Código Da Última Compra Consignada
 
+    Append To List    ${BUFF_COD_COMPRAS_LOTE}    ${COD_COMPRA}
+
 Capturar Código Da Última Compra Consignada
     [Documentation]    Consulta o banco e armazena o código da última compra consignada aberta
 
@@ -385,7 +387,7 @@ E adiciono uma compra consignada com Fornecedor e produto normal informando a qu
     E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     Então finalizo a compra consignada
     E valido valor da compra
-    Append To List    ${BUFF_COD_COMPRAS_LOTE}    ${COD_COMPRA}
+  
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -676,7 +678,8 @@ E Abro Aba de Devolução
     Wait Until Screen Contain    ${TELA_LANC_COMPRA_CONSIG}    ${TEMPO_TELA}
 
     Press Combination    KEY.ALT    KEY.D
-    Sleep    ${TEMPO_TELA}
+
+    Sleep    ${SLEEP_BAIXO}
 
     Wait Until Screen Contain    ${ABA_DEVOLUCAO}    ${TEMPO_TELA}
 
@@ -868,13 +871,15 @@ Então pressiono pagar
 
 Então desdobro forma de pagamento
     [Documentation]    Desdobra a forma de pagamento para selecionar a opção de compra consignada
-
+    [Arguments]    ${SELECIONAR_TODOS}
     Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+
     IF    not ${SELECIONAR_TODOS}
 
         Selecionar Registro Na Grid
 
     END
+
 
 
     ${CHECK_BOX_MARCADO_true}    Run Keyword And Return Status
@@ -898,6 +903,25 @@ Então desdobro forma de pagamento
 
         END
         Sleep    ${SLEEP_BAIXO}
+
+    ELSE IF    not ${CHECK_BOX_MARCADO_true}
+
+        FOR    ${_}    IN RANGE    4
+
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    TAB
+
+        END
+
+        Press Special Key    DOWN
+
+        FOR    ${_}    IN RANGE    5
+
+            Sleep    ${SLEEP_BAIXO}
+            Press Special Key    ENTER
+
+        END
+    
     ELSE
 
         Fail
