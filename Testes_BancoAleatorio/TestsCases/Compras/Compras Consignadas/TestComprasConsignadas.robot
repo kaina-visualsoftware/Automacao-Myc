@@ -181,4 +181,20 @@ Teste 11 - Validação do pagamento de compra consignada com devolução e exclu
     E valido contas a receber em caixa      
     E saio da tela(ComprasConsignada)
 
+Teste 12 - Validação do pagamento de compra consignada em lotes
+    [Documentation]    Valida o pagamento no caixa de compras consignadas em lotes
+    [Tags]    Teste12    Validacao_Pagamento_Compra_Consignada_Lotes
+
+    Dado que eu acesso a tela de Compras Consignadas
+    E adiciono a primeira compra com Fornecedor e produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
+    E adiciono a segunda compra com Fornecedor e produto normal informando a quantidade(${QTDE_PADRAO_TESTES})
+    Então pressiono pagar
+    E adciono fornecedor em pagamento da compra consignada
+    E filtro por data de criação de compras consignadas
+    E seleciono todas as compras consignadas geradas nesse lote
+    Então desdobro forma de pagamento
+    Então finalizo pagamento
+    
+    E valido contas a receber em caixa      
+    E saio da tela(ComprasConsignada)
 

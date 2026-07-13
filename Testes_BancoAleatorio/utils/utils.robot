@@ -102,7 +102,6 @@ ${INPUT_CODIGO_CLIENTE_DEVOLUCAO}                      lb_CodClienteDevolucao.pn
 ${INPUT_COD_BENEFICIADO_DOACAO}                        lb_CodBeneficiadoDoacao.png
 ${INPUT_COD_CLIENTE_NFE_SAIDA_MANUAL}                  input_CodCliente.png
 ${INPUT_VALOR_UNITARIO_PRODUTO}                        input_ValorUnitarioProduto.png
-${INPUT_COD_FORNECEDOR}                                lb_CodFornecedor.png
 
 # Labels
 ${LABEL_AVISO_CREDITO_LIBERADO}                        lb_CreditoLiberado.png
