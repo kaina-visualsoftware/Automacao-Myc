@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py

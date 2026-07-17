@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary
+Library    SikuliLibrary    mode=NEW
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    DateTime
@@ -640,6 +640,8 @@ Valida tela de confirmação de data
 
 Recupera sequencia caixa
 
+    Log To Console    Terminal=[${NomeTerminalExecucao}]
+
     IF    ${Parametro_CaixaControladoPorUsuario}
         
         # No MyCommerce, valida se o caixa aberto — seja por usuário ou por terminal — possui marcado o recebimento ou pagamento diário. Caso contrário, exibe a tela de confirmação de data.
@@ -653,6 +655,8 @@ Recupera sequencia caixa
 
     END
     
+    Log To Console    Resultado=${Controle_Pag_Rec_Diario}
+
     Set Test Variable    ${CODIGO_CAIXA}    ${Controle_Pag_Rec_Diario[0][0]}
 
 Cria novo NDocumento a partir da sequencia do caixa

@@ -231,3 +231,87 @@ Preparar Ambiente MyCommerce
         myCommerce.Abrir MyCommerce
         
     END
+
+# ====================================================================
+# KEYWORDS - OS_EXCLUI_SUPER (Permissão de Usuário)
+# ====================================================================
+
+Pré Condição Os_exclui_Super Ativado
+
+    Log To Console    \n\n╔══ PRÉ-CONDIÇÃO: OS_EXCLUI_SUPER ══╗
+
+    # Obter o código do usuário atual
+    ${SQL_GET_USUARIO}    Set Variable
+    ...    SELECT u.Codigo FROM usuarios u
+    ...    INNER JOIN usuario_acesso ua ON u.UserName = ua.ua_usuario_mycommerce
+    ...    WHERE ua.ua_data = CURDATE()
+    ...    ORDER BY ua.ua_id DESC LIMIT 1
+
+    ${codigo_usuario}    Query    ${SQL_GET_USUARIO}
+    ${codigo_usuario}    Set Variable    ${codigo_usuario[0][0]}
+
+    Log To Console    \n[Usuário atual] Codigo = ${codigo_usuario}
+
+    # Salvar valor atual
+    ${SQL_SELECT}    Set Variable    SELECT Os_exclui_Super FROM usuarios WHERE Codigo = ${codigo_usuario};
+
+    ${valor_atual}    Query    ${SQL_SELECT}
+    ${valor_atual}    Set Variable    ${valor_atual[0][0]}
+
+    Log To Console    [VALOR ATUAL] Os_exclui_Super = ${valor_atual}
+
+    Set Global Variable    ${RESTORE_OS_EXCLUI_SUPER}    ${valor_atual}
+
+    # Alterar para 1 se necessário
+    IF    ${valor_atual} != 1
+
+        Log To Console    [UPDATE] Os_exclui_Super: ${valor_atual} → 1
+
+        ${SQL_UPDATE}    Set Variable    UPDATE usuarios SET Os_exclui_Super = 1 WHERE Codigo = ${codigo_usuario};
+
+        Execute Sql String    ${SQL_UPDATE}
+
+        Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
+
+        Carregar parâmetros do sistema
+
+    ELSE
+
+        Log To Console    Nenhuma alteração necessária.
+
+    END
+
+    Log To Console    \n╚═══════════════════════════════════╝\n
+
+Restaurar Os_exclui_Super
+
+    ${valor_original}    Get Variable Value    ${RESTORE_OS_EXCLUI_SUPER}
+
+    IF    ${valor_original} is not None
+
+        Log To Console    \n\n╔══ RESTAURAÇÃO: OS_EXCLUI_SUPER ══╗
+
+        # Obter o código do usuário atual
+        ${SQL_GET_USUARIO}    Set Variable
+        ...    SELECT u.Codigo FROM usuarios u
+        ...    INNER JOIN usuario_acesso ua ON u.UserName = ua.ua_usuario_mycommerce
+        ...    WHERE ua.ua_data = CURDATE()
+        ...    ORDER BY ua.ua_id DESC LIMIT 1
+
+        ${codigo_usuario}    Query    ${SQL_GET_USUARIO}
+        ${codigo_usuario}    Set Variable    ${codigo_usuario[0][0]}
+
+        Log To Console    \n[VALOR ORIGINAL] Os_exclui_Super = ${valor_original}
+        Log To Console    [UPDATE] Os_exclui_Super = ${valor_original}
+
+        ${SQL_UPDATE}    Set Variable    UPDATE usuarios SET Os_exclui_Super = ${valor_original} WHERE Codigo = ${codigo_usuario};
+
+        Execute Sql String    ${SQL_UPDATE}
+
+        Set Global Variable    ${REINICIAR_MYCOMMERCE}    ${True}
+
+        Carregar parâmetros do sistema
+
+        Log To Console    \n╚═══════════════════════════════════╝\n
+
+    END

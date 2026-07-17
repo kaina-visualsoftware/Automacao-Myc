@@ -334,6 +334,9 @@ E listo pela tela de Geração de vendas
 # =============================================================
 
 Dado que acesso a tela de Carregamento
+
+    Sleep    ${SLEEP_BAIXO}
+
     Type With Modifiers    T    CTRL
 
     Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
@@ -354,6 +357,7 @@ Quando pesquiso o Carregamento gerado
     Sleep    ${SLEEP_BAIXO}
 
 E fecho a tela de carregamento
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${TELA_CARREGAMENTOS}
     Sleep    ${SLEEP_BAIXO}
@@ -808,7 +812,7 @@ E gravo o carregamento da venda
 
     Clicar no botão Gravar
 
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
 
 
 Fechar tela de carregamento
@@ -1410,11 +1414,16 @@ Então o carregamento deve ser excluído com sucesso
 
 Então o sistema deve impedir a exclusão
     ${resultado}=    Query    SELECT c.Sequencia FROM cargas c WHERE c.Sequencia = ${COD_CARREGAMENTO} AND c.Cancelado IS NULL
+
     Should Not Be Empty    ${resultado}
-    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    3
+
+    ${aviso_excluir_carregamento_fechado}=    Run Keyword And Return Status    Wait Until Screen Contain    ${AVISO_EXCLUIR_CARREGAMENTO_FECHADO}    ${TEMPO_TELA}
+    
     IF    ${aviso_excluir_carregamento_fechado}
+
         Clicar no botão Ok
         Sleep    ${SLEEP_BAIXO}
+        
     END
 
 Quando acesso a tela de embarque
@@ -1448,7 +1457,7 @@ E gravo o embarque
 
 
 Então o embarque deve ser salvo com sucesso
-    Wait Until Screen Contain    ${TELA_CARREGAMENTO}    ${TEMPO_TELA}
+    Wait Until Screen Contain    ${TELA_CARREGAMENTOS}    ${TEMPO_TELA}
 
 
 Então o adiantamento deve estar cadastrado no banco

@@ -2,11 +2,9 @@
 Documentation    Testes em Banco Aleatório
 
 Resource    ../../../KeyWords/Financeiro/comissoes/KeyComissoes1.robot
-# Resource    ../../../utils/montadorDeCenarios.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords    Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
-Suite Teardown    Stop Remote Server
+Suite Setup    Run Keywords    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
 
 Test Setup    montadorDeCenarios.Dado que realizo uma venda completa, com produto normal
 Test Teardown    parametros_pre_condicoes.Teardown Restaurar Parametros Alterados E Reiniciar MyCommerce Se Necessário
@@ -211,7 +209,7 @@ Teste 12 - Comissão por linha de serviço e pagamento da comissão no caixa ap�
     Então faço o pagamento da comissao
     E saio da tela(CaixaPrincipal)
 
-Teste 13 - Gerando comissão de venda com múltiplos produtos, recebendo parcela por parcela - Linha Simples
+Teste 13 - Comissão por linha de produto com múltiplos produtos, com recebimento de parcela por parcela no caixa - Linha Simples
     # Tarefa: 176401 | CT: 1-593
     [Tags]    Teste13
     [Setup]    Run Keywords    
