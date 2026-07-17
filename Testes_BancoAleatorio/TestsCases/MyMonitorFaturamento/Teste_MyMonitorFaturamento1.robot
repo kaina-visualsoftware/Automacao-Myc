@@ -2,7 +2,8 @@
 Resource    ../../KeyWords/MyMonitorFaturamento/KeyMyMonitorFaturamento1.robot
 Resource    ../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Setup    Run Keywords     Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Teardown    Stop Remote Server
 
 *** Test Cases ***
 Teste 01 - Abertura do MyMonitorFaturamento

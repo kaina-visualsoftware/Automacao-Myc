@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary    mode=NEW
+Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    ../../../libs/validaParametros.py
 Library    Process
@@ -27,18 +27,6 @@ Dado que eu acesso a tela de doações
     Wait Until Screen Contain    ${SUBMENU_DOACOES}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${SUBMENU_DOACOES}
-    
-    Sleep    ${SLEEP_MEDIO}
-    ${aviso}    Exists    ${AVISO_QUEDA_ENERGIA_OPERACAO_EM_ABERTO}
-
-    IF    ${aviso}
-
-        Sleep    ${SLEEP_BAIXO}
-        SikuliLibrary.Click    ${BT_NAO}
-        Sleep    ${SLEEP_BAIXO}
-        
-    END
-        
     Wait Until Screen Contain    ${TELA_DOACOES}    ${TEMPO_TELA}
 
 Quando eu clico em adicionar

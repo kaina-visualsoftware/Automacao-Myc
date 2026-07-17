@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary    mode=NEW
+Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 Library    ../libs/validaParametros.py
@@ -56,14 +56,16 @@ ${TELA_NOTA_FISCAL_MANUAL}                             tela_NotaFiscalPreenchime
 ${TELA_COMISSOES}                                      tela_Comissoes.png
 ${CAIXA_PRINCIPAL}                                     tela_CaixaPrinicipal.png
 ${TELA_LIBERACAO_DESCONTO_MAXIMO}                      tela_liberacaoDesconto.png
-${MODAL_CANCELAR_VENDA}                                modal_CancelarVenda
+${MODAL_CANCELAR_VENDA}                                modal_SenhaDoSupervisor.png
 ${TELA_MOTIVO_PRECO_ZERADO_PRODUTO}                    tela_MotivoPrecoZeradoProduto.png
 ${TELA_IMPRESSAO_DIRETA}                               tela_ImpressaoDireta.png
 ${MODAL_PERSONALIZACAO_PAGAMENTO}                      modal_PersonalizacaoPagamento.png
 ${TELA_RELATORIO_COMISSOES}                            tela_RelatorioComissoes.png
 ${TELA_LIBERACAO_STATUS}                               tela_LiberacaoStatus.png
+${TELA_COMPRAS_CONSIGNADAS}                            tela_Compra_consignada.png
+${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}                 tela_LanCompraConsignada.png
 ${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}                  tela_Agrupamento.png
-${TELA_LIBERACAO_STATUS_ORCAMENTO}                     tela_LiberacaoStatusOrcamento.png
+${TELA_CARREGAMENTO}                                   tela_Carregamentos.png
 
 # Telas Avisos
 ${AVISO_SEM_ESTOQUE}                                   aviso_QuantidadeSemEstoque.png
@@ -74,7 +76,6 @@ ${AVISO_EST_INSUFICIENTE_CONTINUAR}                    aviso_EstoqueInsuficiente
 ${AVISO_PRODUTO_JA_INCLUSO}                            aviso_ProdutoJaIncluso.png
 ${AVISO_CADASTRE_CANAL_DE_VENDA}                       aviso_CadastreCanaisVenda.png
 ${AVISO_ESPECIFIQUE_VLR_UNIT_PRODUTO}                  aviso_EspecifiqueVlrUnitProduto.png
-${AVISO_DESC_ESCALA_COMISSAO}                          aviso_DescEscalaComissao.png
 
 # Botões
 ${BT_CONFIRMA_CANAL_NEGOCIACAO}                        bt_ConfirmarCanal.png
@@ -109,6 +110,7 @@ ${LABEL_REF_PRODUTO}                                   label_RefProduto.png
 
 # Rows
 ${ROW_PROD_INCLUSO}                                    row_ProdIncluso.png
+${ROW_PROD_CONSIGNADO}                                 row_ProdConsignado.png
 ${ROW_FUNCIONARIO_INCLUSO_SERVICO_OS}                  row_FuncComissionadoInclusoServicoOS.png
 
 # Outros
@@ -138,7 +140,7 @@ ${Parametro_QtdePadraoOrcamentos}                      ${False}
 ${Parametro_QtdePadraoOS}                              ${False}
 ${Parametro_QtdePadraoPreVendas}                       ${False}
 ${Parametro_QtdePadraoVendas}                          ${False}
-${Teste_Orcamento_Agrupamento_Produto}                 ${False}
+${Teste_Orc_Agrup_Prod}                                ${False}
 
 # Variáveis escalares (inicializadas em runtime via Set Test Variable)
 ${COD_PRODUTO}                                         None
@@ -146,7 +148,6 @@ ${COD_SERVICO}                                         None
 ${COD_VENDA}                                           None
 ${CODIGO_OPERACAO_MOV}                                 None
 ${Codigo_Pedido}                                       None
-${COD_ORCAMENTO}                                       None
 ${VALOR_FINAL_VENDA}                                   None
 ${VALOR_FINAL_OPERAÇÃO}                                None
 ${VALOR_FINAL_DEVOLUCAO}                               None
@@ -180,7 +181,6 @@ ${Faixas_Escalonada}                                   ${None}
 ${Id_Tabela_Preco_Selecionada}                         ${None}
 ${Codigos_Produtos}                                    ${None}
 ${Codigos_Pedidos}                                     ${None}
-${Desconto_Produto}                                    ${None}
 
 # Variáveis de operação (inicializadas em runtime — compartilhadas com validacaoAviso.robot)
 ${Codigo_Vendedor}                                     None
@@ -420,10 +420,11 @@ Adicionar Vendedor e Cliente(${TELA})
 
 Seleciona vendedor
     
-    ${codVendedor}    Query    SELECT c.Codigo FROM clientes AS c WHERE (c.Tipo LIKE 'D' OR c.Tipo LIKE 'V') AND c.Ativo = -1 AND c.`Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
+    ${codVendedor}    Query    SELECT codigo FROM clientes WHERE (Tipo LIKE 'D' OR Tipo LIKE 'V') AND Ativo = -1 AND `Status` LIKE 'ATIVA' ORDER BY RAND() LIMIT 1;
     Sleep    ${SLEEP_BAIXO}
 
     RETURN    ${codVendedor[0][0]}
+
 
 Seleciona cliente 
     
@@ -1563,6 +1564,61 @@ Inserir Produto normal - Necessita de estoque
         
     # END
 
+
+Inserir Mesmo Produto normal - Necessita de estoque
+
+    ${Qtde_Minima_Estoque}    Set Variable    0
+
+    IF    '${TELA}' == 'NFeSaidasManual'
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT    KEY.P
+        Sleep    ${SLEEP_BAIXO}
+
+        SikuliLibrary.Click    ${BT_SETA_DIREITA}
+        Sleep    ${SLEEP_BAIXO}
+        
+        Type With Modifiers    P    SHIFT
+        Sleep    ${SLEEP_BAIXO}
+
+    ELSE
+
+        Sleep    ${SLEEP_MEDIO}
+        Press Combination    KEY.ALT    KEY.P
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+
+    IF    ${Parametro_QuantidadePadraoProduto} == 0
+
+        ${Qtde_Minima_Estoque}    Set Variable    1
+
+    ELSE
+
+        ${Qtde_Minima_Estoque}    Set Variable    ${Parametro_QuantidadePadraoProduto}
+
+    END
+
+
+    
+    Sleep    ${SLEEP_MEDIO}
+
+    Input Text    ${EMPTY}    ${COD_PRODUTO} 
+    Sleep    ${SLEEP_BAIXO}
+
+    Press Special Key    TAB
+    Sleep    ${SLEEP_MEDIO}
+
+    Set Test Variable    ${Qtde_Minima_Estoque}
+
+    # IF    ${TesteUtilizaDescontoMaximoProduto}
+
+    #     Altera o desconto máximo do produto
+        
+    # END
+
+
+
 Inserir Produto sem comissão por linha
     [Arguments]    ${permite_sem_estoque}=${False}
 
@@ -1673,6 +1729,14 @@ Valida parametros após incluir produto
             SikuliLibrary.Click    ${BT_INCLUIR_PROD_NFE_SAIDA_MANUAL}
             Sleep    ${SLEEP_BAIXO}
 
+        ELSE IF    '${TELA}' == 'ComprasConsignadas'
+
+            Press Combination    KEY.ALT    KEY.I
+            Sleep    ${SLEEP_BAIXO}
+            Wait Until Screen Contain    ${ROW_PROD_CONSIGNADO}    ${SLEEP_MEDIO}
+            Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
+            RETURN
+
         ELSE
 
             Press Combination    KEY.ALT    KEY.I
@@ -1681,8 +1745,6 @@ Valida parametros após incluir produto
         END
 
     END
-
-    Valida desconto que não se encaixa em nenhuma escala de comissão
 
     IF    '${TELA}' == 'Orcamento'
 
@@ -1734,7 +1796,7 @@ Valida parametros após incluir produto
         Valida controle de entrega
 
     END
-
+    
     Wait Until Screen Contain    ${ROW_PROD_INCLUSO}    ${TEMPO_TELA}
 
     Set Test Variable    ${QUANTIDADE_PRODUTOS}    1
@@ -2176,9 +2238,9 @@ Desativa avisos de inicialização nas permissões de usuário
     
     Sleep    ${SLEEP_BAIXO}
 
-    Execute Sql String    UPDATE usuarios_auxiliar AS uax JOIN usuarios AS u ON u.Codigo = uax.uau_codigo_usuario SET uax.uau_avisa_ferias = 0, uax.Uau_Cons_Avisos_Manutencoes_Inicializar = 0, uax.Uau_Cons_Avisos_TransfRecusadas_Inicializar = 0, uax.Uau_Avisos_Cotacao_Moeda = 0, uax.Uau_Importa_Produtos = 0, uax.uau_BloqDev_ComValorNegativo = 0 WHERE u.UserName = 'Visual';
+    Execute Sql String    UPDATE usuarios_auxiliar AS uax JOIN usuarios AS u ON u.Codigo = uax.uau_codigo_usuario SET uax.uau_avisa_ferias = 0, uax.Uau_Cons_Avisos_Manutencoes_Inicializar = 0, uax.Uau_Cons_Avisos_TransfRecusadas_Inicializar = 0, uax.Uau_Avisos_Cotacao_Moeda = 0, uax.Uau_Importa_Produtos = 0 WHERE u.UserName = 'Visual';
 
-E saio da tela(${TELA})    
+E saio da tela(${TELA})
 
     IF    '${TELA}' == 'Condicional'
             
@@ -2263,7 +2325,18 @@ E saio da tela(${TELA})
         Press Special Key    ESC
         
         Wait Until Screen Not Contain    ${TELA_RELATORIO_COMISSOES}    ${TEMPO_TELA}
-
+    ELSE IF    '${TELA}' == 'ComprasConsignada'
+        SikuliLibrary.Click    ${TELA_COMPRAS_CONSIGNADAS}
+        Press Combination    KEY.ALT    KEY.S
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Not Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+    ELSE IF    '${TELA}' == 'LancamentoDeCompraConsignada'
+        SikuliLibrary.Click    ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}
+        Press Combination    KEY.ALT    KEY.S 
+        Sleep    ${SLEEP_BAIXO}
+        Wait Until Screen Not Contain    ${TELA_LANCAMENTO_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
+        #Verifica se a tela faz fallback corretamente para tela de compras
+        Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
     END
 
 Valida teste que utiliza o desconto máximo do produto
@@ -2857,35 +2930,27 @@ Valida solicitação de senha do usuário supervisor para liberação de status 
 
 Valida o checkbox informa agrupamento
 
-    ${Teste_Orcamento_Agrupamento_Produto}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    agrupamento
+    ${Teste_Orc_Agrup_Prod}    Run Keyword And Return Status    Should Contain    ${TEST_NAME}    agrupamento
 
-    IF    ${Teste_Orcamento_Agrupamento_Produto}
+    IF    ${Teste_Orc_Agrup_Prod}
+        
+        ${eh_informa_agrupamento_habilitado}    validaTelasIni.Valida Telas Ini Prefixado    formulario=frmCad_Orcamento    campo=InformaAgrupamento
+        
+        Sleep    ${SLEEP_BAIXO}
 
-        ${checkbox_informa_agrupamento_verificado}    Get Variable Value    \${checkbox_informa_agrupamento_verificado}    ${False}
-
-        IF    not ${checkbox_informa_agrupamento_verificado}
-
-            ${informa_agrupamento_habilitado}    validaTelasIni.Valida Telas Ini Prefixado    formulario=frmCad_Orcamento    campo=InformaAgrupamento
-
-            Sleep    ${SLEEP_BAIXO}
-
-            IF    not ${informa_agrupamento_habilitado}
-
-                SikuliLibrary.Click    ${CHECKBOX_INFORMA_AGRUPAMENTO}
-
-            END
-
-            Set Test Variable    ${checkbox_informa_agrupamento_verificado}    ${True}
+        IF    ${eh_informa_agrupamento_habilitado} == False
+        
+            SikuliLibrary.Click    ${CHECKBOX_INFORMA_AGRUPAMENTO}
 
         END
 
-        Set Test Variable    ${Teste_Orcamento_Agrupamento_Produto}
+        Set Test Variable    ${Teste_Orc_Agrup_Prod}
 
     END
 
 Valida inserção de produto com agrupamento em orçamentos
 
-    IF    ${Teste_Orcamento_Agrupamento_Produto}
+    IF    ${Teste_Orc_Agrup_Prod}
         
         Wait Until Screen Contain    ${TELA_AGRUPAMENTO_PRODUTO_ORCAMENTO}    ${TEMPO_TELA}
 
@@ -2906,99 +2971,11 @@ Valida inserção de produto com agrupamento em orçamentos
 
     END
 
-Verifica status padrão de orçamento
-    [Arguments]    ${situacao_orcamento}    ${status_alterado}=${None}
 
-    IF    $status_alterado is not None
 
-        # Status alterado manualmente durante o lançamento
-        ${status_registros}    Query    SELECT sr.Codigo, sr.Descricao FROM status_registros sr WHERE sr.Descricao = '${status_alterado}' AND sr.Excluido = 0 LIMIT 1;
 
-        ${codigo_status}      Set Variable    ${status_registros[0][0]}
-        ${descricao_status}   Set Variable    ${status_registros[0][1]}
 
-        ${orcamento}    Query    SELECT o.IDStatusOR, o.StatusOR FROM orcamentos o WHERE o.Codigo = ${COD_ORCAMENTO};
-
-        Should Be Equal As Integers    ${orcamento[0][0]}    ${codigo_status}
-        Should Be Equal As Strings    ${orcamento[0][1]}    ${descricao_status}
-
-    ELSE
-
-        IF    '${situacao_orcamento}' == 'OrcamentoGravado'
-
-            ${campo}    Set Variable    PadraoAbrir
-
-        ELSE IF    '${situacao_orcamento}' == 'GeradoPreVenda'
-
-            ${campo}    Set Variable    padraoGerarPreVenda
-
-        ELSE IF    '${situacao_orcamento}' == 'GeradoVenda'
-
-            ${campo}    Set Variable    PadraoFechar
-
-        END
-
-        ${status_padronizado}    Query    SELECT sr.Codigo, sr.Descricao FROM status_registros sr WHERE sr.Excluido = 0 AND sr.${campo} = 1 LIMIT 1;
-
-        ${tem_status_padrao}    Evaluate    bool($status_padronizado)
-
-        ${orcamento}    Query    SELECT o.IDStatusOR, o.StatusOR FROM orcamentos o WHERE o.Codigo = ${COD_ORCAMENTO};
-
-        IF    ${tem_status_padrao}
-
-            ${codigo_status}      Set Variable    ${status_padronizado[0][0]}
-            ${descricao_status}   Set Variable    ${status_padronizado[0][1]}
-
-            Should Be Equal As Integers    ${orcamento[0][0]}    ${codigo_status}
-            Should Be Equal As Strings    ${orcamento[0][1]}    ${descricao_status}
-
-        ELSE
-
-            IF    '${situacao_orcamento}' == 'OrcamentoGravado'
-
-                Should Be Equal    ${orcamento[0][0]}    ${None}
-                Should Be Equal    ${orcamento[0][1]}    ${None}
-
-            ELSE
-
-                Log To Console    \nNenhum status padrão configurado para '${situacao_orcamento}' — o sistema não altera o status existente do orçamento; validação ignorada.
-
-            END
-
-        END
-
-    END
-
-Valida solicitação de senha do supervisor para liberação de alteração de status do orçamento
-    
-    ${tela}    Run Keyword And Return Status    Wait Until Screen Contain    ${TELA_LIBERACAO_STATUS_ORCAMENTO}    ${SLEEP_ALTO}
-
-    IF    ${tela}
-
-        ${senhaUsuarioCriptografada}    Query    SELECT us.Password FROM usuarios_supervisores us INNER JOIN clientes c ON c.Codigo = us.CodigoFuncionario WHERE c.Ativo = -1 LIMIT 1;
-        ${senhaUsuarioDescriptografada}    Evaluate   int(${senhaUsuarioCriptografada[0][0]} / 4)
-
-        Input Text    ${EMPTY}    ${senhaUsuarioDescriptografada}
-        Sleep    ${SLEEP_BAIXO}
-
-        Press Special Key    ENTER 
-        Sleep    ${SLEEP_MEDIO}
-
-    END
-
-Valida desconto que não se encaixa em nenhuma escala de comissão
-    
-    Sleep    ${SLEEP_BAIXO}
-    ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
-
-    WHILE    ${aviso}
-
-        Press Special Key    ENTER
-        Sleep    ${SLEEP_MEDIO}
-
-        ${aviso}    Exists    ${AVISO_DESC_ESCALA_COMISSAO}
-
-    END
+#Cliques em botoes genericos
 
 Clicar no botão Adicionar
     ${existe}=    Run Keyword And Return Status    Wait Until Screen Contain    ${BT_ADICIONAR}    ${SLEEP_MEDIO}

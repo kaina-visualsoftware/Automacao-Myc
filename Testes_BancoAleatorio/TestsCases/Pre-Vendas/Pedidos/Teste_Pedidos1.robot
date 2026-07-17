@@ -6,7 +6,8 @@ Resource    ../../../KeyWords/Comercial/Vendas/keyVendas1.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 Resource    ../../../KeyWords/Comercial/Ordem de Servico/KeyOrdemDeSevico1.robot
 
-Suite Setup    Run Keywords    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Setup    Run Keywords     Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Teardown    Stop Remote Server
 
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 
@@ -45,12 +46,9 @@ Teste 03 - Lançamento e edição de pedido
     Quando adiciono vendedor e cliente
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
-    E audito o pedido
-    Então finalizo o pedido
+    Quando finalizo o pedido sem auditar
     E pesquiso pelo pedido gerado
     E pressiono o atalho de editar
-    Quando vou para a aba de pagamentos
-    E estorno a auditoria do pedido
     KeyPedidos1.Quando insiro um produto normal informando a quantidade(1)
     Quando vou para a aba de pagamentos
     E audito o pedido

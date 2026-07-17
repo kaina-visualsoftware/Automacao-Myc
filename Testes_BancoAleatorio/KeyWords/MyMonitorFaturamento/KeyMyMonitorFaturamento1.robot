@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary    mode=NEW
+Library    SikuliLibrary
 Library    ImageHorizonLibrary 
 Library    DatabaseLibrary
 

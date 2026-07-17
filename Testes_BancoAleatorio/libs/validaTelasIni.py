@@ -26,7 +26,7 @@ class validaTelasIni:
     def valida_telas_ini_prefixado(self, formulario, campo):
         """
         Valida campo no Telas.ini cujas chaves possuem prefixo terminal_usuario_.
-        Formato esperado da chave: nomeTerminal_nomeUsuario_nomeCampo (ex: CQP-FELIPE-35_Visual_InformaAgrupamento).
+        Formato esperado da chave: nomeTerminal_codigoUsuario_nomeCampo (ex: CQP-FELIPE-35_1_InformaAgrupamento).
         Retorna False quando o arquivo, a seção ou o campo prefixado não forem encontrados,
         ou quando o valor for '0'. Retorna True apenas quando o valor for '1'.
         """
