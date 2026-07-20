@@ -158,6 +158,7 @@ CT 1-105 - Bloquear Finalizar O.S sem serviço
 
 CT 1-271 - Adicionar serviço agregado ao incluir produto
     [Tags]    CT 1-271
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMFUNCIONARIO    1    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
 
     Dado que existe servico agregado no banco
     Dado que acesso a tela de ordens de serviços para regressão
@@ -173,3 +174,25 @@ CT 1-271 - Adicionar serviço agregado ao incluir produto
     Então finalizo a ordem de serviço
     Então a OS com servico agregado deve estar salva no banco    ${COD_ORDEM_SERVICO}
     E saio da tela(OrdemDeServico)
+
+
+CT 1-309 - Funcionário comissionado na ordem de serviço
+    [Tags]    CT 1-309
+    [Setup]    Run Keywords    Set Test Variable    @{PARAMS_PRE_CONDICOES}    OS_COMFUNCIONARIO    0    AND    Inicializar Pré-Condições    AND    Reiniciar MyCommerce Se Necessário
+
+    Dado que acesso a tela de ordens de serviços para regressão
+    Obtenho um servico ativo para comissionamento
+    E obtenho um funcionario qualquer
+    Quando inicio uma nova ordem de serviço
+    E informo o vendedor
+    E informo a tabela de preço
+    E informo o cliente pelo CPF
+    E informo o servico na OS
+    E informo o servico com detalhamento se necessario
+    E clico em incluir servico
+    E informo o funcionario comissionado
+    E acesso a aba de pagamentos
+    Então finalizo a ordem de serviço
+    Então a OS com funcionario comissionado deve estar salva no banco
+    E saio da tela(OrdemDeServico)
+    
