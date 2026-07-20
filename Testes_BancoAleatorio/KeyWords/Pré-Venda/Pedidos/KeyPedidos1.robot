@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary    mode=NEW
+Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
@@ -161,12 +161,6 @@ Então finalizo o pedido
 
     Valida parâmetros/impressões pós pré-venda
 
-    IF    ${Permissao_Usuario_PreVendaConferirAoFinalizar} and ${Permissao_Usuario_PreVendaExibirBotaoConferencia}
-        
-        Valida tela de separação de pré-venda ao finalizar pré-venda
-
-    END
-    
     Wait Until Screen Contain    ${TELA_PEDIDOS}    ${TEMPO_TELA}
 
 Então visualizo o pedido
@@ -607,9 +601,3 @@ E pesquiso pelo pedido gerado
     Wait Until Screen Contain    ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}    ${TEMPO_TELA}
 
     SikuliLibrary.Click    ${LABEL_REGISTRO_PEDIDO_ENCONTRADO}
-
-E estorno a auditoria do pedido
-
-    Press Combination    KEY.ALT    KEY.R
-
-    Wait Until Screen Not Contain    ${TELA_PEDIDO_AUDITADO}    ${SLEEP_ALTO}

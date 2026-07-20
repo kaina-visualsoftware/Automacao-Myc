@@ -1,5 +1,5 @@
 *** Settings ***
-Library    SikuliLibrary    mode=NEW
+Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../../libs/validaParametros.py
@@ -48,10 +48,6 @@ Dado que eu acesso a tela de lançamento de nota fiscal preenchimento manual
     Key Down    CTRL
     Press Special Key    F9
     Key Up      CTRL
-
-    Sleep    ${SLEEP_ALTO}
-    validacaoAviso.Valida lançamento de nota fiscal de saída manual em aberto
-
     Wait Until Screen Contain    ${TELA_NOTA_FISCAL_PREENCHIMENTO_MANUAL}    ${TEMPO_TELA}
     
     Press Special Key    TAB

@@ -1,6 +1,5 @@
 import mysql.connector
 import leituraConfig as config
-from robot.api import logger
 
 dbname = config.config.Database
 porta = config.config.Porta
@@ -93,27 +92,11 @@ class estoque:
                             print("Estoque baixou corretamente.")
                             return True
                         else:
-                            logger.console("=" * 60)
-                            logger.console("ERRO: Estoque NÃO baixou corretamente!")
-                            logger.console(f"  Produto (idProduto)       : {idProduto}")
-                            logger.console(f"  Movimentação (idMovimento): {idMovimentacao}")
-                            logger.console(f"  Quantidade baixada        : {quantidade_baixa}")
-                            logger.console(f"  Estoque anterior          : {int(row_prev[0])}")
-                            logger.console(f"  Estoque esperado          : {estoqueValidacao}  ({int(row_prev[0])} - {quantidade_baixa})")
-                            logger.console(f"  Estoque atual (obtido)    : {estoqueAtual}")
-                            logger.console("=" * 60)
+                            print(f"Estoque NÃO baixou corretamente. Esperado {estoqueValidacao}, obtido {estoqueAtual}.")
                             return False
                     else:
-                        pe_estoque, pe_tela, pe_operacao = tabelaProdutosEstoque[0]
-                        aud_estoque, aud_tela, aud_operacao = tabelaAuditoriaEstoque[0]
-                        logger.console("=" * 60)
-                        logger.console("ERRO: Auditoria de estoque NÃO está de acordo!")
-                        logger.console(f"  {'Campo':<12} {'produtosestoque':<25} {'auditoriaestoque':<25} {'OK?'}")
-                        logger.console(f"  {'-'*12} {'-'*25} {'-'*25} {'-'*4}")
-                        logger.console(f"  {'Estoque':<12} {str(pe_estoque):<25} {str(aud_estoque):<25} {'OK' if pe_estoque == aud_estoque else 'DIVERGE'}")
-                        logger.console(f"  {'Tela':<12} {str(pe_tela):<25} {str(aud_tela):<25} {'OK' if pe_tela == aud_tela else 'DIVERGE'}")
-                        logger.console(f"  {'Operacao':<12} {str(pe_operacao):<25} {str(aud_operacao):<25} {'OK' if pe_operacao == aud_operacao else 'DIVERGE'}")
-                        logger.console("=" * 60)
+                        print("Auditoria não está de acordo!")
+                        print("Auditoria de estoque =", tabelaAuditoriaEstoque, "Produtos Estoque =", tabelaProdutosEstoque)
                         return False
 
             return False

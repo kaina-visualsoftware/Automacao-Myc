@@ -5,7 +5,8 @@ Resource    ../../../KeyWords/Financeiro/Caixa/keyCaixa1.robot
 Resource    ../../../utils/montadorDeCenarios.robot
 Resource    ../../../utils/parametros_pre_condicoes.robot
 
-Suite Setup    Run Keywords    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Setup    Run Keywords     Start Sikuli Process    AND    Conectar ao Banco de Dados    AND    Preparar Ambiente MyCommerce
+Suite Teardown    Stop Remote Server
 
 Test Teardown    parametros_pre_condicoes.Reiniciar MyCommerce Se Teste Falhar
 

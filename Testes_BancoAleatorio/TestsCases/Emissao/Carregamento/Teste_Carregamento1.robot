@@ -1,5 +1,4 @@
 *** Settings ***
-
 Documentation    Testes em Banco Aleatório
 
 
@@ -259,6 +258,7 @@ Teste 12 - Validar volume de pré-vendas após remoção em um carregamento
     E valido o volume após remover uma pré-venda
     E fecho a tela de carregamento
 
+
 Teste 13 - Lancamento de carregamento de venda
     [Tags]    Teste13
     [Setup]    Run Keywords
@@ -325,6 +325,7 @@ Teste 17 - Nao permitir excluir carregamento fechado
     ...    Set Test Variable    @{PARAMS_PRE_CONDICOES}    CARGA_VENDAS   1
     ...    AND    Inicializar Pré-Condições
     ...    AND    Reiniciar MyCommerce Se Necessário
+    ...    AND    montadorDeCenarios.Dado que realizo mais de uma venda(1)
     ...    AND    montadorDeCenarios.Dado que realizo um carregamento de venda
  
     Dado que acesso a tela de Carregamento
