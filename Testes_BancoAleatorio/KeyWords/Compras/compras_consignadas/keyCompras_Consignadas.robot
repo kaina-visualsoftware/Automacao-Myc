@@ -1,15 +1,20 @@
 *** Settings ***
+Library    OperatingSystem
 Library    SikuliLibrary
 Library    ImageHorizonLibrary
 Library    ../../../libs/validaParametros.py
 Library    Process
 Library    ../../../libs/verificacoesExtras.py
+
 Variables    ../../../libs/leituraConfig.py
 
 Resource    ../../../utils/utils.robot
 Resource    ../../../utils/validacaoAviso.robot
 
 *** Variables ***
+# ── Caminhos ───────────────────────────────────────────────────────────────
+${MYCOMMERCE_PATH}      C:\\Visual Software\\MyCommerce
+
 # ── Telas ──────────────────────────────────────────────────────────────────
 ${MENU_COMPRAS}                         menu_Compras.png
 ${SUBMENU_COMPRAS_CONSIGNADAS}          subMenu_ComprasConsignadas.png
@@ -44,6 +49,8 @@ ${AVISO_DEVOLVIDO_SUPERIOR_A_COMPRADO}  alertaCliente.png
 ${OPERACAO_EM_ABERTO}                   aviso_QuedaEnergiaOperacaoEmAberto.png
 ${LABEL_DESCONTO_FINAL_COMPRA}          lb_DescontoFinalVenda.png
 ${INPUT_COD_FORNECEDOR}                 lb_CodFornecedor.png
+#── Arquivos ───────────────────────────────────────────────────
+${TELAS_INI}            ${MYCOMMERCE_PATH}\\Telas.ini
 
 # ── Variáveis de Runtime ───────────────────────────────────────────────────
 ${COD_COMPRA}                           None
@@ -86,12 +93,53 @@ Dado que eu acesso a tela de Compras Consignadas
     Set Test Variable    ${TELA}    ComprasConsignadas
     Sleep    ${SLEEP_MEDIO}
 
-    SikuliLibrary.Click    ${MENU_COMPRAS}
+    SikuliLibrary.Click    ${MENU_COMPRAS}                                    
     Wait Until Screen Contain    ${SUBMENU_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
 
-    SikuliLibrary.Click    ${SUBMENU_COMPRAS_CONSIGNADAS}
+
+    FOR    ${_}    IN RANGE    4
+
+        Press Special Key    DOWN
+        
+        Sleep    ${SLEEP_BAIXO}
+
+    END
+        
+
+    Press Special Key    ENTER
+
+
     Wait Until Screen Contain    ${TELA_COMPRAS_CONSIGNADAS}    ${TEMPO_TELA}
 
+
+    Valida criterio de pesquisa
+
+
+
+# -----------------------------------------
+#VALIDA  CRITERIO SELECIONADO EM PESQUISAR NA TELA DE COMPRA CONSIGNADA [frmComprasConsignada]
+# -----------------------------------------
+Valida criterio de pesquisa
+    ${conteudo}=    Get File    ${TELAS_INI}    encoding=cp1252
+    @{linhas}=      Split To Lines    ${conteudo}
+
+    FOR    ${linha}    IN    @{linhas}
+        IF    'CboCriterio_Visual' in '${linha}'
+            @{partes}=    Split String    ${linha}    =
+            ${valor}=     Strip String    ${partes}[1]
+
+            Log    Valor encontrado: ${valor}
+            BREAK
+        END
+    END
+    
+    ${VALIDACAO}=    run keyword and return status    Should Be Equal As Strings    ${valor}    1
+
+
+    IF    not ${VALIDACAO}
+        fail    O critério de pesquisa não está definido como "Código". Valor atual: ${valor}
+    END
+    
 # ══════════════════════════════════════════════════════════════════════════════
 # LANÇAMENTO
 # ══════════════════════════════════════════════════════════════════════════════
@@ -130,6 +178,8 @@ Adicionar Fornecedor
 
     Sleep    ${SLEEP_BAIXO}
 
+
+
 Quando eu pressionar em adicionar
     [Documentation]    Clica em Adicionar, aguarda a tela de lançamento e captura o código gerado
 
@@ -146,6 +196,9 @@ Quando eu pressionar em adicionar
 
     Append To List    ${BUFF_COD_COMPRAS_LOTE}    ${COD_COMPRA}
 
+
+
+
 Capturar Código Da Última Compra Consignada
     [Documentation]    Consulta o banco e armazena o código da última compra consignada aberta
 
@@ -155,9 +208,14 @@ Capturar Código Da Última Compra Consignada
     Set Test Variable    ${COD_COMPRA}    ${consulta[0][0]}
     
 
+
+
 E adiciono Fornecedor
     [Documentation]    Alias para o passo BDD que adiciona o fornecedor na compra consignada
     Adicionar Fornecedor    ${TELA}
+
+
+
 
 Garantir codigo de fornecedor para uso
     [Documentation]    Garante que a variável usada no input do fornecedor possua o último código selecionado.
@@ -165,6 +223,9 @@ Garantir codigo de fornecedor para uso
     IF    "${CODIGO}" == "${EMPTY}" and "${CODIGO_FORNECEDOR}" != "${EMPTY}"
         Set Test Variable    ${CODIGO}    ${CODIGO_FORNECEDOR}
     END
+
+
+
 
 Digitar fornecedor no campo ativo
     [Arguments]    ${valor}
@@ -296,6 +357,9 @@ E adiciono Fornecedor das compras ja lançadas
 
     END
 
+
+
+
 E adciono fornecedor em pagamento da compra consignada
     [Documentation]    Adiciona o fornecedor na tela de pagamento da compra consignada para conseguir finalizar o pagamento
 
@@ -353,14 +417,18 @@ E adciono fornecedor em pagamento da compra consignada
         Set Variable    ${TELA}    ${TELA_COMPRAS_CONSIGNADAS}
     END
 
+
+
+
 E adiciono o mesmo fornecedor em outra compra
     [Documentation]    Reutiliza o fornecedor já lançado anteriormente para a próxima compra
     E adiciono Fornecedor das compras ja lançadas    ${True}
 
+
+
 E adiciono outro fornecedor em outra compra
     [Documentation]    Insere um novo fornecedor em vez de reaproveitar o já lançado
     E adiciono Fornecedor das compras ja lançadas    ${False}
-
 
 
 
@@ -427,6 +495,8 @@ E insiro um produto normal informando a quantidade(${Quantidade_Produto})
     END
 
 
+
+
 E insiro o mesmo produto normal informando a quantidade(${Quantidade_Produto})
     [Documentation]    Insere um produto com estoque e informa a quantidade fornecida
 
@@ -441,6 +511,8 @@ E insiro o mesmo produto normal informando a quantidade(${Quantidade_Produto})
     Atualizar Tipo Compra Conforme Aba Ativa
 
     Set Test Variable    ${CompraConsig_PossuiProduto}    ${True}
+
+
 
 
 
@@ -462,6 +534,9 @@ Informa a quantidade do produto devolução(${Quantidade_Produto})
 
     Set Test Variable    ${Quantidade_Produto}
 
+
+
+
 Informa a quantidade do produto(${Quantidade_Produto})
     [Documentation]    Preenche o campo de quantidade e avança com TAB
 
@@ -480,6 +555,8 @@ Informa a quantidade do produto(${Quantidade_Produto})
 
 
     Set Test Variable    ${QTDE_BAIXA_PRODUTO}    ${Quantidade_Produto}
+
+
 
 
 
@@ -546,6 +623,7 @@ Então finalizo a compra consignada
 
     END
     
+
 
 
 Tratar Impressão De Compra Consignada
@@ -1308,6 +1386,7 @@ Então visualizo aba atual
 
     END
 
+
 # ──────────────────────────────────────────────────────────────────────────────
 # VALIDAÇÃO DE AVISOS
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1353,4 +1432,5 @@ Valida aviso de queda do sistema(${prosseguir_apos_aviso})
 
         ...    ${SLEEP_MEDIO}
 
-    END
+    END    
+

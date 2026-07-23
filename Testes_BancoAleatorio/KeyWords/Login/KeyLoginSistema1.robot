@@ -4,6 +4,7 @@ Library    ImageHorizonLibrary
 Library    DatabaseLibrary
 Library    ../../libs/verificacoesExtras.py
 Library    ../../libs/configPorUsuarioWin.py
+Variables  ../../libs/env_loader.py
 
 Variables    ../../libs/leituraConfig.py
 
@@ -56,12 +57,12 @@ Então realizo o login no MyCommerce
     Key Up      CTRL
 
     Wait Until Screen Contain    ${ICONE_USUARIO_VISUAL}    ${SLEEP_ALTO}
-    Type    ${EMPTY}    KAINA
+    Type    ${EMPTY}    ${SIA_NAME}
     Press Special Key    ENTER
 
     Garantir Caps Lock Desligado
 
-    Type    ${EMPTY}    d9o67@rD8
+    Type    ${EMPTY}    ${SIA_SENHA}
     Press Special Key    ENTER
     Sleep    ${SLEEP_BAIXO}
 
