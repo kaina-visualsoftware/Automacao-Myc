@@ -4,6 +4,8 @@ Library    Collections
 
 Resource   ../utils/parametros_admin_sistema.robot
 Resource   ../utils/myCommerce.robot
+Library    ../libs/env_loader.py
+
 
 *** Variables ***
 @{PARAMS_ALTERADOS}
